@@ -1,0 +1,101 @@
+/* 
+ * Copyright (C) 2014 Jean-Christophe Malapert
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package io.github.malapert.jwcs.proj;
+
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
+
+/**
+ * The Hammer-Aitoff projection.
+ * 
+ * <p>
+ * This projection is developed from the equatorial case of the zenithal equal
+ * area projection by doubling the equatorial scale and longitude coverage.
+ * The whole sphere is mapped thereby while preserving the equal. The whole 
+ * sphere is mapped thereby while preserving the equal.
+ * 
+ * This projection reduces distortion in the polar regions compared to 
+ * pseudo cylindrical by making the meridians and parallels more nearly 
+ * orthogonal. Together with its equal area property this makes it one of 
+ * most commonly used all-sky projections.
+ * 
+ * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
+ * "Representations of celestial coordinates in FITS"</a>, 
+ * M. R. Calabretta and E. W. Greisen - page 18
+ * </p>
+ * 
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
+ * @version 1.0
+ */
+public class AIT extends CylindricalProjection {
+        
+    /**
+     * Creates a new AIT projection based on the celestial longitude and 
+     * latitude of the fiducial point (crval1, crval2)
+     * @param crval1 celestial longitude in degrees
+     * @param crval2 celestial latitude in degrees
+     */
+    public AIT(double crval1, double crval2) {
+        super(crval1, crval2);
+    }
+
+    /**
+     * Computes the native spherical coordinates from the projection plane
+     * coordinates.
+     *
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When the pixel is beyond the visible projection
+     */
+    @Override
+    public double[] project(double x, double y) throws PixelBeyondProjectionException  {
+        double xr = Math.toRadians(x);
+        double yr = Math.toRadians(y);
+        double z = 1 - Math.pow(xr / 4, 2) - Math.pow(yr / 2, 2);
+        if (z < 0) {
+            throw new PixelBeyondProjectionException("AIT: Solution not defined for x,y: " + x + ", " + y);
+        }
+        z = Math.sqrt(z);      
+        double s = z * yr;
+	if (Math.abs(s) > 1.0) throw new PixelBeyondProjectionException(
+		    "AIT: Solution not defined for x,y: " + x + ", " + y);        
+        double phi = 2 * Math.atan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
+        double theta = Math.asin(yr * z);         
+        double[] pos = {phi, theta};
+        return pos;
+    }
+
+    /**
+     * Computes the projection plane coordinates from the native spherical
+     * coordinates. 
+     *
+     * @param phi native spherical coordinate in radians along longitude
+     * @param theta native spherical coordinate in radians along latitude
+     * @return the projection plane coordinates
+     */    
+    @Override
+    public double[] projectInverse(double phi, double theta) {         
+        phi = phiRange(phi);
+        double gamma = Math.sqrt(2.0d / (1 + Math.cos(theta) * Math.cos(phi * 0.5d)));
+        gamma = Math.toDegrees(gamma);
+        double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
+        double y = gamma * Math.sin(theta);
+        double[] coord = {x, y};
+        return coord;
+    }
+
+}

@@ -1,0 +1,16 @@
+## Requirements
+JAVA >= 8
+
+## Building sources
+
+### Getting the sources
+
+	$ git clone https://github.com/malapert/JWcs.git
+	
+### Building the sources
+
+Build the sources using ant
+
+	$ cd JWcs
+  
+	$ ant
