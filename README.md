@@ -23,3 +23,7 @@ Build the sources using ant
   
 	$ ant
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/malapert/jwcs/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
