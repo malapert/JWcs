@@ -70,7 +70,7 @@ public abstract class Projection {
     public static final double DEFAULT_THETAP = HALF_PI;
 
     /**
-     *
+     * 
      */
     public static final double DEFAULT_PHIP = 0;
     /**

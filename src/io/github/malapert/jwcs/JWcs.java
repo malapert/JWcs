@@ -76,44 +76,145 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class JWcs implements JWcsKeyProvider {
 
-    protected static final double MAX_LONGITUDE = 360;
-    protected static final double MIN_LONGITUDE = 0;
-    protected static final double MIN_LATITUDE = -90;
-    protected static final double MAX_LATITUDE = 90;
+    public static final double MAX_LONGITUDE = 360;
+    public static final double MIN_LONGITUDE = 0;
+    public static final double MIN_LATITUDE = -90;
+    public static final double MAX_LATITUDE = 90;
 
-    protected static final String NAXIS = "NAXIS";
-    protected static final String NAXIS1 = "NAXIS1";
-    protected static final String NAXIS2 = "NAXIS2";
-    protected static final String CRPIX1 = "CRPIX1";
-    protected static final String CRPIX2 = "CRPIX2";
-    protected static final String CRVAL1 = "CRVAL1";
-    protected static final String CRVAL2 = "CRVAL2";
-    protected static final String CTYPE1 = "CTYPE1";
+    /**
+     * Number of axes.
+     * <p>
+     * 2 for an image
+     */
+    public static final String NAXIS = "NAXIS";
+    /**
+     * Number of pixels along X axis.
+     */
+    public static final String NAXIS1 = "NAXIS1";
+    /**
+     * Number of pixels along Y axis.
+     */
+    public static final String NAXIS2 = "NAXIS2";
+    /**
+     * Reference along X axis in pixel frame.
+     */
+    public static final String CRPIX1 = "CRPIX1";
+    /**
+     * Reference along Y axis in pixel frame.
+     */
+    public static final String CRPIX2 = "CRPIX2";
+    /**
+     * Reference along longitude in degrees in celestial frame.
+     */
+    public static final String CRVAL1 = "CRVAL1";
+    /**
+     * Reference along latitude in degrees in celestial frame.
+     */
+    public static final String CRVAL2 = "CRVAL2";
+    /**
+     * Projection type along X axis.
+     */
+    public static final String CTYPE1 = "CTYPE1";
+    /**
+     * Projection type along Y axis.
+     */
     protected static final String CTYPE2 = "CTYPE2";
-    protected static final String CD11 = "CD1_1";
-    protected static final String CD12 = "CD1_2";
-    protected static final String CD21 = "CD2_1";
-    protected static final String CD22 = "CD2_2";
-    protected static final String CUNIT1 = "CUNIT1";
-    protected static final String CUNIT2 = "CUNIT2";
-    protected static final String CDELT1 = "CDELT1";
-    protected static final String CDELT2 = "CDELT2";
-    protected static final String CROTA2 = "CROTA2";
-    protected static final String EQUINOX = "EQUINOX";
-    protected static final String PC11 = "PC1_1";
-    protected static final String PC12 = "PC1_2";
-    protected static final String PC21 = "PC2_1";
-    protected static final String PC22 = "PC2_2";
-    protected static final String PV11 = "PV1_1";
-    protected static final String PV12 = "PV1_2";
-    protected static final String PV13 = "PV1_3";
-    protected static final String PV14 = "PV1_4";
-    protected static final String PV21 = "PV2_1";
-    protected static final String PV22 = "PV2_2";
-    protected static final String PV23 = "PV2_3";
-    protected static final String LONPOLE = "LONPOLE";
-    protected static final String LATPOLE = "LATPOLE";
-    protected static final String RADESYS = "RADESYS";
+    /**
+     * Scale (degrees / pixel) and rotation matrix. 
+     */
+    public static final String CD11 = "CD1_1";
+    /**
+     * Scale (degrees / pixel) and rotation matrix. 
+     */    
+    public static final String CD12 = "CD1_2";
+    /**
+     * Scale (degrees / pixel) and rotation matrix. 
+     */    
+    public static final String CD21 = "CD2_1";
+    /**
+     * Scale (degrees / pixel) and rotation matrix. 
+     */
+    public static final String CD22 = "CD2_2";
+    /**
+     * Unit along X axis.
+     */
+    public static final String CUNIT1 = "CUNIT1";
+    /**
+     * Unit along Y axis.
+     */
+    public static final String CUNIT2 = "CUNIT2";
+    /**
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     */
+    public static final String CDELT1 = "CDELT1";
+    /**
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     */    
+    public static final String CDELT2 = "CDELT2";
+    /**
+     * Rotation in degrees when CD matrix is not defined.
+     */    
+    public static final String CROTA2 = "CROTA2";
+    /**
+     * Equinox value.
+     */
+    public static final String EQUINOX = "EQUINOX";
+    /**
+     * Deformation matrix.
+     */
+    public static final String PC11 = "PC1_1";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PC12 = "PC1_2";
+    /**
+     * Deformation matrix.
+     */
+    public static final String PC21 = "PC2_1";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PC22 = "PC2_2";
+    /**
+     * Deformation matrix.
+     */
+    public static final String PV11 = "PV1_1";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV12 = "PV1_2";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV13 = "PV1_3";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV14 = "PV1_4";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV21 = "PV2_1";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV22 = "PV2_2";
+    /**
+     * Deformation matrix.
+     */    
+    public static final String PV23 = "PV2_3";
+    /**
+     * lontpole.
+     */    
+    public static final String LONPOLE = "LONPOLE";
+    /**
+     * latpole.
+     */
+    public static final String LATPOLE = "LATPOLE";
+    /**
+     * Reference system.
+     */
+    public static final String RADESYS = "RADESYS";
 
     private Projection proj;
     private RealMatrix cd;
