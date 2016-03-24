@@ -96,6 +96,30 @@ public class SkySystemTest {
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
+     */
+    public void testConvertArrayIcrsToGal() {
+        System.out.println("convert Array ICRS to Gal");
+        ReferenceSystemInterface icrs = new ICRS();
+        SkySystem sysEqIcrs = new Equatorial(icrs);
+        SkySystem galactic = new Galactic();
+        SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
+        double expectedLongitude1 = posInGal.getLongitude();
+        double expectedLatitude1 = posInGal.getLatitude();
+        
+        posInGal = sysEqIcrs.convertTo(galactic, 0.68458d, 1.26917d);
+        double expectedLongitude2 = posInGal.getLongitude();
+        double expectedLatitude2 = posInGal.getLatitude();
+        
+        SkyPosition[] posInGalArray = sysEqIcrs.convertTo(galactic, new double[]{10.68458d, 41.26917d, 0.68458d, 1.26917d});        
+        assertEquals(expectedLongitude1, posInGalArray[0].getLongitude(), 0.0000000000001);
+        assertEquals(expectedLatitude1, posInGalArray[0].getLatitude(), 0.0000000000001);  
+        assertEquals(expectedLongitude2, posInGalArray[1].getLongitude(), 0.0000000000001);
+        assertEquals(expectedLatitude2, posInGalArray[1].getLatitude(), 0.0000000000001);         
+    }    
+    
+    @Test
+    /**
+     * Test based on http://docs.astropy.org/en/stable/coordinates/
      */    
     public void testConvertIcrsToFK5J2000() {
         System.out.println("convert ICRS to FK5 J2000");

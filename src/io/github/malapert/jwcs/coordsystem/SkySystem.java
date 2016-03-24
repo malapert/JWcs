@@ -152,6 +152,44 @@ public abstract class SkySystem {
     }
     
     /**
+     * Converts an array of (longitude1, latitude2, longitude2, latitude2, ...) coordinates into the output 
+     * reference system.
+     * @param refFrame the output reference system
+     * @param coordinates an array of (longitude1, latitude2, longitude2, latitude2, ...) in degrees
+     * @return an array of SkyPosition
+     * @throws IllegalArgumentException Raises an exception when numberEltsOfCoordinates % 2 != 0
+     */
+    public SkyPosition[] convertTo(final SkySystem refFrame, double[] coordinates) throws IllegalArgumentException{
+        final int numberElts = coordinates.length;
+        final int numberOfCoordinatesPerPoint = 3;
+        if (numberElts % 2 != 0) {
+            throw new IllegalArgumentException("coordinates should be an array containing a set of [longitude, latitude]");
+        }
+        final SkyPosition[] skyPositionArray = new SkyPosition[(int)(numberElts * 0.5) * numberOfCoordinatesPerPoint];
+
+        RealMatrix rotation = getRotationMatrix(refFrame);
+        RealMatrix etermsIn = getEtermsIn();
+        RealMatrix etermsOut = getEtermsOut(refFrame);
+
+        int indice = 0;
+        for (int i=0 ; i<numberElts ; i=i+2) {
+            RealMatrix xyz = Utility.longlat2xyz(coordinates[i], coordinates[i+1]); 
+            if (etermsIn != null) {
+                xyz = Utility.removeEterms(xyz, etermsIn);
+            }            
+            xyz = rotation.multiply(xyz);
+            if (etermsOut != null) {
+                xyz = Utility.addEterms(xyz, etermsOut);
+            }            
+            double[] position = Utility.xyz2longlat(xyz);
+            skyPositionArray[indice] = new SkyPosition(position[0], position[1], refFrame);
+            indice++;
+        }
+        
+        return skyPositionArray;
+    }
+    
+    /**
      * Computes the angular separation between two sky positions.
      * @param pos1 sky position in a reference frame
      * @param pos2 sky position in a reference frame
