@@ -16,8 +16,6 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Logger;
 
 /**

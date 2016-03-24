@@ -377,12 +377,16 @@ public final class ZPN extends ZenithalProjection {
      */
     private double computeSolution(double r, double[] pv) throws PixelBeyondProjectionException {
         double result;
-        if (getN() == 1) {
-            result = linearSolution(r, pv);
-        } else if (getN()==2) {
-            result = quadraticSolution(r, pv);
-        } else {
-            result = iterativeSolution(r, pv, getCoeff());
+        switch (getN()) {
+            case 1:
+                result = linearSolution(r, pv);
+                break;
+            case 2:
+                result = quadraticSolution(r, pv);
+                break;
+            default:
+                result = iterativeSolution(r, pv, getCoeff());
+                break;
         }
         return result;
     }
