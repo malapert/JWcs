@@ -88,6 +88,7 @@ public class JWcsTest {
 
     /**
      * Test of pix2wcs method, of class JWcs.
+     * @throws java.lang.Exception
      */
     @Test
     public void testPix2wcs_doubleArr() throws Exception {
@@ -105,6 +106,7 @@ public class JWcsTest {
 
     /**
      * Test of getCenter method, of class JWcs.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetCenter() throws Exception {
@@ -116,6 +118,7 @@ public class JWcsTest {
 
     /**
      * Test of getFov method, of class JWcs.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetFov() throws Exception {
