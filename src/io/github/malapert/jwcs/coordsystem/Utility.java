@@ -163,7 +163,7 @@ public class Utility {
      * @param jd2 Julian date for end epoch
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) degrees
      */
-    public final static double[] lieskeprecangles(double jd1, double jd2) {
+    public final static double[] lieskeprecangles(double jd1, double jd2) {    
         // T = (Current epoch - 1 jan, 2000, 12h noon)
         double T = (jd1 - 2451545.0d) / 36525.0d;
         double t = (jd2 - jd1) / 36525.0d;

@@ -126,7 +126,15 @@ public class SkyPosition {
      */
     public void setRefFrame(final SkySystem refFrame) {
         this.refFrame = refFrame;
-    }    
+    }
+
+    /**
+     * Returns the cartesian coordinates in the current reference frame.
+     * @return the cartesian coordinates as an array
+     */
+    public double[] getCartesian() {
+        return Utility.longlat2xyz(this.longitude, this.latitude).getColumn(0);
+    }
       
     @Override
     public String toString() {

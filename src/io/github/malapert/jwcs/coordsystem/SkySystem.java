@@ -150,5 +150,22 @@ public abstract class SkySystem {
         double[] position = Utility.xyz2longlat(xyz);
         return new SkyPosition(position[0], position[1], refFrame);
     }
+    
+    /**
+     * Computes the angular separation between two sky positions.
+     * @param pos1 sky position in a reference frame
+     * @param pos2 sky position in a reference frame
+     * @return angular separation in degrees.
+     */
+    public static double separation(final SkyPosition pos1, final SkyPosition pos2) {
+        SkySystem skySystem = pos1.getRefFrame();
+        SkyPosition pos1InRefFramePos2 = skySystem.convertTo(pos2.getRefFrame(), pos1.getLongitude(), pos1.getLatitude());
+        double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
+        double[] pos2XYZ = pos2.getCartesian();
+        double normPos1 = Math.sqrt(pos1XYZ[0]*pos1XYZ[0]+pos1XYZ[1]*pos1XYZ[1]+pos1XYZ[2]*pos1XYZ[2]);
+        double normPos2 = Math.sqrt(pos2XYZ[0]*pos2XYZ[0]+pos2XYZ[1]*pos2XYZ[1]+pos2XYZ[2]*pos2XYZ[2]);
+        double separation = Math.acos((pos1XYZ[0]*pos2XYZ[0]+pos1XYZ[1]*pos2XYZ[1]+pos1XYZ[2]*pos2XYZ[2])/(normPos1*normPos2));
+        return Math.toDegrees(separation);
+    }
 
 }
