@@ -30,6 +30,8 @@ import static org.junit.Assert.*;
  */
 public class SkySystemTest {
     
+    private final static double EPSILON_SINGLE = 2.0e-7;
+    
     public SkySystemTest() {
     }
     
@@ -49,6 +51,8 @@ public class SkySystemTest {
     public void tearDown() {
     }
     
+    //TODO Regarder objet IEEE dans Healpix
+    
     @Test
     public void separation() {
         System.out.println("separation");
@@ -59,8 +63,8 @@ public class SkySystemTest {
         SkyPosition pos1 = new SkyPosition(10, 9, sysEqIcrs);
         SkyPosition pos2 = new SkyPosition(11, 10, sysEqFK5);
         double separation = SkySystem.separation(pos1, pos2);
-        double expectedSeparation = 1.4045335865;      
-        assertEquals(expectedSeparation, separation, 0.0000000001);      
+        double expectedSeparation = 1.4045335865d;      
+        assertEquals(expectedSeparation, separation, EPSILON_SINGLE);      
     }     
     
     @Test
@@ -71,11 +75,26 @@ public class SkySystemTest {
         ReferenceSystemInterface fk5 = new FK5(2000.0f);
         SkySystem sysEqFK5 = new Equatorial(fk5);
         SkyPosition pos = sysEqFK4.convertTo(sysEqFK5, 0.0d, 0.0d);
-        double expectedLongitude = 0.640691;
-        double expectedLatitude = 0.27840944;        
+        double expectedLongitude = 0.640691d;
+        double expectedLatitude = 0.27840944d;        
         assertEquals(expectedLongitude, pos.getLongitude(), 0.000001);
         assertEquals(expectedLatitude, pos.getLatitude(), 0.000001);        
-    }    
+    }
+
+    @Test
+    public void testConvertInverseFK4B1950ToFK5J2000() {
+        System.out.println("convert FK4 B1950 to FK5 J2000 and inverse");
+        ReferenceSystemInterface fk4 = new FK4(1950.0f);
+        SkySystem sysEqFK4 = new Equatorial(fk4);
+        ReferenceSystemInterface fk5 = new FK5(2000.0f);
+        SkySystem sysEqFK5 = new Equatorial(fk5);
+        SkyPosition pos = sysEqFK4.convertTo(sysEqFK5, 30.031d, 10.031d);
+        pos = sysEqFK5.convertTo(sysEqFK4, pos.getLongitude(), pos.getLatitude());
+        double expectedLongitude = 30.031d;
+        double expectedLatitude = 10.031d;        
+        assertEquals(expectedLongitude, pos.getLongitude(), 0.0001);
+        assertEquals(expectedLatitude, pos.getLatitude(), 0.0001);        
+    }      
 
     @Test
     /**
@@ -89,8 +108,25 @@ public class SkySystemTest {
         SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
         double expectedLongitude = 121.174241811;
         double expectedLatitude = -21.5728855724;        
-        assertEquals(expectedLongitude, posInGal.getLongitude(), 0.000000001);
-        assertEquals(expectedLatitude, posInGal.getLatitude(), 0.000000001);        
+        assertEquals(expectedLongitude, posInGal.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, posInGal.getLatitude(), EPSILON_SINGLE); 
+    }
+ 
+    @Test
+    /**
+     * Test based on http://docs.astropy.org/en/stable/coordinates/
+     */
+    public void testConvertInverseIcrsToGal() {
+        System.out.println("convert ICRS to Gal and Inverse");
+        ReferenceSystemInterface icrs = new ICRS();
+        SkySystem sysEqIcrs = new Equatorial(icrs);
+        SkySystem galactic = new Galactic();
+        SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
+        posInGal = galactic.convertTo(sysEqIcrs, posInGal.getLongitude(), posInGal.getLatitude());
+        double expectedLongitude = 10.68458d;
+        double expectedLatitude = 41.26917d;        
+        assertEquals(expectedLongitude, posInGal.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, posInGal.getLatitude(), EPSILON_SINGLE);        
     }
     
     @Test
@@ -111,10 +147,10 @@ public class SkySystemTest {
         double expectedLatitude2 = posInGal.getLatitude();
         
         SkyPosition[] posInGalArray = sysEqIcrs.convertTo(galactic, new double[]{10.68458d, 41.26917d, 0.68458d, 1.26917d});        
-        assertEquals(expectedLongitude1, posInGalArray[0].getLongitude(), 0.0000000000001);
-        assertEquals(expectedLatitude1, posInGalArray[0].getLatitude(), 0.0000000000001);  
-        assertEquals(expectedLongitude2, posInGalArray[1].getLongitude(), 0.0000000000001);
-        assertEquals(expectedLatitude2, posInGalArray[1].getLatitude(), 0.0000000000001);         
+        assertEquals(expectedLongitude1, posInGalArray[0].getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude1, posInGalArray[0].getLatitude(), EPSILON_SINGLE);  
+        assertEquals(expectedLongitude2, posInGalArray[1].getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude2, posInGalArray[1].getLatitude(), EPSILON_SINGLE);         
     }    
     
     @Test
@@ -128,11 +164,29 @@ public class SkySystemTest {
         ReferenceSystemInterface fk5 = new FK5(2000.000f);
         SkySystem EqFk5 = new Equatorial(fk5);
         SkyPosition posInFk5 = sysEqIcrs.convertTo(EqFk5, 10.68458d, 41.26917d);
-        double expectedLongitude = 10.6845915393;
-        double expectedLatitude = 41.2691714591;        
-        assertEquals(expectedLongitude, posInFk5.getLongitude(), 0.000000001);
-        assertEquals(expectedLatitude, posInFk5.getLatitude(), 0.000000001);        
-    }    
+        double expectedLongitude = 10.6845915393d;
+        double expectedLatitude = 41.2691714591d;        
+        assertEquals(expectedLongitude, posInFk5.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, posInFk5.getLatitude(), EPSILON_SINGLE);        
+    }   
+    
+    @Test
+    /**
+     * Test based on http://docs.astropy.org/en/stable/coordinates/
+     */    
+    public void testConvertInverseIcrsToFK5J2000() {
+        System.out.println("convert ICRS to FK5 J2000 and inverse");
+        ReferenceSystemInterface icrs = new ICRS();
+        SkySystem sysEqIcrs = new Equatorial(icrs);
+        ReferenceSystemInterface fk5 = new FK5(2000.000f);
+        SkySystem EqFk5 = new Equatorial(fk5);
+        SkyPosition posInFk5 = sysEqIcrs.convertTo(EqFk5, 10.68458d, 41.26917d);
+        posInFk5 = EqFk5.convertTo(sysEqIcrs, posInFk5.getLongitude(), posInFk5.getLatitude());
+        double expectedLongitude = 10.68458d;
+        double expectedLatitude = 41.26917d;        
+        assertEquals(expectedLongitude, posInFk5.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, posInFk5.getLatitude(), EPSILON_SINGLE);        
+    }     
 
     @Test
     /**
@@ -144,48 +198,124 @@ public class SkySystemTest {
         SkySystem sysEqIcrs = new Equatorial(icrs);
         ReferenceSystemInterface fk5 = new FK5(2000.000f);
         SkySystem EqFk5J2000 = new Equatorial(fk5);    
-        SkyPosition posInFk5J2000 = sysEqIcrs.convertTo(EqFk5J2000, 10.68458, 41.26917);        
+        SkyPosition posInFk5J2000 = sysEqIcrs.convertTo(EqFk5J2000, 10.68458d, 41.26917d);        
         ReferenceSystemInterface fk5_1975 = new FK5(1975.000f);
         SkySystem EqFk5J1975 = new Equatorial(fk5_1975);
         SkyPosition posInFk5J1975 = EqFk5J2000.convertTo(EqFk5J1975, posInFk5J2000.getLongitude(), posInFk5J2000.getLatitude());
-        double expectedLongitude = 10.3420913461;
-        double expectedLatitude = 41.1323211229;        
+        double expectedLongitude = 10.3420913461d;
+        double expectedLatitude = 41.1323211229d;        
         assertEquals(expectedLongitude, posInFk5J1975.getLongitude(), 0.00002);
         assertEquals(expectedLatitude, posInFk5J1975.getLatitude(), 0.00002);        
     }    
+    
+    @Test
+    /**
+     * Test based on http://docs.astropy.org/en/stable/coordinates/
+     */    
+    public void testConvertInverseToFK5J1975() {
+        System.out.println("convert FK5J2000 to FK5 J1975 and inverse");
+
+        ReferenceSystemInterface fk5 = new FK5(2000.000f);
+        SkySystem EqFk5J2000 = new Equatorial(fk5);    
+      
+        ReferenceSystemInterface fk5_1975 = new FK5(1975.000f);
+        SkySystem EqFk5J1975 = new Equatorial(fk5_1975);
+        
+        SkyPosition posInFk5J1975 = EqFk5J2000.convertTo(EqFk5J1975, 10.3420913461d, 41.1323211229d);
+        posInFk5J1975  = EqFk5J1975.convertTo(EqFk5J2000, posInFk5J1975.getLongitude(), posInFk5J1975.getLatitude());
+        double expectedLongitude = 10.3420913461d;
+        double expectedLatitude = 41.1323211229d;        
+        assertEquals(expectedLongitude, posInFk5J1975.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, posInFk5J1975.getLatitude(), EPSILON_SINGLE);        
+    }
     
     /**
      * Test of convertTo method, of class SkySystem.
      */
     @Test
-    public void testConvertTo() {       
+    public void testIcrsToFK5() {       
         System.out.println("convert ICRS To FK5");
         ReferenceSystemInterface ref = new ICRS();
         SkySystem sys1 = new Equatorial(ref);
         SkySystem sys2 = new Equatorial(new FK5());
-        SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
-        double expectedLongitude = 182.63867;
-        double expectedLatitude = 39.401165;
+        SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
+        double expectedLongitude = 182.63867d;
+        double expectedLatitude = 39.401165d;
         assertEquals(expectedLongitude, position.getLongitude(), 0.00001);
-        assertEquals(expectedLatitude, position.getLatitude(), 0.00001);
-        
+        assertEquals(expectedLatitude, position.getLatitude(), 0.000001);
+    }
+    
+    @Test
+    public void testIcrsToFK5Inverse() {       
+        System.out.println("convert ICRS To FK5 and Inverse");
+        ReferenceSystemInterface ref = new ICRS();
+        SkySystem sys1 = new Equatorial(ref);
+        SkySystem sys2 = new Equatorial(new FK5());
+        SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
+        double expectedLongitude = 182.63867d;
+        double expectedLatitude = 39.401167d;
+        position = sys2.convertTo(sys1, position.getLongitude(), position.getLatitude());
+        assertEquals(expectedLongitude, position.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, position.getLatitude(), EPSILON_SINGLE);
+    }    
+
+    @Test
+    public void testIcrsToFK4() { 
         System.out.println("convert ICRS To FK4");
-        sys2 = new Equatorial(new FK4());
-        position = sys1.convertTo(sys2, 182.63867, 39.401167);
-        expectedLongitude = 182.0073;
-        expectedLatitude = 39.679217;
+        ReferenceSystemInterface ref = new ICRS();
+        SkySystem sys1 = new Equatorial(ref);        
+        SkySystem sys2 = new Equatorial(new FK4());
+        SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
+        double expectedLongitude = 182.0073;
+        double expectedLatitude = 39.679217;
         assertEquals(expectedLongitude, position.getLongitude(), 0.0001);
         assertEquals(expectedLatitude, position.getLatitude(), 0.0001); 
-        
+    }
+    
+    @Test
+    public void testIcrsToFK4Inverse() { 
+        System.out.println("convert ICRS To FK4 and inverse");
+        ReferenceSystemInterface ref = new ICRS();
+        SkySystem sys1 = new Equatorial(ref);        
+        SkySystem sys2 = new Equatorial(new FK4());
+        SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
+        position = sys2.convertTo(sys1, position.getLongitude(), position.getLatitude());
+        double expectedLongitude = 182.63867d;
+        double expectedLatitude = 39.401167d;
+        assertEquals(expectedLongitude, position.getLongitude(), 0.0001);
+        assertEquals(expectedLatitude, position.getLatitude(), 0.0001); 
+    }
+    
+    @Test
+    public void testIcrsToGalactic() {     
         System.out.println("convert ICRS To Galactic");
-        sys2 = new Galactic();
-        position = sys1.convertTo(sys2, 182.63867, 39.401167);
-        expectedLongitude = 155.08125;
-        expectedLatitude = 75.068157;
+        ReferenceSystemInterface ref = new ICRS();
+        SkySystem sys1 = new Equatorial(ref);         
+        SkySystem sys2 = new Galactic();
+        SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
+        double expectedLongitude = 155.08125;
+        double expectedLatitude = 75.068157;
         assertEquals(expectedLongitude, position.getLongitude(), 0.00001);
         assertEquals(expectedLatitude, position.getLatitude(), 0.00001);   
-        
-        System.out.println("convert to hms/dms");
+    }
+    
+        @Test
+    public void testIcrsToGalacticInverse() {     
+        System.out.println("convert ICRS To Galactic and inverse");
+        ReferenceSystemInterface ref = new ICRS();
+        SkySystem sys1 = new Equatorial(ref);         
+        SkySystem sys2 = new Galactic();
+        SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
+        position = sys2.convertTo(sys1, position.getLongitude(), position.getLatitude());
+        double expectedLongitude = 182.63867d;
+        double expectedLatitude = 39.401167d;        
+        assertEquals(expectedLongitude, position.getLongitude(), EPSILON_SINGLE);
+        assertEquals(expectedLatitude, position.getLatitude(), EPSILON_SINGLE);   
+    }
+
+    @Test
+    public void testConvertDegreeToHexa() { 
+        System.out.println("convert Degrees to hms/dms");
         SkyPosition pos = new SkyPosition(182.63867, 39.401167, new Equatorial());
         assertEquals("12:10:33.281", pos.getLongitudeAsSexagesimal());
         assertEquals("+39:24:04.20", pos.getLatitudeAsSexagesimal());

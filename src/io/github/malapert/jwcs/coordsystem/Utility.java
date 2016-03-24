@@ -693,7 +693,7 @@ public class Utility {
 
         if (eterm == null) {
             eterm = FK4.getEterms(1950);
-        }
+        }        
         double x = xyz.getEntry(0, 0);
         double y = xyz.getEntry(1, 0);
         double z = xyz.getEntry(2, 0);
