@@ -797,7 +797,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public double[] getFov() throws ProjectionException {
-        return pix2wcs(new double[]{0, 0, naxis(1), 0, naxis(1), naxis(2), 0, naxis(2)});
+        return pix2wcs(new double[]{1, 1, naxis(1), 1, naxis(1), naxis(2), 1, naxis(2)});
     }
 
     /**

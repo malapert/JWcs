@@ -116,8 +116,8 @@ public interface JWcsKeyProvider {
     
     /**
      * Transforms the position of a pixel given by (x,y) in a position in the sky.
-     * @param x X coordinate of the pixel
-     * @param y Y coordinate of the pixel
+     * @param x X coordinate of the pixel. Starts to 1 according to FITS standard
+     * @param y Y coordinate of the pixel. Starts to 1 according to FITS standard.
      * @return the pixel position in the sky
      * @throws io.github.malapert.jwcs.proj.exception.JWcsException When there is a projection error
      */
@@ -125,7 +125,7 @@ public interface JWcsKeyProvider {
     
     /**
      * Transforms an array of pixel position in an array of position in the sky.
-     * @param pixels an array of pixel
+     * @param pixels an array of pixel. Starts to 1 according to FITS standard
      * @return an array of sky position 
      * @throws io.github.malapert.jwcs.proj.exception.JWcsException When there is a projection error
      */
