@@ -41,7 +41,7 @@ public abstract class TimeUtils {
      * @return Julian date
      */
     public final static double epochJulian2JD(float jEpoch) {
-        return (jEpoch - 2000.0) * 365.25 + 2451545.0;
+        return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
     }
 
     /**

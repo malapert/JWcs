@@ -57,7 +57,7 @@ public class SkyPosition {
      * @param refFrame sky system of the position
      */
     public SkyPosition(double longitude, double latitude, final SkySystem refFrame) {
-        this.longitude = longitude;
+        this.longitude = longitude%360;
         this.latitude = latitude;
         this.refFrame = refFrame;
     } 
@@ -110,7 +110,15 @@ public class SkyPosition {
     public String getLatitudeAsSexagesimal() {
         DMS dms = new DMS(getLatitude());
         return dms.toString(true);
-    }    
+    }   
+    
+    /**
+     * Returns the skyposition as a double array.
+     * @return 
+     */
+    public double[] getDoubleArray() {
+        return new double[]{getLongitude(), getLatitude()};
+    }
 
     /**
      * Returns the sky system.

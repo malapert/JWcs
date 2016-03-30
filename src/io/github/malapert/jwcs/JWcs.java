@@ -661,7 +661,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    projection = new CYP(crval(1), crval(2), getValueAsDouble(PV21, 1), getValueAsDouble(PV22, 1));
+                    projection = new CYP(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
                     projection = new CYP(crval(1), crval(2));
                 }

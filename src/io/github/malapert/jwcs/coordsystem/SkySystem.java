@@ -85,13 +85,15 @@ public abstract class SkySystem {
             case EQUATORIAL:
                 refSystem = ((Equatorial) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    eterms = FK4.getEterms(getEquinox());
+                    float equinox = ((Equatorial) this).getEquinox();
+                    eterms = FK4.getEterms(equinox);
                 }
                 break;
             case ECLIPTIC:
                 refSystem = ((Ecliptic) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    eterms = FK4.getEterms(getEquinox());
+                    float equinox = ((Equatorial) this).getEquinox();
+                    eterms = FK4.getEterms(equinox);
                 }                
                 break;
         }
@@ -110,13 +112,15 @@ public abstract class SkySystem {
             case EQUATORIAL:
                 refSystem = ((Equatorial) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    eterms = FK4.getEterms(getEquinox());
+                    float equinox = ((Equatorial) refFrame).getEquinox();
+                    eterms = FK4.getEterms(equinox);
                 }
                 break;
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    eterms = FK4.getEterms(getEquinox());
+                    float equinox = ((Equatorial) refFrame).getEquinox();                    
+                    eterms = FK4.getEterms(equinox);
                 }                
                 break;
         }

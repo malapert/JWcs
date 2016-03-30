@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  */
 public class SkySystemTest {
     
-    private final static double EPSILON_SINGLE = 2.0e-7;
+    private final static double EPSILON_SINGLE = 1e-12;
     
     public SkySystemTest() {
     }
@@ -50,8 +50,7 @@ public class SkySystemTest {
     @After
     public void tearDown() {
     }
-    
-    //TODO Regarder objet IEEE dans Healpix
+     
     
     @Test
     public void separation() {
@@ -64,7 +63,7 @@ public class SkySystemTest {
         SkyPosition pos2 = new SkyPosition(11, 10, sysEqFK5);
         double separation = SkySystem.separation(pos1, pos2);
         double expectedSeparation = 1.4045335865d;      
-        assertEquals(expectedSeparation, separation, EPSILON_SINGLE);      
+        assertEquals(expectedSeparation, separation, 1e-8);      
     }     
     
     @Test
@@ -106,10 +105,10 @@ public class SkySystemTest {
         SkySystem sysEqIcrs = new Equatorial(icrs);
         SkySystem galactic = new Galactic();
         SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
-        double expectedLongitude = 121.174241811;
-        double expectedLatitude = -21.5728855724;        
-        assertEquals(expectedLongitude, posInGal.getLongitude(), EPSILON_SINGLE);
-        assertEquals(expectedLatitude, posInGal.getLatitude(), EPSILON_SINGLE); 
+        double expectedLongitude = 121.174241811d;
+        double expectedLatitude = -21.5728855724d;        
+        assertEquals(expectedLongitude, posInGal.getLongitude(), 1e-8);
+        assertEquals(expectedLatitude, posInGal.getLatitude(), 1e-8); 
     }
  
     @Test
@@ -166,8 +165,8 @@ public class SkySystemTest {
         SkyPosition posInFk5 = sysEqIcrs.convertTo(EqFk5, 10.68458d, 41.26917d);
         double expectedLongitude = 10.6845915393d;
         double expectedLatitude = 41.2691714591d;        
-        assertEquals(expectedLongitude, posInFk5.getLongitude(), EPSILON_SINGLE);
-        assertEquals(expectedLatitude, posInFk5.getLatitude(), EPSILON_SINGLE);        
+        assertEquals(expectedLongitude, posInFk5.getLongitude(), 1e-10);
+        assertEquals(expectedLatitude, posInFk5.getLatitude(), 1e-10);        
     }   
     
     @Test
@@ -225,8 +224,8 @@ public class SkySystemTest {
         posInFk5J1975  = EqFk5J1975.convertTo(EqFk5J2000, posInFk5J1975.getLongitude(), posInFk5J1975.getLatitude());
         double expectedLongitude = 10.3420913461d;
         double expectedLatitude = 41.1323211229d;        
-        assertEquals(expectedLongitude, posInFk5J1975.getLongitude(), EPSILON_SINGLE);
-        assertEquals(expectedLatitude, posInFk5J1975.getLatitude(), EPSILON_SINGLE);        
+        assertEquals(expectedLongitude, posInFk5J1975.getLongitude(), 1e-8);
+        assertEquals(expectedLatitude, posInFk5J1975.getLatitude(), 1e-8);        
     }
     
     /**
@@ -320,6 +319,114 @@ public class SkySystemTest {
         assertEquals("12:10:33.281", pos.getLongitudeAsSexagesimal());
         assertEquals("+39:24:04.20", pos.getLatitudeAsSexagesimal());
     }
-
     
+    @Test
+    public void testICRS2GAL() {
+        System.out.println("ICRS <--> GAL");
+        double coordinates[][] = new double[][]{
+            {0,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Equatorial();
+        SkySystem sk2 = new Galactic();
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), EPSILON_SINGLE);
+        }
+    }
+
+    @Test
+    public void testICRS2SUPERGAL() {
+        System.out.println("ICRS <--> SUPERGAL");
+        double coordinates[][] = new double[][]{
+            {0,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Equatorial();
+        SkySystem sk2 = new SuperGalactic();
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), EPSILON_SINGLE);
+        }
+    }    
+
+    @Test
+    public void testGAL2SUPERGAL() {
+        System.out.println("GAL <--> SUPERGAL");
+        double coordinates[][] = new double[][]{
+            {0,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Galactic();
+        SkySystem sk2 = new SuperGalactic();
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), EPSILON_SINGLE);
+        }
+    }
+    
+
+    @Test    
+    public void testICRS2FK5() {
+        System.out.println("ICRS <--> FK5");
+        double coordinates[][] = new double[][]{
+            {0,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Equatorial();        
+        SkySystem sk2 = new Equatorial(new FK5());
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), EPSILON_SINGLE);
+        }
+    }       
+    
+    @Test    
+    public void testFK5J20002FK5J1950() {
+        System.out.println("FK5(J2000) <--> FK5(1950)");
+        double coordinates[][] = new double[][]{
+            {1,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Equatorial(new FK5(2000));        
+        SkySystem sk2 = new Equatorial(new FK5(1950));
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());           
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), 1e-7);
+        }
+    }  
+    
+    @Test    
+    public void testFK5J20002FK4() {
+        System.out.println("FK5(J2000) <--> FK4");
+        double coordinates[][] = new double[][]{
+            {1,0},
+            {180,60},
+            {359,60},
+            {86,-35}
+        };
+        SkySystem sk1 = new Equatorial(new FK5(2000));        
+        SkySystem sk2 = new Equatorial(new FK4());
+        for (double[] coordinate:coordinates) {
+            SkyPosition[] result = sk1.convertTo(sk2, coordinate);
+            result = sk2.convertTo(sk1, result[0].getDoubleArray());           
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), 1e-4);
+        }        
+    }
+       
 }

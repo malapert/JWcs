@@ -127,7 +127,7 @@ public class FK4 implements ReferenceSystemInterface {
         double cp = Math.cos(p);
         //       -DeltaD        DeltaC            DeltaC.tan(e0)
         double[][] array = {
-            {ek*Math.sin(p), -1*ek*cp*Math.cos(ob), -1*ek*cp*Math.sin(ob)}
+            {ek*Math.sin(p), -ek*cp*Math.cos(ob), -ek*cp*Math.sin(ob)}
         };
         return MatrixUtils.createRealMatrix(array);       
     } 
