@@ -36,7 +36,7 @@ public final class ZPN extends ZenithalProjection {
     /**
      * Default numerical tolerance for double comparison or iterative solution .
      */
-    public static final double DEFAULT_TOLERANCE = 1E-13;
+    public static final double DEFAULT_TOLERANCE = 1E-15;
     /**
      * Default maximum iteration for iterative solution.
      */

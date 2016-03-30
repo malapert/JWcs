@@ -61,23 +61,25 @@ public class ZPNTest extends ProjectionTest {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
      */
     @Test
-    public void testProject() throws ProjectionException {
+    public void testProjectZPN() throws ProjectionException {
         System.out.println("project ZPN");
-        double[] expResult = new double[]{263.471, -78.497682};
+        double expectedResults[][] = {
+            { 263.471000708007352,  -78.497682328997385},
+            { 266.783268968517177,  -50.24524022078576 },
+            { 294.357836271455028,  -39.77023899472649 },
+            { 312.674220190438405,  -71.468154470727242}
+        };
         double[] result = wcs.pix2wcs(1, 1);
-        assertArrayEquals(expResult, result, 0.00001);
+        assertArrayEquals(expectedResults[0], result, 1e-13);
 
-        expResult = new double[]{266.78327, -50.24524};
         result = wcs.pix2wcs(192, 1);
-        assertArrayEquals(expResult, result, 0.00001);
+        assertArrayEquals(expectedResults[1], result, 1e-13);
 
-        expResult = new double[]{294.35784, -39.770239};
         result = wcs.pix2wcs(192, 192);
-        assertArrayEquals(expResult, result, 0.0001);
+        assertArrayEquals(expectedResults[2], result, 1e-13);
 
-        expResult = new double[]{312.67422, -71.468154};
         result = wcs.pix2wcs(1, 192);
-        assertArrayEquals(expResult, result, 0.00001);
+        assertArrayEquals(expectedResults[3], result, 1e-12);
     }
 
     /**
@@ -85,22 +87,19 @@ public class ZPNTest extends ProjectionTest {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
      */
     @Test
-    public void testProjectInverse() throws ProjectionException {
+    public void testProjectInverseZPN() throws ProjectionException {
         System.out.println("projectInverse ZPN");
-        double[] expResult = new double[]{1, 1};
-        double[] result = wcs.wcs2pix(263.471, -78.497682);
-        assertArrayEquals(expResult, result, 0.1);
-
-        expResult = new double[]{192, 1};
-        result = wcs.wcs2pix(266.78327, -50.24524);
-        assertArrayEquals(expResult, result, 0.1);
-
-        expResult = new double[]{192, 192};
-        result = wcs.wcs2pix(294.35784, -39.770239);
-        assertArrayEquals(expResult, result, 0.1);
-
-        expResult = new double[]{1, 192};
-        result = wcs.wcs2pix(312.67422, -71.468154);
-        assertArrayEquals(expResult, result, 0.1);
+        double expectedResults[][] = {
+            {1.0d, 1.0d},
+            {192.d, 1.0d},
+            {192.d, 192d},
+            {1.0d, 192d}
+        };   
+        double[] result;
+        for (double[] expectedResult : expectedResults) {
+            result = wcs.pix2wcs(expectedResult);
+            result = wcs.wcs2pix(result);
+             assertArrayEquals(expectedResult, result, 1e-12);
+        }   
     }
 }

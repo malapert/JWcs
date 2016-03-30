@@ -33,7 +33,7 @@ public class MOL extends CylindricalProjection {
     /**
      *
      */
-    public static final double DEFAULT_TOLERANCE = 1E-14;
+    public static final double DEFAULT_TOLERANCE = 1E-15;
 
     /**
      *

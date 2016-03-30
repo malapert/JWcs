@@ -25,6 +25,7 @@ import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertArrayEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,5 +55,44 @@ public class SINTest extends ProjectionTest {
     @After
     public void tearDown() {
     }
+    
+    @Test
+    public void testProjectSIN() throws ProjectionException {
+        System.out.println("project SIN");
+        double expectedResults[][] = {
+            { 268.391506992151392,  -73.903535526238215},
+            { 269.107163996240899,  -60.0366887090875  },
+            { 293.240651133251504,  -57.078770599663933},
+            { 307.73275850865582 ,  -69.486364588182752}
+        };
+        double[] result = wcs.pix2wcs(1, 1);
+        assertArrayEquals(expectedResults[0], result, 1e-13);
+
+        result = wcs.pix2wcs(192, 1);
+        assertArrayEquals(expectedResults[1], result, 1e-13);
+
+        result = wcs.pix2wcs(192, 192);
+        assertArrayEquals(expectedResults[2], result, 1e-13);
+
+        result = wcs.pix2wcs(1, 192);
+        assertArrayEquals(expectedResults[3], result, 1e-13);
+    }   
+    
+    @Test
+    public void testProjectInverseSIN() throws ProjectionException {
+        System.out.println("projectInverse SIN");
+        double expectedResults[][] = {
+            {1.0d, 1.0d},
+            {192.d, 1.0d},
+            {192.d, 192d},
+            {1.0d, 192d}
+        };   
+        double[] result;
+        for (double[] expectedResult : expectedResults) {
+            result = wcs.pix2wcs(expectedResult);
+            result = wcs.wcs2pix(result);
+             assertArrayEquals(expectedResult, result, 1e-12);
+        }  
+    }     
     
 }

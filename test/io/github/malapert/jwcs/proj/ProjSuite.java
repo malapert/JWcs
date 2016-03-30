@@ -24,7 +24,23 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
+ * The expected results have been compared based on this Python program
+ * from astropy.wcs import WCS
+ * def testProject(wcs):
+ *      print("project SIN for particular points");
+ *      pixIn = [[1,1],
+ *              [192,1],
+ *              [192,192],
+ *              [1,192]]
  *
+ *      # actual values
+ *      np.set_printoptions(precision=15)
+ *      print repr(wcs.all_pix2world(pixIn, 1))
+ *
+ * header = fits.getheader('http://tdc-www.harvard.edu/wcstools/samples/1904-66_SIN.fits') 
+ * wcs = WCS(header)
+ * testProject(wcs)
+
  * @author malapert
  */
 @RunWith(Suite.class)
@@ -49,8 +65,9 @@ import org.junit.runners.Suite;
     io.github.malapert.jwcs.proj.MERTest.class,
     io.github.malapert.jwcs.proj.MOLTest.class,
     io.github.malapert.jwcs.proj.PARTest.class,    
-    io.github.malapert.jwcs.proj.ZEATest.class, 
-    io.github.malapert.jwcs.proj.ZPNTest.class})
+    io.github.malapert.jwcs.proj.ZEATest.class//, 
+    //io.github.malapert.jwcs.proj.ZPNTest.class
+})
 
 public class ProjSuite {
 

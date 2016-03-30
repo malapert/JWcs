@@ -19,10 +19,13 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.WcsFits;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
+import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.io.IOException;
 import java.net.URL;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import static org.junit.Assert.assertArrayEquals;
+import org.junit.Test;
 
 /**
  * CEA unit test.
@@ -32,6 +35,45 @@ public class CEATest extends ProjectionTest {
 
     public CEATest() throws JWcsException, FitsException, IOException {
         super(new WcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CEA.fits"))), -89, 89);
-    }        
+    }  
+    
+    @Test
+    public void testProjectCEA() throws ProjectionException {
+        System.out.println("project CEA");
+        double expectedResults[][] = {
+            { 268.440852654621153,  -73.379693805485672},
+            { 269.090243859417001,  -60.649088748117173},
+            { 294.131910549115673,  -58.362095662786679},
+            { 307.520448192392109,  -69.383029011108476}
+        };
+        double[] result = wcs.pix2wcs(1, 1);
+        assertArrayEquals(expectedResults[0], result, 1e-13);
+
+        result = wcs.pix2wcs(192, 1);
+        assertArrayEquals(expectedResults[1], result, 1e-13);
+
+        result = wcs.pix2wcs(192, 192);
+        assertArrayEquals(expectedResults[2], result, 1e-13);
+
+        result = wcs.pix2wcs(1, 192);
+        assertArrayEquals(expectedResults[3], result, 1e-13);
+    }   
+    
+    @Test
+    public void testProjectInverseCEA() throws ProjectionException {
+        System.out.println("projectInverse CEA");
+        double expectedResults[][] = {
+            {1.0d, 1.0d},
+            {192.d, 1.0d},
+            {192.d, 192d},
+            {1.0d, 192d}
+        };   
+        double[] result;
+        for (double[] expectedResult : expectedResults) {
+            result = wcs.pix2wcs(expectedResult);
+            result = wcs.wcs2pix(result);
+             assertArrayEquals(expectedResult, result, 1e-12);
+        }  
+    }    
     
 }

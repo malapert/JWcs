@@ -120,19 +120,19 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     protected static final String CTYPE2 = "CTYPE2";
     /**
-     * Scale (degrees / pixel) and rotation matrix. 
+     * Scale (degrees / pixel) and rotation matrix.
      */
     public static final String CD11 = "CD1_1";
     /**
-     * Scale (degrees / pixel) and rotation matrix. 
-     */    
+     * Scale (degrees / pixel) and rotation matrix.
+     */
     public static final String CD12 = "CD1_2";
     /**
-     * Scale (degrees / pixel) and rotation matrix. 
-     */    
+     * Scale (degrees / pixel) and rotation matrix.
+     */
     public static final String CD21 = "CD2_1";
     /**
-     * Scale (degrees / pixel) and rotation matrix. 
+     * Scale (degrees / pixel) and rotation matrix.
      */
     public static final String CD22 = "CD2_2";
     /**
@@ -149,11 +149,11 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final String CDELT1 = "CDELT1";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined.
-     */    
+     */
     public static final String CDELT2 = "CDELT2";
     /**
      * Rotation in degrees when CD matrix is not defined.
-     */    
+     */
     public static final String CROTA2 = "CROTA2";
     /**
      * Equinox value.
@@ -165,7 +165,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final String PC11 = "PC1_1";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PC12 = "PC1_2";
     /**
      * Deformation matrix.
@@ -173,7 +173,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final String PC21 = "PC2_1";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PC22 = "PC2_2";
     /**
      * Deformation matrix.
@@ -181,31 +181,31 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final String PV11 = "PV1_1";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV12 = "PV1_2";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV13 = "PV1_3";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV14 = "PV1_4";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV21 = "PV2_1";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV22 = "PV2_2";
     /**
      * Deformation matrix.
-     */    
+     */
     public static final String PV23 = "PV2_3";
     /**
      * lontpole.
-     */    
+     */
     public static final String LONPOLE = "LONPOLE";
     /**
      * latpole.
@@ -232,7 +232,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * <li>checks the WCS</li>
      * </ul>
      *
-     * @throws io.github.malapert.jwcs.proj.exception.JWcsException When WCS is not valid
+     * @throws io.github.malapert.jwcs.proj.exception.JWcsException When WCS is
+     * not valid
      */
     protected final void init() throws JWcsException {
         setProj(createProjection());
@@ -369,8 +370,8 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Returns the sky system.
      * <p>
-     * The sky system is found according to the CTYPE1 keyword.
-     * A JWcsError is raised when CTYPE1 is not found.
+     * The sky system is found according to the CTYPE1 keyword. A JWcsError is
+     * raised when CTYPE1 is not found.
      *
      * @return the sky system
      */
@@ -426,7 +427,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * Make the initialization of the WCS. By default, you must call
      * {@link #init()}
      *
-     * @throws io.github.malapert.jwcs.proj.exception.JWcsException when an error occurs
+     * @throws io.github.malapert.jwcs.proj.exception.JWcsException when an
+     * error occurs
      */
     public abstract void doInit() throws JWcsException;
 
@@ -596,13 +598,25 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     /**
+     * Returns the value of keyword when keyword exists otherwise defaultValue.
+     *
+     * @param keyword the keyword
+     * @param defaultValue the default value
+     * @return the value
+     */
+    public double getValueAsDouble(String keyword, double defaultValue) {
+        return (hasKeyword(keyword) ? getValueAsDouble(keyword) : defaultValue);
+    }
+
+    /**
      * Creates the projection by reading CTYPE1.
      * <p>
      * Raises a JWcsError when no projection code is found.
-     * 
+     *
      * @return the projection
      * @throws
-     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when the projection parameter is wrong
+     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * when the projection parameter is wrong
      */
     protected final Projection createProjection() throws BadProjectionParameterException {
         String ctype1 = ctype(1);
@@ -625,29 +639,29 @@ public abstract class JWcs implements JWcsKeyProvider {
                 }
                 break;
             case "BON":
-                projection = new BON(crval(1), crval(2), getValueAsDouble(PV21));
+                projection = new BON(crval(1), crval(2), getValueAsDouble(PV21, 0));
                 break;
             case "CAR":
                 projection = new CAR(crval(1), crval(2));
                 break;
             case "CEA":
-                projection = new CEA(crval(1), crval(2), getValueAsDouble(PV21));
+                projection = new CEA(crval(1), crval(2), getValueAsDouble(PV21, 1));
                 break;
             case "COD":
-                projection = new COD(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                projection = new COD(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COE":
-                projection = new COE(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                projection = new COE(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COO":
-                projection = new COO(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                projection = new COO(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COP":
-                projection = new COP(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                projection = new COP(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    projection = new CYP(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                    projection = new CYP(crval(1), crval(2), getValueAsDouble(PV21, 1), getValueAsDouble(PV22, 1));
                 } else {
                     projection = new CYP(crval(1), crval(2));
                 }
@@ -690,11 +704,20 @@ public abstract class JWcs implements JWcsKeyProvider {
                 Iterator iter = iterator();
                 List<Double> pvs = new ArrayList<>();
                 while (iter.hasNext()) {
-                    HeaderCard card = (HeaderCard) iter.next();
-                    String key = card.getKey();
-                    if (key.startsWith("PV2")) {
-                        pvs.add(Double.valueOf(card.getValue()));
+                    Object keyObj = iter.next();
+                    if (keyObj instanceof HeaderCard) {
+                        HeaderCard card = (HeaderCard) keyObj;
+                        String key = card.getKey();
+                        if (key.startsWith("PV2")) {
+                            pvs.add(Double.valueOf(card.getValue()));
+                        }
+                    } else {
+                        String key = (String) keyObj;
+                        if (key.startsWith("PV2")) {
+                            pvs.add(this.getValueAsDouble(key));
+                        }                        
                     }
+
                 }
                 Double[] pvsArray = pvs.toArray(new Double[pvs.size()]);
                 double[] pvsPrimitif = new double[pvsArray.length];
@@ -724,7 +747,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param x X coordinate of the pixel
      * @param y Y coordinate of the pixel
      * @return the pixel position in the sky
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when there is a projection error
+     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
+     * there is a projection error
      */
     @Override
     public double[] pix2wcs(double x, double y) throws ProjectionException {
@@ -746,7 +770,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param pixels an array of pixel
      * @return an array of sky position
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when there is a projection error
+     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
+     * there is a projection error
      */
     @Override
     public double[] pix2wcs(double[] pixels) throws ProjectionException {
@@ -800,7 +825,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param longitude longitude of the sky position
      * @param latitude latitude of the sky position
      * @return the sky position in the pixel grid.
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when there is a projection error
+     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
+     * there is a projection error
      */
     @Override
     public double[] wcs2pix(double longitude, double latitude) throws ProjectionException {
@@ -817,13 +843,14 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Transforms an array of sky position in an array of pixel position.
      * <p>
-     * Raise an JWcsError when the length of
-     * <code>skyPositions</code> is not a multiple of 2.
+     * Raise an JWcsError when the length of <code>skyPositions</code> is not a
+     * multiple of 2.
      * </p>
      *
      * @param skyPositions array of sky positions
      * @return the sky position in the pixel grid.
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when there is a projection error
+     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
+     * there is a projection error
      */
     @Override
     public double[] wcs2pix(double[] skyPositions) throws ProjectionException {

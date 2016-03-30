@@ -30,7 +30,7 @@ public class PCO extends PolyConicProjection {
      * Default tolerance for the approximative solution of the inverse
      * projection.
      */
-    public static final double DEFAULT_TOLERANCE = 1E-12;
+    public static final double DEFAULT_TOLERANCE = 1E-15;
 
     /**
      * Default maximum iterations for the approximative solution of the inverse
