@@ -55,8 +55,12 @@ import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.TimeUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -219,6 +223,8 @@ public abstract class JWcs implements JWcsKeyProvider {
     private Projection proj;
     private RealMatrix cd;
     private RealMatrix cdInverse;
+    
+    protected static final Logger LOG = Logger.getLogger(JWcs.class.getName()); 
 
     /**
      * Initialize the WCS Object.
@@ -605,7 +611,14 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return the value
      */
     public double getValueAsDouble(String keyword, double defaultValue) {
-        return (hasKeyword(keyword) ? getValueAsDouble(keyword) : defaultValue);
+        double result;
+        if (hasKeyword(keyword)) {
+            result = getValueAsDouble(keyword);
+        } else {
+             LOG.log(Level.WARNING, "{0} not found -- use default value {1}", new Object[]{keyword, defaultValue});
+             result = defaultValue;
+        }
+        return result;
     }
 
     /**
@@ -702,27 +715,26 @@ public abstract class JWcs implements JWcsKeyProvider {
                 break;
             case "ZPN":
                 Iterator iter = iterator();
-                List<Double> pvs = new ArrayList<>();
+                Map<String, Double> pvMap = new HashMap<>();
                 while (iter.hasNext()) {
                     Object keyObj = iter.next();
                     if (keyObj instanceof HeaderCard) {
                         HeaderCard card = (HeaderCard) keyObj;
                         String key = card.getKey();
                         if (key.startsWith("PV2")) {
-                            pvs.add(Double.valueOf(card.getValue()));
+                            pvMap.put(key, getValueAsDouble(key));
                         }
                     } else {
                         String key = (String) keyObj;
                         if (key.startsWith("PV2")) {
-                            pvs.add(this.getValueAsDouble(key));
+                            pvMap.put(key, getValueAsDouble(key));
                         }                        
                     }
-
                 }
-                Double[] pvsArray = pvs.toArray(new Double[pvs.size()]);
-                double[] pvsPrimitif = new double[pvsArray.length];
-                for (int i = 0; i < pvsArray.length; i++) {
-                    pvsPrimitif[i] = pvsArray[i];
+                double[] pvsPrimitif = new double[pvMap.size()];
+                for (int i = 0; i < pvMap.size(); i++) {
+                    int indice = i+1;
+                    pvsPrimitif[i] = pvMap.get("PV2_"+indice);
                 }
                 projection = new ZPN(crval(1), crval(2), pvsPrimitif);
                 break;

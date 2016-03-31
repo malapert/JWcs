@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -37,6 +39,8 @@ public class ProjectionFrame extends JPanel {
 
     private final JWcs wcs;
 
+    protected static final Logger LOG = Logger.getLogger(ProjectionFrame.class.getName());
+    //TODO Problèmes dans les projections suivantes COD,COP,COO,CYP,COE,PAR
     public ProjectionFrame(String projectionCode) throws JWcsException {
         Map wcsKeywords = new HashMap();
         wcsKeywords.put(JWcs.NAXIS, "2");
@@ -46,7 +50,69 @@ public class ProjectionFrame extends JPanel {
         wcsKeywords.put(JWcs.CRPIX1, "300");
         wcsKeywords.put(JWcs.CRPIX2, "150");
         wcsKeywords.put(JWcs.CRVAL1, "0");
-        wcsKeywords.put(JWcs.CRVAL2, "0");
+        if(null != projectionCode) switch (projectionCode) {
+            case "ZEA":
+            case "TAN":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                break;
+            case "SZP":
+                wcsKeywords.put(JWcs.CRVAL2, "0");
+                wcsKeywords.put(JWcs.PV21, "2");
+                wcsKeywords.put(JWcs.PV22, "180");
+                wcsKeywords.put(JWcs.PV23, "60");
+                break;
+            case "STG":
+                wcsKeywords.put(JWcs.CRVAL2, "-90");
+                break;
+            case "CYP":
+                wcsKeywords.put(JWcs.CRVAL2, "0");
+                wcsKeywords.put(JWcs.PV21, "1");
+                wcsKeywords.put(JWcs.PV22, "45");
+                break;
+            case "COP":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                wcsKeywords.put(JWcs.PV21, "20");
+                wcsKeywords.put(JWcs.PV22, "70");
+                break;
+            case "COO":
+                wcsKeywords.put(JWcs.CRVAL2, "0");
+                wcsKeywords.put(JWcs.PV21, "20");
+                wcsKeywords.put(JWcs.PV22, "70");
+                break;
+            case "COE":
+                wcsKeywords.put(JWcs.CRVAL2, "-90");
+                wcsKeywords.put(JWcs.PV21, "20");
+                wcsKeywords.put(JWcs.PV22, "70");
+                break;
+            case "COD":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                wcsKeywords.put(JWcs.PV21, "20");
+                wcsKeywords.put(JWcs.PV22, "70");
+                break;
+            case "AZP":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                wcsKeywords.put(JWcs.PV21, "2");
+                wcsKeywords.put(JWcs.PV22, "30");
+                break;
+            case "ARC":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                break;
+            case "ZPN":
+                wcsKeywords.put(JWcs.CRVAL2, "90");
+                wcsKeywords.put(JWcs.PV21, "0.050");
+                wcsKeywords.put(JWcs.PV22, "0.975");
+                wcsKeywords.put(JWcs.PV23, "-0.807"); 
+                wcsKeywords.put("PV2_4", "0.337");
+                wcsKeywords.put("PV2_5", "-0.065");
+                wcsKeywords.put("PV2_6", "0.010"); 
+                wcsKeywords.put("PV2_7", "0.003");
+                wcsKeywords.put("PV2_8", "-0.001");                
+                break;
+            default:
+                wcsKeywords.put(JWcs.CRVAL2, "0");
+                break;
+        }
+        
         wcsKeywords.put(JWcs.CD11, String.valueOf(180d / 300d));
         wcsKeywords.put(JWcs.CD12, "0");
         wcsKeywords.put(JWcs.CD21, "0");
@@ -82,7 +148,7 @@ public class ProjectionFrame extends JPanel {
                     int y = (int) xy[1];
                     g2d.drawLine(x, y, x, y);
                 } catch (ProjectionException ex) {
-                    //Logger.getLogger(io.github.malapert.jwcs.proj.AITFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    LOG.log(Level.WARNING, ex.getMessage());
                 }
             }
         }

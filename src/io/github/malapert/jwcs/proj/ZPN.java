@@ -179,7 +179,7 @@ public final class ZPN extends ZenithalProjection {
         if ((getPhi0() != 0) || (getTheta0() != HALF_PI)) {
             throw new IllegalArgumentException("Non-standard PVi_1 and/or PVi_2 values");
         }
-        if (this.PV.length < 10) {
+        if (this.PV.length < 8) {
             throw new ArrayIndexOutOfBoundsException("Need at least 10 projection parameters");
         }
     }
