@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.JWcsException;
-import io.github.malapert.jwcs.WcsFits;
+import io.github.malapert.jwcs.JWcsFits;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +37,7 @@ import org.junit.Test;
 public class SINTest extends ProjectionTest {
     
     public SINTest() throws FitsException, IOException, JWcsException {
-        super(new WcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SIN.fits"))), -90, -0.1);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SIN.fits"))));
     }
     
     @BeforeClass

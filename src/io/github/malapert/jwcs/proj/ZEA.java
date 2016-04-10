@@ -25,7 +25,20 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class ZEA extends ZenithalProjection {
+
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Zenithal equal-area";
     
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";     
+    
+    /**
+     * Tolerance for numerical precision.
+     */
     private final static double TOLERANCE = 1.0e-13;
 
     /**
@@ -46,14 +59,14 @@ public class ZEA extends ZenithalProjection {
         if (NumericalUtils.equal(r_theta, 0.0, TOLERANCE)) {
             phi = 0;
         } else {
-            phi = Math.atan2(xr, -yr);
+            phi = NumericalUtils.aatan2(xr, -yr);
         }
         
         double theta;
 	if (NumericalUtils.equal(r_theta, 2, DOUBLE_TOLERANCE)) {
 	    theta = -HALF_PI;
 	} else {
-	    theta = HALF_PI - 2*Math.asin(r_theta * 0.5);
+	    theta = HALF_PI - 2*NumericalUtils.aasin(r_theta * 0.5);
 	}        
         double[] pos = {phi, theta};
         return pos;      
@@ -62,11 +75,20 @@ public class ZEA extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
-        double r = 2 * Math.sin((HALF_PI-theta)/2.0d);
+        double r = 2 * Math.sin((HALF_PI-theta)*0.5d);
         double x = Math.toDegrees(r * Math.sin(phi));
         double y = Math.toDegrees(-r * Math.cos(phi));
         double[] pos = {x,y};
         return pos;
     }
 
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+    
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }    
 }

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +42,12 @@ public abstract class CylindricalProjection extends Projection {
      * Logger.
      */
     protected static final Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
+    
+    /**
+     * Projection name.
+     */
+    public static final String NAME = "Cylindrical projections";
+    
     /**
      * Native longitude value in radians for cylindrical projection.
      */    
@@ -70,6 +77,11 @@ public abstract class CylindricalProjection extends Projection {
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
     }
+    
+    @Override
+    public String getNameFamily() {
+        return NAME;
+    }  
 
     @Override
     public final void setPhi0(double phi0) {
@@ -104,5 +116,11 @@ public abstract class CylindricalProjection extends Projection {
         double[] posNativePole = computeCoordNativePole(phi_p);
         LOG.log(Level.FINER, "(alphap, deltap) of coordinate native pole", posNativePole);        
         return super.computeNativeSpherical(ra, dec, posNativePole[0], posNativePole[1], phi_p);
-    }
+    }       
+    
+    @Override
+    public boolean inside(double lon, double lat) {      
+       return !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, 1e-13);      
+    }     
+
 }

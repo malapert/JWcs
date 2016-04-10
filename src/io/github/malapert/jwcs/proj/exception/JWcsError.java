@@ -20,7 +20,7 @@ package io.github.malapert.jwcs.proj.exception;
  * JWcs Error.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
-public class JWcsError extends Error {
+public class JWcsError extends RuntimeException {
     
     public JWcsError() {
         super();

@@ -32,6 +32,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class SZP extends ZenithalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Slant zenithal perspective";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
 
     private static final double NO_VALUE = 101;
 
@@ -81,7 +91,7 @@ public class SZP extends ZenithalProjection {
         this.mu = mu;
         this.thetac = Math.toRadians(thetac);
         this.phic = Math.toRadians(phic);
-        check();
+        check();        
     }
 
     /**
@@ -119,7 +129,7 @@ public class SZP extends ZenithalProjection {
             } else if(NumericalUtils.equal(sol1, -1, DOUBLE_TOLERANCE)){
                 theta1 = -HALF_PI;
             } else {
-                theta1 = Math.asin(sol1);
+                theta1 = NumericalUtils.aasin(sol1);
             }
         }
         if (Math.abs(sol2) < 1 + DOUBLE_TOLERANCE) {
@@ -128,7 +138,7 @@ public class SZP extends ZenithalProjection {
             } else if(NumericalUtils.equal(sol1, -1, DOUBLE_TOLERANCE)){
                 theta2 = -HALF_PI;
             } else {            
-                theta2 = Math.asin(sol2);
+                theta2 = NumericalUtils.aasin(sol2);
             }
         }
         double theta;
@@ -146,7 +156,7 @@ public class SZP extends ZenithalProjection {
                 theta = theta1;
             }
         }
-        double phi = Math.atan2(X - X1 * (1 - Math.sin(theta)), -(Y - Y1 * (1 - Math.sin(theta))));
+        double phi = NumericalUtils.aatan2(X - X1 * (1 - Math.sin(theta)), -(Y - Y1 * (1 - Math.sin(theta))));
         double[] pos = {phi, theta};
         return pos;
     }
@@ -167,6 +177,16 @@ public class SZP extends ZenithalProjection {
         y = Math.toDegrees(y);
         double[] coord = {x, y};
         return coord;
+    }  
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.mu, Math.toDegrees(this.phic), Math.toDegrees(this.thetac));
     }
 
 }

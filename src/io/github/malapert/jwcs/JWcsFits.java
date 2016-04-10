@@ -36,7 +36,7 @@ import nom.tam.fits.Header;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class WcsFits extends JWcs {
+public class JWcsFits extends JWcs {
 
     /**
      * The Header FITS that contains the WCS keyword.
@@ -47,7 +47,7 @@ public class WcsFits extends JWcs {
      * Clone
      * @param wcs wcsFits
      */
-    public WcsFits(WcsFits wcs) {
+    public JWcsFits(JWcsFits wcs) {
         setHdr(wcs.getHdr());
     }
 
@@ -57,11 +57,11 @@ public class WcsFits extends JWcs {
      * @throws FitsException FitsException
      * @throws IOException IOException
      */
-    public WcsFits(final Fits simpleFits) throws FitsException, IOException {      
+    public JWcsFits(final Fits simpleFits) throws FitsException, IOException {      
         this(simpleFits.readHDU().getHeader());
     }
     
-    public WcsFits(final Fits fits, int extension) throws FitsException, IOException {
+    public JWcsFits(final Fits fits, int extension) throws FitsException, IOException {
         this(fits.getHDU(extension).getHeader());
     }
     
@@ -69,7 +69,7 @@ public class WcsFits extends JWcs {
      * Creates an instance and reads the WCS keyword in the FITS header.
      * @param hdr FITS header
      */
-    public WcsFits(final Header hdr) {     
+    public JWcsFits(final Header hdr) {     
         this.hdr = hdr;     
     }        
     

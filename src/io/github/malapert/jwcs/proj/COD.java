@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
  * Conic Equidistant.
@@ -35,6 +36,16 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
  * @version 1.0
  */
 public class COD extends ConicProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Conic equidistant";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";     
 
     /**
      * Constructs a COD projection based on the celestial longitude and latitude
@@ -66,10 +77,10 @@ public class COD extends ConicProjection {
         double y0 = getEta() / (Math.tan(getEta()) * Math.tan(getTheta_a()));
         int sign = (getTheta_a() < 0) ? -1 : 1;
         double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        if (r_theta == 0) {
+        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("Bad value for sigma: " + this.getEta());
         }
-        double phi = Math.atan2(xr / r_theta, (y0 - yr) / r_theta) / c;
+        double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         double theta = getTheta_a() + y0 - r_theta;
         double[] pos = {phi, theta};
         return pos;
@@ -86,4 +97,14 @@ public class COD extends ConicProjection {
         double[] coord = {x, y};
         return coord;
     }
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
+    }      
 }

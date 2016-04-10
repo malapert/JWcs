@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.JWcsException;
-import io.github.malapert.jwcs.WcsFits;
+import io.github.malapert.jwcs.JWcsFits;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class ZEATest extends ProjectionTest{
     
     public ZEATest() throws FitsException, IOException, JWcsException {
-        super(new WcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_ZEA.fits"))), -0, 90);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_ZEA.fits"))));
     }
     
     @BeforeClass

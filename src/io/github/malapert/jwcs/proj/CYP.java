@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 
 /**
@@ -32,6 +33,16 @@ import java.util.logging.Level;
  * @version 1.0
  */
 public class CYP extends CylindricalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Cylindrical perspective";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03BC=%s \u03BB=%s";     
 
     /**
      * Default MU.
@@ -58,9 +69,7 @@ public class CYP extends CylindricalProjection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      */
     public CYP(double crval1, double crval2) {
-        super(crval1, crval2);
-        this.mu = DEFAULT_MU;
-        this.lambda = DEFAULT_LAMBDA;
+        this(crval1, crval2, DEFAULT_MU, DEFAULT_LAMBDA);
     }
     
     /**
@@ -98,7 +107,7 @@ public class CYP extends CylindricalProjection {
         double yr = Math.toRadians(y);
         double phi = xr / getLambda();        
         double eta = yr / (getMu() + getLambda());
-        double theta = Math.atan2(eta, 1) + Math.asin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
+        double theta = NumericalUtils.aatan2(eta, 1) + NumericalUtils.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
         double[] pos = {phi, theta};
         return pos;
     }
@@ -130,6 +139,16 @@ public class CYP extends CylindricalProjection {
      */
     protected double getLambda() {
         return lambda;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.mu, this.lambda);
     }
 
 }

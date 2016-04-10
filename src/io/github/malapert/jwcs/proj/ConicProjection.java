@@ -52,7 +52,11 @@ public abstract class ConicProjection extends Projection {
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ConicProjection.class.getName());    
+    protected static final Logger LOG = Logger.getLogger(ConicProjection.class.getName());        
+    /**
+     * Projection name.
+     */
+    public static final String NAME = "Conic projections";    
     /**
      * theta_a = (theta1 + theta2) / 2 in radians.
      */
@@ -92,6 +96,11 @@ public abstract class ConicProjection extends Projection {
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.theta_a);
     }
+    
+    @Override
+    public String getNameFamily() {
+        return NAME;
+    }     
     
     /**
      * Fix Theta_a and eta.
@@ -180,5 +189,10 @@ public abstract class ConicProjection extends Projection {
         double[] posNativePole = computeCoordNativePole(phi_p);
         LOG.log(Level.FINER, "(alphap, deltap) of coordinate native pole", posNativePole);
         return super.computeNativeSpherical(ra, dec, posNativePole[0], posNativePole[1], phi_p);
-    }
+    }    
+    
+    @Override
+    public boolean inside(double lon, double lat) {      
+       return true;      
+    }     
 }

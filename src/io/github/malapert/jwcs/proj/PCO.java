@@ -25,6 +25,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class PCO extends PolyConicProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Polyconic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";    
 
     /**
      * Default tolerance for the approximative solution of the inverse
@@ -163,7 +173,7 @@ public class PCO extends PolyConicProjection {
 	    if (NumericalUtils.equal(xp, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(yp, 0.0, DOUBLE_TOLERANCE)) {
 		phi = 0.0;
 	    } else {
-		phi = Math.atan2(yp, xp)/Math.sin(theta);
+		phi = NumericalUtils.aatan2(yp, xp)/Math.sin(theta);
 	    }
 	}
         
@@ -191,6 +201,16 @@ public class PCO extends PolyConicProjection {
         y = Math.toDegrees(y);
         double[] coord = {x, y};
         return coord;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

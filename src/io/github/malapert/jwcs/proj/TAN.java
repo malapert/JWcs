@@ -35,6 +35,19 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  */
 public class TAN extends ZenithalProjection {
 
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Gnomonic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";     
+    
+    /**
+     * Tolerance for numerical precision.
+     */
     protected final static double TOLERANCE = 1.0e-13;
 
     /**
@@ -56,7 +69,7 @@ public class TAN extends ZenithalProjection {
         if (NumericalUtils.equal(r_theta, 0.0, DOUBLE_TOLERANCE)) {
             phi = 0;
         } else {
-            phi = Math.atan2(xr, -yr);
+            phi = NumericalUtils.aatan2(xr, -yr);
         }
         double theta = Math.atan2(1.0d, r_theta);
         double[] pos = {phi, theta};
@@ -67,7 +80,7 @@ public class TAN extends ZenithalProjection {
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {        
         phi = phiRange(phi);
         double s = Math.sin(theta);
-        if (s == 0.0) {
+        if (NumericalUtils.equal(s, 0, 1e-13)) {
             throw new PixelBeyondProjectionException("TAN: theta = " + theta);
         }
         double r;
@@ -80,5 +93,20 @@ public class TAN extends ZenithalProjection {
         double y = Math.toDegrees(-r * Math.cos(phi));
         double[] coord = {x, y};
         return coord;
+    }       
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
     }
+    
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+    
+    @Override
+    public boolean inside(double lon, double lat) {  
+       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0, 1e-13);
+    }     
 }

@@ -40,9 +40,9 @@ public class JWcsTest {
     JWcs wcs1;
     
     public JWcsTest() throws FitsException, IOException, JWcsException {
-        wcs = new WcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/WFPC2ASSNu5780205bx.fits")));
+        wcs = new JWcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/WFPC2ASSNu5780205bx.fits")));
         wcs.doInit();
-        wcs1 = new WcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/FOCx38i0101t_c0f.fits")), 0);
+        wcs1 = new JWcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/FOCx38i0101t_c0f.fits")), 0);
         wcs1.doInit();
     }
     

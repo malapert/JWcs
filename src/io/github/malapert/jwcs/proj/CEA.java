@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
  *
@@ -26,6 +27,16 @@ import io.github.malapert.jwcs.proj.exception.ProjectionException;
  */
 public class CEA extends CylindricalProjection {
 
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Cylindrical equal area";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03BB=%s";  
+    
     private double lambda;
 
     public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
@@ -46,7 +57,7 @@ public class CEA extends CylindricalProjection {
             throw new PixelBeyondProjectionException("CEA: y=" + y + " < "
                     + 1 / lambda);
         }
-        double theta = Math.asin(arg);
+        double theta = NumericalUtils.aasin(arg);
         double[] pos = {phi, theta};
         return pos;        
     }
@@ -72,6 +83,16 @@ public class CEA extends CylindricalProjection {
      */
     private void setLambda(double lambda) {
         this.lambda = lambda;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.lambda);
     }
 
 }

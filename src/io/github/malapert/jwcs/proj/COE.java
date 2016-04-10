@@ -37,6 +37,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
 public class COE extends ConicProjection {
 
     /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Conic equal area";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
+    
+    /**
      * Creates an instance.
      *
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
@@ -80,7 +90,7 @@ public class COE extends ConicProjection {
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
         } else {
-            phi = Math.atan2(xr / r_theta, (y0 - yr) / r_theta) / c;
+            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         }
 
         double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
@@ -95,7 +105,7 @@ public class COE extends ConicProjection {
 		 "COE: Calculation failed for (x,y) = (" + x + ", " + y + ")");
             }
         } else {
-            theta = Math.asin(w);
+            theta = NumericalUtils.aasin(w);
         }
         double[] pos = {phi, theta};
         return pos;
@@ -129,5 +139,15 @@ public class COE extends ConicProjection {
         double[] coord = {x, y};
         return coord;
     }
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
+    }    
 
 }

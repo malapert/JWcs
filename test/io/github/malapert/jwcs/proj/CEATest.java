@@ -17,7 +17,7 @@
 
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.WcsFits;
+import io.github.malapert.jwcs.JWcsFits;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.junit.Test;
 public class CEATest extends ProjectionTest {
 
     public CEATest() throws JWcsException, FitsException, IOException {
-        super(new WcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CEA.fits"))), -89, 89);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CEA.fits"))));
     }  
     
     @Test

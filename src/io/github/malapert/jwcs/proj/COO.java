@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
  * Conic orthomorphic.
@@ -26,6 +27,16 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
  */
 public class COO extends ConicProjection {
 
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = " Conic orthomorphic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
+    
     /**
      * Creates an instance.
      *
@@ -57,15 +68,15 @@ public class COO extends ConicProjection {
         double theta2 = getTheta_a() + Math.abs(getEta());
         double tan1 = Math.tan((HALF_PI - theta1) * 0.5);
         double tan2 = Math.tan((HALF_PI - theta2) * 0.5);
-        double c = (theta1 == theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
-        if (c == 0.0) {
+        double c = (NumericalUtils.equal(theta1,theta2,DOUBLE_TOLERANCE)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        if (NumericalUtils.equal(c,0,DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("Projection parameters: sin(theta1) + sin(theta2) = 0");
         }
-        double psi = (tan1 == 0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        double psi = (NumericalUtils.equal(tan1,0, DOUBLE_TOLERANCE)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
         int sign = (getTheta_a() < 0) ? -1 : 1;
         double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        double phi = Math.atan2(xr / r_theta, (y0 - yr) / r_theta) / c;
+        double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
         double[] pos = {phi, theta};
         return pos;
@@ -86,9 +97,9 @@ public class COO extends ConicProjection {
         double theta2 = getTheta_a() + Math.abs(getEta());
         double tan1 = Math.tan((HALF_PI - theta1) * 0.5);
         double tan2 = Math.tan((HALF_PI - theta2) * 0.5);
-        double c = (theta1 == theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
-        double psi = (tan1 == 0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
-        if (psi == 0.0) {
+        double c = (NumericalUtils.equal(theta1,theta2,DOUBLE_TOLERANCE)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        double psi = (NumericalUtils.equal(tan1,0,DOUBLE_TOLERANCE)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        if (NumericalUtils.equal(psi,0,DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException(
                     "Projection parameters: theta_a, eta = " + getTheta_a() + ", " + getEta());
         }
@@ -99,6 +110,16 @@ public class COO extends ConicProjection {
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
         double[] coord = {x, y};
         return coord;
+    }
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
     }
 
 }

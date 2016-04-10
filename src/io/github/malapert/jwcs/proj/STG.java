@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Stereographic.
  * 
@@ -34,6 +36,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class STG extends ZenithalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Stereographic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";    
 
     /**
      * Creates an instance
@@ -49,7 +61,7 @@ public class STG extends ZenithalProjection {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double r_theta = Math.sqrt(xr * xr + yr * yr);
-        double phi = Math.atan2(xr, -yr);        
+        double phi = NumericalUtils.aatan2(xr, -yr);        
         double theta = Math.PI / 2 - 2 * Math.atan(r_theta * 0.5);       
         double[] pos = {phi, theta};
         return pos;       
@@ -67,6 +79,15 @@ public class STG extends ZenithalProjection {
         double y = -r * Math.cos(phi);
         double[] pos = {x,y};
         return pos;
+    } 
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
     }
-
+    
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }    
 }

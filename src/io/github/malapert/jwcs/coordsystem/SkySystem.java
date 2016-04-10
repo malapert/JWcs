@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -206,7 +207,7 @@ public abstract class SkySystem {
         double[] pos2XYZ = pos2.getCartesian();
         double normPos1 = Math.sqrt(pos1XYZ[0]*pos1XYZ[0]+pos1XYZ[1]*pos1XYZ[1]+pos1XYZ[2]*pos1XYZ[2]);
         double normPos2 = Math.sqrt(pos2XYZ[0]*pos2XYZ[0]+pos2XYZ[1]*pos2XYZ[1]+pos2XYZ[2]*pos2XYZ[2]);
-        double separation = Math.acos((pos1XYZ[0]*pos2XYZ[0]+pos1XYZ[1]*pos2XYZ[1]+pos1XYZ[2]*pos2XYZ[2])/(normPos1*normPos2));
+        double separation = NumericalUtils.aacos((pos1XYZ[0]*pos2XYZ[0]+pos1XYZ[1]*pos2XYZ[1]+pos1XYZ[2]*pos2XYZ[2])/(normPos1*normPos2));
         return Math.toDegrees(separation);
     }
 

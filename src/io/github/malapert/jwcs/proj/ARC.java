@@ -36,6 +36,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class ARC extends ZenithalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Zenithal equidistant";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";
 
     /**
      * Creates a new ARC projection based on the celestial longitude and 
@@ -64,7 +74,7 @@ public class ARC extends ZenithalProjection {
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
             phi = 0.0;
         } else {
-            phi = Math.atan2(xr, -yr);
+            phi = NumericalUtils.aatan2(xr, -yr);
         }
         double theta = HALF_PI - r_theta;
         double[] pos = {phi, theta};
@@ -80,6 +90,15 @@ public class ARC extends ZenithalProjection {
         double y = -r * Math.cos(phi);
         double[] pos = {x, y};
         return pos;
+    }  
+    
+    @Override
+    public String getName() {
+       return NAME_PROJECTION; 
     }
 
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
 }

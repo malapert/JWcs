@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Mollweide's.
  *
@@ -30,6 +32,16 @@ package io.github.malapert.jwcs.proj;
  */
 public class MOL extends CylindricalProjection {
 
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Mollweide’s";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";
+    
     /**
      *
      */
@@ -82,7 +94,7 @@ public class MOL extends CylindricalProjection {
             }
             z = ((z < 0.0) ? -1.0 : 1.0) + s * yr / Math.PI;
         } else {
-            z = Math.asin(z) / HALF_PI + s * yr / Math.PI;
+            z = NumericalUtils.aasin(z) / HALF_PI + s * yr / Math.PI;
         }
 
         if (Math.abs(z) > 1.0) {
@@ -91,7 +103,7 @@ public class MOL extends CylindricalProjection {
             }
             z = (z < 0.0) ? -1.0 : 1.0;
         }
-        double theta = Math.asin(z);
+        double theta = NumericalUtils.aasin(z);
 
         double[] pos = {phi, theta};
         return pos;
@@ -161,6 +173,16 @@ public class MOL extends CylindricalProjection {
      */
     public final void setMaxIter(double maxIter) {
         this.maxIter = maxIter;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

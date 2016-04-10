@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.TimeUtils.epochBessel2JD;
 import static io.github.malapert.jwcs.utility.TimeUtils.epochJulian2JD;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -567,6 +568,16 @@ public class Utility {
     public final static RealMatrix longlat2xyz(double longitude, double latitude) {
         double longitudeRad = Math.toRadians(longitude);
         double latitudeRad = Math.toRadians(latitude);
+        return Utility.longlatRad2xyz(longitudeRad, latitudeRad);
+    }
+    
+    public final static double getBorderLatitude(double[] center, double longitude) {
+        double x = -(Math.cos(longitude)*center[0]+Math.sin(longitude)*center[1]);
+        double y = center[2];
+        return NumericalUtils.aatan2(y, x);
+    }
+    
+    public final static RealMatrix longlatRad2xyz(double longitudeRad, double latitudeRad) {
         double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
         double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
         double z = Math.sin(latitudeRad);
@@ -596,9 +607,9 @@ public class Utility {
         double x = xyz.getEntry(0, 0);
         double y = xyz.getEntry(1, 0);
         double z = xyz.getEntry(2, 0);
-        double longitude = Math.toDegrees(Math.atan2(y, x));
+        double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x));
         longitude = (longitude < 0) ? longitude + 360.0d : longitude;
-        double latitude = Math.toDegrees(Math.asin(z));
+        double latitude = Math.toDegrees(NumericalUtils.aasin(z));
         double coord[] = {longitude, latitude};
         return coord;
     }

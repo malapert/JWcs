@@ -57,12 +57,12 @@ public abstract class Projection {
     /**
      *
      */
-    protected static final double HALF_PI = Math.PI * 0.5d;
+    public static final double HALF_PI = Math.PI * 0.5d;
 
     /**
      *
      */
-    protected static final double TWO_PI = Math.PI * 2.0d;
+    public static final double TWO_PI = Math.PI * 2.0d;
     
     /**
      *
@@ -168,7 +168,7 @@ public abstract class Projection {
         LOG.log(Level.FINER, "computeCelestialSpherical:theta[rad]",theta);
         LOG.log(Level.FINER, "computeCelestialSpherical:alphap[rad]", alphap);
         LOG.log(Level.FINER, "computeCelestialSpherical:deltap[rad]", deltap);
-        LOG.log(Level.FINER, "computeCelestialSpherical:phip[rad]", phip);
+        LOG.log(Level.FINER, "computeCelestialSpherical:phip[rad]", phip);        
         if (deltap >= HALF_PI) {
             ra = alphap + phi - phip - Math.PI;
             dec = theta;
@@ -176,12 +176,12 @@ public abstract class Projection {
             ra = alphap - phi + phip;
             dec = -theta;
         } else {
-            ra = alphap + Math.atan2(-Math.cos(theta) * Math.sin(phi - phip),
+            ra = alphap + NumericalUtils.aatan2(-Math.cos(theta) * Math.sin(phi - phip),
                     Math.sin(theta) * Math.cos(deltap)
                     - Math.cos(theta) * Math.sin(deltap)
                     * Math.cos(phi - phip));
 
-            dec = Math.asin(Math.sin(theta) * Math.sin(deltap)
+            dec = NumericalUtils.aasin(Math.sin(theta) * Math.sin(deltap)
                     + Math.cos(theta) * Math.cos(deltap)
                     * Math.cos(phi - phip));
         }
@@ -212,11 +212,16 @@ public abstract class Projection {
         LOG.log(Level.FINER, "computeNativeSpherical:ra_p[rad]", ra_p);
         LOG.log(Level.FINER, "computeNativeSpherical:dec_p[rad]", dec_p);
         LOG.log(Level.FINER, "computeNativeSpherical:phi_p[rad]", phi_p);
-        double phi = phi_p + Math.atan2(-Math.cos(dec) * Math.sin(ra - ra_p),
+        
+        if (NumericalUtils.equal(Math.abs(dec),Projection.HALF_PI, 1e-15)) {
+            return new double[]{ra,dec};
+        } 
+
+        double phi = phi_p + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
                 Math.sin(dec) * Math.cos(dec_p)
                 - Math.cos(dec) * Math.sin(dec_p)
                 * Math.cos(ra - ra_p));
-        double theta = Math.asin(Math.sin(dec) * Math.sin(dec_p)
+        double theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
                 + Math.cos(dec) * Math.cos(dec_p)
                 * Math.cos(ra - ra_p));
 
@@ -238,8 +243,8 @@ public abstract class Projection {
         if (NumericalUtils.equal(getTheta0(), 0.0d, DOUBLE_TOLERANCE) && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI, DOUBLE_TOLERANCE)) {
             deltap = getThetap();
         } else {
-            double deltap_tmp = Math.atan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
-            double deltap_cos = Math.acos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
+            double deltap_tmp = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
+            double deltap_cos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
             deltap = deltap_tmp + deltap_cos;
             double deltap2 = deltap_tmp - deltap_cos;
             if (Math.abs(deltap) > HALF_PI) {
@@ -265,7 +270,7 @@ public abstract class Projection {
             if (NumericalUtils.equal(das, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(dac, 0, DOUBLE_TOLERANCE)) {
                 alphap = getCrval1() - Math.PI;
             } else {
-                alphap = getCrval1() - Math.atan2(das, dac);
+                alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
             }
         }
         double[] pos = {alphap, deltap};
@@ -345,6 +350,7 @@ public abstract class Projection {
     public double[] wcs2projectionPlane(double ra, double dec) throws ProjectionException {
         LOG.log(Level.FINER, "wcs2projectionPlane:ra[deg]", ra);
         LOG.log(Level.FINER, "wcs2projectionPlane:dec[deg]", dec);
+        ra = NumericalUtils.normalizeLongitudeD(ra);
         double ra_p = getCrval1();
         double dec_p = getCrval2();
         double phi_p = (getCrval2() >= getTheta0()) ? getPhi0() : LONPOLE_PI + getPhi0();
@@ -369,4 +375,30 @@ public abstract class Projection {
     public double getCrval2() {
         return this.crval2;
     }
+    
+    /**
+     * Returns true if the given lat/lon point is visible in this projection.
+     * @param lon longitude in radians.
+     * @param lat latitude in radians.
+     * @return
+     */
+    public abstract boolean inside(double lon, double lat);
+       
+    /**
+     * Returns the projection's name.
+     * @return the projection's name
+     */
+    public abstract String getName();
+    
+    /**
+     * Returns the projection's family.
+     * @return the projection's family
+     */
+    public abstract String getNameFamily();   
+    
+    /**
+     * Returns the projection's description.
+     * @return the projection's description
+     */
+    public abstract String getDescription();    
 }

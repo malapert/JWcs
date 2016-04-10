@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Parabolic.
  * 
@@ -30,6 +32,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class PAR extends CylindricalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Parabolic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";    
 
     /**
      * Creates an instance.
@@ -44,7 +56,7 @@ public class PAR extends CylindricalProjection {
     protected double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double theta = 3 * Math.asin(yr / Math.PI);
+        double theta = 3 * NumericalUtils.aasin(yr / Math.PI);
         double phi = xr / (1 - 4*Math.pow(yr / Math.PI, 2));
         double[] pos = {phi, theta};
         return pos;
@@ -61,6 +73,16 @@ public class PAR extends CylindricalProjection {
         double x = Math.toDegrees(phi * (2*Math.cos(2*theta/3) - 1));
         double[] coord = {x, y};        
         return coord;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

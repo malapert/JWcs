@@ -41,6 +41,12 @@ public abstract class PolyConicProjection extends Projection {
      * Logger.
      */
     protected static final Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());  
+    
+    /**
+     * Projection name.
+     */
+    public static final String NAME = "Polyconic and pseudoconic projections";
+    
     /**
      * Native longitude value in radians for cylindrical projection.
      */
@@ -79,6 +85,11 @@ public abstract class PolyConicProjection extends Projection {
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
     }
+    
+    @Override
+    public String getNameFamily() {
+        return NAME;
+    }     
 
     @Override
     public double getPhi0() {
@@ -121,4 +132,9 @@ public abstract class PolyConicProjection extends Projection {
     protected double getTheta1() {
         return theta1;
     }
+    
+    @Override
+    public boolean inside(double lon, double lat) {      
+       return true;      
+    }       
 }

@@ -150,6 +150,14 @@ public interface JWcsKeyProvider {
     double[] wcs2pix(double[] skyPositions) throws JWcsException;
 
     /**
+     * Returns true if the given lat/lon point is visible in this projection.
+     * @param lon longitude in degrees.
+     * @param lat latitude in degrees.
+     * @return
+     */
+    boolean inside(double lon, double lat);  
+    
+    /**
      * Returns the center of the image in sky coordinates.
      * @return the center of the image
      * @throws io.github.malapert.jwcs.proj.exception.JWcsException When there is a projection error

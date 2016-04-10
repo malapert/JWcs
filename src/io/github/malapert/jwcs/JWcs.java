@@ -198,6 +198,10 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Deformation matrix.
      */
+    public static final String PV20 = "PV2_0";    
+    /**
+     * Deformation matrix.
+     */
     public static final String PV21 = "PV2_1";
     /**
      * Deformation matrix.
@@ -267,7 +271,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return True when the Header is valid otherwise False.
      */
     public static boolean isValidWcs(final Header hdr) {
-        JWcs wcs = new WcsFits(hdr);
+        JWcs wcs = new JWcsFits(hdr);
         boolean result;
         try {
             wcs.checkWcs();
@@ -437,6 +441,30 @@ public abstract class JWcs implements JWcsKeyProvider {
      * error occurs
      */
     public abstract void doInit() throws JWcsException;
+    
+    /**
+     * Returns the projection's name.
+     * @return the projection's name
+     */
+    public final String getName() {
+        return getProj().getName();
+    }
+    
+    /**
+     * Returns the projection family.
+     * @return the projection's name
+     */
+    public final String getNameFamily() {
+        return getProj().getNameFamily();
+    }    
+    
+    /**
+     * Returns the projection's description.
+     * @return the projection's description
+     */
+    public final String getDescription() {
+        return getProj().getDescription();
+    }
 
     /**
      * Computes CD matrix from CDELT[] and CROTA.
@@ -733,8 +761,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                 }
                 double[] pvsPrimitif = new double[pvMap.size()];
                 for (int i = 0; i < pvMap.size(); i++) {
-                    int indice = i+1;
-                    pvsPrimitif[i] = pvMap.get("PV2_"+indice);
+                    pvsPrimitif[i] = pvMap.get("PV2_"+i);
                 }
                 projection = new ZPN(crval(1), crval(2), pvsPrimitif);
                 break;
@@ -829,6 +856,17 @@ public abstract class JWcs implements JWcsKeyProvider {
             throw new IllegalArgumentException("Latitude must be [-90, 90], found " + latitude);
         }
     }
+    
+    /**
+     * Returns true if the given lat/lon point is visible in this projection.
+     * @param lon longitude in degrees.
+     * @param lat latitude in degrees.
+     * @return
+     */
+    @Override
+    public boolean inside(double lon, double lat) {
+        return this.getProj().inside(Math.toRadians(lon), Math.toRadians(lat));
+    }    
 
     /**
      * Transforms the sky position given by (longitude, latitude) in a pixel

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +40,11 @@ public abstract class ZenithalProjection extends Projection {
      * Logger.
      */
     protected static final Logger LOG = Logger.getLogger(ZenithalProjection.class.getName());
+    
+    /**
+     * Projection name.
+     */
+    public static final String NAME = "Zenithal (azimuthal) projections";
     /**
      * Native longitude value in radians for zenithal projection.
      */
@@ -91,7 +97,7 @@ public abstract class ZenithalProjection extends Projection {
     public final void setTheta0(double theta0) {
         this.theta0 = theta0;
     }
-
+    
 //    @Override
 //    protected double[] computeCelestialSpherical(double phi, double theta, double alphap, double deltap, double phip) {
 //        return super.computeCelestialSpherical(phi, theta, alphap, deltap, phip);        
@@ -101,4 +107,17 @@ public abstract class ZenithalProjection extends Projection {
 //    protected double[] computeNativeSpherical(double ra, double dec, double ra_p, double dec_p, double phi_p) {
 //        return super.computeNativeSpherical(ra, dec, ra_p, dec_p, phi_p);
 //    }
+    @Override
+    public String getNameFamily() {
+        return NAME;
+    } 
+
+    @Override
+    public boolean inside(double lon, double lat) {    
+       double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+       if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
+           angle = Projection.HALF_PI;
+       }
+       return (angle <= Projection.HALF_PI && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, 1e-13));
+    }      
 }

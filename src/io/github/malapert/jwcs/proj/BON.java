@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Bonnes's equal area.
  *
@@ -32,6 +34,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class BON extends PolyConicProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Bonne’s equal area";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";     
 
     private SFL sfl;
 
@@ -68,15 +80,15 @@ public class BON extends PolyConicProjection {
             int sign = (getTheta1() < 0) ? -1 : 1;
             double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
             double aphi;
-            if (r_theta == 0) {
+            if (NumericalUtils.equal(r_theta,0,DOUBLE_TOLERANCE)) {
                 aphi = 0;
             } else {
-                aphi = Math.atan2(xr / r_theta, (y0 - yr) / r_theta);
+                aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
             }
             double theta = y0 - r_theta;
             double cos_theta = Math.cos(theta);
             double phi;
-            if (cos_theta == 0) {
+            if (NumericalUtils.equal(cos_theta,0,DOUBLE_TOLERANCE)) {
                 phi = 0;
             } else {
                 phi = aphi * r_theta / cos_theta;
@@ -115,5 +127,15 @@ public class BON extends PolyConicProjection {
         }
         return result;
     }
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }     
 
 }

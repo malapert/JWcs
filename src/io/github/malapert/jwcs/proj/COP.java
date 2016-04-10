@@ -26,6 +26,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class COP extends ConicProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Conic perspective";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";    
 
     /**
      * Creates an instance.
@@ -59,7 +69,7 @@ public class COP extends ConicProjection {
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
         } else {
-            phi = Math.atan2(xr / r_theta, (y0 - yr) / r_theta) / c;
+            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         }      
         double theta = getTheta_a() + Math.atan(1.0/Math.tan(getTheta_a())-r_theta/Math.cos(getEta()));
         double[] pos = {phi, theta};
@@ -82,6 +92,16 @@ public class COP extends ConicProjection {
 
         double[] coord = {x, y};
         return coord;
+    }      
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
     }
 
 }

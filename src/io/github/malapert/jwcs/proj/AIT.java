@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
  * The Hammer-Aitoff projection.
@@ -41,6 +42,16 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
  * @version 1.0
  */
 public class AIT extends CylindricalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Hammer-Aitoff";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";    
         
     /**
      * Creates a new AIT projection based on the celestial longitude and 
@@ -73,8 +84,8 @@ public class AIT extends CylindricalProjection {
         double s = z * yr;
 	if (Math.abs(s) > 1.0) throw new PixelBeyondProjectionException(
 		    "AIT: Solution not defined for x,y: " + x + ", " + y);        
-        double phi = 2 * Math.atan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
-        double theta = Math.asin(yr * z);         
+        double phi = 2 * NumericalUtils.aatan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
+        double theta = NumericalUtils.aasin(yr * z);         
         double[] pos = {phi, theta};
         return pos;
     }
@@ -96,6 +107,16 @@ public class AIT extends CylindricalProjection {
         double y = gamma * Math.sin(theta);
         double[] coord = {x, y};
         return coord;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

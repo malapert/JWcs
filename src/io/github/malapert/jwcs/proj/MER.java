@@ -33,6 +33,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class MER extends CylindricalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Mercator";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";       
 
     /**
      *
@@ -62,6 +72,16 @@ public class MER extends CylindricalProjection {
         y = Math.toDegrees(y);
         double[] coord = {x, y};
         return coord;        
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

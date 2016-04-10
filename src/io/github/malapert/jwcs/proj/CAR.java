@@ -31,6 +31,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class CAR extends CylindricalProjection{
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Plate carrée";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";     
 
     /**
      * Constructs a CAR based on the celestial longitude and 
@@ -57,6 +67,16 @@ public class CAR extends CylindricalProjection{
         double y = Math.toDegrees(theta);
         double[] coord = {x, y};
         return coord;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

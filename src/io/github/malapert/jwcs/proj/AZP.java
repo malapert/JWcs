@@ -37,6 +37,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  */
 public class AZP extends ZenithalProjection {
 
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Zenithal perspective";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u03BC=%s \u0263=%s";
+
     private double gamma;
     private double mu;
     private static final double DEFAULT_VALUE = 0;
@@ -75,8 +85,11 @@ public class AZP extends ZenithalProjection {
      * @param y projection plane coordinate along Y
      * @return the native spherical coordinates in radians
      * @throws
-     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a projection parameter is wrong
-     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When the pixel is beyond the visible projection
+     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * when a projection parameter is wrong
+     * @throws
+     * io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
+     * When the pixel is beyond the visible projection
      */
     @Override
     public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
@@ -87,7 +100,7 @@ public class AZP extends ZenithalProjection {
         if (NumericalUtils.equal(r, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
         } else {
-            phi = Math.atan2(xr, -yr * Math.cos(gamma));
+            phi = NumericalUtils.aatan2(xr, -yr * Math.cos(gamma));
         }
 
         double c = (mu + 1) + yr * Math.sin(gamma);
@@ -101,9 +114,9 @@ public class AZP extends ZenithalProjection {
                     + ", " + y + ")");
         } else if (Math.abs(s) > 1) {
             double tmp = (s < 0.0) ? -Math.abs(HALF_PI) : Math.abs(HALF_PI);
-            theta = Math.atan2(1.0,rhau) - tmp;            
+            theta = NumericalUtils.aatan2(1.0, rhau) - tmp;
         } else {
-            theta = Math.atan2(1.0,rhau) - Math.asin(s);
+            theta = NumericalUtils.aatan2(1.0, rhau) - NumericalUtils.aasin(s);
         }
         double[] pos = {phi, theta};
         return pos;
@@ -117,7 +130,8 @@ public class AZP extends ZenithalProjection {
      * @param theta native spherical coordinate in radians along latitude
      * @return the projection plane coordinates
      * @throws
-     * io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When the pixel is beyond the visible projection
+     * io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
+     * When the pixel is beyond the visible projection
      */
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
@@ -137,13 +151,13 @@ public class AZP extends ZenithalProjection {
         } else {
             denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
         }
-        
+
 //        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE) || theta < thetax) {
 //            throw new PixelBeyondProjectionException("AZP: theta = " + theta);
 //        }
         if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE)) {
             throw new PixelBeyondProjectionException("AZP: theta = " + theta);
-        }        
+        }
 
         double r = (mu + 1) * Math.cos(theta) / denom;
         r = Math.toDegrees(r);
@@ -151,5 +165,15 @@ public class AZP extends ZenithalProjection {
         double y = -r * Math.cos(phi) / Math.cos(gamma);
         double[] pos = {x, y};
         return pos;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+    
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.mu, Math.toDegrees(this.gamma));
     }
 }

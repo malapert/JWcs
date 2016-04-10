@@ -31,14 +31,24 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class SIN extends ZenithalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Slant orthographic";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "\u046F=%s \u03B7=%s";
 
     /**
      * DEfault value.
      */
     public static final double DEFAULT_VALUE = 0;
 
-    private double ksi;
-    private double eta;
+    private final double ksi;
+    private final double eta;
 
     /**
      * Creates a new instance.
@@ -47,13 +57,11 @@ public class SIN extends ZenithalProjection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      */
     public SIN(double crval1, double crval2) {
-        super(crval1, crval2);
-        this.ksi = DEFAULT_VALUE;
-        this.eta = DEFAULT_VALUE;
+        this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
     }
 
     public SIN(double crval1, double crval2, double ksi, double eta) {
-        this(crval1, crval2);
+        super(crval1, crval2);
         this.ksi = ksi;
         this.eta = eta;
     }
@@ -64,11 +72,11 @@ public class SIN extends ZenithalProjection {
         double yr = Math.toRadians(y);
         double phi, theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE, DOUBLE_TOLERANCE) && NumericalUtils.equal(eta, DEFAULT_VALUE, DOUBLE_TOLERANCE)) {
-            double r_theta = Math.sqrt(xr * xr + yr * yr);
-            phi = Math.atan2(xr, -yr);
-            theta = Math.acos(r_theta);
+            double r_theta = Math.hypot(xr,yr);
+            phi = NumericalUtils.aatan2(xr, -yr);
+            theta = NumericalUtils.aacos(r_theta);
         } else {
-            double a = ksi*ksi + eta*eta + 1;
+            double a = Math.pow(ksi,2) + Math.pow(eta,2) + 1;
             double b = ksi*(xr-ksi) + eta*(yr-eta);
             double c = (xr-ksi)*(xr-ksi) + (yr-eta)*(yr-eta) - 1;
             double theta1 = (-b + Math.sqrt(b*b-a*c)) / a;
@@ -79,17 +87,16 @@ public class SIN extends ZenithalProjection {
                 if (Math.abs(theta2) >= 1-DOUBLE_TOLERANCE) {
                     theta2 = -999;
                 } else {
-                    theta2 = Math.asin(theta2);
+                    theta2 = NumericalUtils.aasin(theta2);
                 }
             } else {
-                theta1 = Math.asin(theta1);
+                theta1 = NumericalUtils.aasin(theta1);
             }
             theta = (theta1 > theta2)?theta1:theta2;
             if(NumericalUtils.equal(theta, -999, DOUBLE_TOLERANCE)) {
                 throw new BadProjectionParameterException(("ksi = " + ksi + " , eta = " + eta));
             }
-            phi = Math.atan2(xr-ksi*(1-Math.sin(theta)), -(yr-eta*(1-Math.sin(theta))));
-            // verifier si ATAN == ATAN2
+            phi = NumericalUtils.aatan2(xr-ksi*(1-Math.sin(theta)), -(yr-eta*(1-Math.sin(theta))));
         }
 
         double[] pos = {phi, theta};
@@ -104,5 +111,14 @@ public class SIN extends ZenithalProjection {
         double[] coord = {x, y};
         return coord;
     }
+    
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
 
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, this.ksi, this.eta);
+    }
 }

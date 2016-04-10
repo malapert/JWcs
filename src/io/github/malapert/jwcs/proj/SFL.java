@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Sanson-Flamsteed.
  * 
@@ -29,6 +31,16 @@ package io.github.malapert.jwcs.proj;
  * @version 1.0
  */
 public class SFL extends CylindricalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Sanson-Flamsteed";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "no limits";     
 
     /**
      * Creates an instance.
@@ -44,7 +56,7 @@ public class SFL extends CylindricalProjection {
         double theta = Math.toRadians(y);
         double cosTheta = Math.cos(theta);
         double phi;
-        if(cosTheta == 0) {
+        if(NumericalUtils.equal(cosTheta, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
         } else {
             phi = Math.toRadians(x) / Math.cos(theta);
@@ -60,5 +72,15 @@ public class SFL extends CylindricalProjection {
         double y = Math.toDegrees(theta);
         double[] coord = {x, y};
         return coord;        
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 }

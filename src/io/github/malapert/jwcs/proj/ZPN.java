@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.Arrays;
 
 /**
  * Zenithal polynomial.
@@ -32,6 +33,16 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public final class ZPN extends ZenithalProjection {
+    
+    /**
+     * Projection's name.
+     */
+    private static final String NAME_PROJECTION = "Zenithal polynomia";
+    
+    /**
+     * Projection's description.
+     */
+    private static final String DESCRIPTION = "poly=(%s)";    
 
     /**
      * Default numerical tolerance for double comparison or iterative solution .
@@ -165,7 +176,7 @@ public final class ZPN extends ZenithalProjection {
     @SuppressWarnings("empty-statement")
     private int findTheHighestPVNoNull(double[] pv) throws BadProjectionParameterException {
         int i;
-        for (i = pv.length - 1; i >= 0 && pv[i] == 0.0; i--);
+        for (i = pv.length - 1; i >= 0 && NumericalUtils.equal(pv[i],0.0,getTolerance()); i--);
         if (i < 0) {
             throw new BadProjectionParameterException("All coefficients = 0");
         }
@@ -400,7 +411,7 @@ public final class ZPN extends ZenithalProjection {
 	if (NumericalUtils.equal(r_theta, 0.0, getTolerance())) {
 	    phi = 0.0;
 	} else {
-	    phi = Math.atan2(xr, -yr);
+	    phi = NumericalUtils.aatan2(xr, -yr);
 	}
         double theta = HALF_PI - computeSolution(r_theta, PV);
         double[] pos = {phi, theta};
@@ -414,6 +425,16 @@ public final class ZPN extends ZenithalProjection {
         double y = Math.toDegrees(-r_theta * Math.cos(phi));
         double[] coord = {x, y};
         return coord;
+    }
+
+    @Override
+    public String getName() {
+        return NAME_PROJECTION;
+    }
+    
+    @Override
+    public String getDescription() {
+        return String.format(DESCRIPTION, Arrays.toString(this.PV));
     }
 
 }
