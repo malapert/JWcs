@@ -118,6 +118,6 @@ public abstract class ZenithalProjection extends Projection {
        if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
            angle = Projection.HALF_PI;
        }
-       return (angle <= Projection.HALF_PI && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, 1e-13));
+       return (angle <= Projection.HALF_PI && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE));
     }      
 }

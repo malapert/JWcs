@@ -186,7 +186,7 @@ public class SZP extends ZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.mu, Math.toDegrees(this.phic), Math.toDegrees(this.thetac));
+        return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(Math.toDegrees(this.phic)), NumericalUtils.round(Math.toDegrees(this.thetac)));
     }
 
 }

@@ -40,12 +40,14 @@ public class COD extends ConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Conic equidistant";
+    private static final String NAME_PROJECTION = "Conic equidistant";        
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";     
+    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
+
+    private final double c,y0;
 
     /**
      * Constructs a COD projection based on the celestial longitude and latitude
@@ -58,6 +60,13 @@ public class COD extends ConicProjection {
      */
     public COD(double crval1, double crval2, double theta_a, double eta) {
         super(crval1, crval2, theta_a, eta);
+        if(NumericalUtils.equal(Math.toRadians(eta), 0, DOUBLE_TOLERANCE)) {
+            this.c = Math.sin(Math.toRadians(theta_a));
+            this.y0 = 1.0/Math.tan(Math.toRadians(theta_a));           
+        } else {
+            this.c = Math.sin(getTheta_a()) * Math.sin(Math.toRadians(eta)) / Math.toRadians(eta);   
+            this.y0 = Math.toRadians(eta) / (Math.tan(Math.toRadians(eta)) * Math.tan(Math.toRadians(theta_a)));
+        }         
     }
 
     /**
@@ -72,11 +81,9 @@ public class COD extends ConicProjection {
     @Override
     protected double[] project(double x, double y) throws BadProjectionParameterException {
         double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double c = Math.sin(getTheta_a()) * Math.sin(getEta()) / getEta();
-        double y0 = getEta() / (Math.tan(getEta()) * Math.tan(getTheta_a()));
-        int sign = (getTheta_a() < 0) ? -1 : 1;
-        double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        double yr = Math.toRadians(y);     
+        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        //int sign = (getTheta_a() < 0) ? -1 : 1;
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("Bad value for sigma: " + this.getEta());
         }
@@ -88,8 +95,6 @@ public class COD extends ConicProjection {
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
-        double c = Math.sin(getTheta_a()) * Math.sin(getEta()) / getEta();
-        double y0 = getEta() / (Math.tan(getEta()) * Math.tan(getTheta_a()));
         phi = phiRange(phi);
         double r_theta = getTheta_a() + y0 - theta;
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
@@ -105,6 +110,6 @@ public class COD extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
+        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
     }      
 }

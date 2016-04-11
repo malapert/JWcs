@@ -95,7 +95,7 @@ public class CYP extends CylindricalProjection {
             LOG.log(Level.WARNING, "Lambda must be > 0 -- resetting to 1");
             this.lambda = 1;
         }
-        if (getMu() == -getLambda()) {
+        if (NumericalUtils.equal(getMu(),-getLambda(), DOUBLE_TOLERANCE)) {
             LOG.log(Level.WARNING, "Mu must not be -lambda -- resetting to 1");
             this.mu = 1;
         }              
@@ -148,7 +148,7 @@ public class CYP extends CylindricalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.mu, this.lambda);
+        return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(this.lambda));
     }
 
 }

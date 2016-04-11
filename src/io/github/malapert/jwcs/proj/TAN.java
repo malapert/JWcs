@@ -107,6 +107,6 @@ public class TAN extends ZenithalProjection {
     
     @Override
     public boolean inside(double lon, double lat) {  
-       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0, 1e-13);
+       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0, DOUBLE_TOLERANCE);
     }     
 }

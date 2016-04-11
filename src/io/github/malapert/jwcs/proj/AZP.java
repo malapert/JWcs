@@ -174,6 +174,6 @@ public class AZP extends ZenithalProjection {
     
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.mu, Math.toDegrees(this.gamma));
+        return String.format(DESCRIPTION, this.mu, NumericalUtils.round(Math.toDegrees(this.gamma)));
     }
 }

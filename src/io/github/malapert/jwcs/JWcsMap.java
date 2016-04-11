@@ -113,6 +113,9 @@ public class JWcsMap extends JWcs {
                 case "TAN":
                     wcsKeywords.put(JWcs.CRVAL2, "90");
                     break;
+                case "BON":
+                    wcsKeywords.put(JWcs.PV21, "45");
+                    break;                    
                 case "SZP":
                     wcsKeywords.put(JWcs.CRVAL2, "0");
                     wcsKeywords.put(JWcs.PV21, "2");
@@ -125,7 +128,7 @@ public class JWcsMap extends JWcs {
                 case "CYP":
                     wcsKeywords.put(JWcs.CRVAL2, "0");
                     wcsKeywords.put(JWcs.PV21, "1");
-                    wcsKeywords.put(JWcs.PV22, "45");
+                    wcsKeywords.put(JWcs.PV22, String.valueOf(Math.sqrt(2)*0.5));
                     break;
                 case "COP":
                     wcsKeywords.put(JWcs.CRVAL2, "90");
@@ -133,19 +136,19 @@ public class JWcsMap extends JWcs {
                     wcsKeywords.put(JWcs.PV22, "70");
                     break;
                 case "COO":
-                    wcsKeywords.put(JWcs.CRVAL2, "0");
-                    wcsKeywords.put(JWcs.PV21, "20");
-                    wcsKeywords.put(JWcs.PV22, "70");
+                    wcsKeywords.put(JWcs.CRVAL2, "90");
+                    wcsKeywords.put(JWcs.PV21, "45");
+                    wcsKeywords.put(JWcs.PV22, "25");
                     break;
                 case "COE":
                     wcsKeywords.put(JWcs.CRVAL2, "-90");
-                    wcsKeywords.put(JWcs.PV21, "20");
-                    wcsKeywords.put(JWcs.PV22, "70");
+                    wcsKeywords.put(JWcs.PV21, "-45");
+                    wcsKeywords.put(JWcs.PV22, "25");
                     break;
                 case "COD":
                     wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV21, "20");
-                    wcsKeywords.put(JWcs.PV22, "70");
+                    wcsKeywords.put(JWcs.PV21, "45");
+                    wcsKeywords.put(JWcs.PV22, "25");
                     break;
                 case "AZP":
                     wcsKeywords.put(JWcs.CRVAL2, "60");

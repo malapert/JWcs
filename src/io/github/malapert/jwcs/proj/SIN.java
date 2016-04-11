@@ -119,6 +119,6 @@ public class SIN extends ZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.ksi, this.eta);
+        return String.format(DESCRIPTION, NumericalUtils.round(this.ksi), NumericalUtils.round(this.eta));
     }
 }

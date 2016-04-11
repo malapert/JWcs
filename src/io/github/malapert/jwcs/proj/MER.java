@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
+
 /**
  * Mercator.
  * 
@@ -82,6 +84,6 @@ public class MER extends CylindricalProjection {
     @Override
     public String getDescription() {
         return DESCRIPTION;
-    }
+    }    
 
 }

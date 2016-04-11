@@ -57,7 +57,7 @@ public class BON extends PolyConicProjection {
      */
     public BON(double crval1, double crval2, double theta1) {
         super(crval1, crval2, theta1);
-        if (theta1 == 0) {
+        if (NumericalUtils.equal(theta1,0, DOUBLE_TOLERANCE)) {
             this.sfl = new SFL(crval1, crval2);
         }
     }

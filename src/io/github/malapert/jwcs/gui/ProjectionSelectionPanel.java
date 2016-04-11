@@ -45,7 +45,8 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         Object[] projNames = new Object[]{"ARC", "AZP", "SIN", "STG", "SZP", "TAN", "ZEA", "ZPN",
             "AIT", "CAR", "CEA", "CYP", "MER", "MOL", "PAR", "SFL",
             "COD", "COE", "COO", "COP",
-            "BON", "PCO"};
+            "BON", "PCO"
+        };
         //Object[] projNames = new Object[]{"AIT"};
 
         projectionComboBox.setModel(new DefaultComboBoxModel(projNames));

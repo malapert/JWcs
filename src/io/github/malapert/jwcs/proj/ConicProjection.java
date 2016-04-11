@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -192,7 +193,11 @@ public abstract class ConicProjection extends Projection {
     }    
     
     @Override
-    public boolean inside(double lon, double lat) {      
-       return true;      
-    }     
+    public boolean inside(double lon, double lat) {     
+       double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+       if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
+           angle = Projection.HALF_PI;
+       }
+       return (angle <= Projection.HALF_PI && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE));
+    }      
 }

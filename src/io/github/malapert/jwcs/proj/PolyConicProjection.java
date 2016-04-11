@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,6 +136,6 @@ public abstract class PolyConicProjection extends Projection {
     
     @Override
     public boolean inside(double lon, double lat) {      
-       return true;      
+       return !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE);      
     }       
 }

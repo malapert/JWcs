@@ -92,7 +92,7 @@ public class CEA extends CylindricalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.lambda);
+        return String.format(DESCRIPTION, NumericalUtils.round(this.lambda));
     }
 
 }

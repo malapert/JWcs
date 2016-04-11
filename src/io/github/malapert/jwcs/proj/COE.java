@@ -147,7 +147,7 @@ public class COE extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.getTheta_a(), this.getEta());
+        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
     }    
 
 }

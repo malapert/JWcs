@@ -64,13 +64,9 @@ public class PAR extends CylindricalProjection {
 
     @Override
     protected double[] projectInverse(double phi, double theta) {        
-        if (phi > Math.PI) {
-            phi -= 2*Math.PI;
-        } else if (phi < Math.PI) {
-            phi += 2*Math.PI;
-        }         
-        double y = Math.PI * Math.toDegrees(Math.sin(theta / 3));
-        double x = Math.toDegrees(phi * (2*Math.cos(2*theta/3) - 1));
+        phi = phiRange(phi);
+        double y = Math.toDegrees(Math.PI * Math.sin(theta / 3d));
+        double x = Math.toDegrees(phi * (2d*Math.cos(theta/1.5d) - 1d));
         double[] coord = {x, y};        
         return coord;
     }
