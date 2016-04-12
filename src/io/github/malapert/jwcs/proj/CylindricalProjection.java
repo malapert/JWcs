@@ -120,7 +120,7 @@ public abstract class CylindricalProjection extends Projection {
     
     @Override
     public boolean inside(double lon, double lat) {      
-       return !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE);      
+       return true;
     }     
 
 }

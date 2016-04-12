@@ -85,5 +85,11 @@ public class MER extends CylindricalProjection {
     public String getDescription() {
         return DESCRIPTION;
     }    
+        
+
+    @Override
+    public boolean inside(double lon, double lat) {
+        return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE);   
+    }
 
 }

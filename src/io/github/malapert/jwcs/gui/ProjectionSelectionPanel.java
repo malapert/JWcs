@@ -399,7 +399,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
             }
         });
 
-        lat0Label.setText("0");
+        lat0Label.setText("-90");
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);

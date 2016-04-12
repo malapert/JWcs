@@ -98,15 +98,6 @@ public abstract class ZenithalProjection extends Projection {
         this.theta0 = theta0;
     }
     
-//    @Override
-//    protected double[] computeCelestialSpherical(double phi, double theta, double alphap, double deltap, double phip) {
-//        return super.computeCelestialSpherical(phi, theta, alphap, deltap, phip);        
-//    }
-//    
-//    @Override
-//    protected double[] computeNativeSpherical(double ra, double dec, double ra_p, double dec_p, double phi_p) {
-//        return super.computeNativeSpherical(ra, dec, ra_p, dec_p, phi_p);
-//    }
     @Override
     public String getNameFamily() {
         return NAME;
@@ -118,6 +109,6 @@ public abstract class ZenithalProjection extends Projection {
        if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
            angle = Projection.HALF_PI;
        }
-       return (angle <= Projection.HALF_PI && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE));
+       return (angle <= Projection.HALF_PI );
     }      
 }

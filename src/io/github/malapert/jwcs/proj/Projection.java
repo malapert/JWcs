@@ -212,21 +212,17 @@ public abstract class Projection {
         LOG.log(Level.FINER, "computeNativeSpherical:ra_p[rad]", ra_p);
         LOG.log(Level.FINER, "computeNativeSpherical:dec_p[rad]", dec_p);
         LOG.log(Level.FINER, "computeNativeSpherical:phi_p[rad]", phi_p);
-        
-        if (NumericalUtils.equal(Math.abs(dec),Projection.HALF_PI, 1e-15)) {
-            return new double[]{ra,dec};
-        } 
-
+                   
         double phi = phi_p + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
                 Math.sin(dec) * Math.cos(dec_p)
                 - Math.cos(dec) * Math.sin(dec_p)
                 * Math.cos(ra - ra_p));
         double theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
                 + Math.cos(dec) * Math.cos(dec_p)
-                * Math.cos(ra - ra_p));
-
+                * Math.cos(ra - ra_p));       
+        
         double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "computeNativeSpherical:pos[rad]", pos);
+        LOG.log(Level.FINER, "computeNativeSpherical:pos[rad]", pos);        
         return pos;
     }
 
