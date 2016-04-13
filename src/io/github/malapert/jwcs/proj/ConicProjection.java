@@ -96,6 +96,7 @@ public abstract class ConicProjection extends Projection {
         this.eta = Math.toRadians(angles[1]);        
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.theta_a);
+        setPhip(computePhip());
     }
     
     @Override
@@ -145,6 +146,17 @@ public abstract class ConicProjection extends Projection {
     }
     
     @Override
+    protected final double computePhip() {
+        double phip;
+        if(getCrval2() >= getTheta0()) {
+            phip = getPhi0();
+        } else {
+            phip = Math.PI + getPhi0();
+        }
+        return phip;
+    }    
+    
+    @Override
     public final void setPhi0(double phio) {
         this.phio = phio;
     }
@@ -176,21 +188,7 @@ public abstract class ConicProjection extends Projection {
      */
     protected void setEta(double eta) {
         this.eta = eta;
-    }    
-    
-    @Override
-    protected double[] computeCelestialSpherical(double phi, double theta, double alphap, double deltap, double phip) {
-        double[] posNativePole = computeCoordNativePole(phip);
-        LOG.log(Level.FINER, "(alphap, deltap) of native pole", posNativePole);
-        return super.computeCelestialSpherical(phi, theta, posNativePole[0], posNativePole[1], phip);
-    }
-
-    @Override
-    protected double[] computeNativeSpherical(double ra, double dec, double ra_p, double dec_p, double phi_p) {
-        double[] posNativePole = computeCoordNativePole(phi_p);
-        LOG.log(Level.FINER, "(alphap, deltap) of coordinate native pole", posNativePole);
-        return super.computeNativeSpherical(ra, dec, posNativePole[0], posNativePole[1], phi_p);
-    }    
+    }      
     
     @Override
     public boolean inside(double lon, double lat) {     

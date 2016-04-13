@@ -18,8 +18,6 @@ package io.github.malapert.jwcs.utility;
 
 import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
@@ -82,11 +80,23 @@ public abstract class NumericalUtils {
         return NumericalUtils.aacos(dot / (normVector(xyzPos1) * normVector(xyzPos2)));
     }
 
+    /**
+     * Atan2 operation
+     * @param n the ordinate coordinate
+     * @param d the abscissa coordinate
+     * @return the theta component of the point (r, theta) in polar coordinates 
+     * that corresponds to the point (x, y) in Cartesian coordinates.
+     */
     public static double aatan2(double n, double d) {
         final double ATOL = 1.0e-15;
         return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? 0 : Math.atan2(n, d));
     }
 
+    /**
+     * Asin operation
+     * @param v the value whose arc sine is to be returned
+     * @return the arc sine of the argument. 
+     */
     public static double aasin(double v) {
         final double ONE_TOL = 1.00000000000001;
         double av = Math.abs(v);
@@ -99,14 +109,23 @@ public abstract class NumericalUtils {
         return Math.asin(v);
     }
 
+    /**
+     * Acos operation.
+     * @param v the value whose arc cosine is to be returned.
+     * @return the value whose arc cosine is to be returned
+     */
     public static double aacos(double v) {
         if (Math.abs(v) > 1.) {
             return v < 0.0 ? Math.PI : 0.0;
         }
         return Math.acos(v);
     }
-//
 
+    /**
+     * Normalizes the latitude
+     * @param angle latitude in radians
+     * @return the angle from -half_PI to half_PI
+     */
     public static double normalizeLatitude(double angle) {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite latitude");
@@ -126,14 +145,13 @@ public abstract class NumericalUtils {
         }
 
         return angle;
-//		return Math.IEEEremainder(angle, Math.PI);
     }
 
     /**
-     * normalize longitude angle in radians
+     * normalizes longitude angle in radians
      *
-     * @param angle
-     * @return
+     * @param angle longitude in radians
+     * @return the angle from 0 to 2PI
      */
     public static double normalizeLongitude(double angle) {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
@@ -170,20 +188,12 @@ public abstract class NumericalUtils {
 
         return angle % 360;
     }
-//
-//    public static double normalizeAngle(double angle) {
-//        if (Double.isInfinite(angle) || Double.isNaN(angle)) {
-//            throw new ProjectionException("Infinite angle");
-//        }
-//        while (angle > TWOPI) {
-//            angle -= TWOPI;
-//        }
-//        while (angle < 0) {
-//            angle += TWOPI;
-//        }
-//        return angle;
-//    }
 
+    /**
+     * Formats the number with a precision with 3 digits after the comma.
+     * @param number the number to format
+     * @return the formatted number
+     */
     public static String round(double number) {
         DecimalFormat df = new DecimalFormat("0.###");
         return df.format(number);

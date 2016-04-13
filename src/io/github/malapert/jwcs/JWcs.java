@@ -227,6 +227,8 @@ public abstract class JWcs implements JWcsKeyProvider {
     private RealMatrix cdInverse;
     
     protected static final Logger LOG = Logger.getLogger(JWcs.class.getName()); 
+    
+    //TODO : prise en compte de CUNIT
 
     /**
      * Initialize the WCS Object.
@@ -571,7 +573,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         } else if (hasKeyword(PV13)) {
             result = getValueAsDouble(PV13);
         } else {
-            result = Projection.DEFAULT_PHIP;
+            result = Double.NaN;
         }
         return result;
     }
@@ -584,7 +586,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         } else if (hasKeyword(PV14)) {
             result = getValueAsDouble(PV14);
         } else {
-            result = Projection.DEFAULT_THETAP;
+            result = Double.NaN;
         }
         return result;
     }
@@ -772,8 +774,12 @@ public abstract class JWcs implements JWcsKeyProvider {
         if (hasKeyword(PV12)) {
             projection.setTheta0(getValueAsDouble(PV12));
         }
-        projection.setPhip(Math.toRadians(lonpole()));
-        projection.setThetap(Math.toRadians(latpole()));
+        if (!Double.isNaN(lonpole())) {
+            projection.setPhip(Math.toRadians(lonpole()));
+        }
+        if (!Double.isNaN(latpole())) {
+            projection.setThetap(Math.toRadians(latpole()));
+        }
         return projection;
     }
 
@@ -879,7 +885,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     @Override
     public double[] wcs2pix(double longitude, double latitude) throws ProjectionException {
         checkLongitudeLatitude(longitude, latitude);
-        double[] coordVal = this.getProj().wcs2projectionPlane(longitude, latitude);
+        double[] coordVal = this.getProj().wcs2projectionPlane(Math.toRadians(longitude), Math.toRadians(latitude));
         double[][] coord = {
             {coordVal[0], coordVal[1]}
         };

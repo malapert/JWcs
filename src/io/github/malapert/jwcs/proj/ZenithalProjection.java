@@ -76,7 +76,19 @@ public abstract class ZenithalProjection extends Projection {
         super(crval1, crval2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
+        setPhip(computePhip());
     }
+    
+    @Override
+    protected final double computePhip() {
+        double phip;
+        if(getCrval2() >= getTheta0()) {
+            phip = 0;
+        } else {
+            phip = Math.PI;
+        }
+        return phip;
+    }    
 
     @Override
     public double getPhi0() {
@@ -97,6 +109,11 @@ public abstract class ZenithalProjection extends Projection {
     public final void setTheta0(double theta0) {
         this.theta0 = theta0;
     }
+        
+    @Override
+    protected double[] computeCoordNativePole(double phi_p) {
+       return new double[]{getCrval1(), getCrval2()};
+    }    
     
     @Override
     public String getNameFamily() {
