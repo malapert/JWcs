@@ -648,6 +648,34 @@ public abstract class JWcs implements JWcsKeyProvider {
         }
         return result;
     }
+    
+    private double convertToDegree(String cunit) {
+        double cx;
+        if (hasKeyword(cunit)) {
+            String unit_lc = cunit.toLowerCase();
+            switch (unit_lc) {
+                case "acmin":
+                    cx = 1 / 60;
+                    break;
+                case "arcsec":
+                    cx = 1 / 3600;                    
+                    break;
+                case "mas":
+                    cx = 1 / 3600000;
+                    break;
+                case "rad":
+                    cx = 180/Math.PI;
+                    break;
+                default:
+                    cx = 1;
+                    break;
+            }
+        } else {
+            // assumes it is in degree;
+            cx = 1;
+        }        
+        return cx;
+    }
 
     /**
      * Creates the projection by reading CTYPE1.
@@ -663,83 +691,86 @@ public abstract class JWcs implements JWcsKeyProvider {
         String ctype1 = ctype(1);
         String codeProjection = ctype1.substring(ctype1.lastIndexOf("-") + 1, ctype1.length());
         Projection projection;
+        double cx = convertToDegree(cunit(1));
+        double cy = convertToDegree(cunit(2));
+        
         switch (codeProjection) {
             case "AIT":
-                projection = new AIT(crval(1), crval(2));
+                projection = new AIT(crval(1)*cx, crval(2)*cy);
                 break;
             case "ARC":
-                projection = new ARC(crval(1), crval(2));
+                projection = new ARC(crval(1)*cx, crval(2)*cy);
                 break;
             case "AZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
                     double mu = getValueAsDouble(PV21);
                     double gamma = getValueAsDouble(PV22);
-                    projection = new AZP(crval(1), crval(2), mu, gamma);
+                    projection = new AZP(crval(1)*cx, crval(2)*cy, mu, gamma);
                 } else {
-                    projection = new AZP(crval(1), crval(2));
+                    projection = new AZP(crval(1)*cx, crval(2)*cy);
                 }
                 break;
             case "BON":
-                projection = new BON(crval(1), crval(2), getValueAsDouble(PV21, 0));
+                projection = new BON(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0));
                 break;
             case "CAR":
-                projection = new CAR(crval(1), crval(2));
+                projection = new CAR(crval(1)*cx, crval(2)*cy);
                 break;
             case "CEA":
-                projection = new CEA(crval(1), crval(2), getValueAsDouble(PV21, 1));
+                projection = new CEA(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 1));
                 break;
             case "COD":
-                projection = new COD(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COD(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COE":
-                projection = new COE(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COE(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COO":
-                projection = new COO(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COO(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COP":
-                projection = new COP(crval(1), crval(2), getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    projection = new CYP(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22));
+                    projection = new CYP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
-                    projection = new CYP(crval(1), crval(2));
+                    projection = new CYP(crval(1)*cx, crval(2)*cy);
                 }
                 break;
             case "MER":
-                projection = new MER(crval(1), crval(2));
+                projection = new MER(crval(1)*cx, crval(2)*cy);
                 break;
             case "MOL":
-                projection = new MOL(crval(1), crval(2));
+                projection = new MOL(crval(1)*cx, crval(2)*cy);
                 break;
             case "PAR":
-                projection = new PAR(crval(1), crval(2));
+                projection = new PAR(crval(1)*cx, crval(2)*cy);
                 break;
             case "PCO":
-                projection = new PCO(crval(1), crval(2));
+                projection = new PCO(crval(1)*cx, crval(2)*cy);
                 break;
             case "SFL":
-                projection = new SFL(crval(1), crval(2));
+                projection = new SFL(crval(1)*cx, crval(2)*cy);
                 break;
             case "SIN":
-                projection = new SIN(crval(1), crval(2));
+                projection = new SIN(crval(1)*cx, crval(2)*cy);
                 break;
             case "STG":
-                projection = new STG(crval(1), crval(2));
+                projection = new STG(crval(1)*cx, crval(2)*cy);
                 break;
             case "SZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22) && hasKeyword(PV23)) {
-                    projection = new SZP(crval(1), crval(2), getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
+                    projection = new SZP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
                 } else {
-                    projection = new SZP(crval(1), crval(2));
+                    projection = new SZP(crval(1)*cx, crval(2)*cy);
                 }
                 break;
             case "TAN":
-                projection = new TAN(crval(1), crval(2));
+                projection = new TAN(crval(1)*cx, crval(2)*cy);
                 break;
             case "ZEA":
-                projection = new ZEA(crval(1), crval(2));
+                projection = new ZEA(crval(1)*cx, crval(2)*cy);
                 break;
             case "ZPN":
                 Iterator iter = iterator();
@@ -763,7 +794,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                 for (int i = 0; i < pvMap.size(); i++) {
                     pvsPrimitif[i] = pvMap.get("PV2_"+i);
                 }
-                projection = new ZPN(crval(1), crval(2), pvsPrimitif);
+                projection = new ZPN(crval(1)*cx, crval(2)*cy, pvsPrimitif);
                 break;
             default:
                 throw new JWcsError("code projection : " + codeProjection + " is not supported");
