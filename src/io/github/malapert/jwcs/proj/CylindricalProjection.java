@@ -16,7 +16,6 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -75,18 +74,7 @@ public abstract class CylindricalProjection extends Projection {
         super(crval1, crval2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
-        setPhip(computePhip());        
-    }
-    
-    @Override
-    protected final double computePhip() {
-        double phip;
-        if(getCrval2() >= getTheta0()) {
-            phip = getPhi0();
-        } else {
-            phip = Math.PI + getPhi0();
-        }
-        return phip;
+        setPhip(computeDefaultValueForPhip());        
     }
     
     @Override
@@ -118,5 +106,10 @@ public abstract class CylindricalProjection extends Projection {
     public boolean inside(double lon, double lat) {      
        return true;
     }     
+    
+    @Override
+    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        return Math.abs(pos1[0] - pos2[0]) < 100;
+    }    
 
 }

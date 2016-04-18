@@ -74,8 +74,10 @@ public class COO extends ConicProjection {
         }
         double psi = (NumericalUtils.equal(tan1,0, DOUBLE_TOLERANCE)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
-        int sign = (getTheta_a() < 0) ? -1 : 1;
-        double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        }        
         double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
         double[] pos = {phi, theta};
@@ -106,6 +108,9 @@ public class COO extends ConicProjection {
         double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
         phi = phiRange(phi);
         double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);
+        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        }        
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
         double[] coord = {x, y};
@@ -120,6 +125,11 @@ public class COO extends ConicProjection {
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+    }
+        
+    @Override
+    public boolean inside(double lon, double lat) {
+        return super.inside(lon, lat) && !NumericalUtils.equal(lat, -HALF_PI, DOUBLE_TOLERANCE);
     }
 
 }

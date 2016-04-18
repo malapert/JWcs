@@ -46,48 +46,43 @@ public abstract class ZenithalProjection extends Projection {
      */
     public static final String NAME = "Zenithal (azimuthal) projections";
     /**
-     * Native longitude value in radians for zenithal projection.
+     * Default Native longitude (\u03D5<SUB>0</SUB>) value in radians for zenithal projection.
      */
     public static final double DEFAULT_PHI0 = 0;
     /**
-     * Native latitude value in radians for zenithal projection.
+     * Default Native latitude (\u03B8<SUB>0</SUB>) value in radians for zenithal projection.
      */
     public static final double DEFAULT_THETA0 = HALF_PI;
 
     /**
-     * Native longitude in radians of the ﬁducial point for the Zenithal
-     * Projection
+     * Native longitude (\u03D5<SUB>0</SUB>) in radians of the ﬁducial point for the Zenithal
+     * Projection.
      */
     private double phi0;
     /**
-     * Native latitude in radians of the ﬁducial point for the Zenithal
-     * Projection
+     * Native latitude (\u03B8<SUB>0</SUB>) in radians of the ﬁducial point for the Zenithal
+     * Projection.
      */
     private double theta0;
 
     /**
      * Creates a zenithal projection based on the celestial longitude and
      * latitude of the ﬁducial point.
+     * Creates a zenithal projection by setting :
+     * <ul>
+     *  <li>(\u03D5<SUB>0</SUB>, \u03B8<SUB>0</SUB>) = (0, HALF_PI)</li>
+     *  <li>by computing \u03D5<SUB>p</SUB></li>
+     * </ul>
+     * @see ZenithalProjection#computeDefaultValueForPhip() 
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+     * @param crval1 Celestial longitude in degrees of the ﬁducial point (\u03B1<sub>0</sub>)
+     * @param crval2 Celestial latitude in degrees of the ﬁducial point (\u03B4<sub>0</sub>)
      */
     protected ZenithalProjection(double crval1, double crval2) {
         super(crval1, crval2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
-        setPhip(computePhip());
-    }
-    
-    @Override
-    protected final double computePhip() {
-        double phip;
-        if(getCrval2() >= getTheta0()) {
-            phip = 0;
-        } else {
-            phip = Math.PI;
-        }
-        return phip;
+        setPhip(computeDefaultValueForPhip());
     }    
 
     @Override
@@ -123,9 +118,32 @@ public abstract class ZenithalProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {    
        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-       if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
+       if(NumericalUtils.equal(angle, Projection.HALF_PI, DOUBLE_TOLERANCE)) {
            angle = Projection.HALF_PI;
        }
        return (angle <= Projection.HALF_PI );
-    }      
+    } 
+    
+    @Override
+    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        return true;
+    }
+    
+    protected double computeRTheta(double x, double y) {
+        return Math.hypot(x, y);
+    }
+    
+    protected double[] computeProjectionPlaceCoordinates(double rtheta, double phi) {
+        return new double[]{rtheta*Math.sin(phi), -rtheta*Math.cos(phi)};
+    }
+    
+    protected double computePhi(double x,double y, double rtheta) {
+        double phi;
+        if (NumericalUtils.equal(rtheta, 0, DOUBLE_TOLERANCE)) {
+            phi = 0;
+        } else {
+            phi = NumericalUtils.aatan2(x, y);
+        }        
+        return phi;
+    }
 }

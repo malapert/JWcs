@@ -114,7 +114,7 @@ public class SkyPosition {
     
     /**
      * Returns the skyposition as a double array.
-     * @return 
+     * @return the sky position.
      */
     public double[] getDoubleArray() {
         return new double[]{getLongitude(), getLatitude()};

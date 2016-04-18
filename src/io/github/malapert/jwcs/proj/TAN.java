@@ -65,13 +65,11 @@ public class TAN extends ZenithalProjection {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double r_theta = Math.sqrt(xr * xr + yr * yr);
-        double phi;
-        if (NumericalUtils.equal(r_theta, 0.0, DOUBLE_TOLERANCE)) {
-            phi = 0;
-        } else {
-            phi = NumericalUtils.aatan2(xr, -yr);
+        if(NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
+            throw new PixelBeyondProjectionException("Unvalid projection parameters.");
         }
-        double theta = Math.atan2(1.0d, r_theta);
+        double phi = NumericalUtils.aatan2(xr, -yr);        
+        double theta = Math.atan(1.0d / r_theta);
         double[] pos = {phi, theta};
         return pos;
     }
@@ -79,18 +77,13 @@ public class TAN extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {        
         phi = phiRange(phi);
-        double s = Math.sin(theta);
-        if (NumericalUtils.equal(s, 0, 1e-13)) {
+        double s = Math.tan(theta);
+        if (NumericalUtils.equal(s, 0, DOUBLE_TOLERANCE)) {
             throw new PixelBeyondProjectionException("TAN: theta = " + theta);
         }
-        double r;
-        if (theta <= 0+DOUBLE_TOLERANCE) {
-            r = theta;
-        } else {
-            r = 1 / Math.tan(theta);//Math.cos(theta)/s;
-        }
-        double x = Math.toDegrees(r * Math.sin(phi));
-        double y = Math.toDegrees(-r * Math.cos(phi));
+        double r_theta = 1 / s;
+        double x = Math.toDegrees(r_theta * Math.sin(phi));
+        double y = Math.toDegrees(-r_theta * Math.cos(phi));
         double[] coord = {x, y};
         return coord;
     }       

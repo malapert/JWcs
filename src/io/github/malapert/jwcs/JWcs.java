@@ -78,10 +78,10 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class JWcs implements JWcsKeyProvider {
 
-    public static final double MAX_LONGITUDE = 360;
-    public static final double MIN_LONGITUDE = 0;
-    public static final double MIN_LATITUDE = -90;
-    public static final double MAX_LATITUDE = 90;
+    public static final int MAX_LONGITUDE = 360;
+    public static final int MIN_LONGITUDE = 0;
+    public static final int MIN_LATITUDE = -90;
+    public static final int MAX_LATITUDE = 90;
 
     /**
      * Number of axes.
@@ -196,7 +196,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Deformation matrix.
      */
-    public static final String PV20 = "PV2_0";    
+    public static final String PV20 = "PV2_0";
     /**
      * Deformation matrix.
      */
@@ -222,13 +222,22 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public static final String RADESYS = "RADESYS";
 
+    /**
+     * Projection object.
+     */
     private Projection proj;
+
+    /**
+     * CD matrix : scale and rotation.
+     */
     private RealMatrix cd;
+
+    /**
+     * Inverse CD matrix.
+     */
     private RealMatrix cdInverse;
-    
-    protected static final Logger LOG = Logger.getLogger(JWcs.class.getName()); 
-    
-    //TODO : prise en compte de CUNIT
+
+    protected static final Logger LOG = Logger.getLogger(JWcs.class.getName());
 
     /**
      * Initialize the WCS Object.
@@ -441,25 +450,36 @@ public abstract class JWcs implements JWcsKeyProvider {
      * error occurs
      */
     public abstract void doInit() throws JWcsException;
-    
+
     /**
      * Returns the projection's name.
+     *
      * @return the projection's name
      */
     public final String getName() {
         return getProj().getName();
     }
-    
+
     /**
      * Returns the projection family.
+     * <p>
+     * The supported projection families are the following:
+     * <ul>
+     * <li>{@link io.github.malapert.jwcs.proj.CylindricalProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.ConicProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.PolyConicProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.ZenithalProjection}</li>
+     * </ul>
+     *
      * @return the projection's name
      */
     public final String getNameFamily() {
         return getProj().getNameFamily();
-    }    
-    
+    }
+
     /**
      * Returns the projection's description.
+     *
      * @return the projection's description
      */
     public final String getDescription() {
@@ -468,7 +488,6 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Computes CD matrix from CDELT[] and CROTA.
-     *
      *
      * The computation is realized as follows:
      * <pre>
@@ -643,13 +662,19 @@ public abstract class JWcs implements JWcsKeyProvider {
         if (hasKeyword(keyword)) {
             result = getValueAsDouble(keyword);
         } else {
-             LOG.log(Level.WARNING, "{0} not found -- use default value {1}", new Object[]{keyword, defaultValue});
-             result = defaultValue;
+            LOG.log(Level.WARNING, "{0} not found -- use default value {1}", new Object[]{keyword, defaultValue});
+            result = defaultValue;
         }
         return result;
     }
-    
-    private double convertToDegree(String cunit) {
+
+    /**
+     * Scale factor. This is used to convert the CRVAL into degree.
+     *
+     * @param cunit The cunit axis
+     * @return the scale factor to apply at CRVAL
+     */
+    private double convertToDegree(final String cunit) {
         double cx;
         if (hasKeyword(cunit)) {
             String unit_lc = cunit.toLowerCase();
@@ -658,13 +683,13 @@ public abstract class JWcs implements JWcsKeyProvider {
                     cx = 1 / 60;
                     break;
                 case "arcsec":
-                    cx = 1 / 3600;                    
+                    cx = 1 / 3600;
                     break;
                 case "mas":
                     cx = 1 / 3600000;
                     break;
                 case "rad":
-                    cx = 180/Math.PI;
+                    cx = 180 / Math.PI;
                     break;
                 default:
                     cx = 1;
@@ -673,7 +698,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         } else {
             // assumes it is in degree;
             cx = 1;
-        }        
+        }
         return cx;
     }
 
@@ -693,84 +718,84 @@ public abstract class JWcs implements JWcsKeyProvider {
         Projection projection;
         double cx = convertToDegree(cunit(1));
         double cy = convertToDegree(cunit(2));
-        
+
         switch (codeProjection) {
             case "AIT":
-                projection = new AIT(crval(1)*cx, crval(2)*cy);
+                projection = new AIT(crval(1) * cx, crval(2) * cy);
                 break;
             case "ARC":
-                projection = new ARC(crval(1)*cx, crval(2)*cy);
+                projection = new ARC(crval(1) * cx, crval(2) * cy);
                 break;
             case "AZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
                     double mu = getValueAsDouble(PV21);
                     double gamma = getValueAsDouble(PV22);
-                    projection = new AZP(crval(1)*cx, crval(2)*cy, mu, gamma);
+                    projection = new AZP(crval(1) * cx, crval(2) * cy, mu, gamma);
                 } else {
-                    projection = new AZP(crval(1)*cx, crval(2)*cy);
+                    projection = new AZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "BON":
-                projection = new BON(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0));
+                projection = new BON(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0));
                 break;
             case "CAR":
-                projection = new CAR(crval(1)*cx, crval(2)*cy);
+                projection = new CAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "CEA":
-                projection = new CEA(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 1));
+                projection = new CEA(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 1));
                 break;
             case "COD":
-                projection = new COD(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COD(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COE":
-                projection = new COE(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COE(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COO":
-                projection = new COO(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COO(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COP":
-                projection = new COP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
+                projection = new COP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    projection = new CYP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
+                    projection = new CYP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
-                    projection = new CYP(crval(1)*cx, crval(2)*cy);
+                    projection = new CYP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "MER":
-                projection = new MER(crval(1)*cx, crval(2)*cy);
+                projection = new MER(crval(1) * cx, crval(2) * cy);
                 break;
             case "MOL":
-                projection = new MOL(crval(1)*cx, crval(2)*cy);
+                projection = new MOL(crval(1) * cx, crval(2) * cy);
                 break;
             case "PAR":
-                projection = new PAR(crval(1)*cx, crval(2)*cy);
+                projection = new PAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "PCO":
-                projection = new PCO(crval(1)*cx, crval(2)*cy);
+                projection = new PCO(crval(1) * cx, crval(2) * cy);
                 break;
             case "SFL":
-                projection = new SFL(crval(1)*cx, crval(2)*cy);
+                projection = new SFL(crval(1) * cx, crval(2) * cy);
                 break;
             case "SIN":
-                projection = new SIN(crval(1)*cx, crval(2)*cy);
+                projection = new SIN(crval(1) * cx, crval(2) * cy);
                 break;
             case "STG":
-                projection = new STG(crval(1)*cx, crval(2)*cy);
+                projection = new STG(crval(1) * cx, crval(2) * cy);
                 break;
             case "SZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22) && hasKeyword(PV23)) {
-                    projection = new SZP(crval(1)*cx, crval(2)*cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
+                    projection = new SZP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
                 } else {
-                    projection = new SZP(crval(1)*cx, crval(2)*cy);
+                    projection = new SZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "TAN":
-                projection = new TAN(crval(1)*cx, crval(2)*cy);
+                projection = new TAN(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZEA":
-                projection = new ZEA(crval(1)*cx, crval(2)*cy);
+                projection = new ZEA(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZPN":
                 Iterator iter = iterator();
@@ -787,14 +812,14 @@ public abstract class JWcs implements JWcsKeyProvider {
                         String key = (String) keyObj;
                         if (key.startsWith("PV2")) {
                             pvMap.put(key, getValueAsDouble(key));
-                        }                        
+                        }
                     }
                 }
                 double[] pvsPrimitif = new double[pvMap.size()];
                 for (int i = 0; i < pvMap.size(); i++) {
-                    pvsPrimitif[i] = pvMap.get("PV2_"+i);
+                    pvsPrimitif[i] = pvMap.get("PV2_" + i);
                 }
-                projection = new ZPN(crval(1)*cx, crval(2)*cy, pvsPrimitif);
+                projection = new ZPN(crval(1) * cx, crval(2) * cy, pvsPrimitif);
                 break;
             default:
                 throw new JWcsError("code projection : " + codeProjection + " is not supported");
@@ -891,17 +916,29 @@ public abstract class JWcs implements JWcsKeyProvider {
             throw new IllegalArgumentException("Latitude must be [-90, 90], found " + latitude);
         }
     }
-    
+
     /**
      * Returns true if the given lat/lon point is visible in this projection.
+     *
      * @param lon longitude in degrees.
      * @param lat latitude in degrees.
-     * @return
+     * @return True when the point is visible otherwise False.
      */
     @Override
     public boolean inside(double lon, double lat) {
         return this.getProj().inside(Math.toRadians(lon), Math.toRadians(lat));
-    }    
+    }
+
+    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        boolean result;
+        boolean isFinite = Double.isFinite(pos1[0]) && Double.isFinite(pos1[1]) && Double.isFinite(pos2[0]) && Double.isFinite(pos2[1]);
+        if (isFinite) {            
+            result = this.getProj().isLineToDraw(pos1, pos2);
+        } else {
+            result = false;
+        }
+        return result;
+    }
 
     /**
      * Transforms the sky position given by (longitude, latitude) in a pixel

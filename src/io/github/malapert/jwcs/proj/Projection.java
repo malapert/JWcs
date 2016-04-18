@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
@@ -49,27 +50,27 @@ import java.util.logging.Logger;
 public abstract class Projection {
 
     /**
-     * Double tolerance.
+     * Double tolerance for numerical precision operations sets to 1e-12.
      */
     protected static final double DOUBLE_TOLERANCE = 1e-12;
 
     /**
-     *
+     * Half PI value.
      */
     public static final double HALF_PI = Math.PI * 0.5d;
 
     /**
-     *
+     * Two Pi value.
      */
     public static final double TWO_PI = Math.PI * 2.0d;
 
     /**
-     *
+     * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link Projection#HALF_PI}.
      */
     public static final double DEFAULT_THETAP = HALF_PI;
 
     /**
-     *
+     * Default native longitude of the celestial pole (\u03D5<sub>p</sub>) sets to 0.     
      */
     public static final double DEFAULT_PHIP = 0;
     /**
@@ -78,27 +79,45 @@ public abstract class Projection {
     private static final Logger LOG = Logger.getLogger(Projection.class.getName());
 
     /**
-     * Native longitude in radians of the celestial pole for delta0 &lt; THETA0.
+     * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
+     * &lt; \u03B8<sub>0</sub>.
      */
     protected static final double LONPOLE_PI = Math.PI;
 
     /**
-     * Native longitude in radians of the celestial pole for delta0 &gt; THETA0.
+     * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
+     * &ge; \u03B8<sub>0</sub>.
      */
     protected static final double LONPOLE_0 = 0;
 
+    /**
+     * Celestial longitude \u03B1<sub>0</sub> in radians of the fiducial point.
+     */
     private final double crval1;
+    /**
+     * Celestial longitude \u03B4<sub>0</sub> in radians of the fiducial point.
+     */
     private final double crval2;
+    /**
+     * Initializes the native longitude of the celestial pole (\u03D5<sub>p</sub>) to {@link Projection#DEFAULT_PHIP}. 
+     */
     private double phip = DEFAULT_PHIP;
-    private double thetap = HALF_PI;
-    
+    /**
+     * Initializes the native latitude of the celestial pole (\u03B8<sub>p</sub>) to {@link Projection#HALF_PI}. 
+     */
+    private double thetap = HALF_PI;    
+    /**
+     * Celestial longitude and latitude of the native pole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>).
+     */
     private double[] coordNativePole;
 
     /**
      * Creates an instance of projection by given sky position coordinates.
+     * 
+     * Initializes {@link Projection#crval1} with crval1, {@link Projection#crval2} with crval2 and {@link Projection#thetap} to {@link Projection#DEFAULT_THETAP}
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+     * @param crval1 Celestial longitude (\u03B1<sub>0</sub>) in degrees of the ﬁducial point
+     * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point
      */
     protected Projection(double crval1, double crval2) {
         this.crval1 = Math.toRadians(crval1);
@@ -109,70 +128,103 @@ public abstract class Projection {
     }
 
     /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
      *
      * @param x projection plane coordinate along X
      * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
-     * there is an error while the projection
+     * an error happens while the projection
      */
     protected abstract double[] project(double x, double y) throws ProjectionException;
 
     /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates.
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
      *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
+     * @param phi native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta native spherical coordinate (\u03B8) in radians along latitude
      * @return the projection plane coordinates
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
-     * there is an error while the projection
+     * an error happens while the projection
      */
     protected abstract double[] projectInverse(double phi, double theta) throws ProjectionException;
 
     /**
-     * Returns phi0 in radians.
+     * Returns the native longitude of the fiducial point (\u03D5<sub>0</sub>) in radians.
      *
-     * @return phi0 in radians.
+     * @return \u03D5<sub>0</sub> in radians.
      */
     public abstract double getPhi0();
 
     /**
-     * Sets the native longitude in radians of the ﬁducial point.
+     * Sets the native longitude of the ﬁducial point (\u03D5<sub>0</sub>) in radians.
      *
-     * @param phio the native longitude in radians of the ﬁducial point
+     * @param phio the native longitude in radians of the ﬁducial point (\u03D5<sub>0</sub>)
      */
     public abstract void setPhi0(double phio);
 
     /**
-     * Returns the native latitude in radians of the ﬁducial point.
+     * Returns the native latitude of the ﬁducial point (\u03B8<sub>0</sub>) in radians.
      *
-     * @return theta0 in radians.
+     * @return \u03B8<sub>0</sub> in radians.
      */
     public abstract double getTheta0();
 
     /**
-     * Sets the native latitude in radians of the ﬁducial point.
+     * Sets the native latitude in radians of the ﬁducial point (\u03B8<sub>0</sub>).
      *
-     * @param theta0 the native latitude in radians of the ﬁducial point
+     * @param theta0 the native latitude in radians of the ﬁducial point (\u03B8<sub>0</sub>)
      */
     public abstract void setTheta0(double theta0);
 
     /**
-     * Computes phip
-     * @return phip in radians.
+     * Computes the default value for \u03D5<sub>p</sub>. The default value of
+     * \u03D5<sub>p</sub> will be {@link Projection#LONPOLE_0} for \u03B4<sub>0</sub> &ge;
+     * \u03B8<sub>0</sub> or {@link Projection#LONPOLE_PI} for \u03B4<sub>0</sub> &lt; \u03B8<sub>0</sub>.
+     *
+     * @return \u03D5<sub>p</sub> in radians.
      */
-    protected abstract double computePhip();
+    protected final double computeDefaultValueForPhip() {
+        double phi_p;
+        if (NumericalUtils.equal(getCrval2(), getTheta0(), DOUBLE_TOLERANCE)) {
+            phi_p = LONPOLE_0;
+        } else if (getCrval2() > getTheta0()) {
+            phi_p = LONPOLE_0;
+        } else {
+            phi_p = LONPOLE_PI;
+        }
+        return phi_p;
+    }
 
     /**
-     * Computes the celestial spherical coordinates from the native spherical
-     * coordinates.
+     * Computes the celestial spherical coordinates (\u03B1, \u03B4) from the
+     * native spherical coordinates (\u03D5, \u03B8). 
+     * 
+     * The computation is performed by applying the spherical coordinate rotation.
      *
-     * @param phi Native longitude in radians
-     * @param theta Native latitude in radians
-     * @return Returns (right ascension, declination) in degrees
+     * general case:<br>
+     * ------------<br>
+     * \u03B1 = \u03B1<sub>p</sub> + arg(sin\u03B8cos\u03B4<sub>p</sub> -
+     * cos\u03B8sin\u03B4<sub>p</sub>cos(\u03D5-\u03D5<sub>p</sub>),-cos\u03B8sin(\u03D5-\u03D5<sub>p</sub>))<br>
+     * \u03B4 = asin(sin\u03B8sin\u03B4<sub>p</sub> +
+     * cos\u03B8cos\u03B4<sub>p</sub>cos(\u03D5-\u03D5<sub>p</sub>))<br>
+     * <br>
+     * Special cases:<br>
+     * -------------<br>
+     * if \u03B4<sub>p</sub> = HALF_PI<br>
+     * \u03B1 = \u03B1<sub>p</sub> + \u03D5 - \u03D5<sub>p</sub> - PI<br>
+     * \u03B4 = \u03B8<br>
+     * if \u03B4<sub>p</sub> = -HALF_PI<br>
+     * \u03B1 = \u03B1<sub>p</sub> - \u03D5 + \u03D5<sub>p</sub><br>
+     * \u03B4 = -\u03B8<br>
+     *
+     *
+     * @param phi Native longitude (\u03D5) in radians
+     * @param theta Native latitude (\u03B8) in radians
+     * @return Returns the celestial spherical coordinates (\u03B1, \u03B4) in
+     * degrees
      */
     protected double[] computeCelestialSpherical(double phi, double theta) {
         double ra, dec;
@@ -180,10 +232,10 @@ public abstract class Projection {
         double deltap = getCoordNativePole()[1];
         LOG.log(Level.FINER, "computeCelestialSpherical:phi[rad]", phi);
         LOG.log(Level.FINER, "computeCelestialSpherical:theta[rad]", theta);
-        if (deltap >= HALF_PI) {
+        if (NumericalUtils.equal(deltap, HALF_PI, DOUBLE_TOLERANCE)) {
             ra = alphap + phi - getPhip() - Math.PI;
             dec = theta;
-        } else if (deltap <= -HALF_PI) {
+        } else if (NumericalUtils.equal(deltap, -HALF_PI, DOUBLE_TOLERANCE)) {
             ra = alphap - phi + getPhip();
             dec = -theta;
         } else {
@@ -208,8 +260,13 @@ public abstract class Projection {
     }
 
     /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from 
+     * the celestial spherical coordinates (\u03B1, \u03B4)  .
+     * 
+     * The computation is performed by applying the inverse of the spherical 
+     * coordinate rotation.<br>
+     * \u03D5 = \u03D5<sub>p</sub> + arg(sin\u03B4cos\u03B4<sub>p</sub>-cos\u03B4sin\u03B4<sub>p</sub>cos(\u03B1-\u03B1<sub>p</sub>),-cos\u03B4sin(\u03B1-\u03B1<sub>p</sub>))<br>
+     * \u03B8 = asin(sin\u03B4sin\u03B4<sub>p</sub>+cos\u03B4cos\u03B4<sub>p</sub>cos(\u03B1-\u03B1<sub>p</sub>))
      *
      * @param ra Celestial longitude in radians
      * @param dec Celestial latitude in radians
@@ -235,12 +292,26 @@ public abstract class Projection {
     }
 
     /**
-     * Computes the coordinates of the native pole.
+     * Computes the celestial coordinates (\u03B1<sub>p</sub>,
+     * \u03B4<sub>p</sub>) of the native pole
+     * (\u03B4<sub>p</sub>=\u03B8<sub>p</sub>).
      *
-     * @param phi_p Native longitude in radians of the celestial pole
-     * @return Celestial longitude and latitude in radians of the native pole
+     * Projections such as the cylindricals and conics for which
+     * (\u03D5<sub>0</sub>, \u03B8<sub>0</sub>) = (0, HALF_PI) are handled by
+     * providing formulae to compute (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>)
+     * from (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     *
+     * @param phi_p Native longitude (\u03D5<sub>p</sub>) in radians of the
+     * celestial pole
+     * @return Celestial (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>) longitude and
+     * latitude in radians of the native pole
      */
     protected double[] computeCoordNativePole(double phi_p) {
+
+        if (NumericalUtils.equal(getPhi0(), 0, DOUBLE_TOLERANCE)
+                && NumericalUtils.equal(getTheta0(), HALF_PI, DOUBLE_TOLERANCE)) {
+            return new double[]{getCrval1(), getCrval2()};
+        }
 
         // native longitude of the celestial pole in radians
         double alphap, deltap;
@@ -248,35 +319,44 @@ public abstract class Projection {
         if (NumericalUtils.equal(getTheta0(), 0.0d, DOUBLE_TOLERANCE) && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI, DOUBLE_TOLERANCE)) {
             deltap = getThetap();
         } else {
-            double deltap_tmp = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
-            double deltap_cos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
-            deltap = deltap_tmp + deltap_cos;
-            double deltap2 = deltap_tmp - deltap_cos;
-            if (Math.abs(deltap) > HALF_PI) {
-                deltap = deltap2;
-            }
-            if (Math.abs(deltap2) > HALF_PI) {
-                deltap2 = deltap;
-            }
-            if (Math.abs(deltap - getThetap()) > Math.abs(deltap2 - getThetap())) {
-                deltap = deltap2;
+            double deltap_arg = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
+            double deltap_acos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
+            double deltap1 = deltap_arg + deltap_acos;
+            double deltap2 = deltap_arg - deltap_acos;
+
+            if (NumericalUtils.equal(getTheta0(), 0, DOUBLE_TOLERANCE)
+                    && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE)
+                    && NumericalUtils.equal(getPhip(), getPhi0(), HALF_PI)) {
+                deltap = getThetap();
+            } else {
+
+                boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+                boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+
+                if (isDeltap1InInterval && isDeltap2InInterval) {
+                    double diff1 = Math.abs(deltap1 - getThetap());
+                    double diff2 = Math.abs(deltap2 - getThetap());
+                    deltap = (diff1 < diff2) ? deltap1 : deltap2;
+                } else if (isDeltap1InInterval) {
+                    deltap = deltap1;
+                } else if (isDeltap2InInterval) {
+                    deltap = deltap2;
+                } else {
+                    throw new JWcsError("No valid solution for thetap");
+                }
             }
         }
 
-        if (NumericalUtils.equal(deltap, HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI, DOUBLE_TOLERANCE)) {
+            alphap = getCrval1();
+        } else if (NumericalUtils.equal(deltap, HALF_PI, DOUBLE_TOLERANCE)) {
             alphap = getCrval1() + phi_p - getPhi0() - Math.PI;
         } else if (NumericalUtils.equal(deltap, -HALF_PI, DOUBLE_TOLERANCE)) {
-            alphap = getCrval1() - phi_p + getPhi0();
-        } else if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI, DOUBLE_TOLERANCE)) {
-            alphap = getCrval1();
+            alphap = getCrval1() - phi_p + getPhi0();      
         } else {
             double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
             double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
-            if (NumericalUtils.equal(das, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(dac, 0, DOUBLE_TOLERANCE)) {
-                alphap = getCrval1() - Math.PI;
-            } else {
-                alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
-            }
+            alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
         }
         double[] pos = {alphap, deltap};
         LOG.log(Level.FINER, "computeCoordNativePole:pos[rad]", pos);
@@ -284,9 +364,9 @@ public abstract class Projection {
     }
 
     /**
-     * Sets the native longitude in radians of the celestial pole.
+     * Sets the native longitude in radians of the celestial pole (\u03D5<sub>p</sub>).
      *
-     * @param phip The native longitude in radians of the celestial pole
+     * @param phip The native longitude in radians of the celestial pole (\u03D5<sub>p</sub>)
      */
     public final void setPhip(double phip) {
         this.phip = phip;
@@ -294,27 +374,27 @@ public abstract class Projection {
     }
 
     /**
-     * Returns the native longitude in radians of the celestial pole.
+     * Returns the native longitude in radians of the celestial pole (\u03D5<sub>p</sub>).
      *
-     * @return the native longitude in radians of the celestial pole
+     * @return the native longitude in radians of the celestial pole (\u03D5<sub>p</sub>)
      */
     public double getPhip() {
         return this.phip;
     }
 
     /**
-     * Sets the native latitude in radians of the celestial pole.
+     * Sets the native latitude in radians of the celestial pole (\u03B8<sub>p</sub>).
      *
-     * @param thetap the native latitude in radians of the celestial pole
+     * @param thetap the native latitude in radians of the celestial pole (\u03B8<sub>p</sub>)
      */
     public final void setThetap(double thetap) {
         this.thetap = thetap;
     }
 
     /**
-     * Returns the native latitude in radians of the celestial pole.
+     * Returns the native latitude in radians of the celestial pole (\u03B8<sub>p</sub>).
      *
-     * @return the native latitude in radians of the celestial pole
+     * @return the native latitude in radians of the celestial pole (\u03B8<sub>p</sub>)
      */
     public double getThetap() {
         return this.thetap;
@@ -337,14 +417,14 @@ public abstract class Projection {
     }
 
     /**
-     * Computes the celestial spherical coordinates from the projection plane
-     * coordinates.
+     * Computes the celestial spherical coordinates (\u03B1, \u03B4) from the projection plane
+     * coordinates (\u03B4, \u03B8).
      *
-     * @param x projection plane coordinates along X axis
-     * @param y projection plane coordinates along Y axis
-     * @return the celestial spherical coordinates in degrees
+     * @param x projection plane longitude (\u03D5) in radians
+     * @param y projection plane latitude (\u03B8) in radians
+     * @return the celestial spherical coordinates in degrees (\u03B1, \u03B4)
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
-     * there is an error while the projection
+     * an error happens while the projection
      */
     public double[] projectionPlane2wcs(double x, double y) throws ProjectionException {
         double[] pos = project(x, y);
@@ -352,14 +432,14 @@ public abstract class Projection {
     }
 
     /**
-     * Computes the projection plane coordinates from the celestial spherical
-     * coordinates.
+     * Computes the projection plane coordinates (\u03B4, \u03B8) from the celestial spherical
+     * coordinates (\u03B1, \u03B4).
      *
-     * @param ra right ascension in radians
-     * @param dec declination in radians.
-     * @return the projection plane coordinates.
+     * @param ra right ascension in radians (\u03B1)
+     * @param dec declination in radians (\u03B4)
+     * @return the projection plane coordinates (\u03D5, \u03B8)
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
-     * there is an error while the projection
+     * an error happens while the projection
      */
     public double[] wcs2projectionPlane(double ra, double dec) throws ProjectionException {
         LOG.log(Level.FINER, "wcs2projectionPlane:ra[rad]", ra);
@@ -372,18 +452,18 @@ public abstract class Projection {
     }
 
     /**
-     * Returns the celestial longitude in radians of the ﬁducial point
+     * Returns the celestial longitude in radians of the ﬁducial point (\u03B1<sub>0</sub>)
      *
-     * @return the celestial longitude in radians of the ﬁducial point
+     * @return \u03B1<sub>0</sub> in radians
      */
     public double getCrval1() {
         return this.crval1;
     }
 
     /**
-     * Returns the celestial latitude in radians of the ﬁducial point
+     * Returns the celestial latitude in radians of the ﬁducial point (\u03B4<sub>0</sub>) 
      *
-     * @return the celestial latitude in radians of the ﬁducial point
+     * @return  \u03B4<sub>0</sub> in radians
      */
     public double getCrval2() {
         return this.crval2;
@@ -392,11 +472,14 @@ public abstract class Projection {
     /**
      * Returns true if the given lat/lon point is visible in this projection.
      *
-     * @param lon longitude in radians.
-     * @param lat latitude in radians.
-     * @return
+     * @param lon longitude in radians (\u03B1).
+     * @param lat latitude in radians (\u03B4).
+     * @return True when the point is visible otherwise False.
      */
     public abstract boolean inside(double lon, double lat);
+    
+
+    public abstract boolean isLineToDraw(double[] pos1, double[] pos2); 
 
     /**
      * Returns the projection's name.
@@ -420,7 +503,8 @@ public abstract class Projection {
     public abstract String getDescription();
 
     /**
-     * @return the coordNativePole
+     * Returns the celestial longitude and latitude of the native pole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>).
+     * @return the coordNativePole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>)
      */
     protected double[] getCoordNativePole() {
         return coordNativePole;

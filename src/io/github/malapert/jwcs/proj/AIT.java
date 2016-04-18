@@ -100,7 +100,7 @@ public class AIT extends CylindricalProjection {
      */    
     @Override
     public double[] projectInverse(double phi, double theta) {         
-        phi = phiRange(phi);
+        phi = phiRange(phi);         
         double gamma = Math.sqrt(2.0d / (1 + Math.cos(theta) * Math.cos(phi * 0.5d)));
         gamma = Math.toDegrees(gamma);
         double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);

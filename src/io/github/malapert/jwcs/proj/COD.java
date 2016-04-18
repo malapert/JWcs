@@ -83,9 +83,8 @@ public class COD extends ConicProjection {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);     
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        //int sign = (getTheta_a() < 0) ? -1 : 1;
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Bad value for sigma: " + this.getEta());
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
         }
         double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         double theta = getTheta_a() + y0 - r_theta;
@@ -94,9 +93,12 @@ public class COD extends ConicProjection {
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
         phi = phiRange(phi);
         double r_theta = getTheta_a() + y0 - theta;
+        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        }        
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
         double[] coord = {x, y};
@@ -111,5 +113,11 @@ public class COD extends ConicProjection {
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
-    }      
+    }    
+
+    @Override
+    public boolean inside(double lon, double lat) {
+        return true;
+    }
+
 }

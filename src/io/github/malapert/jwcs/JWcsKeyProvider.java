@@ -153,7 +153,7 @@ public interface JWcsKeyProvider {
      * Returns true if the given lat/lon point is visible in this projection.
      * @param lon longitude in degrees.
      * @param lat latitude in degrees.
-     * @return
+     * @return True when the point is visible otherwise False.
      */
     boolean inside(double lon, double lat);  
     

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
@@ -66,10 +67,14 @@ public class MER extends CylindricalProjection {
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException  {
         phi = phiRange(phi);
         double x = phi;
-        double y = Math.log(Math.tan((HALF_PI + theta) * 0.5d));
+        double d = Math.tan((HALF_PI + theta) * 0.5d);
+        if (d<=0) {
+            throw new PixelBeyondProjectionException("this theta value "+Math.toDegrees(theta)+" is not supported for this projection");
+        }
+        double y = Math.log(d);
         x = Math.toDegrees(x);
         y = Math.toDegrees(y);
         double[] coord = {x, y};

@@ -69,11 +69,7 @@ public class STG extends ZenithalProjection {
 
     @Override
     public double[] projectInverse(double phi, double theta) {
-        if (phi > Math.PI) {
-            phi -= 2*Math.PI;
-        } else if (phi < Math.PI) {
-            phi += 2*Math.PI;
-        }         
+        phi = phiRange(phi);        
         double r = 360 / Math.PI * Math.tan((Math.toRadians(90)-theta)/2.0d);
         double x = r * Math.sin(phi);
         double y = -r * Math.cos(phi);

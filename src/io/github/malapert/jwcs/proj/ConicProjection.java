@@ -96,7 +96,7 @@ public abstract class ConicProjection extends Projection {
         this.eta = Math.toRadians(angles[1]);        
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.theta_a);
-        setPhip(computePhip());
+        setPhip(computeDefaultValueForPhip());
     }
     
     @Override
@@ -118,7 +118,7 @@ public abstract class ConicProjection extends Projection {
     private double[] fixInputParameters(double theta_a, double eta) {
         double theta_fixed;
         double eta_fixed;
-        if (theta_a == 0) {
+        if (NumericalUtils.equal(theta_a,0,DOUBLE_TOLERANCE)) {
             LOG.log(Level.WARNING, "ThetaA=0 not allowed -- defaulting to 45 deg", theta_a);
             theta_fixed = 45;
         } else {
@@ -143,18 +143,7 @@ public abstract class ConicProjection extends Projection {
     @Override
     public final double getTheta0() {
         return theta0;
-    }
-    
-    @Override
-    protected final double computePhip() {
-        double phip;
-        if(getCrval2() >= getTheta0()) {
-            phip = getPhi0();
-        } else {
-            phip = Math.PI + getPhi0();
-        }
-        return phip;
-    }    
+    }  
     
     @Override
     public final void setPhi0(double phio) {
@@ -193,9 +182,14 @@ public abstract class ConicProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {     
        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-       if(NumericalUtils.equal(angle, Projection.HALF_PI, 1e-13)) {
+       if(NumericalUtils.equal(angle, Projection.HALF_PI, DOUBLE_TOLERANCE)) {
            angle = Projection.HALF_PI;
        }
-       return (angle <= Projection.HALF_PI);
-    }      
+       return (angle < Projection.HALF_PI);
+    }   
+    
+    @Override
+    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        return true;
+    }    
 }

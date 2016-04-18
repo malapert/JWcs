@@ -31,12 +31,12 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 1.0
  */
 public class SIN extends ZenithalProjection {
-    
+
     /**
      * Projection's name.
      */
     private static final String NAME_PROJECTION = "Slant orthographic";
-    
+
     /**
      * Projection's description.
      */
@@ -72,31 +72,30 @@ public class SIN extends ZenithalProjection {
         double yr = Math.toRadians(y);
         double phi, theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE, DOUBLE_TOLERANCE) && NumericalUtils.equal(eta, DEFAULT_VALUE, DOUBLE_TOLERANCE)) {
-            double r_theta = Math.hypot(xr,yr);
+            double r_theta = Math.hypot(xr, yr);
             phi = NumericalUtils.aatan2(xr, -yr);
             theta = NumericalUtils.aacos(r_theta);
         } else {
-            double a = Math.pow(ksi,2) + Math.pow(eta,2) + 1;
-            double b = ksi*(xr-ksi) + eta*(yr-eta);
-            double c = (xr-ksi)*(xr-ksi) + (yr-eta)*(yr-eta) - 1;
-            double theta1 = (-b + Math.sqrt(b*b-a*c)) / a;
-            double theta2 = -999;
-            if (Math.abs(theta1) >= 1-DOUBLE_TOLERANCE) {
-                theta1 = -999;
-                theta2 = (-b - Math.sqrt(b*b-a*c)) / a;
-                if (Math.abs(theta2) >= 1-DOUBLE_TOLERANCE) {
-                    theta2 = -999;
-                } else {
-                    theta2 = NumericalUtils.aasin(theta2);
-                }
+            double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
+            double b = ksi * (xr - ksi) + eta * (yr - eta);
+            double c = Math.pow((xr - ksi),2) + Math.pow((yr - eta),2) - 1;
+            double theta1 = NumericalUtils.aasin((-b + Math.sqrt(b * b - a * c)) / a);
+            double theta2 = NumericalUtils.aasin((-b - Math.sqrt(b * b - a * c)) / a);
+            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+            if (isTheta1Valid && isTheta2Valid) {
+                double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
+                double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
+                theta = (diffTheta1Pole < diffTheta2Pole) ? theta1 : theta2;
+            } else if (isTheta1Valid) {
+                theta = theta1;
+            } else if (isTheta2Valid) {
+                theta = theta2;
             } else {
-                theta1 = NumericalUtils.aasin(theta1);
-            }
-            theta = (theta1 > theta2)?theta1:theta2;
-            if(NumericalUtils.equal(theta, -999, DOUBLE_TOLERANCE)) {
                 throw new BadProjectionParameterException(("ksi = " + ksi + " , eta = " + eta));
             }
-            phi = NumericalUtils.aatan2(xr-ksi*(1-Math.sin(theta)), -(yr-eta*(1-Math.sin(theta))));
+
+            phi = NumericalUtils.aatan2(xr - ksi * (1 - Math.sin(theta)), -(yr - eta * (1 - Math.sin(theta))));
         }
 
         double[] pos = {phi, theta};
@@ -111,7 +110,7 @@ public class SIN extends ZenithalProjection {
         double[] coord = {x, y};
         return coord;
     }
-    
+
     @Override
     public String getName() {
         return NAME_PROJECTION;

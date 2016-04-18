@@ -73,8 +73,8 @@ public final class ZPN extends ZenithalProjection {
     /**
      * The point of inflection closest to the pole.
      *
-     * coeff[0] Co-latitude of the first point of inflection (N > 2) coeff[1]
-     * Radius of the first point of inflection (N > 2)
+     * coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
+     * Radius of the first point of inflection (N &gt; 2)
      */
     private final transient double[] coeff;
 
@@ -103,7 +103,7 @@ public final class ZPN extends ZenithalProjection {
      * @param highestPV highest PV order
      * @param PV projection parameters
      * @return the inflection point the closest from pole
-     * @throws BadProjectionParameterException 
+     * @throws BadProjectionParameterException Exception
      */
     private double[] findTheInflectionPointClosestFromPole(int highestPV, double[] PV) throws BadProjectionParameterException {
         // Find the point of inflection closest to the pole. 
@@ -167,11 +167,11 @@ public final class ZPN extends ZenithalProjection {
     }
 
     /**
-     * Searches the highest PV index <code>i</code> where <code>PV[i]> != 0.
+     * Searches the highest PV index <code>i</code> where <code>PV[i]</code> != 0.
      *
-     * @param projection parameters
+     * @param pv parameters
      * @return the highest PV index
-     * @throws BadProjectionParameterException
+     * @throws BadProjectionParameterException Exception
      */
     @SuppressWarnings("empty-statement")
     private int findTheHighestPVNoNull(double[] pv) throws BadProjectionParameterException {
@@ -282,6 +282,7 @@ public final class ZPN extends ZenithalProjection {
      * @param r radius
      * @param pv projection parameters
      * @return the solution for a quadratic equation
+     * @throws PixelBeyondProjectionException Exception
      */  
     private double quadraticSolution(double r, double[] pv) throws PixelBeyondProjectionException {
         double a = pv[2];
@@ -314,14 +315,15 @@ public final class ZPN extends ZenithalProjection {
     }
 
     /**
-     * Computes an iterative solution for an equation where order > 2.
+     * Computes an iterative solution for an equation where order &gt; 2.
      * <p>
      * The end of the iterative solution is given by the expected numerical precision
      * or the maximal number of iterations.
      * </p>
      * @param r radius
      * @param pv projection parameters
-     * @return the solution for an equation where order > 2
+     * @return the solution for an equation where order &gt; 2
+     * @throws PixelBeyondProjectionException Exception
      */    
     private double iterativeSolution(double r, double[] pv, double[] coeff) throws PixelBeyondProjectionException {
         double zd1 = 0.0;
@@ -384,7 +386,7 @@ public final class ZPN extends ZenithalProjection {
      * @param r radius
      * @param pv projection parameters
      * @return the solution for whatever polynomial equation
-     * @throws PixelBeyondProjectionException 
+     * @throws PixelBeyondProjectionException Exception
      */
     private double computeSolution(double r, double[] pv) throws PixelBeyondProjectionException {
         double result;
@@ -420,6 +422,7 @@ public final class ZPN extends ZenithalProjection {
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        phi = phiRange(phi);
         double r_theta = polyEval(HALF_PI - theta, PV);
         double x = Math.toDegrees(r_theta * Math.sin(phi));
         double y = Math.toDegrees(-r_theta * Math.cos(phi));

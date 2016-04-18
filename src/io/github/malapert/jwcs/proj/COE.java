@@ -76,37 +76,19 @@ public class COE extends ConicProjection {
         double theta1 = getTheta_a() - getEta();
         double theta2 = getTheta_a() + getEta();
         double gamma = Math.sin(theta1) + Math.sin(theta2);
-        if (gamma == 0) {
+        if (NumericalUtils.equal(gamma, 0, DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("Projection parameters: sin(theta1) + sin(theta2) = 0");
         }
-        double c = gamma * 0.5;
-        
-        
+        double c = gamma * 0.5;                
         double y0 = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin((theta1+theta2)*0.5)) / c;
-        
-        int sign = (getTheta_a() < 0) ? -1 : 1;
-        double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
-        double phi;
+        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            phi = 0;
-        } else {
-            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
-        }
-
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        }        
+        double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;        
         double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
-        double theta;
-        if (Math.abs(w) > 1) {
-            if (NumericalUtils.equal(w, 1, DOUBLE_TOLERANCE)) {
-                theta = HALF_PI;
-            } else if (NumericalUtils.equal(w, -1, DOUBLE_TOLERANCE)) {
-                theta = -HALF_PI;
-            } else {
-                throw new PixelBeyondProjectionException(
-		 "COE: Calculation failed for (x,y) = (" + x + ", " + y + ")");
-            }
-        } else {
-            theta = NumericalUtils.aasin(w);
-        }
+        double theta = NumericalUtils.aasin(w);
+        
         double[] pos = {phi, theta};
         return pos;
     }
@@ -120,19 +102,17 @@ public class COE extends ConicProjection {
      * @return the projection plane coordinates
      */
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
+        phi = phiRange(phi);
         double theta1 = getTheta_a() - getEta();
         double theta2 = getTheta_a() + getEta();
         double gamma = Math.sin(theta1) + Math.sin(theta2);
         double c = gamma * 0.5;
         double y0 = Math.sqrt(1 + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(getTheta_a())) / c;
-        phi = phi % (Math.PI * 2);
-        if (phi > Math.PI) {
-            phi -= Math.PI * 2;
-        } else if (phi < -Math.PI) {
-            phi += Math.PI * 2;
-        }
         double r_theta = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(theta)) / c;
+        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
+            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        }        
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
 
@@ -148,6 +128,11 @@ public class COE extends ConicProjection {
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+    }   
+    
+    @Override
+    public boolean inside(double lon, double lat) {
+        return true;
     }    
 
 }

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,14 +78,14 @@ public abstract class PolyConicProjection extends Projection {
     protected PolyConicProjection(double crval1, double crval2, double theta1) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "theta1[deg]", theta1);
-        if (theta1 == 0) {
+        if (NumericalUtils.equal(theta1,0,DOUBLE_TOLERANCE)) {
             LOG.log(Level.WARNING, "ThetaA=0 not allowed -- defaulting to 45 deg", theta1);
             theta1 = 45;
         }        
         this.theta1 = Math.toRadians(theta1);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
-        setPhip(computePhip());
+        setPhip(computeDefaultValueForPhip());
     }
     
     @Override
@@ -100,18 +101,7 @@ public abstract class PolyConicProjection extends Projection {
     @Override
     public double getTheta0() {
         return theta0;
-    }
-    
-    @Override
-    protected final double computePhip() {
-        double phip;
-        if(getCrval2() >= getTheta0()) {
-            phip = getPhi0();
-        } else {
-            phip = Math.PI + getPhi0();
-        }
-        return phip;
-    }    
+    }  
     
     @Override
     public final void setPhi0(double phio) {
@@ -134,5 +124,10 @@ public abstract class PolyConicProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {      
        return true;
-    }       
+    }     
+    
+    @Override
+    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        return Math.abs(pos1[0] - pos2[0]) < 50;
+    }    
 }

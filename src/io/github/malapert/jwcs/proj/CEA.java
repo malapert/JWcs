@@ -41,7 +41,7 @@ public class CEA extends CylindricalProjection {
 
     public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
-	if (lambda <= 0 || lambda > 1.0) 
+	if (NumericalUtils.equal(lambda, 0, DOUBLE_TOLERANCE) || lambda < 0 || lambda > 1.0) 
 	  throw new BadProjectionParameterException(
             "lambda outside of range (0,1]: " + lambda);        
         setLambda(lambda);

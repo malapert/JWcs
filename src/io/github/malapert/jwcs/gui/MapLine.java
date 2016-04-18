@@ -40,7 +40,7 @@ public class MapLine {
     
     /**
      * Return the number of points of this line.
-     * @return 
+     * @return the number of points.
      */
     public int size() {
         return points.size();

@@ -64,7 +64,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         double[] pos1 = new double[2];
         pos1[0] = Double.NaN;
         double[] xyzCenter = NumericalUtils.radec2xyz(center);
-        for (int lon = 0; lon <= 360; lon += 10) {
+        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += 10) {
             double[] pos2;
             try {
                 double latRad = Utility.getBorderLatitude(xyzCenter, Math.toRadians(lon));
@@ -100,27 +100,33 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     protected final List<MapLine> drawLatitudeLines(JWcs wcs) {
         List<MapLine> latitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lat = -90; lat <= 90; lat += 5) {
+        for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += 15) {
             pos1[0] = Double.NaN;
-            for (int lon = 0; lon <= 360; lon += 10) {
+            for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += 15) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        if (Double.isFinite(pos1[0])) {
-                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
+                        if(wcs.isLineToDraw(pos1, pos2)) {
                                 MapLine line = new MapLine();
                                 line.addPoint(pos1[0], pos1[1]);
                                 line.addPoint(pos2[0], pos2[1]);
-                                latitudes.add(line);
-                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
-                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
-                                MapLine line = new MapLine();
-                                line.addPoint(pos1[0], pos1[1]);
-                                line.addPoint(pos2[0], pos2[1]);
-                                latitudes.add(line);
-                            }
+                                latitudes.add(line);                            
                         }
+//                        if (Double.isFinite(pos1[0])) {
+//                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
+//                                MapLine line = new MapLine();
+//                                line.addPoint(pos1[0], pos1[1]);
+//                                line.addPoint(pos2[0], pos2[1]);
+//                                latitudes.add(line);
+//                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
+//                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
+//                                MapLine line = new MapLine();
+//                                line.addPoint(pos1[0], pos1[1]);
+//                                line.addPoint(pos2[0], pos2[1]);
+//                                latitudes.add(line);
+                            //}
+//                        }
                         System.arraycopy(pos2, 0, pos1, 0, pos2.length);
                     } else {
                         pos1[0] = Double.NaN;
@@ -137,27 +143,33 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     protected final List<MapLine> drawLongitudeLines(JWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lon = 0; lon < 360; lon += 10) {
+        for (int lon = JWcs.MIN_LONGITUDE; lon < JWcs.MAX_LONGITUDE; lon += 15) {
             pos1[0] = Double.NaN;
-            for (int lat = -90; lat <= 90; lat += 5) {
+            for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += 15) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        if (Double.isFinite(pos1[0])) {
-                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
+                        if (wcs.isLineToDraw(pos1,pos2)) {
                                 MapLine line = new MapLine();
                                 line.addPoint(pos1[0], pos1[1]);
                                 line.addPoint(pos2[0], pos2[1]);
-                                longitudes.add(line);
-                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
-                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
-                                MapLine line = new MapLine();
-                                line.addPoint(pos1[0], pos1[1]);
-                                line.addPoint(pos2[0], pos2[1]);
-                                longitudes.add(line);
-                            }
+                                longitudes.add(line);                            
                         }
+                        //if (Double.isFinite(pos1[0])) {
+//                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
+//                                MapLine line = new MapLine();
+//                                line.addPoint(pos1[0], pos1[1]);
+//                                line.addPoint(pos2[0], pos2[1]);
+//                                longitudes.add(line);
+//                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
+//                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
+//                                MapLine line = new MapLine();
+//                                line.addPoint(pos1[0], pos1[1]);
+//                                line.addPoint(pos2[0], pos2[1]);
+//                                longitudes.add(line);
+                            //}
+//                        }
                         System.arraycopy(pos2, 0, pos1, 0, pos2.length);
                     } else {
                         pos1[0] = Double.NaN;
@@ -172,7 +184,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     }
 
     private List<MapLine> drawLines(JWcs wcs) {
-        if (!this.linesFromClient.isEmpty()) {
+        if (this.linesFromClient.isEmpty()) {
             return new ArrayList<>();
         }
         List<MapLine> projectedLines = new ArrayList<>();
@@ -290,7 +302,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * Write basic infromation about the projection to the graphical user
      * interface.
      *
-     * @projection The Projection that provides the information.
+     * @param wcs The Projection that provides the information.
      */
     private void updateProjectionInfo(JWcs wcs) {
         if (wcs == null) {

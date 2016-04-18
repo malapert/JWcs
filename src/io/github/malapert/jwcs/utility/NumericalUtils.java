@@ -88,7 +88,7 @@ public abstract class NumericalUtils {
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public static double aatan2(double n, double d) {
-        final double ATOL = 1.0e-15;
+        final double ATOL = 1.0e-13;
         return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? 0 : Math.atan2(n, d));
     }
 
@@ -197,5 +197,15 @@ public abstract class NumericalUtils {
     public static String round(double number) {
         DecimalFormat df = new DecimalFormat("0.###");
         return df.format(number);
+    }
+    
+    public static boolean isInInterval(double number, double min, double max, double precision) {
+        if (NumericalUtils.equal(number, min, precision)) {
+            return true;
+        }
+        if (NumericalUtils.equal(number, max, precision)) {
+            return true;
+        }        
+        return min < number && number < max;
     }
 }

@@ -115,6 +115,7 @@ public class JWcsMap extends JWcs {
                     break;
                 case "BON":
                     wcsKeywords.put(JWcs.PV21, "45");
+                    wcsKeywords.put(JWcs.CRVAL2, "0");
                     break;                    
                 case "SZP":
                     wcsKeywords.put(JWcs.CRVAL2, "0");
@@ -132,8 +133,8 @@ public class JWcsMap extends JWcs {
                     break;
                 case "COP":
                     wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV21, "20");
-                    wcsKeywords.put(JWcs.PV22, "70");
+                    wcsKeywords.put(JWcs.PV21, "45");
+                    wcsKeywords.put(JWcs.PV22, "25");
                     break;
                 case "COO":
                     wcsKeywords.put(JWcs.CRVAL2, "90");

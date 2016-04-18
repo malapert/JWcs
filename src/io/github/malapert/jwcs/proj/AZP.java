@@ -63,7 +63,7 @@ public class AZP extends ZenithalProjection {
     }
 
     /**
-     * Creates a new AZC projection based on the celestial longitude and
+     * Creates a new AZP projection based on the celestial longitude and
      * latitude of the fiducial point (crval1, crval2) and mu and gamma.
      *
      * @param crval1 celestial longitude of the fiducial point in degrees
@@ -95,7 +95,7 @@ public class AZP extends ZenithalProjection {
     public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r = Math.sqrt(xr * xr + yr * yr * Math.cos(gamma) * Math.cos(gamma));
+        double r = Math.sqrt(Math.pow(xr,2) + Math.pow(yr, 2) * Math.cos(gamma) * Math.cos(gamma));
         double phi, theta;
         if (NumericalUtils.equal(r, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
@@ -104,7 +104,7 @@ public class AZP extends ZenithalProjection {
         }
 
         double c = (mu + 1) + yr * Math.sin(gamma);
-        if (c == 0) {
+        if (NumericalUtils.equal(c,0,DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("mu = " + mu + " , gamma = " + gamma);
         }
         double rhau = r / c;

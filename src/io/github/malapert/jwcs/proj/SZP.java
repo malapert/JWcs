@@ -168,7 +168,7 @@ public class SZP extends ZenithalProjection {
         double yp = mu * Math.cos(thetac) * Math.cos(phic);
         double zp = mu * Math.sin(thetac) + 1;
         double denom = zp - (1 - Math.sin(theta));
-        if (NumericalUtils.equal(zp, 0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE)) {
             throw new PixelBeyondProjectionException("SZP: theta = " + theta);
         }
         double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;

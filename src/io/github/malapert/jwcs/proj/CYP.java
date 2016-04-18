@@ -23,9 +23,9 @@ import java.util.logging.Level;
  * Cylindrical perspective.
  * 
  * <p>
- * The sphere is projected onto a cylinder of radius <code>LAMBDA</code> 
+ * The sphere is projected onto a cylinder of radius <code>\u03BB</code> 
  * spherical radii from points in the equatorial plane of the native system at a
- * distance <code>MU</code> spherical radii measured from the center of the 
+ * distance <code>\u03BC</code> spherical radii measured from the center of the 
  * sphere in the direction opposite the projected surface.
  * </p>
  * 
@@ -55,11 +55,11 @@ public class CYP extends CylindricalProjection {
     public static final double DEFAULT_LAMBDA = 1;
     
     /**
-     * Projection parameter.
+     * \u03BC.
      */
     private double mu;
     /**
-     * Other projection parameter.
+     * \u03BB.
      */
     private double lambda;
     
@@ -76,8 +76,8 @@ public class CYP extends CylindricalProjection {
      * Creates an instance
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param mu Projection parameter
-     * @param lambda Other projection Parameter
+     * @param mu distance measured from the center of the sphere in the direction opposite the projected surface
+     * @param lambda radius of the cylinder
      * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">Representations of celestial coordinates in FITS, chapter 5.2.1</a>
      */
     public CYP(double crval1, double crval2, double mu, double lambda) {
@@ -88,11 +88,13 @@ public class CYP extends CylindricalProjection {
     }
     
     /**
-     * Checks.
+     * Checks projection parameters.
+     * 
+     * Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
      */
     protected final void check() {
         if (getLambda() < 0) {
-            LOG.log(Level.WARNING, "Lambda must be > 0 -- resetting to 1");
+            LOG.log(Level.WARNING, "Lambda must be >= 0 -- resetting to 1");
             this.lambda = 1;
         }
         if (NumericalUtils.equal(getMu(),-getLambda(), DOUBLE_TOLERANCE)) {
@@ -114,11 +116,7 @@ public class CYP extends CylindricalProjection {
 
     @Override
     public double[] projectInverse(double phi, double theta) {
-        if (phi > Math.PI) {
-            phi -= 2*Math.PI;
-        } else if (phi < Math.PI) {
-            phi += 2*Math.PI;
-        }
+        phi = phiRange(phi);
         double x = Math.toDegrees(getLambda() * phi);
         double y = Math.toDegrees((getMu()+getLambda())/(getMu() + Math.cos(theta)) * Math.sin(theta));
         double[] coord = {x, y};
@@ -126,7 +124,7 @@ public class CYP extends CylindricalProjection {
     }
 
     /**
-     * Returns mu.
+     * Returns \u03BC.
      * @return the mu
      */
     protected double getMu() {
@@ -134,7 +132,7 @@ public class CYP extends CylindricalProjection {
     }
 
     /**
-     * Returns lambda.
+     * Returns \u03BB.
      * @return the lambda
      */
     protected double getLambda() {

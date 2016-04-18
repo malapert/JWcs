@@ -31,7 +31,7 @@ public class UngenerateImporter {
      * Reads an Ungenerate file and returns the found lines in a Vector.
      * @param filePath The file to import.
      * @return A Vector containing all read MapLines.
-     * @throws java.io.IOException
+     * @throws java.io.IOException Exception
      */
     public static List<MapLine> importData(String filePath) throws IOException {
         return importData (new FileInputStream(filePath));
@@ -61,6 +61,7 @@ public class UngenerateImporter {
      * Reads a MapLine from the current file position.
      * @param in The reader that provides the data to read.
      * @return MapLine The read line.
+     * @exception java.io.IOException Exception
      */
     private static MapLine readLine(BufferedReader in) throws java.io.IOException {
         String str;

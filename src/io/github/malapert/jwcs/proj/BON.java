@@ -76,15 +76,10 @@ public class BON extends PolyConicProjection {
         if (this.sfl == null) {
             double xr = Math.toRadians(x);
             double yr = Math.toRadians(y);
-            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
-            int sign = (getTheta1() < 0) ? -1 : 1;
-            double r_theta = sign * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-            double aphi;
-            if (NumericalUtils.equal(r_theta,0,DOUBLE_TOLERANCE)) {
-                aphi = 0;
-            } else {
-                aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
-            }
+            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());            
+            double r_theta = Math.signum(getTheta1())* Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+            double aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
+            
             double theta = y0 - r_theta;
             double cos_theta = Math.cos(theta);
             double phi;
