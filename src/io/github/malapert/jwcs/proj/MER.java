@@ -70,8 +70,11 @@ public class MER extends CylindricalProjection {
     protected double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException  {
         phi = phiRange(phi);
         double x = phi;
+        if (NumericalUtils.equal(Math.abs(theta), HALF_PI, DOUBLE_TOLERANCE)) {
+            throw new PixelBeyondProjectionException("this theta value "+Math.toDegrees(theta)+" is not supported for this projection");            
+        }
         double d = Math.tan((HALF_PI + theta) * 0.5d);
-        if (d<=0) {
+        if (d<0 || NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
             throw new PixelBeyondProjectionException("this theta value "+Math.toDegrees(theta)+" is not supported for this projection");
         }
         double y = Math.log(d);

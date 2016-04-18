@@ -82,10 +82,12 @@ public class COE extends ConicProjection {
         double c = gamma * 0.5;                
         double y0 = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin((theta1+theta2)*0.5)) / c;
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
+        double phi;
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
-        }        
-        double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;        
+            phi = 0;
+        } else {
+            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;   
+        }                     
         double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
         double theta = NumericalUtils.aasin(w);
         
@@ -109,10 +111,7 @@ public class COE extends ConicProjection {
         double gamma = Math.sin(theta1) + Math.sin(theta2);
         double c = gamma * 0.5;
         double y0 = Math.sqrt(1 + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(getTheta_a())) / c;
-        double r_theta = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(theta)) / c;
-        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
-        }        
+        double r_theta = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(theta)) / c;      
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
 

@@ -28,7 +28,7 @@ public class PixelBeyondProjectionException extends ProjectionException {
     }
 
     public PixelBeyondProjectionException() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super();
     }
     
 }

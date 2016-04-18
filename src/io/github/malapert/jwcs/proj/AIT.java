@@ -97,15 +97,20 @@ public class AIT extends CylindricalProjection {
      * @param phi native spherical coordinate in radians along longitude
      * @param theta native spherical coordinate in radians along latitude
      * @return the projection plane coordinates
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
      */    
     @Override
-    public double[] projectInverse(double phi, double theta) {         
+    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {         
         phi = phiRange(phi);         
-        double gamma = Math.sqrt(2.0d / (1 + Math.cos(theta) * Math.cos(phi * 0.5d)));
-        gamma = Math.toDegrees(gamma);
+        double d = 1 + Math.cos(theta) * Math.cos(phi * 0.5d);
+        if (NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
+            throw new PixelBeyondProjectionException(
+		    "AIT: Solution not defined for phi,theta: " + Math.toDegrees(phi) + ", " + Math.toDegrees(theta));
+        }
+        double gamma = Math.sqrt(2.0d / d);        
         double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
         double y = gamma * Math.sin(theta);
-        double[] coord = {x, y};
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }
 

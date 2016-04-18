@@ -101,8 +101,8 @@ public class AZP extends ZenithalProjection {
             phi = 0;
         } else {
             phi = NumericalUtils.aatan2(xr, -yr * Math.cos(gamma));
-        }
-
+        }       
+        
         double c = (mu + 1) + yr * Math.sin(gamma);
         if (NumericalUtils.equal(c,0,DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException("mu = " + mu + " , gamma = " + gamma);

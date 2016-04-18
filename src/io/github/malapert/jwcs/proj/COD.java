@@ -83,10 +83,12 @@ public class COD extends ConicProjection {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);     
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        double phi;
         if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+            phi = 0;
+        } else {
+            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         }
-        double phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;
         double theta = getTheta_a() + y0 - r_theta;
         double[] pos = {phi, theta};
         return pos;
@@ -96,8 +98,8 @@ public class COD extends ConicProjection {
     protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
         phi = phiRange(phi);
         double r_theta = getTheta_a() + y0 - theta;
-        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("r_theta cannot be equal to 0");
+        if (r_theta < 0) {
+            throw new BadProjectionParameterException("r_theta cannot be inferior to 0");
         }        
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);

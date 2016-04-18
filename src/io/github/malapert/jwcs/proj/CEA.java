@@ -53,10 +53,6 @@ public class CEA extends CylindricalProjection {
         double yr = Math.toRadians(y);
         double phi = xr;
         double arg = getLambda() * yr;
-        if (Math.abs(arg) > 1) {
-            throw new PixelBeyondProjectionException("CEA: y=" + y + " < "
-                    + 1 / lambda);
-        }
         double theta = NumericalUtils.aasin(arg);
         double[] pos = {phi, theta};
         return pos;        

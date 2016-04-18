@@ -60,7 +60,7 @@ public class STG extends ZenithalProjection {
     public double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r_theta = Math.sqrt(xr * xr + yr * yr);
+        double r_theta = Math.hypot(xr, yr);
         double phi = NumericalUtils.aatan2(xr, -yr);        
         double theta = Math.PI / 2 - 2 * Math.atan(r_theta * 0.5);       
         double[] pos = {phi, theta};

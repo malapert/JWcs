@@ -84,11 +84,10 @@ public class ARC extends ZenithalProjection {
     @Override
     protected double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
-        double r = HALF_PI - theta;
-        r = Math.toDegrees(r);
+        double r = HALF_PI - theta;  // theta between [-HALF_PI, HALF_PI] => no need to test
         double x = r * Math.sin(phi);
         double y = -r * Math.cos(phi);
-        double[] pos = {x, y};
+        double[] pos = {Math.toDegrees(x), Math.toDegrees(y)};
         return pos;
     }  
     

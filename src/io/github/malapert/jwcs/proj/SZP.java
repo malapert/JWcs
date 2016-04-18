@@ -172,10 +172,8 @@ public class SZP extends ZenithalProjection {
             throw new PixelBeyondProjectionException("SZP: theta = " + theta);
         }
         double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
-        x = Math.toDegrees(x);
         double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;
-        y = Math.toDegrees(y);
-        double[] coord = {x, y};
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }  
     

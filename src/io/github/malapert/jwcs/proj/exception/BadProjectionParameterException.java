@@ -23,8 +23,8 @@ package io.github.malapert.jwcs.proj.exception;
  */
 public class BadProjectionParameterException extends ProjectionException{
 
-    public BadProjectionParameterException(final String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BadProjectionParameterException(final String message) {
+        super(message);
     }
     
 }

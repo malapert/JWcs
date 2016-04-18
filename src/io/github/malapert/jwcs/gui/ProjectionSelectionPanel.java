@@ -7,8 +7,6 @@ package io.github.malapert.jwcs.gui;
 
 import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.coordsystem.Utility;
-import io.github.malapert.jwcs.proj.CylindricalProjection;
-import io.github.malapert.jwcs.proj.PolyConicProjection;
 import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
@@ -36,6 +34,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      */
     private List<MapLine> lines = new ArrayList();
     private final List<MapLine> linesFromClient = new ArrayList();
+    private static final int STEP_GRID = 5;
 
     /**
      * Creates new form ProjectionSelectionPanel
@@ -64,7 +63,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         double[] pos1 = new double[2];
         pos1[0] = Double.NaN;
         double[] xyzCenter = NumericalUtils.radec2xyz(center);
-        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += 10) {
+        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
             double[] pos2;
             try {
                 double latRad = Utility.getBorderLatitude(xyzCenter, Math.toRadians(lon));
@@ -100,9 +99,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     protected final List<MapLine> drawLatitudeLines(JWcs wcs) {
         List<MapLine> latitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += 15) {
+        for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
             pos1[0] = Double.NaN;
-            for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += 15) {
+            for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
@@ -143,9 +142,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     protected final List<MapLine> drawLongitudeLines(JWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lon = JWcs.MIN_LONGITUDE; lon < JWcs.MAX_LONGITUDE; lon += 15) {
+        for (int lon = JWcs.MIN_LONGITUDE; lon < JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
             pos1[0] = Double.NaN;
-            for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += 15) {
+            for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
