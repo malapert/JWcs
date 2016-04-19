@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
@@ -28,7 +29,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class SIN extends ZenithalProjection {
 
@@ -43,23 +44,45 @@ public class SIN extends ZenithalProjection {
     private static final String DESCRIPTION = "\u046F=%s \u03B7=%s";
 
     /**
-     * DEfault value.
+     * Default value.
      */
     public static final double DEFAULT_VALUE = 0;
 
+    /**
+     * \u03BE is defined as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
+     */
     private final double ksi;
+    /**
+     * \u03B7 is defined as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
+     */
     private final double eta;
 
-    /**
-     * Creates a new instance.
-     *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a SIN projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) with default \u03BE,\u03B7 
+     * 
+     * \u03BE,\u03B7 parameters are set to {@link SIN#DEFAULT_VALUE}.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public SIN(double crval1, double crval2) {
         this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
     }
 
+   /**
+     * Constructs a SIN projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BE,\u03B7      
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param ksi \u03BE dimensionless
+     * @param eta \u03B7 dimensionless
+     */    
     public SIN(double crval1, double crval2, double ksi, double eta) {
         super(crval1, crval2);
         this.ksi = ksi;
@@ -67,12 +90,15 @@ public class SIN extends ZenithalProjection {
     }
 
     @Override
-    public double[] project(double x, double y) throws BadProjectionParameterException {
+    public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double phi, theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE, DOUBLE_TOLERANCE) && NumericalUtils.equal(eta, DEFAULT_VALUE, DOUBLE_TOLERANCE)) {
             double r_theta = Math.hypot(xr, yr);
+            if(NumericalUtils.equal(r_theta, 1, DOUBLE_TOLERANCE)) {
+                throw new PixelBeyondProjectionException("r_theta must be < 1");
+            }
             phi = NumericalUtils.aatan2(xr, -yr);
             theta = NumericalUtils.aacos(r_theta);
         } else {
@@ -92,7 +118,7 @@ public class SIN extends ZenithalProjection {
             } else if (isTheta2Valid) {
                 theta = theta2;
             } else {
-                throw new BadProjectionParameterException(("ksi = " + ksi + " , eta = " + eta));
+                throw new BadProjectionParameterException("SIN: ksi = " + ksi + " , eta = " + eta);
             }
 
             phi = NumericalUtils.aatan2(xr - ksi * (1 - Math.sin(theta)), -(yr - eta * (1 - Math.sin(theta))));
@@ -106,7 +132,7 @@ public class SIN extends ZenithalProjection {
     public double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
         double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
-        double y = -Math.toDegrees(Math.cos(theta) * Math.cos(phi) - eta * (1 - Math.sin(theta)));
+        double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
         double[] coord = {x, y};
         return coord;
     }

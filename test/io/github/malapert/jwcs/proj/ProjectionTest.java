@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public class ProjectionTest {
                         }
 
                         if (deltaLatitude > tolerance) {
-                            System.out.printf("longitue = %20.15f lat = %20.15f\n", longitude, latitude);
+                            System.out.printf("longitude = %20.15f lat = %20.15f\n", longitude, latitude);
                             System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
                             System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
                             System.out.println();

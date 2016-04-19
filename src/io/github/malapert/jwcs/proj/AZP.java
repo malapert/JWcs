@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class AZP extends ZenithalProjection {
 
@@ -47,16 +47,28 @@ public class AZP extends ZenithalProjection {
      */
     private static final String DESCRIPTION = "\u03BC=%s \u0263=%s";
 
+    /**
+     * \u0263 is the angle between the camera's optical axis and the line to the center of the planet.
+     */
     private double gamma;
+    /**
+     * \u03BC is the distance from the center of the sphere to the source of projection.
+     * \u03BC increases in the direction away from the plane of projection.
+     */
     private double mu;
+    /**
+     * Default value for \u0263 and \u03BC.
+     */
     private static final double DEFAULT_VALUE = 0;
 
     /**
      * Creates a new AZC projection based on the celestial longitude and
-     * latitude of the fiducial point (crval1, crval2) and mu and gamma.
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * \u03BC and \u0263 are set to {@link AZP#DEFAULT_VALUE}.
      *
-     * @param crval1 celestial longitude of the fiducial point in degrees
-     * @param crval2 celestial latitude of the fiducial point in degrees
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */
     public AZP(double crval1, double crval2) {
         this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
@@ -64,12 +76,15 @@ public class AZP extends ZenithalProjection {
 
     /**
      * Creates a new AZP projection based on the celestial longitude and
-     * latitude of the fiducial point (crval1, crval2) and mu and gamma.
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BC and \u0263.
+     * 
+     * \u03BC is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees. 
+     * \u0263 is set by the FITS keyword PV<code>nbAxis</code>_1 in radii.
      *
-     * @param crval1 celestial longitude of the fiducial point in degrees
-     * @param crval2 celestial latitude of the fiducial point in degrees
-     * @param gamma PV<code>nbAxis</code>_2 in degrees
-     * @param mu PV<code>nbAxis</code>_1 in radians
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
+     * @param gamma \u03BC Angle in degrees between the camera's optical axis and the line to the center of the planet
+     * @param mu \u0263 Distance in radii from the center of the sphere to the source of projectionPV<code>nbAxis</code>_1 in radians
      */
     public AZP(double crval1, double crval2, double mu, double gamma) {
         super(crval1, crval2);
@@ -77,25 +92,11 @@ public class AZP extends ZenithalProjection {
         this.mu = mu;
     }
 
-    /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
-     * @param x projection plane coordinate along X
-     * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     * @throws
-     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
-     * when a projection parameter is wrong
-     * @throws
-     * io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
-     * When the pixel is beyond the visible projection
-     */
     @Override
     public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r = Math.sqrt(Math.pow(xr,2) + Math.pow(yr, 2) * Math.cos(gamma) * Math.cos(gamma));
+        double r = Math.sqrt(Math.pow(xr,2) + Math.pow(yr, 2) * Math.pow(Math.cos(gamma),2));
         double phi, theta;
         if (NumericalUtils.equal(r, 0, DOUBLE_TOLERANCE)) {
             phi = 0;
@@ -105,12 +106,12 @@ public class AZP extends ZenithalProjection {
         
         double c = (mu + 1) + yr * Math.sin(gamma);
         if (NumericalUtils.equal(c,0,DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("mu = " + mu + " , gamma = " + gamma);
+            throw new BadProjectionParameterException("AZP: Bad projection parameter for (mu,gamma): " + mu + ", " + gamma);
         }
         double rhau = r / c;
         double s = rhau * mu / Math.sqrt(rhau * rhau + 1);
         if (Math.abs(s) > 1 + DOUBLE_TOLERANCE) {
-            throw new PixelBeyondProjectionException("AZP: (x,y) = (" + x
+            throw new PixelBeyondProjectionException("AZP: Solution not defined for (x,y) = (" + x
                     + ", " + y + ")");
         } else if (Math.abs(s) > 1) {
             double tmp = (s < 0.0) ? -Math.abs(HALF_PI) : Math.abs(HALF_PI);
@@ -122,27 +123,16 @@ public class AZP extends ZenithalProjection {
         return pos;
     }
 
-    /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates.
-     *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
-     * @return the projection plane coordinates
-     * @throws
-     * io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
-     * When the pixel is beyond the visible projection
-     */
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
-//        double thetax;
-//        if (NumericalUtils.equal(mu, 0, DOUBLE_TOLERANCE)) {
-//            thetax = 0;
-//        } else if (Math.abs(mu) > 1) {
-//            thetax = Math.asin(-1 / mu);
-//        } else {
-//            thetax = Math.asin(-mu);
-//        }
+        double thetax;
+        if (NumericalUtils.equal(mu, 0, DOUBLE_TOLERANCE)) {
+            thetax = 0;
+        } else if (Math.abs(mu) > 1) {
+            thetax = NumericalUtils.aasin(-1 / mu);
+        } else {
+            thetax = NumericalUtils.aasin(-mu);
+        }
         phi = phiRange(phi);
 
         double denom;
@@ -152,10 +142,7 @@ public class AZP extends ZenithalProjection {
             denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
         }
 
-//        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE) || theta < thetax) {
-//            throw new PixelBeyondProjectionException("AZP: theta = " + theta);
-//        }
-        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE) || theta < thetax) {
             throw new PixelBeyondProjectionException("AZP: theta = " + theta);
         }
 

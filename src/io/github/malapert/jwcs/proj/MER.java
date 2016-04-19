@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class MER extends CylindricalProjection {
     
@@ -47,10 +47,14 @@ public class MER extends CylindricalProjection {
      */
     private static final String DESCRIPTION = "no limits";       
 
-    /**
-     *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a MER projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public MER(double crval1, double crval2) {
         super(crval1, crval2);
@@ -71,11 +75,15 @@ public class MER extends CylindricalProjection {
         phi = phiRange(phi);
         double x = phi;
         if (NumericalUtils.equal(Math.abs(theta), HALF_PI, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("this theta value "+Math.toDegrees(theta)+" is not supported for this projection");            
+            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));            
         }
-        double d = Math.tan((HALF_PI + theta) * 0.5d);
+        double angle = (HALF_PI + theta) * 0.5d;
+        if(NumericalUtils.equal(Math.abs(angle), HALF_PI, DOUBLE_TOLERANCE)) {
+            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));            
+        }
+        double d = Math.tan(angle);
         if (d<0 || NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("this theta value "+Math.toDegrees(theta)+" is not supported for this projection");
+            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));
         }
         double y = Math.log(d);
         x = Math.toDegrees(x);

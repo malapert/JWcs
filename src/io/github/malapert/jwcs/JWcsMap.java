@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,18 @@ public class JWcsMap extends JWcs {
     
     private Map keywords;
     
+    /**
+     * Clones a JWcsMap.
+     * @param wcs JWcsMap object
+     */
     public JWcsMap(JWcsMap wcs) {
         setKeywords(wcs.keywords);
     }
     
+    /**
+     * Creates a JWcs bases on a map.
+     * @param keywords map of keywords
+     */
     public JWcsMap(Map keywords) {
         this.keywords = keywords;
     }
@@ -98,6 +106,12 @@ public class JWcsMap extends JWcs {
         this.keywords = keywords;
     }  
     
+    /**
+     * Gets a projection based on a projection code.
+     * @param projectionCode projection code
+     * @return Returns a JWcs projection
+     * @throws JWcsException When a JWcsException happens
+     */
     public static JWcs getProjection(String projectionCode) throws JWcsException {
     Map wcsKeywords = new HashMap();
         wcsKeywords.put(JWcs.NAXIS, "2");

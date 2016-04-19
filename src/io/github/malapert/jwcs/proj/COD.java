@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class COD extends ConicProjection {
     
@@ -51,12 +51,17 @@ public class COD extends ConicProjection {
 
     /**
      * Constructs a COD projection based on the celestial longitude and latitude
-     * of the fiducial point (crval1, crval2) and theta_a and eta.
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 03B8<sub>a</sub> and \u03B7.
      *
-     * @param crval1 celestial longitude in degrees
-     * @param crval2 celestial latitude in degrees
-     * @param theta_a PV<code>nbAxis</code>_1 in degrees
-     * @param eta PV<code>nbAxis</code>_2 in degrees
+     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      */
     public COD(double crval1, double crval2, double theta_a, double eta) {
         super(crval1, crval2, theta_a, eta);
@@ -97,10 +102,7 @@ public class COD extends ConicProjection {
     @Override
     protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
         phi = phiRange(phi);
-        double r_theta = getTheta_a() + y0 - theta;
-        if (r_theta < 0) {
-            throw new BadProjectionParameterException("r_theta cannot be inferior to 0");
-        }        
+        double r_theta = getTheta_a() + y0 - theta;       
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
         double[] coord = {x, y};

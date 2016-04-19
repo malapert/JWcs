@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class ZenithalProjection extends Projection {
 
@@ -127,23 +127,5 @@ public abstract class ZenithalProjection extends Projection {
     @Override
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
         return true;
-    }
-    
-    protected double computeRTheta(double x, double y) {
-        return Math.hypot(x, y);
-    }
-    
-    protected double[] computeProjectionPlaceCoordinates(double rtheta, double phi) {
-        return new double[]{rtheta*Math.sin(phi), -rtheta*Math.cos(phi)};
-    }
-    
-    protected double computePhi(double x,double y, double rtheta) {
-        double phi;
-        if (NumericalUtils.equal(rtheta, 0, DOUBLE_TOLERANCE)) {
-            phi = 0;
-        } else {
-            phi = NumericalUtils.aatan2(x, y);
-        }        
-        return phi;
     }
 }

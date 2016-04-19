@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * Conic perspective.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class COP extends ConicProjection {
     
@@ -37,13 +37,19 @@ public class COP extends ConicProjection {
      */
     private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";    
 
-    /**
-     * Creates an instance.
+   /**
+     * Constructs a COP projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 03B8<sub>a</sub> and \u03B7.
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param theta_a (theta1 + theta2) / 2 in degrees
-     * @param eta abs(theta1 - theta2) / 2 in degrees
+     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      */
     public COP(double crval1, double crval2, double theta_a, double eta)  {
         super(crval1, crval2, theta_a, eta);
@@ -55,11 +61,11 @@ public class COP extends ConicProjection {
         double yr = Math.toRadians(y);
         double c = Math.sin(getTheta_a());
         if (NumericalUtils.equal(c, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Bad value for theta_a: " + getTheta_a());
+            throw new BadProjectionParameterException("COP: Bad value for theta_a: " + getTheta_a());
         }
         double d = Math.cos(getEta());
         if (NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Bad value for eta: " + getEta());
+            throw new BadProjectionParameterException("COP: Bad value for eta: " + getEta());
         }
         double y0 = d / Math.tan(getTheta_a());       
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
@@ -80,14 +86,11 @@ public class COP extends ConicProjection {
         phi = phiRange(phi);
         double c = Math.sin(getTheta_a());
         if (NumericalUtils.equal(c, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Bad value for theta_a: " + getTheta_a());
+            throw new BadProjectionParameterException("COE: Bad value for theta_a: " + getTheta_a());
         }
         double a = c*phi;
         double y0 = Math.cos(getEta()) / Math.tan(getTheta_a());      
         double r_theta = y0 - Math.cos(getEta())*Math.tan(theta-getTheta_a());
-        if(r_theta < 0) {
-            throw new BadProjectionParameterException("r_theta cannot be inferior to 0");
-        }
         double x = Math.toDegrees(r_theta *Math.sin(a));
         double y = Math.toDegrees(y0 - r_theta*Math.cos(a));
 

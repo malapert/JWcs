@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class CYP extends CylindricalProjection {
     
@@ -45,39 +45,51 @@ public class CYP extends CylindricalProjection {
     private static final String DESCRIPTION = "\u03BC=%s \u03BB=%s";     
 
     /**
-     * Default MU.
+     * Default value for \u03BC.
      */
     public static final double DEFAULT_MU = 1;
 
     /**
-     * Default lambda.
+     * Default value for \u03BB.
      */
     public static final double DEFAULT_LAMBDA = 1;
     
     /**
-     * \u03BC.
+     * \u03BC: distance in spherical radii from the center of the sphere to the equatorial plane of the native system. 
      */
     private double mu;
     /**
-     * \u03BB.
+     * \u03BB: radius of the cylinder in spherical radii.
      */
     private double lambda;
     
-    /**
-     * Creates an instance.
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a CYP projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     *
+     * \u03BC is set to {@link CYP#DEFAULT_MU}.
+     * \u03BB is set to {@link CYP#DEFAULT_LAMBDA}.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public CYP(double crval1, double crval2) {
         this(crval1, crval2, DEFAULT_MU, DEFAULT_LAMBDA);
     }
     
     /**
-     * Creates an instance
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param mu distance measured from the center of the sphere in the direction opposite the projected surface
-     * @param lambda radius of the cylinder
+     * Constructs a CYP projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BC and \u03BB. 
+     *
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param mu \u03BC distance measured from the center of the sphere in the direction opposite the projected surface
+     * @param lambda \u03BB radius of the cylinder
      * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">Representations of celestial coordinates in FITS, chapter 5.2.1</a>
      */
     public CYP(double crval1, double crval2, double mu, double lambda) {
@@ -94,11 +106,11 @@ public class CYP extends CylindricalProjection {
      */
     protected final void check() {
         if (getLambda() < 0) {
-            LOG.log(Level.WARNING, "Lambda must be >= 0 -- resetting to 1");
+            LOG.log(Level.WARNING, "CYP: Lambda must be >= 0 -- resetting to 1");
             this.lambda = 1;
         }
         if (NumericalUtils.equal(getMu(),-getLambda(), DOUBLE_TOLERANCE)) {
-            LOG.log(Level.WARNING, "Mu must not be -lambda -- resetting to 1");
+            LOG.log(Level.WARNING, "CYP: Mu must not be -lambda -- resetting to 1");
             this.mu = 1;
         }              
     }

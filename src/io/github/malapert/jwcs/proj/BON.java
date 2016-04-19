@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class BON extends PolyConicProjection {
     
@@ -49,11 +49,13 @@ public class BON extends PolyConicProjection {
 
     /**
      * Constructs a BON projection by providing celestial longitude and latitude
-     * of the fiducial point (crval1, crval2) and theta1.
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03B8<sub>1</sub>.
      *
-     * @param crval1 celestial longitude of the fiducial point in degrees
-     * @param crval2 celestial latitude of the fiducial point in degrees
-     * @param theta1 PV<code>nbAxis</code>_1 in degrees
+     * \u03B8<sub>1</sub> can be set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
+     * @param theta1 \u03B8<sub>1</sub> latitude in degrees. 
      */
     public BON(double crval1, double crval2, double theta1) {
         super(crval1, crval2, theta1);
@@ -62,14 +64,6 @@ public class BON extends PolyConicProjection {
         }
     }
 
-    /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
-     * @param x projection plane coordinate along X
-     * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     */
     @Override
     protected double[] project(double x, double y) {
         double[] result;
@@ -96,14 +90,6 @@ public class BON extends PolyConicProjection {
         return result;
     }
 
-    /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates.
-     *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
-     * @return the projection plane coordinates
-     */
     @Override
     protected double[] projectInverse(double phi, double theta) {
         double[] result;

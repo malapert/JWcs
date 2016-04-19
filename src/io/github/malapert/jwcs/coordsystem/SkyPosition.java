@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ import io.github.malapert.jwcs.utility.HMS;
  */
 public class SkyPosition {
     
+    /**
+     * Factor to convert degrees to hours.
+     */
     public static final double TO_HOURS = 24d/360d;
     
     /**

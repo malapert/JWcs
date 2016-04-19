@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class COE extends ConicProjection {
 
@@ -46,29 +46,24 @@ public class COE extends ConicProjection {
      */
     private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
     
-    /**
-     * Creates an instance.
+   /**
+     * Constructs a COE projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 03B8<sub>a</sub> and \u03B7.
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param theta_a (theta1 + theta2) / 2 in degrees
-     * @param eta abs(theta1 - theta2) / 2 in degrees
+     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      */
     public COE(double crval1, double crval2, double theta_a, double eta) {
         super(crval1, crval2, theta_a, eta);
     }
 
-    /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
-     *
-     * @param x projection plane coordinate along X
-     * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a projection parameter is wrong
-     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When the pixel is beyond the visible projection
-     */
     @Override
     protected double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
@@ -77,7 +72,7 @@ public class COE extends ConicProjection {
         double theta2 = getTheta_a() + getEta();
         double gamma = Math.sin(theta1) + Math.sin(theta2);
         if (NumericalUtils.equal(gamma, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Projection parameters: sin(theta1) + sin(theta2) = 0");
+            throw new BadProjectionParameterException("COE : Projection parameters: sin(theta1) + sin(theta2) = 0");
         }
         double c = gamma * 0.5;                
         double y0 = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin((theta1+theta2)*0.5)) / c;
@@ -95,16 +90,8 @@ public class COE extends ConicProjection {
         return pos;
     }
 
-    /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates.
-     *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
-     * @return the projection plane coordinates
-     */
     @Override
-    protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
+    protected double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
         double theta1 = getTheta_a() - getEta();
         double theta2 = getTheta_a() + getEta();

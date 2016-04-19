@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * Zenithal equal-area.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class ZEA extends ZenithalProjection {
 
@@ -41,10 +41,14 @@ public class ZEA extends ZenithalProjection {
      */
     private final static double TOLERANCE = 1.0e-13;
 
-    /**
-     * Creates an instance
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a ZEA projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public ZEA(double crval1, double crval2) {
         super(crval1, crval2);

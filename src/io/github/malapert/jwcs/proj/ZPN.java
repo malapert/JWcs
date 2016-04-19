@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import java.util.Arrays;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public final class ZPN extends ZenithalProjection {
     
@@ -79,11 +79,13 @@ public final class ZPN extends ZenithalProjection {
     private final transient double[] coeff;
 
     /**
-     * Creates a projection based on crval1, crval2 and the projection
+     * Creates a ZPN projection based on crval1, crval2 and the projection
      * parameters.
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      * @param PV projection parameters
      * @throws
      * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a parameter projection is wrong

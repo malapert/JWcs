@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,13 @@ public class JWcsFits extends JWcs {
         this(simpleFits.readHDU().getHeader());
     }
     
+    /**
+     * Creates an instance of JWcs based on a part of the FITS file.
+     * @param fits the FITS file
+     * @param extension the extension number of the FITS file
+     * @throws FitsException When an error happens when the FITS is handling
+     * @throws IOException When an error happens when the FITS is handling
+     */
     public JWcsFits(final Fits fits, int extension) throws FitsException, IOException {
         this(fits.getHDU(extension).getHeader());
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,19 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
-import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
- *
- * @author Jean-Christophe Malapert
+ * The cylindrical equal area projection.
+ * 
+ * <p>
+ * Reference: "Representations of celestial coordinates in FITS", 
+ * M. R. Calabretta and E. W. Greisen
+ * </p>
+ * 
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
+ * @version 2.0
  */
 public class CEA extends CylindricalProjection {
 
@@ -31,19 +37,56 @@ public class CEA extends CylindricalProjection {
      * Projection's name.
      */
     private static final String NAME_PROJECTION = "Cylindrical equal area";
-    
+
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03BB=%s";  
-    
+    private static final String DESCRIPTION = "\u03BB=%s";
+
+    /**
+     * \u03BB Scaling parameter.
+     */
     private double lambda;
 
+    /**
+     * Default value for \u03BB.
+     */
+    private static final int DEFAULT_VALUE = 1;
+
+    /**
+     * Constructs a CEA based on the celestial longitude and latitude of the
+     * fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     *
+     * \u03BB is set to {@link CEA#DEFAULT_VALUE}.
+     *
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @throws BadProjectionParameterException
+     */
+    public CEA(double crval1, double crval2) throws BadProjectionParameterException {
+        this(crval1, crval2, DEFAULT_VALUE);
+    }
+
+    /**
+     * Constructs a CEA based on the celestial longitude and latitude of the
+     * fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BB.
+     * 
+     * \u03BB is set by the FITS keyword PV<code>nbAxis</code>_1.
+     *
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param lambda \u03BB dimensionless.
+     * @throws BadProjectionParameterException
+     */
     public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
-	if (NumericalUtils.equal(lambda, 0, DOUBLE_TOLERANCE) || lambda < 0 || lambda > 1.0) 
-	  throw new BadProjectionParameterException(
-            "lambda outside of range (0,1]: " + lambda);        
+        if (NumericalUtils.equal(lambda, 0, DOUBLE_TOLERANCE) || lambda < 0 || lambda > 1.0) {
+            throw new BadProjectionParameterException("CEA: Bad projection parameter for lambda " + lambda + " - lambda outside of range (0,1]");
+        }
         setLambda(lambda);
     }
 
@@ -55,7 +98,7 @@ public class CEA extends CylindricalProjection {
         double arg = getLambda() * yr;
         double theta = NumericalUtils.aasin(arg);
         double[] pos = {phi, theta};
-        return pos;        
+        return pos;
     }
 
     @Override
@@ -68,6 +111,8 @@ public class CEA extends CylindricalProjection {
     }
 
     /**
+     * Returns \u03BB, the scaling parameter.
+     *
      * @return the lambda
      */
     private double getLambda() {
@@ -75,6 +120,8 @@ public class CEA extends CylindricalProjection {
     }
 
     /**
+     * Sets \u03BB, the scaling parameter.
+     *
      * @param lambda the lambda to set
      */
     private void setLambda(double lambda) {

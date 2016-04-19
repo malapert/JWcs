@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,18 @@ public class WcsNumericalMap extends JWcs {
 
     private Map keywords;
 
+    /**
+     * Clones a WcsNumericalMap.
+     * @param wcs WcsNumericalMap object
+     */
     public WcsNumericalMap(WcsNumericalMap wcs) {
         setKeywords(wcs.keywords);
     }
 
+    /**
+     * Creates JWcs based on a map.
+     * @param keywords map of keywords
+     */
     public WcsNumericalMap(Map keywords) {
         this.keywords = keywords;
     }

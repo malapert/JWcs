@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class AIT extends CylindricalProjection {
     
@@ -55,23 +55,14 @@ public class AIT extends CylindricalProjection {
         
     /**
      * Creates a new AIT projection based on the celestial longitude and 
-     * latitude of the fiducial point (crval1, crval2)
-     * @param crval1 celestial longitude in degrees
-     * @param crval2 celestial latitude in degrees
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */
     public AIT(double crval1, double crval2) {
         super(crval1, crval2);
     }
 
-    /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
-     * @param x projection plane coordinate along X
-     * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When the pixel is beyond the visible projection
-     */
     @Override
     public double[] project(double x, double y) throws PixelBeyondProjectionException  {
         double xr = Math.toRadians(x);

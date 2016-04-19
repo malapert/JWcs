@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class SZP extends ZenithalProjection {
     
@@ -45,46 +45,61 @@ public class SZP extends ZenithalProjection {
 
     private static final double NO_VALUE = 101;
 
+    /**
+     * \u03BC : Distance in spherical radii from the center of the sphere to the source of the projection.
+     */
     private final double mu;
+    /**
+     * Intersection of the line PO with the sphere at the \u03D5<sub>c</sub> coordinate.
+     */
     private final double thetac;
+    /**
+     * Intersection of the line PO with the sphere at the \u03B8<sub>c</sub> coordinate.
+     */    
     private final double phic;
 
     /**
-     * Default value for mu0
+     * Default value for \u03BC.
      */
     public static final double DEFAULT_VALUE_MU = 0;
 
     /**
-     * Default value for PHIC
+     * Default value for \u03D5<sub>c</sub>.
      */
     public static final double DEFAULT_VALUE_PHIC = 0;
 
     /**
-     * Default value for THETAC
+     * Default value for \u03B8<sub>c</sub>.
      */
     public static final double DEFAULT_VALUE_THETAC = 90;
 
-    /**
-     * Create an instance.
-     *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a SZP projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * \u03D5<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_PHIC}.
+     * \u03B8<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_THETAC}.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public SZP(double crval1, double crval2) {
-        super(crval1, crval2);
-        this.mu = DEFAULT_VALUE_MU;
-        this.thetac = Math.toRadians(DEFAULT_VALUE_THETAC);
-        this.phic = Math.toRadians(DEFAULT_VALUE_PHIC);
+        this(crval1, crval2, DEFAULT_VALUE_MU, DEFAULT_VALUE_THETAC, DEFAULT_VALUE_PHIC);
     }
 
-    /**
-     * Creates an instance.
-     *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param mu Parameter projection
-     * @param phic Parameter projection
-     * @param thetac Parameter projection
+   /**
+     * Constructs a SZP projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param mu \u03BC parameter projection
+     * @param phic \u03B8<sub>c</sub> parameter projection
+     * @param thetac \u03D5<sub>c</sub> parameter projection
      */
     public SZP(double crval1, double crval2, double mu, double phic, double thetac) {
         super(crval1, crval2);
@@ -99,7 +114,7 @@ public class SZP extends ZenithalProjection {
      */
     protected final void check() {
         if ((getPhi0() != 0) || (getTheta0() != HALF_PI)) {
-            throw new IllegalArgumentException("Non-standard PVi_1 and/or PVi_2 values");
+            throw new IllegalArgumentException("Non-standard phi0 or theta0 values");
         }
     }
 

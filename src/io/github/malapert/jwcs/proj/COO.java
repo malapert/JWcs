@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * Conic orthomorphic.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class COO extends ConicProjection {
 
@@ -37,29 +37,24 @@ public class COO extends ConicProjection {
      */
     private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
     
-    /**
-     * Creates an instance.
+   /**
+     * Constructs a COO projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 03B8<sub>a</sub> and \u03B7.
      *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
-     * @param theta_a (theta1 + theta2) / 2 in degrees
-     * @param eta abs(theta1 - theta2) / 2 in degrees
+     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees.
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      */
     public COO(double crval1, double crval2, double theta_a, double eta) {
         super(crval1, crval2, theta_a, eta);
     }
 
-    /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
-     *
-     * @param x projection plane coordinate along X
-     * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     * @throws
-     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a projection parameter is wrong
-     */
     @Override
     protected double[] project(double x, double y) throws BadProjectionParameterException {
         double xr = Math.toRadians(x);
@@ -70,7 +65,7 @@ public class COO extends ConicProjection {
         double tan2 = Math.tan((HALF_PI - theta2) * 0.5);
         double c = (NumericalUtils.equal(theta1,theta2,DOUBLE_TOLERANCE)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
         if (NumericalUtils.equal(c,0,DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("Projection parameters: sin(theta1) + sin(theta2) = 0");
+            throw new BadProjectionParameterException("COO : Projection parameters: sin(theta1) + sin(theta2) = 0");
         }
         double psi = (NumericalUtils.equal(tan1,0, DOUBLE_TOLERANCE)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
@@ -86,15 +81,6 @@ public class COO extends ConicProjection {
         return pos;
     }
 
-    /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates.
-     *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
-     * @return the projection plane coordinates
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a projection parameter is wrong
-     */
     @Override
     protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
         double theta1 = getTheta_a() - Math.abs(getEta());
@@ -105,14 +91,11 @@ public class COO extends ConicProjection {
         double psi = (NumericalUtils.equal(tan1,0,DOUBLE_TOLERANCE)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         if (NumericalUtils.equal(psi,0,DOUBLE_TOLERANCE)) {
             throw new BadProjectionParameterException(
-                    "Projection parameters: theta_a, eta = " + getTheta_a() + ", " + getEta());
+                    "COO : Projection parameters: theta_a, eta = " + getTheta_a() + ", " + getEta());
         }
         double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
         phi = phiRange(phi);
-        double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);
-        if (r_theta < 0) {
-            throw new BadProjectionParameterException("r_theta cannot be inferior to 0");
-        }        
+        double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
         double x = Math.toDegrees(r_theta * Math.sin(c * phi));
         double y = Math.toDegrees(-r_theta * Math.cos(c * phi) + y0);
         double[] coord = {x, y};

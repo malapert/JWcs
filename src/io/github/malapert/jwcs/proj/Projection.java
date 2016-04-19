@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Projection {
 
@@ -190,7 +190,7 @@ public abstract class Projection {
         double phi_p;
         if (NumericalUtils.equal(getCrval2(), getTheta0(), DOUBLE_TOLERANCE)) {
             phi_p = LONPOLE_0;
-        } else if (getCrval2() > getTheta0()) {
+        } else if (getCrval2()-DOUBLE_TOLERANCE > getTheta0()) {
             phi_p = LONPOLE_0;
         } else {
             phi_p = LONPOLE_PI;
@@ -277,15 +277,23 @@ public abstract class Projection {
         LOG.log(Level.FINER, "computeNativeSpherical:dec[rad]", dec);
         double ra_p = getCoordNativePole()[0];
         double dec_p = getCoordNativePole()[1];
-
-        double phi = getPhip() + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
-                Math.sin(dec) * Math.cos(dec_p)
-                - Math.cos(dec) * Math.sin(dec_p)
-                * Math.cos(ra - ra_p));
-        double theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
-                + Math.cos(dec) * Math.cos(dec_p)
-                * Math.cos(ra - ra_p));
-
+        
+        double phi, theta;
+        if (NumericalUtils.equal(dec_p, HALF_PI, DOUBLE_TOLERANCE)) {
+            phi = Math.PI + getPhip() + ra - ra_p;
+            theta = dec;
+        } else if (NumericalUtils.equal(dec_p, -HALF_PI, DOUBLE_TOLERANCE)) {
+            phi = getPhip() - ra + ra_p;
+            theta = -dec;            
+        } else {
+            phi = getPhip() + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
+                    Math.sin(dec) * Math.cos(dec_p)
+                    - Math.cos(dec) * Math.sin(dec_p)
+                    * Math.cos(ra - ra_p));
+            theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
+                     + Math.cos(dec) * Math.cos(dec_p)
+                     * Math.cos(ra - ra_p));      
+        }                   
         double[] pos = {phi, theta};
         LOG.log(Level.FINER, "computeNativeSpherical:pos[rad]", pos);
         return pos;
@@ -326,7 +334,7 @@ public abstract class Projection {
 
             if (NumericalUtils.equal(getTheta0(), 0, DOUBLE_TOLERANCE)
                     && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE)
-                    && NumericalUtils.equal(getPhip(), getPhi0(), HALF_PI)) {
+                    && NumericalUtils.equal(Math.abs(getPhip()-getPhi0()), HALF_PI, DOUBLE_TOLERANCE)) {
                 deltap = getThetap();
             } else {
 
@@ -358,7 +366,7 @@ public abstract class Projection {
             double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
             alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
         }
-        double[] pos = {alphap, deltap};
+        double[] pos = {alphap, deltap};        
         LOG.log(Level.FINER, "computeCoordNativePole:pos[rad]", pos);
         return pos;
     }
@@ -478,7 +486,12 @@ public abstract class Projection {
      */
     public abstract boolean inside(double lon, double lat);
     
-
+    /**
+     * Checks if the line is visible.
+     * @param pos1 First point of the line
+     * @param pos2 Last point of the line
+     * @return Returns True when the line is visible otherwise False
+     */
     public abstract boolean isLineToDraw(double[] pos1, double[] pos2); 
 
     /**

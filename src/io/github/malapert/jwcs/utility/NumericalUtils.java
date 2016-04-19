@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public abstract class NumericalUtils {
      * @param precision precision for the comparison
      * @return True when <code>val1</code> and <code>val2</code> are equals.
      */
-    public static boolean equal(double val1, double val2, double precision) {
+    public final static boolean equal(double val1, double val2, double precision) {
         return Math.abs(val2 - val1) <= precision;
     }
 
@@ -45,7 +45,7 @@ public abstract class NumericalUtils {
      * @param pos position in the sky
      * @return the position in the cartesian reference system
      */
-    public static double[] radec2xyz(double pos[]) {
+    public final static double[] radec2xyz(double pos[]) {
         double[] xyz = new double[3];
         xyz[0] = Math.cos(pos[1]) * Math.cos(pos[0]);
         xyz[1] = Math.cos(pos[1]) * Math.sin(pos[0]);
@@ -59,7 +59,7 @@ public abstract class NumericalUtils {
      * @param pos position in the sky
      * @return the norm of the position.
      */
-    public static double normVector(double[] pos) {
+    public final static double normVector(double[] pos) {
         return Math.hypot(pos[0], pos[1]);
     }
 
@@ -70,7 +70,7 @@ public abstract class NumericalUtils {
      * @param pos2 second angle.
      * @return the distance between two angles
      */
-    public static double distAngle(double[] pos1, double[] pos2) {
+    public final static double distAngle(double[] pos1, double[] pos2) {
         double[] xyzPos1 = radec2xyz(pos1);
         double[] xyzPos2 = radec2xyz(pos2);
         double dot = xyzPos1[0] * xyzPos2[0] + xyzPos1[1] * xyzPos2[1] + xyzPos1[2] * xyzPos2[2];
@@ -87,17 +87,17 @@ public abstract class NumericalUtils {
      * @return the theta component of the point (r, theta) in polar coordinates 
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
-    public static double aatan2(double n, double d) {
+    public final static double aatan2(double n, double d) {
         final double ATOL = 1.0e-13;
         return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? 0 : Math.atan2(n, d));
     }
-
+    
     /**
      * Asin operation
      * @param v the value whose arc sine is to be returned
      * @return the arc sine of the argument. 
      */
-    public static double aasin(double v) {
+    public final static double aasin(double v) {
         final double ONE_TOL = 1.00000000000001;
         double av = Math.abs(v);
         if (av >= 1) {
@@ -114,7 +114,7 @@ public abstract class NumericalUtils {
      * @param v the value whose arc cosine is to be returned.
      * @return the value whose arc cosine is to be returned
      */
-    public static double aacos(double v) {
+    public final static double aacos(double v) {
         if (Math.abs(v) > 1.) {
             return v < 0.0 ? Math.PI : 0.0;
         }
@@ -126,7 +126,7 @@ public abstract class NumericalUtils {
      * @param angle latitude in radians
      * @return the angle from -half_PI to half_PI
      */
-    public static double normalizeLatitude(double angle) {
+    public final static double normalizeLatitude(double angle) {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite latitude");
         }
@@ -153,7 +153,7 @@ public abstract class NumericalUtils {
      * @param angle longitude in radians
      * @return the angle from 0 to 2PI
      */
-    public static double normalizeLongitude(double angle) {
+    public final static double normalizeLongitude(double angle) {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite longitude");
         }
@@ -177,29 +177,25 @@ public abstract class NumericalUtils {
         return angle;
     }
 
-    public static double normalizeLongitudeD(double angle) {
-        if (Double.isInfinite(angle) || Double.isNaN(angle)) {
-            throw new JWcsError("Infinite longitude");
-        }
-
-        if (Math.abs(angle % 360 - 0) < 1e-15) {
-            return 0;
-        }
-
-        return angle % 360;
-    }
-
     /**
      * Formats the number with a precision with 3 digits after the comma.
      * @param number the number to format
      * @return the formatted number
      */
-    public static String round(double number) {
+    public final static String round(double number) {
         DecimalFormat df = new DecimalFormat("0.###");
         return df.format(number);
     }
     
-    public static boolean isInInterval(double number, double min, double max, double precision) {
+    /**
+     * Checks if the number is included in [min,max] with a numerical precision.
+     * @param number number to test
+     * @param min minimum value
+     * @param max maximum value
+     * @param precision numerical precision
+     * @return True when number is included in [min,max] otherwise False.
+     */
+    public final static boolean isInInterval(double number, double min, double max, double precision) {
         if (NumericalUtils.equal(number, min, precision)) {
             return true;
         }
@@ -207,5 +203,5 @@ public abstract class NumericalUtils {
             return true;
         }        
         return min < number && number < max;
-    }
+    } 
 }

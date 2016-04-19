@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,17 @@ package io.github.malapert.jwcs.proj.exception;
  */
 public class UnsupportedProjectionException extends ProjectionException {
 
+    /**
+     * Creates an UnsupportedProjectionException based on a message.
+     * @param s message
+     */
     public UnsupportedProjectionException(final String s) {
         super(s);
     }
 
+    /**
+     * Creates an UnsupportedProjectionException.
+     */
     public UnsupportedProjectionException() {
         super("Unsupported Projection");
     }

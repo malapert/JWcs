@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +78,24 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class JWcs implements JWcsKeyProvider {
 
+    /**
+     * Maximum longitude value in degrees.
+     */
     public static final int MAX_LONGITUDE = 360;
+
+    /**
+     * Minimum longitude value in degrees.
+     */
     public static final int MIN_LONGITUDE = 0;
+
+    /**
+     * Minimum latitude value in degrees.
+     */
     public static final int MIN_LATITUDE = -90;
+
+    /**
+     * Maximum latitude value in degrees.
+     */
     public static final int MAX_LATITUDE = 90;
 
     /**
@@ -237,6 +252,9 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     private RealMatrix cdInverse;
 
+    /**
+     * LOG.
+     */
     protected static final Logger LOG = Logger.getLogger(JWcs.class.getName());
 
     /**
@@ -929,6 +947,12 @@ public abstract class JWcs implements JWcsKeyProvider {
         return this.getProj().inside(Math.toRadians(lon), Math.toRadians(lat));
     }
 
+    /**
+     * Checks if the line is visible.
+     * @param pos1 first point of the line
+     * @param pos2 last point of the line
+     * @return True when the line is visible otherwise False.
+     */
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
         boolean result;
         boolean isFinite = Double.isFinite(pos1[0]) && Double.isFinite(pos1[1]) && Double.isFinite(pos2[0]) && Double.isFinite(pos2[1]);

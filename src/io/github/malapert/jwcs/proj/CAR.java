@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ package io.github.malapert.jwcs.proj;
  * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class CAR extends CylindricalProjection{
     
@@ -44,9 +44,9 @@ public class CAR extends CylindricalProjection{
 
     /**
      * Constructs a CAR based on the celestial longitude and 
-     * latitude of the fiducial point (crval1, crval2)
-     * @param crval1 celestial longitude in degrees
-     * @param crval2 celestial latitude in degrees
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */
     public CAR(double crval1, double crval2) {
         super(crval1, crval2);

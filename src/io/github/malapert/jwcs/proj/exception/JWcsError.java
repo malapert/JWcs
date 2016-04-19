@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,34 @@ package io.github.malapert.jwcs.proj.exception;
  */
 public class JWcsError extends RuntimeException {
     
+    /**
+     * Creates an error.
+     */
     public JWcsError() {
         super();
     }
     
+    /**
+     * Creates an error based on a message.
+     * @param message message
+     */
     public JWcsError(String message) {
         super(message);
     }    
     
+    /**
+     * Creates an error based on a cause.
+     * @param cause cause
+     */
     public JWcsError(Throwable cause) {
         super(cause);
     }    
     
+    /**
+     * Creates an error based on a message and a cause.
+     * @param message message
+     * @param cause cause
+     */
     public JWcsError(String message, Throwable cause) {
         super(message, cause);
     }    

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class MOL extends CylindricalProjection {
 
@@ -43,23 +43,32 @@ public class MOL extends CylindricalProjection {
     private static final String DESCRIPTION = "no limits";
     
     /**
-     *
+     * Default tolerance for the iterative solution.
      */
     public static final double DEFAULT_TOLERANCE = 1E-15;
 
     /**
-     *
+     * Default maximum iteration for the iterative solution.
      */
     public static final double DEFAULT_MAX_ITER = 100;
 
+    /**
+     * Tolerance for the iterative solution.
+     */
     private double tolerance;
+    /**
+     * Maximum iteration for the iterative solution.
+     */
     private double maxIter;
 
-    /**
-     * Creates an instance.
-     *
-     * @param crval1 Celestial longitude in degrees of the ﬁducial point
-     * @param crval2 Celestial latitude in degrees of the ﬁducial point
+   /**
+     * Constructs a MOL projection based on the celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
+     * fiducial point
+     * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
+     * fiducial point
      */
     public MOL(double crval1, double crval2) {
         super(crval1, crval2);
@@ -69,6 +78,7 @@ public class MOL extends CylindricalProjection {
 
     @Override
     protected double[] project(double x, double y) {
+        //TODO : check algorithm.
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double tol = 1.0e-12;
@@ -130,7 +140,7 @@ public class MOL extends CylindricalProjection {
                 v1 = v;
             }
         } while (Math.abs(diff) > getTolerance() && nIter < getMaxIter());
-        double gamma = v / 2.0;
+        double gamma = v*0.5;
         double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phi * Math.cos(gamma));
         double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
         double[] coord = {x, y};

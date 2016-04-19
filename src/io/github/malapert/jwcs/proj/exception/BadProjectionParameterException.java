@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Jean-Christophe Malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@ package io.github.malapert.jwcs.proj.exception;
  */
 public class BadProjectionParameterException extends ProjectionException{
 
+    /**
+     * Creates a new Exception.
+     * @param message message
+     */
     public BadProjectionParameterException(final String message) {
         super(message);
     }
