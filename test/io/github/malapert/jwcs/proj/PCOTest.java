@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class PCOTest extends ProjectionTest {
     
     public PCOTest() throws FitsException, IOException, JWcsException {
-        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_PCO.fits"))), 1e-4);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_PCO.fits"))), 1e-6);
     }
     
     @BeforeClass

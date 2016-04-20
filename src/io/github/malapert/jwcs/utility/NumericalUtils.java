@@ -98,15 +98,15 @@ public abstract class NumericalUtils {
      * @return the arc sine of the argument. 
      */
     public final static double aasin(double v) {
-        final double ONE_TOL = 1.00000000000001;
+        final double ATOL = 1.0e-13;
         double av = Math.abs(v);
-        if (av >= 1) {
-            if (av > ONE_TOL) {
-                return Double.NaN;
-            }
-            return v < 0 ? -Math.PI / 2 : Math.PI / 2;
-        }
-        return Math.asin(v);
+        if (equal(v, 1, ATOL)) {
+            return Math.PI/2;
+        } else if (equal(v, -1, ATOL)) {
+            return -Math.PI/2;
+        } else {
+            return Math.asin(v);
+        }        
     }
 
     /**

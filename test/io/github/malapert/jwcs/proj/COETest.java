@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class COETest extends ProjectionTest {
     
     public COETest() throws FitsException, IOException, JWcsException {
-        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_COE.fits"))), 1e-5);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_COE.fits"))));
     }
     
     @BeforeClass

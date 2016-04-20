@@ -25,28 +25,28 @@ import io.github.malapert.jwcs.utility.NumericalUtils;
  * @version 2.0
  */
 public class PCO extends PolyConicProjection {
-    
+
     /**
      * Projection's name.
      */
     private static final String NAME_PROJECTION = "Polyconic";
-    
+
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "no limits";    
+    private static final String DESCRIPTION = "no limits";
 
     /**
      * Default tolerance for the approximative solution of the inverse
      * projection.
      */
-    public static final double DEFAULT_TOLERANCE = 1E-15;
+    public static final double DEFAULT_TOLERANCE = 1E-16;
 
     /**
      * Default maximum iterations for the approximative solution of the inverse
      * projection.
      */
-    public static final double DEFAULT_MAX_ITER = 1000;
+    public static final int DEFAULT_MAX_ITER = 1000;
 
     /**
      * Tolerance for the approximative solution.
@@ -55,12 +55,12 @@ public class PCO extends PolyConicProjection {
     /**
      * Number of iterations for the approximative solution.
      */
-    private double maxIter;
+    private int maxIter;
 
-   /**
+    /**
      * Constructs a PCO projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
-     * 
+     *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
@@ -95,7 +95,7 @@ public class PCO extends PolyConicProjection {
      *
      * @return the maxIter
      */
-    public double getMaxIter() {
+    public int getMaxIter() {
         return maxIter;
     }
 
@@ -104,7 +104,7 @@ public class PCO extends PolyConicProjection {
      *
      * @param maxIter the maxIter to set
      */
-    public final void setMaxIter(double maxIter) {
+    public final void setMaxIter(int maxIter) {
         this.maxIter = maxIter;
     }
 
@@ -112,78 +112,81 @@ public class PCO extends PolyConicProjection {
     protected double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        
-        double phi,theta = 0;
-	if (NumericalUtils.equal(yr, 0, DOUBLE_TOLERANCE)) {
-	    phi = xr;
-	    theta = 0.0;
-	} else if (NumericalUtils.equal(yr, HALF_PI, DOUBLE_TOLERANCE)) {
-	    phi = 0.0;
-	    theta = (yr < 0.0) ? -HALF_PI : HALF_PI;
-	} else {
+
+        double phi, theta = 0;
+        if (NumericalUtils.equal(yr, 0, DOUBLE_TOLERANCE)) {
+            phi = xr;
+            theta = 0.0;
+        } else if (NumericalUtils.equal(yr, HALF_PI, DOUBLE_TOLERANCE)) {
+            phi = 0.0;
+            theta = (yr < 0.0) ? -HALF_PI : HALF_PI;
+        } else {
             double thepos;
-	    // Iterative solution using weighted division of the interval. 
-	    if (yr > 0.0) {
-		thepos =  HALF_PI;
-	    } else {
-		thepos = -HALF_PI;
-	    }
-	    double theneg = 0.0;
+            // Iterative solution using weighted division of the interval. 
+            if (yr > 0.0) {
+                thepos = HALF_PI;
+            } else {
+                thepos = -HALF_PI;
+            }
+            double theneg = 0.0;
 
-	    double xx = xr*xr;
-	    double ymthe = yr - thepos;
-	    double fpos = xx + ymthe*ymthe;
-	    double fneg = -999.0;
+            double xx = xr * xr;
+            double ymthe = yr - thepos;
+            double fpos = xx + ymthe * ymthe;
+            double fneg = -999.0;
             double tanthe = 1.0;
-	    for (int j = 0; j < getMaxIter(); j++) {
-		if (fneg < -100.0) {
+            for (int j = 0; j < getMaxIter(); j++) {
+                if (fneg < -100.0) {
 
-		    // Equal division of the interval. 
-		    theta = (thepos+theneg)/2.0;
-		} else {
+                    // Equal division of the interval. 
+                    theta = (thepos + theneg) / 2.0;
+                } else {
 
-		    // Weighted division of the interval. 
-		    double lambda = fpos/(fpos-fneg);
-		    if (lambda < 0.1) {
-			lambda = 0.1;
-		    } else if (lambda > 0.9) {
-			lambda = 0.9;
-		    }
-		    theta = thepos - lambda*(thepos-theneg);
-		}
+                    // Weighted division of the interval. 
+                    double lambda = fpos / (fpos - fneg);
+                    if (lambda < 0.1) {
+                        lambda = 0.1;
+                    } else if (lambda > 0.9) {
+                        lambda = 0.9;
+                    }
+                    theta = thepos - lambda * (thepos - theneg);
+                }
 
-		// Compute the residue. 
-		ymthe = yr - theta;
-		tanthe = Math.tan(theta);
-		double f = xx + ymthe*(ymthe - 2/tanthe);
+                // Compute the residue. 
+                ymthe = yr - theta;
+                tanthe = Math.tan(theta);
+                double f = xx + ymthe * (ymthe - 2 / tanthe);
 
-		// Check for convergence. 
-		if (NumericalUtils.equal(f,0, getTolerance())) break;
-		if (NumericalUtils.equal(thepos, theneg, getTolerance())) break;
+                // Check for convergence. 
+                if (NumericalUtils.equal(f, 0, getTolerance())) {
+                    break;
+                }
+                if (NumericalUtils.equal(thepos, theneg, getTolerance())) {
+                    break;
+                }
 
-		// Redefine the interval. 
-		if (f > 0.0) {
-		    thepos = theta;
-		    fpos = f;
-		} else {
-		    theneg = theta;
-		    fneg = f;
-		}
-	    }
+                // Redefine the interval. 
+                if (f > 0.0) {
+                    thepos = theta;
+                    fpos = f;
+                } else {
+                    theneg = theta;
+                    fneg = f;
+                }
+            }
 
-	    double xp = 1 - ymthe*tanthe;
-	    double yp = xr*tanthe;
-	    if (NumericalUtils.equal(xp, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(yp, 0.0, DOUBLE_TOLERANCE)) {
-		phi = 0.0;
-	    } else {
-		phi = NumericalUtils.aatan2(yp, xp)/Math.sin(theta);
-	    }
-	}
-        
+            double xp = 1 - ymthe * tanthe;
+            double yp = xr * tanthe;
+            if (NumericalUtils.equal(xp, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(yp, 0, DOUBLE_TOLERANCE)) {
+                phi = 0.0;
+            } else {
+                phi = NumericalUtils.aatan2(yp, xp) / Math.sin(theta);
+            }
+        }
+
         double[] pos = {phi, theta};
-        return pos;        
+        return pos;
     }
-
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
@@ -198,7 +201,7 @@ public class PCO extends PolyConicProjection {
         } else {
             double cotthe = costhe / sinthe;
             x = cotthe * Math.sin(a);
-            y = (cotthe * (1.0 - Math.cos(a)) + theta);
+            y = cotthe * (1.0 - Math.cos(a)) + theta;
         }
         x = Math.toDegrees(x);
         y = Math.toDegrees(y);

@@ -85,6 +85,9 @@ public class COE extends ConicProjection {
         }                     
         double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
         double theta = NumericalUtils.aasin(w);
+        if (Double.isNaN(theta)) {
+            throw new PixelBeyondProjectionException("COE: No solution for (theta1,theta2)=("+Math.toDegrees(theta1)+","+Math.toDegrees(theta2)+")");
+        }
         
         double[] pos = {phi, theta};
         return pos;
