@@ -219,4 +219,9 @@ public class PCO extends PolyConicProjection {
         return DESCRIPTION;
     }
 
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        return new ProjectionParameter[]{};
+    }
+
 }

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -122,6 +123,13 @@ public class COE extends ConicProjection {
     @Override
     public boolean inside(double lon, double lat) {
         return true;
+    }    
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
+        ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
+        return new ProjectionParameter[]{p1,p2};    
     }    
 
 }

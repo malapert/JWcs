@@ -108,7 +108,23 @@ public abstract class ZenithalProjection extends Projection {
     @Override
     protected double[] computeCoordNativePole(double phi_p) {
        return new double[]{getCrval1(), getCrval2()};
+    }
+
+    protected double computeRadius(double x, double y) {
+        return Math.hypot(x, y);
+    }
+    
+    protected double computeX(double radius, double phi) {
+        return radius*Math.sin(phi);
+    }
+    
+    protected double computeY(double radius, double phi) {
+        return -radius*Math.cos(phi);
     }    
+    
+    protected double computePhi(double x, double y, double radius) {
+        return NumericalUtils.equal(radius, 0, DOUBLE_TOLERANCE) ? 0 : NumericalUtils.aatan2(x, -y);
+    }       
     
     @Override
     public String getNameFamily() {
@@ -127,5 +143,5 @@ public abstract class ZenithalProjection extends Projection {
     @Override
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
         return true;
-    }
+    }        
 }

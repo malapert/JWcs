@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -129,8 +130,12 @@ public class SIN extends ZenithalProjection {
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) {
+    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         phi = phiRange(phi);
+        double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(theta));
+        if (theta < thetax) {
+            throw new PixelBeyondProjectionException("not visisble");
+        }
         double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
         double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
         double[] coord = {x, y};
@@ -146,4 +151,11 @@ public class SIN extends ZenithalProjection {
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(this.ksi), NumericalUtils.round(this.eta));
     }
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("ksi", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        return new ProjectionParameter[]{p1,p2};    
+    }    
 }

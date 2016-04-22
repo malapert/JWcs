@@ -89,17 +89,23 @@ public abstract class NumericalUtils {
      */
     public final static double aatan2(double n, double d) {
         final double ATOL = 1.0e-13;
-        return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? 0 : Math.atan2(n, d));
+        return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? Double.NaN : Math.atan2(n, d));
     }
     
     /**
-     * Asin operation
-     * @param v the value whose arc sine is to be returned
+     * Asin operation.
+     * 
+     * Returns the arc sine of a value; the returned angle is in the range -pi/2 through pi/2. Special cases:
+     * <ul>
+     *   <li>If the argument is NaN or its absolute value is greater than 1, then the result is NaN.</li>
+     *   <li>If the argument is zero, then the result is a zero with the same sign as the argument.</li>
+     * </ul>     
+     * 
+     * @param v the value whose arc sine is returned
      * @return the arc sine of the argument. 
      */
     public final static double aasin(double v) {
-        final double ATOL = 1.0e-13;
-        double av = Math.abs(v);
+        final double ATOL = 1.0e-13;        
         if (equal(v, 1, ATOL)) {
             return Math.PI/2;
         } else if (equal(v, -1, ATOL)) {
@@ -130,20 +136,20 @@ public abstract class NumericalUtils {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite latitude");
         }
-        if (Math.abs(angle - Projection.HALF_PI) < 1e-15) {
+        if (Math.abs(angle - Projection.HALF_PI) < 1e-12) {
             return Projection.HALF_PI;
         }
-        if (Math.abs(angle + Projection.HALF_PI) < 1e-15) {
+        if (Math.abs(angle + Projection.HALF_PI) < 1e-12) {
             return -Projection.HALF_PI;
         }
-        if (angle > Projection.HALF_PI) {
-            angle = Projection.HALF_PI;
-        }
 
-        if (angle < -Projection.HALF_PI) {
-            angle = -Projection.HALF_PI;
+        if (angle > Math.PI) {
+            angle -= Projection.TWO_PI;
         }
-
+        
+        if (angle < -Math.PI) {
+            angle += Projection.TWO_PI;
+        }
         return angle;
     }
 

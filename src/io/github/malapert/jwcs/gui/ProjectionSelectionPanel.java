@@ -8,6 +8,7 @@ package io.github.malapert.jwcs.gui;
 import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.coordsystem.Utility;
 import io.github.malapert.jwcs.proj.Projection;
+import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -106,26 +107,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        if(wcs.isLineToDraw(pos1, pos2)) {
-                                MapLine line = new MapLine();
-                                line.addPoint(pos1[0], pos1[1]);
-                                line.addPoint(pos2[0], pos2[1]);
-                                latitudes.add(line);                            
+                        if (wcs.isLineToDraw(pos1, pos2)) {
+                            MapLine line = new MapLine();
+                            line.addPoint(pos1[0], pos1[1]);
+                            line.addPoint(pos2[0], pos2[1]);
+                            latitudes.add(line);
                         }
-//                        if (Double.isFinite(pos1[0])) {
-//                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
-//                                MapLine line = new MapLine();
-//                                line.addPoint(pos1[0], pos1[1]);
-//                                line.addPoint(pos2[0], pos2[1]);
-//                                latitudes.add(line);
-//                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
-//                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
-//                                MapLine line = new MapLine();
-//                                line.addPoint(pos1[0], pos1[1]);
-//                                line.addPoint(pos2[0], pos2[1]);
-//                                latitudes.add(line);
-                            //}
-//                        }
                         System.arraycopy(pos2, 0, pos1, 0, pos2.length);
                     } else {
                         pos1[0] = Double.NaN;
@@ -149,26 +136,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        if (wcs.isLineToDraw(pos1,pos2)) {
-                                MapLine line = new MapLine();
-                                line.addPoint(pos1[0], pos1[1]);
-                                line.addPoint(pos2[0], pos2[1]);
-                                longitudes.add(line);                            
+                        if (wcs.isLineToDraw(pos1, pos2)) {
+                            MapLine line = new MapLine();
+                            line.addPoint(pos1[0], pos1[1]);
+                            line.addPoint(pos2[0], pos2[1]);
+                            longitudes.add(line);
                         }
-                        //if (Double.isFinite(pos1[0])) {
-//                            if ((wcs.getNameFamily().equals(CylindricalProjection.NAME) || wcs.getNameFamily().equals(PolyConicProjection.NAME)) && Math.abs(pos1[0] - pos2[0]) < 50) {
-//                                MapLine line = new MapLine();
-//                                line.addPoint(pos1[0], pos1[1]);
-//                                line.addPoint(pos2[0], pos2[1]);
-//                                longitudes.add(line);
-//                                //g2d.drawLine((int) pos1[0], (int) pos1[1], (int) pos2[0], (int) pos2[1]);
-//                            } else if (!wcs.getNameFamily().equals(CylindricalProjection.NAME) && !wcs.getNameFamily().equals(PolyConicProjection.NAME)) {
-//                                MapLine line = new MapLine();
-//                                line.addPoint(pos1[0], pos1[1]);
-//                                line.addPoint(pos2[0], pos2[1]);
-//                                longitudes.add(line);
-                            //}
-//                        }
                         System.arraycopy(pos2, 0, pos1, 0, pos2.length);
                     } else {
                         pos1[0] = Double.NaN;
@@ -209,6 +182,15 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         String projName = (String) projectionComboBox.getSelectedItem();
         JWcs wcs = JWcsMap.getProjection(projName);
         this.lines.clear();
+        PV21_Slider.setVisible(false);
+        PV21_label.setVisible(false);
+        PV21_text.setVisible(false);
+        PV22_Slider.setVisible(false);
+        PV22_label.setVisible(false);
+        PV22_text.setVisible(false);
+        PV23_Slider.setVisible(false);
+        PV23_label.setVisible(false);
+        PV23_text.setVisible(false);
         return wcs;
     }
 
@@ -222,45 +204,112 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
         try {
             JWcsMap jwcsMap = (JWcsMap) init();
+            ProjectionParameter[] params = jwcsMap.getProjectionParameters();
+            switch (params.length) {
+                case 1:
+                    ProjectionParameter p1 = params[0];
+                    double min = p1.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    double max = p1.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV21_Slider.setVisible(true);
+                    PV21_Slider.setMinimum((int) min);
+                    PV21_Slider.setMaximum((int) max);
+                    //PV21_Slider.setValue((int) p1.getDefaultValue());
+                    PV21_text.setName(p1.getName());
+                    PV21_label.setVisible(true);
+                    PV21_text.setVisible(true);
+                    break;
+                case 2:
+                    p1 = params[0];
+                    min = p1.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    max = p1.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV21_Slider.setVisible(true);
+                    PV21_Slider.setMinimum((int) min);
+                    PV21_Slider.setMaximum((int) max);
+                    //PV21_Slider.setValue((int) p1.getDefaultValue());
+                    PV21_text.setText(p1.getName());
+                    PV21_label.setVisible(true);
+                    PV21_text.setVisible(true);
+
+                    ProjectionParameter p2 = params[1];
+                    min = p2.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    max = p2.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV22_Slider.setVisible(true);
+                    PV22_Slider.setMinimum((int) min);
+                    PV22_Slider.setMaximum((int) max);
+                    //PV22_Slider.setValue((int) p2.getDefaultValue());
+                    PV22_text.setText(p2.getName());
+                    PV22_label.setVisible(true);
+                    PV22_text.setVisible(true);
+                    break;
+                case 3:
+                    p1 = params[0];
+                    min = p1.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    max = p1.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV21_Slider.setVisible(true);
+                    PV21_Slider.setMinimum((int) min);
+                    PV21_Slider.setMaximum((int) max);
+                    //PV21_Slider.setValue((int) p1.getDefaultValue());
+                    PV21_text.setText(p1.getName());
+                    PV21_label.setVisible(true);
+                    PV21_text.setVisible(true);
+
+                    p2 = params[1];
+                    min = p2.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    max = p2.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV22_Slider.setVisible(true);
+                    PV22_Slider.setMinimum((int) min);
+                    PV22_Slider.setMaximum((int) max);
+                    //PV22_Slider.setValue((int) p2.getDefaultValue());
+                    PV22_text.setText(p2.getName());
+                    PV22_label.setVisible(true);
+                    PV22_text.setVisible(true);
+
+                    ProjectionParameter p3 = params[2];
+                    min = p3.getValidInterval()[0];
+                    min = Double.isInfinite(min) ? -15 : min;
+                    max = p3.getValidInterval()[1];
+                    max = Double.isInfinite(max) ? 15 : max;
+                    PV23_Slider.setVisible(true);
+                    PV23_Slider.setMinimum((int) min);
+                    PV23_Slider.setMaximum((int) max);
+                    //PV23_Slider.setValue((int) p3.getDefaultValue());
+                    PV23_text.setText(p3.getName());
+                    PV23_label.setVisible(true);
+                    PV23_text.setVisible(true);
+                    break;
+                default:
+                    break;
+
+            }
             if (!NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.CRVAL1), lon0Slider.getValue(), 1e-13)) {
                 jwcsMap.getKeywords().put(JWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
             }
             if (!NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.CRVAL2), lat0Slider.getValue(), 1e-13)) {
                 jwcsMap.getKeywords().put(JWcs.CRVAL2, String.valueOf(lat0Slider.getValue()));
             }
+            if (PV21_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV21), PV21_Slider.getValue(), 1e-13)) {
+                jwcsMap.getKeywords().put(JWcs.PV21, String.valueOf(PV21_Slider.getValue()));
+            }
+            if (PV22_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV22), PV22_Slider.getValue(), 1e-13)) {
+                jwcsMap.getKeywords().put(JWcs.PV22, String.valueOf(PV22_Slider.getValue()));
+            }
+            if (PV23_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV23), PV23_Slider.getValue(), 1e-13)) {
+                jwcsMap.getKeywords().put(JWcs.PV23, String.valueOf(PV23_Slider.getValue()));
+            }
             jwcsMap.doInit();
             computeGrid(jwcsMap);
             map.setLines(lines);
             updateProjectionInfo(jwcsMap);
-//        try {
-//            // find the selected name, create the corresponding projection.
-//            String projName = (String) projectionComboBox.getSelectedItem();
-//            Projection projection = ProjectionFactory.getNamedProjection(projName);
-//
-//            // use the selected projection to project the lines,
-//            // and pass the projected lines to the map to display.
-//            if (projection != null) {
-//                projection.setProjectionLongitudeDegrees(lon0Slider.getValue());
-//                projection.setEllipsoid(Ellipsoid.SPHERE);
-//                projection.initialize();
-//
-//                LineProjector projector = new LineProjector();
-//                ArrayList<MapLine> projectedLines = new ArrayList<MapLine>();
-//                projector.constructGraticule(projectedLines, projection);
-//                projector.projectLines(lines, projectedLines, projection);
-//                if (inverse && projection.hasInverse()) {
-//                    projectedLines = projector.inverse(projectedLines, projection);
-//                }
-//
-//                map.setLines(projectedLines);
-//            } else {
-//                map.setLines(null);
-//            }
-//
-//            // write some descriptive information about the selected projection.
-//            updateProjectionInfo(projection);
-//
-//        }
         } catch (JWcsException ex) {
             String msg = ex.getMessage();
             String title = "Error";
@@ -333,6 +382,15 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         lat0Slider = new javax.swing.JSlider();
         lat0Label = new javax.swing.JLabel();
+        PV21_Slider = new javax.swing.JSlider();
+        PV21_text = new javax.swing.JLabel();
+        PV22_Slider = new javax.swing.JSlider();
+        PV22_text = new javax.swing.JLabel();
+        PV21_label = new javax.swing.JLabel();
+        PV22_label = new javax.swing.JLabel();
+        PV23_Slider = new javax.swing.JSlider();
+        PV23_text = new javax.swing.JLabel();
+        PV23_label = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout(10, 10));
 
@@ -412,39 +470,91 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
         lat0Label.setText("-90");
 
+        PV21_Slider.setMaximum(10);
+        PV21_Slider.setMinimum(-10);
+        PV21_Slider.setValue(0);
+        PV21_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                PV21_SliderStateChanged(evt);
+            }
+        });
+
+        PV21_text.setText("mu");
+
+        PV22_Slider.setMaximum(360);
+        PV22_Slider.setValue(0);
+        PV22_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                PV22_SliderStateChanged(evt);
+            }
+        });
+
+        PV22_text.setText("gamma");
+
+        PV21_label.setText("0");
+
+        PV22_label.setText("0");
+
+        PV23_Slider.setMaximum(90);
+        PV23_Slider.setMinimum(-90);
+        PV23_Slider.setValue(90);
+        PV23_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                PV23_SliderStateChanged(evt);
+            }
+        });
+
+        PV23_text.setText("phic");
+
+        PV23_label.setText("90");
+
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
         infoPanelLayout.setHorizontalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(infoPanelLayout.createSequentialGroup()
-                        .addGap(97, 97, 97)
+                        .addGap(54, 54, 54)
                         .addComponent(descriptionLeadLabel)
                         .addGap(10, 10, 10)
                         .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(infoPanelLayout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(infoPanelLayout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(jLabel1)
+                                .addComponent(PV23_text)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lat0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV23_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, infoPanelLayout.createSequentialGroup()
                                 .addComponent(longitudeLeadLabel)
                                 .addGap(10, 10, 10)
-                                .addComponent(lon0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(lon0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV22_text)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(PV22_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                                .addComponent(lat0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV21_text)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(PV21_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(32, 32, 32)
                         .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lon0Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lat0Label, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(93, 93, 93))
+                            .addComponent(lat0Label, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PV21_label)
+                            .addComponent(PV22_label)
+                            .addComponent(PV23_label))))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
-                .addGap(62, 62, 62)
+                .addGap(23, 23, 23)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lat0Label)
                     .addGroup(infoPanelLayout.createSequentialGroup()
@@ -464,7 +574,31 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                         .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lat0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(infoPanelLayout.createSequentialGroup()
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(PV21_label))
+                            .addComponent(PV21_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(PV22_label))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(PV22_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(infoPanelLayout.createSequentialGroup()
+                        .addComponent(PV21_text)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PV22_text)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(PV23_label)
+                    .addComponent(PV23_text, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(PV23_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         add(infoPanel, java.awt.BorderLayout.SOUTH);
@@ -508,7 +642,34 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         //}
     }//GEN-LAST:event_lat0SliderStateChanged
 
+    private void PV21_SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_PV21_SliderStateChanged
+        JSlider slider = (JSlider) evt.getSource();
+        PV21_label.setText(Integer.toString(slider.getValue()));
+        project();
+    }//GEN-LAST:event_PV21_SliderStateChanged
+
+    private void PV22_SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_PV22_SliderStateChanged
+        JSlider slider = (JSlider) evt.getSource();
+        PV22_label.setText(Integer.toString(slider.getValue()));
+        project();
+    }//GEN-LAST:event_PV22_SliderStateChanged
+
+    private void PV23_SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_PV23_SliderStateChanged
+        JSlider slider = (JSlider) evt.getSource();
+        PV23_label.setText(Integer.toString(slider.getValue()));
+        project();
+    }//GEN-LAST:event_PV23_SliderStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSlider PV21_Slider;
+    private javax.swing.JLabel PV21_label;
+    private javax.swing.JLabel PV21_text;
+    private javax.swing.JSlider PV22_Slider;
+    private javax.swing.JLabel PV22_label;
+    private javax.swing.JLabel PV22_text;
+    private javax.swing.JSlider PV23_Slider;
+    private javax.swing.JLabel PV23_label;
+    private javax.swing.JLabel PV23_text;
     private javax.swing.JLabel descriptionLabel;
     private javax.swing.JPanel infoPanel;
     private javax.swing.JLabel jLabel1;

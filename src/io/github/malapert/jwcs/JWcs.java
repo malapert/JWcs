@@ -41,6 +41,7 @@ import io.github.malapert.jwcs.proj.MOL;
 import io.github.malapert.jwcs.proj.PAR;
 import io.github.malapert.jwcs.proj.PCO;
 import io.github.malapert.jwcs.proj.Projection;
+import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.SFL;
 import io.github.malapert.jwcs.proj.SIN;
 import io.github.malapert.jwcs.proj.STG;
@@ -469,6 +470,10 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public abstract void doInit() throws JWcsException;
 
+    public final ProjectionParameter[] getProjectionParameters() {
+        return getProj().getProjectionParameters();
+    } 
+    
     /**
      * Returns the projection's name.
      *
@@ -476,7 +481,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public final String getName() {
         return getProj().getName();
-    }
+    }      
 
     /**
      * Returns the projection family.
@@ -796,8 +801,12 @@ public abstract class JWcs implements JWcsKeyProvider {
             case "SFL":
                 projection = new SFL(crval(1) * cx, crval(2) * cy);
                 break;
-            case "SIN":
-                projection = new SIN(crval(1) * cx, crval(2) * cy);
+            case "SIN":                
+                if (hasKeyword(PV21) && hasKeyword(PV22)) {
+                    projection = new SIN(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
+                } else {
+                    projection = new SIN(crval(1) * cx, crval(2) * cy);
+                }
                 break;
             case "STG":
                 projection = new STG(crval(1) * cx, crval(2) * cy);
@@ -1067,5 +1076,5 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     protected void setCdInverse(RealMatrix cdInverse) {
         this.cdInverse = cdInverse;
-    }
+    }   
 }

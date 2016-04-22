@@ -522,4 +522,38 @@ public abstract class Projection {
     protected double[] getCoordNativePole() {
         return coordNativePole;
     }
+
+    public abstract ProjectionParameter[] getProjectionParameters();
+    
+    public class ProjectionParameter {
+        
+        private final String name;
+        private final String PVName;
+        private final double[] validInterval;
+        private final double defaultValue;
+        
+        public ProjectionParameter(String name, String PVName, double[] validInterval, double defaultValue) {
+            this.name = name;
+            this.PVName = PVName;
+            this.validInterval = validInterval;
+            this.defaultValue = defaultValue;
+        }
+        
+        public String getName() {
+            return this.name;
+        }
+        
+        public String getPVName() {
+            return this.PVName;
+        }
+        
+        public double[] getValidInterval() {
+            return this.validInterval;
+        }
+        
+        public double getDefaultValue() {
+            return this.defaultValue;
+        } 
+        
+    }    
 }

@@ -111,5 +111,10 @@ public abstract class CylindricalProjection extends Projection {
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
         return Math.abs(pos1[0] - pos2[0]) < 100;
     }    
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        return new ProjectionParameter[]{};
+    }
 
 }

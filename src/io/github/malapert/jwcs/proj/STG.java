@@ -90,4 +90,9 @@ public class STG extends ZenithalProjection {
     public String getDescription() {
         return DESCRIPTION;
     }    
+
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        return new ProjectionParameter[]{};
+    }
 }

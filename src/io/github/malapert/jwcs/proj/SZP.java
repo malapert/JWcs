@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
@@ -43,8 +45,6 @@ public class SZP extends ZenithalProjection {
      */
     private static final String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
 
-    private static final double NO_VALUE = 101;
-
     /**
      * \u03BC : Distance in spherical radii from the center of the sphere to the source of the projection.
      */
@@ -57,6 +57,21 @@ public class SZP extends ZenithalProjection {
      * Intersection of the line PO with the sphere at the \u03B8<sub>c</sub> coordinate.
      */    
     private final double phic;
+    
+    /**
+     * X coordinate of P.
+     */
+    private final double xp;
+    
+    /**
+     * Y coordinate of P.
+     */
+    private final double yp;
+    
+    /**
+     * Z coordinate of P.
+     */
+    private final double zp;
 
     /**
      * Default value for \u03BC.
@@ -84,8 +99,9 @@ public class SZP extends ZenithalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
      */
-    public SZP(double crval1, double crval2) {
+    public SZP(double crval1, double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE_MU, DEFAULT_VALUE_THETAC, DEFAULT_VALUE_PHIC);
     }
 
@@ -100,21 +116,29 @@ public class SZP extends ZenithalProjection {
      * @param mu \u03BC parameter projection
      * @param phic \u03B8<sub>c</sub> parameter projection
      * @param thetac \u03D5<sub>c</sub> parameter projection
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
      */
-    public SZP(double crval1, double crval2, double mu, double phic, double thetac) {
+    public SZP(double crval1, double crval2, double mu, double phic, double thetac) throws BadProjectionParameterException {
         super(crval1, crval2);
         this.mu = mu;
         this.thetac = Math.toRadians(thetac);
         this.phic = Math.toRadians(phic);
+        this.xp = -this.mu * Math.cos(this.thetac) * Math.sin(this.phic);
+        this.yp = this.mu * Math.cos(this.thetac) * Math.cos(this.phic);
+        this.zp = this.mu * Math.sin(this.thetac) + 1;        
         check();        
     }
 
     /**
      * Check.
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
      */
-    protected final void check() {
+    protected final void check() throws BadProjectionParameterException {
         if ((getPhi0() != 0) || (getTheta0() != HALF_PI)) {
             throw new IllegalArgumentException("Non-standard phi0 or theta0 values");
+        }
+        if (NumericalUtils.equal(this.zp, 0, DOUBLE_TOLERANCE)) {
+            throw new BadProjectionParameterException("SZP: degenarate projection because zp is 0");
         }
     }
 
@@ -123,11 +147,7 @@ public class SZP extends ZenithalProjection {
 
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-
-        double xp = -mu * Math.cos(thetac) * Math.sin(phic);
-        double yp = mu * Math.cos(thetac) * Math.cos(phic);
-        double zp = mu * Math.sin(thetac) + 1;
-
+        
         double X = xr;
         double Y = yr;
         double X1 = (X - xp) / zp;
@@ -136,42 +156,27 @@ public class SZP extends ZenithalProjection {
         double b = X1 * (X - X1) + Y1 * (Y - Y1);
         double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
         double sol1 = (-b - Math.sqrt(b * b - a * c)) / a;
-        double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;
-        double theta1 = NO_VALUE, theta2 = NO_VALUE;        
-        if (Math.abs(sol1) < 1 + DOUBLE_TOLERANCE) {
-            if (NumericalUtils.equal(sol1, 1, DOUBLE_TOLERANCE)) {
-                theta1 = HALF_PI;
-            } else if(NumericalUtils.equal(sol1, -1, DOUBLE_TOLERANCE)){
-                theta1 = -HALF_PI;
-            } else {
-                theta1 = NumericalUtils.aasin(sol1);
-            }
-        }
-        if (Math.abs(sol2) < 1 + DOUBLE_TOLERANCE) {
-            if (NumericalUtils.equal(sol1, 1, DOUBLE_TOLERANCE)) {
-                theta2 = HALF_PI;
-            } else if(NumericalUtils.equal(sol1, -1, DOUBLE_TOLERANCE)){
-                theta2 = -HALF_PI;
-            } else {            
-                theta2 = NumericalUtils.aasin(sol2);
-            }
-        }
+        double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;       
+        double theta1 = NumericalUtils.aasin(sol1);            
+        double theta2 = NumericalUtils.aasin(sol2);            
+
         double theta;
-        if (theta1 > NO_VALUE - 1 && theta2 > NO_VALUE - 1) {
+        if (Double.isNaN(theta1) && Double.isNaN(theta2)) {
             throw new PixelBeyondProjectionException("SZP: (x,y) = (" + x
                     + ", " + y + ")");
-        } else if (theta1 > NO_VALUE - 1) {
+        } else if (Double.isNaN(theta1)) {
             theta = theta2;
-        } else if (theta2 > NO_VALUE - 1) {
+        } else if (Double.isNaN(theta2)) {
             theta = theta1;
         } else {
+            // The right solution is this one which is closer to 90°.
             if (Math.abs(theta1 - HALF_PI) > Math.abs(theta2 - HALF_PI)) {
                 theta = theta2;
             } else {
                 theta = theta1;
             }
         }
-        double phi = NumericalUtils.aatan2(X - X1 * (1 - Math.sin(theta)), -(Y - Y1 * (1 - Math.sin(theta))));
+        double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
         double[] pos = {phi, theta};
         return pos;
     }
@@ -179,9 +184,6 @@ public class SZP extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         phi = phiRange(phi);
-        double xp = -mu * Math.cos(thetac) * Math.sin(phic);
-        double yp = mu * Math.cos(thetac) * Math.cos(phic);
-        double zp = mu * Math.sin(thetac) + 1;
         double denom = zp - (1 - Math.sin(theta));
         if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE)) {
             throw new PixelBeyondProjectionException("SZP: theta = " + theta);
@@ -201,5 +203,13 @@ public class SZP extends ZenithalProjection {
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(Math.toDegrees(this.phic)), NumericalUtils.round(Math.toDegrees(this.thetac)));
     }
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        ProjectionParameter p2 = new ProjectionParameter("phic", JWcs.PV22, new double[]{0, 360}, 0);                
+        ProjectionParameter p3 = new ProjectionParameter("thetac", JWcs.PV23, new double[]{0, 90}, 90);
+        return new ProjectionParameter[]{p1,p2,p3};    
+    }    
 
 }

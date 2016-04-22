@@ -67,14 +67,9 @@ public class TAN extends ZenithalProjection {
     public double[] project(double x, double y) throws PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r_theta = Math.hypot(xr, yr);
-        double phi;
-        if(NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            phi = 0;
-        } else {
-            phi = NumericalUtils.aatan2(xr, -yr);   
-        }              
-        double theta = Math.atan(1.0d / r_theta);
+        double r_theta = computeRadius(xr, yr);        
+        double phi = computePhi(x, y, r_theta);       
+        double theta = NumericalUtils.aatan2(1, r_theta);        
         double[] pos = {phi, theta};
         return pos;
     }
@@ -107,4 +102,9 @@ public class TAN extends ZenithalProjection {
     public boolean inside(double lon, double lat) {  
        return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0, DOUBLE_TOLERANCE);
     }     
+
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        return new ProjectionParameter[]{};
+    }
 }

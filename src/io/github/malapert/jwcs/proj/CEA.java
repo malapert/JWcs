@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -137,5 +138,11 @@ public class CEA extends CylindricalProjection {
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(this.lambda));
     }
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("lambda", JWcs.PV21, new double[]{0, 1}, 1);
+        return new ProjectionParameter[]{p1};        
+    }    
 
 }

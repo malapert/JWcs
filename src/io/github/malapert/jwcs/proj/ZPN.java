@@ -442,4 +442,9 @@ public final class ZPN extends ZenithalProjection {
         return String.format(DESCRIPTION, Arrays.toString(this.PV));
     }
 
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        return new ProjectionParameter[]{};
+    }
+
 }

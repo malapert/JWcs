@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
@@ -118,5 +119,11 @@ public class BON extends PolyConicProjection {
     public String getDescription() {
         return DESCRIPTION;
     }     
+
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("theta1", JWcs.PV11, new double[]{-90, 90}, 45);
+        return new ProjectionParameter[]{p1};
+    }
 
 }
