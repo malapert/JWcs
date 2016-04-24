@@ -60,7 +60,7 @@ public class BON extends PolyConicProjection {
      */
     public BON(double crval1, double crval2, double theta1) {
         super(crval1, crval2, theta1);
-        if (NumericalUtils.equal(theta1,0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(theta1,0)) {
             this.sfl = new SFL(crval1, crval2);
         }
     }
@@ -78,7 +78,7 @@ public class BON extends PolyConicProjection {
             double theta = y0 - r_theta;
             double cos_theta = Math.cos(theta);
             double phi;
-            if (NumericalUtils.equal(cos_theta,0,DOUBLE_TOLERANCE)) {
+            if (NumericalUtils.equal(cos_theta,0)) {
                 phi = 0;
             } else {
                 phi = aphi * r_theta / cos_theta;
@@ -98,11 +98,10 @@ public class BON extends PolyConicProjection {
             phi = phiRange(phi);
             double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
             double r_theta = y0 - theta;
-            phi = phiRange(phi);
             double aphi = phi * Math.cos(theta) / r_theta;
-            double x = Math.toDegrees(r_theta * Math.sin(aphi));
-            double y = Math.toDegrees(-r_theta * Math.cos(aphi) + y0);
-            double[] coord = {x, y};
+            double x = r_theta * Math.sin(aphi);
+            double y = -r_theta * Math.cos(aphi) + y0;
+            double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
             result = coord;
         } else {
             result = sfl.projectInverse(phi, theta);

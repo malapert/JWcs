@@ -16,7 +16,6 @@
  */
 package io.github.malapert.jwcs.utility;
 
-import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import java.text.DecimalFormat;
 
@@ -26,6 +25,21 @@ import java.text.DecimalFormat;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public abstract class NumericalUtils {
+    
+    /**
+     * Double tolerance for numerical precision operations sets to 1e-12.
+     */
+    protected static final double DOUBLE_TOLERANCE = 1e-12;
+
+    /**
+     * Half PI value.
+     */
+    public static final double HALF_PI = Math.PI * 0.5d;
+
+    /**
+     * Two Pi value.
+     */
+    public static final double TWO_PI = Math.PI * 2.0d;    
 
     /**
      * Compares two doubles.
@@ -88,8 +102,7 @@ public abstract class NumericalUtils {
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public final static double aatan2(double n, double d) {
-        final double ATOL = 1.0e-13;
-        return ((Math.abs(n) < ATOL && Math.abs(d) < ATOL) ? Double.NaN : Math.atan2(n, d));
+        return ((Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE) ? Double.NaN : Math.atan2(n, d));
     }
     
     /**
@@ -104,11 +117,10 @@ public abstract class NumericalUtils {
      * @param v the value whose arc sine is returned
      * @return the arc sine of the argument. 
      */
-    public final static double aasin(double v) {
-        final double ATOL = 1.0e-13;        
-        if (equal(v, 1, ATOL)) {
+    public final static double aasin(double v) {       
+        if (equal(v, 1, DOUBLE_TOLERANCE)) {
             return Math.PI/2;
-        } else if (equal(v, -1, ATOL)) {
+        } else if (equal(v, -1, DOUBLE_TOLERANCE)) {
             return -Math.PI/2;
         } else {
             return Math.asin(v);
@@ -136,19 +148,19 @@ public abstract class NumericalUtils {
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite latitude");
         }
-        if (Math.abs(angle - Projection.HALF_PI) < 1e-12) {
-            return Projection.HALF_PI;
+        if (Math.abs(angle - HALF_PI) < DOUBLE_TOLERANCE) {
+            return HALF_PI;
         }
-        if (Math.abs(angle + Projection.HALF_PI) < 1e-12) {
-            return -Projection.HALF_PI;
+        if (Math.abs(angle + HALF_PI) < DOUBLE_TOLERANCE) {
+            return -HALF_PI;
         }
 
         if (angle > Math.PI) {
-            angle -= Projection.TWO_PI;
+            angle -= TWO_PI;
         }
         
         if (angle < -Math.PI) {
-            angle += Projection.TWO_PI;
+            angle += TWO_PI;
         }
         return angle;
     }
@@ -167,18 +179,18 @@ public abstract class NumericalUtils {
         // avoid instable computations with very small numbers: if the
         // angle is very close to the graticule boundary, return +/-PI.
         // Bernhard Jenny, May 25 2010.
-        if (Math.abs(angle - 0) < 1e-15) {
+        if (Math.abs(angle - 0) < DOUBLE_TOLERANCE) {
             return 0;
         }
-        if (Math.abs(angle - Projection.TWO_PI) < 1e-15) {
-            return Projection.TWO_PI;
+        if (Math.abs(angle - TWO_PI) < DOUBLE_TOLERANCE) {
+            return TWO_PI;
         }
 
-        while (angle > Projection.TWO_PI) {
-            angle -= Projection.TWO_PI;
+        while (angle > TWO_PI) {
+            angle -= TWO_PI;
         }
         while (angle < 0) {
-            angle += Projection.TWO_PI;
+            angle += TWO_PI;
         }
         return angle;
     }
@@ -210,4 +222,26 @@ public abstract class NumericalUtils {
         }        
         return min < number && number < max;
     } 
+
+    /**
+     * Compares two doubles with a numerical precision of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     *
+     * @param val1 first double
+     * @param val2 second double
+     * @return True when <code>val1</code> and <code>val2</code> are equals.
+     */    
+    public static boolean equal(double val1, double val2) {
+        return equal(val1, val2, DOUBLE_TOLERANCE);
+    }
+
+    /**
+     * Checks if the number is included in [min,max] with a numerical precision of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     * @param number number to test
+     * @param min minimum value
+     * @param max maximum value
+     * @return True when number is included in [min,max] otherwise False.
+     */    
+    public static boolean isInInterval(double number, double min, double max) {
+        return isInInterval(number, min, max, DOUBLE_TOLERANCE);
+    }
 }

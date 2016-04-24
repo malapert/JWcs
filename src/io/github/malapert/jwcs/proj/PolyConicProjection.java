@@ -78,7 +78,7 @@ public abstract class PolyConicProjection extends Projection {
     protected PolyConicProjection(double crval1, double crval2, double theta1) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "theta1[deg]", theta1);
-        if (NumericalUtils.equal(theta1,0,DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(theta1,0)) {
             LOG.log(Level.WARNING, "ThetaA=0 not allowed -- defaulting to 45 deg", theta1);
             theta1 = 45;
         }        

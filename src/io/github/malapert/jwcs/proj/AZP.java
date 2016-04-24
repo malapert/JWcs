@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Zenithal perspective.
@@ -71,8 +72,9 @@ public class AZP extends ZenithalProjection {
      *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
      */
-    public AZP(double crval1, double crval2) {
+    public AZP(double crval1, double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
     }
 
@@ -87,11 +89,24 @@ public class AZP extends ZenithalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      * @param gamma \u03BC Angle in degrees between the camera's optical axis and the line to the center of the planet
      * @param mu \u0263 Distance in radii from the center of the sphere to the source of projectionPV<code>nbAxis</code>_1 in radians
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
      */
-    public AZP(double crval1, double crval2, double mu, double gamma) {
+    public AZP(double crval1, double crval2, double mu, double gamma) throws BadProjectionParameterException {
         super(crval1, crval2);
         this.gamma = Math.toRadians(gamma);
         this.mu = mu;
+        checkParameters(this.gamma);
+    }
+    
+    /**
+     * Checks gamma parameter.
+     * @param gamma value to check
+     * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
+     */
+    private void checkParameters(double gamma) throws BadProjectionParameterException {
+        if(NumericalUtils.equal(Math.abs(gamma), HALF_PI)) {
+            throw new BadProjectionParameterException(this, "gamma="+gamma+". Gamma must be != +/-HALF_PI");
+        }
     }
     
     /**
@@ -105,7 +120,7 @@ public class AZP extends ZenithalProjection {
     
     /**
      * Computes the plane coordinate along Y based on parameter projection.
-     * @param x plane coordinate along Y in radians.
+     * @param y plane coordinate along Y in radians.
      * @return the plane coordinate along Y with application of parameter projection
      */    
     private double computeYr(double y) {
@@ -118,30 +133,30 @@ public class AZP extends ZenithalProjection {
      * @param y plane coordinate in radians along Y
      * @param radius Radius in radians
      * @return the \u03B8 native spherical coordinates in radians
-     * @throws BadProjectionParameterException
-     * @throws PixelBeyondProjectionException 
+     * @throws BadProjectionParameterException When projection parameters are wrong
+     * @throws PixelBeyondProjectionException When (x,y) has no solution
      */
     private double computeTheta(double x, double y, double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
         double denom = (mu + 1) + y * Math.tan(gamma);
-        if (NumericalUtils.equal(denom,0,DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("AZP: Bad projection parameter for (mu,gamma): " + mu + ", " + gamma);
+        if (NumericalUtils.equal(denom,0)) {
+            throw new BadProjectionParameterException(this,"(mu,gamma) = (" + mu + ", " + gamma+"). (mu + 1) + y * tan(gamma) must be !=0");
         }    
         double rho = radius / denom;
         double val = mu*rho/Math.sqrt(Math.pow(rho, 2)+1);
         double omega = NumericalUtils.aasin(val);
         if (Double.isNaN(omega)) {
-            throw new PixelBeyondProjectionException("AZP: Solution not defined for (x,y) = (" + x + ", " + y + ")");
+            throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");
         }
         double psi = NumericalUtils.aatan2(1.0, rho);
         if(Double.isNaN(psi)) {
-            throw new PixelBeyondProjectionException("AZP: Solution not defined for (x,y) = (" + x + ", " + y + ")");            
+            throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");            
         }
         double theta1 = NumericalUtils.normalizeLatitude(psi - omega);
         double theta2 = NumericalUtils.normalizeLatitude(psi + omega + Math.PI);        
         double theta;        
         if(Math.abs(mu) < 1) {
-            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
-            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
             if(isTheta1Valid && isTheta2Valid) {
                 throw new JWcsError("It seems to be a bug");
             } else if (isTheta1Valid) {
@@ -177,7 +192,7 @@ public class AZP extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         double thetax;
-        if (NumericalUtils.equal(mu, 0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(mu, 0)) {
             thetax = 0;
         } else if (Math.abs(mu) > 1) {
             thetax = NumericalUtils.aasin(-1 / mu);
@@ -188,8 +203,8 @@ public class AZP extends ZenithalProjection {
 
         double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
 
-        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE) || theta < thetax) {
-            throw new PixelBeyondProjectionException("AZP: theta = " + theta);
+        if (NumericalUtils.equal(denom, 0) || theta < thetax) {
+            throw new PixelBeyondProjectionException(this,"theta = " + theta);
         }
 
         double r = (mu + 1) * Math.cos(theta) / denom;        

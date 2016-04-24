@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
@@ -64,7 +65,7 @@ public class CEA extends CylindricalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @throws BadProjectionParameterException
+     * @throws BadProjectionParameterException When projection parameters are wrong
      */
     public CEA(double crval1, double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE);
@@ -81,12 +82,12 @@ public class CEA extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      * @param lambda \u03BB dimensionless.
-     * @throws BadProjectionParameterException
+     * @throws BadProjectionParameterException When projection parameters are wrong
      */
     public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
-        if (NumericalUtils.equal(lambda, 0, DOUBLE_TOLERANCE) || lambda < 0 || lambda > 1.0) {
-            throw new BadProjectionParameterException("CEA: Bad projection parameter for lambda " + lambda + " - lambda outside of range (0,1]");
+        if (NumericalUtils.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
+            throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside of range (0,1]");
         }
         setLambda(lambda);
     }
@@ -98,6 +99,9 @@ public class CEA extends CylindricalProjection {
         double phi = xr;
         double arg = getLambda() * yr;
         double theta = NumericalUtils.aasin(arg);
+        if(Double.isNaN(theta)) {
+            throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
+        }
         double[] pos = {phi, theta};
         return pos;
     }

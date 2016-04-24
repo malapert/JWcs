@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Zenithal equidistant.
@@ -61,13 +61,8 @@ public class ARC extends ZenithalProjection {
     protected double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r_theta = Math.sqrt(Math.pow(xr, 2) + Math.pow(yr, 2));
-        double phi;
-        if (NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            phi = 0.0;
-        } else {
-            phi = NumericalUtils.aatan2(xr, -yr);
-        }
+        double r_theta = computeRadius(xr, yr);
+        double phi = computePhi(xr, yr, r_theta);
         double theta = HALF_PI - r_theta;
         double[] pos = {phi, theta};
         return pos;
@@ -76,10 +71,10 @@ public class ARC extends ZenithalProjection {
     @Override
     protected double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
-        double r = HALF_PI - theta;  // theta between [-HALF_PI, HALF_PI] => no need to test
-        double x = r * Math.sin(phi);
-        double y = -r * Math.cos(phi);
-        double[] pos = {Math.toDegrees(x), Math.toDegrees(y)};
+        double r = Math.toDegrees(HALF_PI - theta);  // theta between [-HALF_PI, HALF_PI] => no need to test
+        double x = computeX(r, phi);
+        double y = computeY(r, phi);
+        double[] pos = {x, y};
         return pos;
     }  
     

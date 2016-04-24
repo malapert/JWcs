@@ -7,11 +7,11 @@ package io.github.malapert.jwcs.gui;
 
 import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.coordsystem.Utility;
-import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,11 +68,11 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
             double[] pos2;
             try {
                 double latRad = Utility.getBorderLatitude(xyzCenter, Math.toRadians(lon));
-                if (latRad > Projection.HALF_PI) {
-                    latRad = Projection.HALF_PI - latRad;
+                if (latRad > HALF_PI) {
+                    latRad = HALF_PI - latRad;
                 }
-                if (latRad < -Projection.HALF_PI) {
-                    latRad = -Projection.HALF_PI - latRad;
+                if (latRad < -HALF_PI) {
+                    latRad = -HALF_PI - latRad;
                 }
 
 //                if (latRad>Projection.HALF_PI) {

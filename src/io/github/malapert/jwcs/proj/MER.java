@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Mercator.
@@ -74,16 +75,16 @@ public class MER extends CylindricalProjection {
     protected double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException  {
         phi = phiRange(phi);
         double x = phi;
-        if (NumericalUtils.equal(Math.abs(theta), HALF_PI, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));            
+        if (NumericalUtils.equal(Math.abs(theta), HALF_PI)) {
+            throw new PixelBeyondProjectionException(this,"theta = "+theta);            
         }
         double angle = (HALF_PI + theta) * 0.5d;
-        if(NumericalUtils.equal(Math.abs(angle), HALF_PI, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));            
+        if(NumericalUtils.equal(Math.abs(angle), HALF_PI)) {
+            throw new PixelBeyondProjectionException(this,"theta = "+theta);        
         }
         double d = Math.tan(angle);
-        if (d<0 || NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("MER: Solution not defined for theta value "+Math.toDegrees(theta));
+        if (d<0 || NumericalUtils.equal(d, 0)) {
+            throw new PixelBeyondProjectionException(this,"theta = "+theta);        
         }
         double y = Math.log(d);
         x = Math.toDegrees(x);
@@ -105,7 +106,7 @@ public class MER extends CylindricalProjection {
 
     @Override
     public boolean inside(double lon, double lat) {
-        return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), Projection.HALF_PI, DOUBLE_TOLERANCE);   
+        return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), HALF_PI);   
     }
 
 }

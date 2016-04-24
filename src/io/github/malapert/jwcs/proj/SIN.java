@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Slant orthographic.
@@ -95,12 +96,12 @@ public class SIN extends ZenithalProjection {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double phi, theta;
-        if (NumericalUtils.equal(ksi, DEFAULT_VALUE, DOUBLE_TOLERANCE) && NumericalUtils.equal(eta, DEFAULT_VALUE, DOUBLE_TOLERANCE)) {
-            double r_theta = Math.hypot(xr, yr);
-            if(NumericalUtils.equal(r_theta, 1, DOUBLE_TOLERANCE)) {
-                throw new PixelBeyondProjectionException("r_theta must be < 1");
+        if (NumericalUtils.equal(ksi, DEFAULT_VALUE) && NumericalUtils.equal(eta, DEFAULT_VALUE)) {
+            double r_theta = computeRadius(xr, yr);
+            if(NumericalUtils.equal(r_theta, 1)) {
+                throw new PixelBeyondProjectionException(this,"(x,y)=("+x+","+y+") : r_theta must be < 1");
             }
-            phi = NumericalUtils.aatan2(xr, -yr);
+            phi = computePhi(xr, yr, r_theta);
             theta = NumericalUtils.aacos(r_theta);
         } else {
             double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
@@ -108,8 +109,8 @@ public class SIN extends ZenithalProjection {
             double c = Math.pow((xr - ksi),2) + Math.pow((yr - eta),2) - 1;
             double theta1 = NumericalUtils.aasin((-b + Math.sqrt(b * b - a * c)) / a);
             double theta2 = NumericalUtils.aasin((-b - Math.sqrt(b * b - a * c)) / a);
-            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
-            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
             if (isTheta1Valid && isTheta2Valid) {
                 double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
                 double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
@@ -119,7 +120,7 @@ public class SIN extends ZenithalProjection {
             } else if (isTheta2Valid) {
                 theta = theta2;
             } else {
-                throw new BadProjectionParameterException("SIN: ksi = " + ksi + " , eta = " + eta);
+                throw new BadProjectionParameterException(this," (ksi,eta) = (" + ksi + " , " + eta+")");
             }
 
             phi = NumericalUtils.aatan2(xr - ksi * (1 - Math.sin(theta)), -(yr - eta * (1 - Math.sin(theta))));
@@ -132,9 +133,9 @@ public class SIN extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         phi = phiRange(phi);
-        double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(theta));
+        double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(phi));
         if (theta < thetax) {
-            throw new PixelBeyondProjectionException("not visisble");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+phi+","+theta+")");
         }
         double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
         double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));

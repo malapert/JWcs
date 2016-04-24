@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 
@@ -105,11 +107,11 @@ public class CYP extends CylindricalProjection {
      * Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
      */
     protected final void check() {
-        if (getLambda() < 0) {
-            LOG.log(Level.WARNING, "CYP: Lambda must be >= 0 -- resetting to 1");
+        if (getLambda() < 0 || NumericalUtils.equal(getLambda(), 0)) {
+            LOG.log(Level.WARNING, "CYP: Lambda must be > 0 -- resetting to 1");
             this.lambda = 1;
         }
-        if (NumericalUtils.equal(getMu(),-getLambda(), DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(getMu(),-getLambda())) {
             LOG.log(Level.WARNING, "CYP: Mu must not be -lambda -- resetting to 1");
             this.mu = 1;
         }              
@@ -127,11 +129,15 @@ public class CYP extends CylindricalProjection {
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) {
+    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         phi = phiRange(phi);
-        double x = Math.toDegrees(getLambda() * phi);
-        double y = Math.toDegrees((getMu()+getLambda())/(getMu() + Math.cos(theta)) * Math.sin(theta));
-        double[] coord = {x, y};
+        double x = getLambda() * phi;
+        double ctheta = Math.cos(theta);
+        if(NumericalUtils.equal(getMu(), -ctheta)) {
+            throw new PixelBeyondProjectionException(this,"theta = "+theta);
+        }
+        double y = (getMu()+getLambda())/(getMu() + ctheta) * Math.sin(theta);
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }
 
@@ -160,5 +166,12 @@ public class CYP extends CylindricalProjection {
     public String getDescription() {
         return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(this.lambda));
     }
+    
+    @Override
+    public ProjectionParameter[] getProjectionParameters() {
+        ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        ProjectionParameter p2 = new ProjectionParameter("lambda", JWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
+        return new ProjectionParameter[]{p1,p2};        
+    }        
 
 }

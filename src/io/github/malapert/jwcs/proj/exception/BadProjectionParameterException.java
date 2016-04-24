@@ -17,18 +17,28 @@
 
 package io.github.malapert.jwcs.proj.exception;
 
+import io.github.malapert.jwcs.proj.Projection;
+
 /**
  * Bad Projection Parameter Exception.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class BadProjectionParameterException extends ProjectionException{
-
+    
     /**
-     * Creates a new Exception.
+     * Creates a new Exception when the projection parameter are wrong.
+     * @param projectionName projection name
      * @param message message
      */
-    public BadProjectionParameterException(final String message) {
-        super(message);
+    public BadProjectionParameterException(Projection projectionName, final String message) {
+        super(projectionName, message);
     }
+
+    @Override
+    public String toString() {
+        return this.getProjection().getClass().getName()+"- Bad projection parameter for "+getMessage();
+    }
+    
+    
     
 }

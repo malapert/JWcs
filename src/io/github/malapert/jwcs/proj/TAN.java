@@ -45,10 +45,6 @@ public class TAN extends ZenithalProjection {
      */
     private static final String DESCRIPTION = "no limits";     
     
-    /**
-     * Tolerance for numerical precision.
-     */
-    protected final static double TOLERANCE = 1.0e-13;
 
    /**
      * Constructs a TAN projection based on the celestial longitude and latitude
@@ -77,14 +73,14 @@ public class TAN extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {        
         phi = phiRange(phi);
-        double s = Math.tan(theta);
-        if (NumericalUtils.equal(s, 0, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("TAN: theta = " + theta);
+        double s = Math.sin(theta);
+        if (NumericalUtils.equal(s, 0)) {
+            throw new PixelBeyondProjectionException(this, "theta = " + theta);
         }
-        double r_theta = 1 / s;
-        double x = Math.toDegrees(r_theta * Math.sin(phi));
-        double y = Math.toDegrees(-r_theta * Math.cos(phi));
-        double[] coord = {x, y};
+        double r_theta = Math.cos(theta) / s;
+        double x = computeX(r_theta, phi);
+        double y = computeY(r_theta, phi);
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }       
 
@@ -100,7 +96,7 @@ public class TAN extends ZenithalProjection {
     
     @Override
     public boolean inside(double lon, double lat) {  
-       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0, DOUBLE_TOLERANCE);
+       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0);
     }     
 
     @Override

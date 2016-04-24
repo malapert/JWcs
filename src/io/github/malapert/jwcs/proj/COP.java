@@ -37,6 +37,13 @@ public class COP extends ConicProjection {
      * Projection's description.
      */
     private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";    
+    
+    /**
+     * Constant of the cone in radians.
+     * 
+     * This constant is defined as c=sin\u03B8<sub>a</sub>
+     */
+    private final double c;
 
    /**
      * Constructs a COP projection based on the celestial longitude and latitude
@@ -51,31 +58,27 @@ public class COP extends ConicProjection {
      * fiducial point
      * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
      * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    public COP(double crval1, double crval2, double theta_a, double eta)  {
+    public COP(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException  {
         super(crval1, crval2, theta_a, eta);
+        this.c = Math.sin(getTheta_a());
+        if (NumericalUtils.equal(this.c, 0)) {
+            throw new BadProjectionParameterException(this,"theta_a: " + getTheta_a()+". It must be !=0");
+        }        
     }
 
     @Override
     protected double[] project(double x, double y) throws BadProjectionParameterException {
         double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double c = Math.sin(getTheta_a());
-        if (NumericalUtils.equal(c, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("COP: Bad value for theta_a: " + getTheta_a());
-        }
+        double yr = Math.toRadians(y);       
         double d = Math.cos(getEta());
-        if (NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("COP: Bad value for eta: " + getEta());
+        if (NumericalUtils.equal(d, 0)) {
+            throw new BadProjectionParameterException(this, "Bad value for eta = " + getEta()+". eta must be > 0");
         }
         double y0 = d / Math.tan(getTheta_a());       
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        double phi;
-        if(NumericalUtils.equal(r_theta, 0, DOUBLE_TOLERANCE)) {
-            phi = 0;
-        } else {       
-            phi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta) / c;              
-        }
+        double phi = computePhi(xr, yr, r_theta, y0, c);
         double theta = getTheta_a() + Math.atan(1.0/Math.tan(getTheta_a())-r_theta/Math.cos(getEta()));
         double[] pos = {phi, theta};
         return pos;
@@ -83,19 +86,13 @@ public class COP extends ConicProjection {
 
     @Override
     protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
-    
         phi = phiRange(phi);
-        double c = Math.sin(getTheta_a());
-        if (NumericalUtils.equal(c, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("COE: Bad value for theta_a: " + getTheta_a());
-        }
-        double a = c*phi;
         double y0 = Math.cos(getEta()) / Math.tan(getTheta_a());      
         double r_theta = y0 - Math.cos(getEta())*Math.tan(theta-getTheta_a());
-        double x = Math.toDegrees(r_theta *Math.sin(a));
-        double y = Math.toDegrees(y0 - r_theta*Math.cos(a));
+        double x = computeX(phi, r_theta, c);
+        double y = computeY(phi, r_theta, c, y0);
 
-        double[] coord = {x, y};
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }      
 

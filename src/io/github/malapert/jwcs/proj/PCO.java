@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Polyconic.
@@ -114,10 +115,10 @@ public class PCO extends PolyConicProjection {
         double yr = Math.toRadians(y);
 
         double phi, theta = 0;
-        if (NumericalUtils.equal(yr, 0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(yr, 0)) {
             phi = xr;
             theta = 0.0;
-        } else if (NumericalUtils.equal(yr, HALF_PI, DOUBLE_TOLERANCE)) {
+        } else if (NumericalUtils.equal(yr, HALF_PI)) {
             phi = 0.0;
             theta = (yr < 0.0) ? -HALF_PI : HALF_PI;
         } else {
@@ -177,7 +178,7 @@ public class PCO extends PolyConicProjection {
 
             double xp = 1 - ymthe * tanthe;
             double yp = xr * tanthe;
-            if (NumericalUtils.equal(xp, 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(yp, 0, DOUBLE_TOLERANCE)) {
+            if (NumericalUtils.equal(xp, 0) && NumericalUtils.equal(yp, 0)) {
                 phi = 0.0;
             } else {
                 phi = NumericalUtils.aatan2(yp, xp) / Math.sin(theta);
@@ -195,7 +196,7 @@ public class PCO extends PolyConicProjection {
         double sinthe = Math.sin(theta);
         double a = phi * sinthe;
         double x, y;
-        if (NumericalUtils.equal(sinthe, 0.0, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(sinthe, 0.0)) {
             x = phi;
             y = 0.0;
         } else {
@@ -203,9 +204,7 @@ public class PCO extends PolyConicProjection {
             x = cotthe * Math.sin(a);
             y = cotthe * (1.0 - Math.cos(a)) + theta;
         }
-        x = Math.toDegrees(x);
-        y = Math.toDegrees(y);
-        double[] coord = {x, y};
+        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         return coord;
     }
 

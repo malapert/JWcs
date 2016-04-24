@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.Arrays;
 
 /**
@@ -114,7 +115,7 @@ public final class ZPN extends ZenithalProjection {
         zd1 = zd2 = d2 = zd = 0.0;
         d1 = PV[1];
         if (d1 <= 0.0) {
-            throw new BadProjectionParameterException("p[1] <= 0");
+            throw new BadProjectionParameterException(this, "p[1] - It must be > 0");
         }
 
         // Find the point where the derivative first goes negative. 
@@ -180,7 +181,7 @@ public final class ZPN extends ZenithalProjection {
         int i;
         for (i = pv.length - 1; i >= 0 && NumericalUtils.equal(pv[i],0.0,getTolerance()); i--);
         if (i < 0) {
-            throw new BadProjectionParameterException("All coefficients = 0");
+            throw new BadProjectionParameterException(this, "pv parameters : All coefficients = 0");
         }
         return i;
     }
@@ -189,7 +190,7 @@ public final class ZPN extends ZenithalProjection {
      * Checks validity of parameters.
      */
     private void check() {
-        if ((getPhi0() != 0) || (getTheta0() != HALF_PI)) {
+        if ((!NumericalUtils.equal(getPhi0(),0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
             throw new IllegalArgumentException("Non-standard PVi_1 and/or PVi_2 values");
         }
         if (this.PV.length < 8) {
@@ -284,15 +285,15 @@ public final class ZPN extends ZenithalProjection {
      * @param r radius
      * @param pv projection parameters
      * @return the solution for a quadratic equation
-     * @throws PixelBeyondProjectionException Exception
+     * @throws Exception Exception
      */  
-    private double quadraticSolution(double r, double[] pv) throws PixelBeyondProjectionException {
+    private double quadraticSolution(double r, double[] pv) throws Exception {
         double a = pv[2];
         double b = pv[1];
         double c = pv[0] - r;
         double d = b * b - 4.0 * a * c;
         if (d < 0.0) {
-            throw new PixelBeyondProjectionException();
+            throw new Exception("No solution for quadratic computation");
         }
         d = Math.sqrt(d);
         // Choose solution closest to pole. 
@@ -304,12 +305,12 @@ public final class ZPN extends ZenithalProjection {
         }
         if (x < 0.0) {
             if (x < -getTolerance()) {
-                throw new PixelBeyondProjectionException();
+                throw new Exception("No solution for quadratic computation");
             }
             x = 0.0;
         } else if (x > Math.PI) {
             if (x > Math.PI + getTolerance()) {
-                throw new PixelBeyondProjectionException();
+                throw new Exception("No solution for quadratic computation");
             }
             x = Math.PI;
         }
@@ -325,9 +326,9 @@ public final class ZPN extends ZenithalProjection {
      * @param r radius
      * @param pv projection parameters
      * @return the solution for an equation where order &gt; 2
-     * @throws PixelBeyondProjectionException Exception
+     * @throws Exception Exception When an exception occurs
      */    
-    private double iterativeSolution(double r, double[] pv, double[] coeff) throws PixelBeyondProjectionException {
+    private double iterativeSolution(double r, double[] pv, double[] coeff) throws Exception {
         double zd1 = 0.0;
         double r1 = pv[0];
         double zd2 = coeff[0];
@@ -335,12 +336,12 @@ public final class ZPN extends ZenithalProjection {
         double zd;
         if (r < r1) {
             if (r < r1 - getTolerance()) {
-                throw new PixelBeyondProjectionException();
+                throw new Exception("No solution for iterative computation");
             }
             zd = zd1;
         } else if (r > r2) {
             if (r > r2 + getTolerance()) {
-                throw new PixelBeyondProjectionException();
+                throw new Exception("No solution for iterative computation");
             }
             zd = zd2;
         } else {
@@ -388,9 +389,9 @@ public final class ZPN extends ZenithalProjection {
      * @param r radius
      * @param pv projection parameters
      * @return the solution for whatever polynomial equation
-     * @throws PixelBeyondProjectionException Exception
+     * @throws Exception Exception
      */
-    private double computeSolution(double r, double[] pv) throws PixelBeyondProjectionException {
+    private double computeSolution(double r, double[] pv) throws Exception {
         double result;
         switch (getN()) {
             case 1:
@@ -408,26 +409,25 @@ public final class ZPN extends ZenithalProjection {
 
     @Override
     protected double[] project(double x, double y) throws PixelBeyondProjectionException {
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);        
-        double r_theta = Math.sqrt(xr * xr + yr * yr);
-        double phi;
-	if (NumericalUtils.equal(r_theta, 0.0, getTolerance())) {
-	    phi = 0.0;
-	} else {
-	    phi = NumericalUtils.aatan2(xr, -yr);
-	}
-        double theta = HALF_PI - computeSolution(r_theta, PV);
-        double[] pos = {phi, theta};
-        return pos;
+        try {
+            double xr = Math.toRadians(x);
+            double yr = Math.toRadians(y);
+            double r_theta = computeRadius(xr, yr);
+            double phi = computePhi(xr, yr, r_theta);
+            double theta = HALF_PI - computeSolution(r_theta, PV);
+            double[] pos = {phi, theta};
+            return pos;
+        } catch (Exception ex) {
+            throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
+        }
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
-        double r_theta = polyEval(HALF_PI - theta, PV);
-        double x = Math.toDegrees(r_theta * Math.sin(phi));
-        double y = Math.toDegrees(-r_theta * Math.cos(phi));
+        double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
+        double x = computeX(r_theta, phi);
+        double y = computeY(r_theta, phi);
         double[] coord = {x, y};
         return coord;
     }

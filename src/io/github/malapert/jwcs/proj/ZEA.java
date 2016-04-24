@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Zenithal equal-area.
@@ -58,16 +59,10 @@ public class ZEA extends ZenithalProjection {
     public double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r_theta = Math.sqrt(xr * xr + yr * yr);
-        double phi;
-        if (NumericalUtils.equal(r_theta, 0.0, TOLERANCE)) {
-            phi = 0;
-        } else {
-            phi = NumericalUtils.aatan2(xr, -yr);
-        }
-        
+        double r_theta = computeRadius(xr, yr);
+        double phi = computePhi(xr, yr, r_theta);        
         double theta;
-	if (NumericalUtils.equal(r_theta, 2, DOUBLE_TOLERANCE)) {
+	if (NumericalUtils.equal(r_theta, 2)) {
 	    theta = -HALF_PI;
 	} else {
 	    theta = HALF_PI - 2*NumericalUtils.aasin(r_theta * 0.5);
@@ -80,9 +75,9 @@ public class ZEA extends ZenithalProjection {
     public double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
         double r = 2 * Math.sin((HALF_PI-theta)*0.5d);
-        double x = Math.toDegrees(r * Math.sin(phi));
-        double y = Math.toDegrees(-r * Math.cos(phi));
-        double[] pos = {x,y};
+        double x = computeX(r, phi);
+        double y = computeY(r, phi);
+        double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
         return pos;
     }
 

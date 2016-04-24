@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Slant zenithal perspective.
@@ -99,7 +100,7 @@ public class SZP extends ZenithalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
     public SZP(double crval1, double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE_MU, DEFAULT_VALUE_THETAC, DEFAULT_VALUE_PHIC);
@@ -116,7 +117,7 @@ public class SZP extends ZenithalProjection {
      * @param mu \u03BC parameter projection
      * @param phic \u03B8<sub>c</sub> parameter projection
      * @param thetac \u03D5<sub>c</sub> parameter projection
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
     public SZP(double crval1, double crval2, double mu, double phic, double thetac) throws BadProjectionParameterException {
         super(crval1, crval2);
@@ -131,14 +132,14 @@ public class SZP extends ZenithalProjection {
 
     /**
      * Check.
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
     protected final void check() throws BadProjectionParameterException {
-        if ((getPhi0() != 0) || (getTheta0() != HALF_PI)) {
+        if ((!NumericalUtils.equal(getPhi0(), 0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
             throw new IllegalArgumentException("Non-standard phi0 or theta0 values");
         }
-        if (NumericalUtils.equal(this.zp, 0, DOUBLE_TOLERANCE)) {
-            throw new BadProjectionParameterException("SZP: degenarate projection because zp is 0");
+        if (NumericalUtils.equal(this.zp, 0)) {
+            throw new BadProjectionParameterException(this,"zp = 0. It must be !=0");
         }
     }
 
@@ -162,7 +163,7 @@ public class SZP extends ZenithalProjection {
 
         double theta;
         if (Double.isNaN(theta1) && Double.isNaN(theta2)) {
-            throw new PixelBeyondProjectionException("SZP: (x,y) = (" + x
+            throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
                     + ", " + y + ")");
         } else if (Double.isNaN(theta1)) {
             theta = theta2;
@@ -185,8 +186,8 @@ public class SZP extends ZenithalProjection {
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
         phi = phiRange(phi);
         double denom = zp - (1 - Math.sin(theta));
-        if (NumericalUtils.equal(denom, 0, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException("SZP: theta = " + theta);
+        if (NumericalUtils.equal(denom, 0)) {
+            throw new PixelBeyondProjectionException(this, "theta = " + theta);
         }
         double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
         double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;

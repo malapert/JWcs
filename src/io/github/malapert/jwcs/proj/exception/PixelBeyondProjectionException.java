@@ -17,6 +17,8 @@
 
 package io.github.malapert.jwcs.proj.exception;
 
+import io.github.malapert.jwcs.proj.Projection;
+
 /**
  * Pixel Beyond Projection Exception
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
@@ -25,17 +27,16 @@ public class PixelBeyondProjectionException extends ProjectionException {
 
     /**
      * Creates a PixelBeyondProjectionException based on a message.
+     * @param projectionName Projection
      * @param message message
      */
-    public PixelBeyondProjectionException(final String message) {
-        super(message);
-    }
+    public PixelBeyondProjectionException(final Projection projectionName, final String message) {
+        super(projectionName, message);
+    } 
 
-    /**
-     * Creates a PixelBeyondProjectionException.
-     */
-    public PixelBeyondProjectionException() {
-        super();
+    @Override
+    public String toString() {
+        return this.getProjection().getClass().getName()+" - Solution not defined for "+getMessage();
     }
-    
+        
 }

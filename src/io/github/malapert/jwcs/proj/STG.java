@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Stereographic.
@@ -64,9 +64,9 @@ public class STG extends ZenithalProjection {
     public double[] project(double x, double y) {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
-        double r_theta = Math.hypot(xr, yr);
-        double phi = NumericalUtils.aatan2(xr, -yr);        
-        double theta = Math.PI / 2 - 2 * Math.atan(r_theta * 0.5);       
+        double r_theta = computeRadius(xr, yr);
+        double phi = computePhi(x, y, r_theta);        
+        double theta = HALF_PI - 2 * Math.atan(r_theta * 0.5);       
         double[] pos = {phi, theta};
         return pos;       
     }
@@ -74,10 +74,10 @@ public class STG extends ZenithalProjection {
     @Override
     public double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);        
-        double r = 360 / Math.PI * Math.tan((Math.toRadians(90)-theta)/2.0d);
+        double r = 2 * Math.tan((HALF_PI-theta)*0.5d);
         double x = r * Math.sin(phi);
         double y = -r * Math.cos(phi);
-        double[] pos = {x,y};
+        double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
         return pos;
     } 
     

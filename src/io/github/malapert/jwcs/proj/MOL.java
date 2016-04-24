@@ -16,7 +16,9 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 
 /**
  * Mollweide's.
@@ -36,12 +38,12 @@ public class MOL extends CylindricalProjection {
      * Projection's name.
      */
     private static final String NAME_PROJECTION = "Mollweide’s";
-    
+
     /**
      * Projection's description.
      */
     private static final String DESCRIPTION = "no limits";
-    
+
     /**
      * Default tolerance for the iterative solution.
      */
@@ -61,10 +63,10 @@ public class MOL extends CylindricalProjection {
      */
     private double maxIter;
 
-   /**
+    /**
      * Constructs a MOL projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
-     * 
+     *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
@@ -77,7 +79,7 @@ public class MOL extends CylindricalProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(double x, double y) throws PixelBeyondProjectionException {
         //TODO : check algorithm.
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
@@ -86,7 +88,7 @@ public class MOL extends CylindricalProjection {
         double phi;
         if (s < -tol) {
             //erreur
-            phi=0;
+            phi = 0;
         } else if (s <= tol) {
             s = 0.0;
             if (Math.abs(xr) > tol) {
@@ -114,6 +116,9 @@ public class MOL extends CylindricalProjection {
             z = (z < 0.0) ? -1.0 : 1.0;
         }
         double theta = NumericalUtils.aasin(z);
+        if (Double.isNaN(theta)) {
+            throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
+        }
 
         double[] pos = {phi, theta};
         return pos;
@@ -140,7 +145,7 @@ public class MOL extends CylindricalProjection {
                 v1 = v;
             }
         } while (Math.abs(diff) > getTolerance() && nIter < getMaxIter());
-        double gamma = v*0.5;
+        double gamma = v * 0.5;
         double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phi * Math.cos(gamma));
         double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
         double[] coord = {x, y};

@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.logging.Logger;
 
 /**
@@ -123,7 +124,7 @@ public abstract class ZenithalProjection extends Projection {
     }    
     
     protected double computePhi(double x, double y, double radius) {
-        return NumericalUtils.equal(radius, 0, DOUBLE_TOLERANCE) ? 0 : NumericalUtils.aatan2(x, -y);
+        return NumericalUtils.equal(radius, 0) ? 0 : NumericalUtils.aatan2(x, -y);
     }       
     
     @Override
@@ -134,10 +135,10 @@ public abstract class ZenithalProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {    
        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-       if(NumericalUtils.equal(angle, Projection.HALF_PI, DOUBLE_TOLERANCE)) {
-           angle = Projection.HALF_PI;
+       if(NumericalUtils.equal(angle, HALF_PI)) {
+           angle = HALF_PI;
        }
-       return (angle <= Projection.HALF_PI );
+       return (angle <= HALF_PI );
     } 
     
     @Override

@@ -69,14 +69,14 @@ public class AIT extends CylindricalProjection {
         double yr = Math.toRadians(y);
         double z = 1 - Math.pow(xr / 4, 2) - Math.pow(yr / 2, 2);
         if (z < 0) {
-            throw new PixelBeyondProjectionException("AIT: Solution not defined for x,y: " + x + ", " + y);
+            throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
         }
         z = Math.sqrt(z);      
-        double s = z * yr;
-	if (Math.abs(s) > 1.0) throw new PixelBeyondProjectionException(
-		    "AIT: Solution not defined for x,y: " + x + ", " + y);        
         double phi = 2 * NumericalUtils.aatan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
         double theta = NumericalUtils.aasin(yr * z);         
+        if(Double.isNaN(theta)) {
+            throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
+        }
         double[] pos = {phi, theta};
         return pos;
     }
@@ -88,20 +88,19 @@ public class AIT extends CylindricalProjection {
      * @param phi native spherical coordinate in radians along longitude
      * @param theta native spherical coordinate in radians along latitude
      * @return the projection plane coordinates
-     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When (phi,theta) has no solution
      */    
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {         
         phi = phiRange(phi);         
         double d = 1 + Math.cos(theta) * Math.cos(phi * 0.5d);
-        if (NumericalUtils.equal(d, 0, DOUBLE_TOLERANCE)) {
-            throw new PixelBeyondProjectionException(
-		    "AIT: Solution not defined for phi,theta: " + Math.toDegrees(phi) + ", " + Math.toDegrees(theta));
+        if (NumericalUtils.equal(d, 0)) {
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + phi + ", " + theta+")");
         }
-        double gamma = Math.sqrt(2.0d / d);        
+        double gamma = Math.toDegrees(Math.sqrt(2.0d / d));        
         double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
         double y = gamma * Math.sin(theta);
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        double[] coord = {x, y};
         return coord;
     }
 

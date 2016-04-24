@@ -19,12 +19,14 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import static io.github.malapert.jwcs.utility.NumericalUtils.TWO_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Conversion of intermediate world coordinates (or projection plane
- * coordinates) to celestial coordinates.
+ * coordinates) to celestial coordinates (\u03B1, \u03B4).
  *
  *
  * Projection plane is given and must be computed from pixels coordinates by
@@ -32,9 +34,9 @@ import java.util.logging.Logger;
  *
  * The conversion is organized by a pipeline doing the following steps:
  * <ul>
- * <li>computes the projection plane coordinates to native spherical coordinates
- * through a spherical projection</li>
- * <li>computes the native spherical coordinates to celestial spherical
+ * <li>computes the projection plane coordinates (x,y) to native spherical coordinates
+ * (\u03D5, \u03B8) through a spherical projection</li>
+ * <li>computes the native spherical coordinates (\u03D5, \u03B8) to celestial spherical
  * coordinates through a spherical coordinate rotation.</li>
  * </ul>
  *
@@ -50,22 +52,7 @@ import java.util.logging.Logger;
 public abstract class Projection {
 
     /**
-     * Double tolerance for numerical precision operations sets to 1e-12.
-     */
-    protected static final double DOUBLE_TOLERANCE = 1e-12;
-
-    /**
-     * Half PI value.
-     */
-    public static final double HALF_PI = Math.PI * 0.5d;
-
-    /**
-     * Two Pi value.
-     */
-    public static final double TWO_PI = Math.PI * 2.0d;
-
-    /**
-     * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link Projection#HALF_PI}.
+     * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link NumericalUtils#HALF_PI}.
      */
     public static final double DEFAULT_THETAP = HALF_PI;
 
@@ -103,7 +90,7 @@ public abstract class Projection {
      */
     private double phip = DEFAULT_PHIP;
     /**
-     * Initializes the native latitude of the celestial pole (\u03B8<sub>p</sub>) to {@link Projection#HALF_PI}. 
+     * Initializes the native latitude of the celestial pole (\u03B8<sub>p</sub>) to {@link NumericalUtils#HALF_PI}. 
      */
     private double thetap = HALF_PI;    
     /**
@@ -188,9 +175,9 @@ public abstract class Projection {
      */
     protected final double computeDefaultValueForPhip() {
         double phi_p;
-        if (NumericalUtils.equal(getCrval2(), getTheta0(), DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(getCrval2(), getTheta0())) {
             phi_p = LONPOLE_0;
-        } else if (getCrval2()-DOUBLE_TOLERANCE > getTheta0()) {
+        } else if (getCrval2() > getTheta0()) {
             phi_p = LONPOLE_0;
         } else {
             phi_p = LONPOLE_PI;
@@ -232,10 +219,10 @@ public abstract class Projection {
         double deltap = getCoordNativePole()[1];
         LOG.log(Level.FINER, "computeCelestialSpherical:phi[rad]", phi);
         LOG.log(Level.FINER, "computeCelestialSpherical:theta[rad]", theta);
-        if (NumericalUtils.equal(deltap, HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(deltap, HALF_PI)) {
             ra = alphap + phi - getPhip() - Math.PI;
             dec = theta;
-        } else if (NumericalUtils.equal(deltap, -HALF_PI, DOUBLE_TOLERANCE)) {
+        } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
             ra = alphap - phi + getPhip();
             dec = -theta;
         } else {
@@ -279,10 +266,10 @@ public abstract class Projection {
         double dec_p = getCoordNativePole()[1];
         
         double phi, theta;
-        if (NumericalUtils.equal(dec_p, HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(dec_p, HALF_PI)) {
             phi = Math.PI + getPhip() + ra - ra_p;
             theta = dec;
-        } else if (NumericalUtils.equal(dec_p, -HALF_PI, DOUBLE_TOLERANCE)) {
+        } else if (NumericalUtils.equal(dec_p, -HALF_PI)) {
             phi = getPhip() - ra + ra_p;
             theta = -dec;            
         } else {
@@ -316,15 +303,15 @@ public abstract class Projection {
      */
     protected double[] computeCoordNativePole(double phi_p) {
 
-        if (NumericalUtils.equal(getPhi0(), 0, DOUBLE_TOLERANCE)
-                && NumericalUtils.equal(getTheta0(), HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(getPhi0(), 0)
+                && NumericalUtils.equal(getTheta0(), HALF_PI)) {
             return new double[]{getCrval1(), getCrval2()};
         }
 
         // native longitude of the celestial pole in radians
         double alphap, deltap;
         LOG.log(Level.FINER, "computeCoordNativePole:phi_p[rad]", phi_p);
-        if (NumericalUtils.equal(getTheta0(), 0.0d, DOUBLE_TOLERANCE) && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(getTheta0(), 0.0d) && NumericalUtils.equal(getCrval2(), 0) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
             double deltap_arg = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
@@ -332,14 +319,14 @@ public abstract class Projection {
             double deltap1 = deltap_arg + deltap_acos;
             double deltap2 = deltap_arg - deltap_acos;
 
-            if (NumericalUtils.equal(getTheta0(), 0, DOUBLE_TOLERANCE)
-                    && NumericalUtils.equal(getCrval2(), 0, DOUBLE_TOLERANCE)
-                    && NumericalUtils.equal(Math.abs(getPhip()-getPhi0()), HALF_PI, DOUBLE_TOLERANCE)) {
+            if (NumericalUtils.equal(getTheta0(), 0)
+                    && NumericalUtils.equal(getCrval2(), 0)
+                    && NumericalUtils.equal(Math.abs(getPhip()-getPhi0()), HALF_PI)) {
                 deltap = getThetap();
             } else {
 
-                boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
-                boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI, DOUBLE_TOLERANCE);
+                boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI);
+                boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI);
 
                 if (isDeltap1InInterval && isDeltap2InInterval) {
                     double diff1 = Math.abs(deltap1 - getThetap());
@@ -355,11 +342,11 @@ public abstract class Projection {
             }
         }
 
-        if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI, DOUBLE_TOLERANCE)) {
+        if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI)) {
             alphap = getCrval1();
-        } else if (NumericalUtils.equal(deltap, HALF_PI, DOUBLE_TOLERANCE)) {
+        } else if (NumericalUtils.equal(deltap, HALF_PI)) {
             alphap = getCrval1() + phi_p - getPhi0() - Math.PI;
-        } else if (NumericalUtils.equal(deltap, -HALF_PI, DOUBLE_TOLERANCE)) {
+        } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
             alphap = getCrval1() - phi_p + getPhi0();      
         } else {
             double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
@@ -523,15 +510,51 @@ public abstract class Projection {
         return coordNativePole;
     }
 
+    /**
+     * Returns the projection parameters for a specific projection.
+     * @return the projection parameters.
+     */
     public abstract ProjectionParameter[] getProjectionParameters();
     
+    /**
+     * The ProjectionParameter object defines few metadata about a projection parameter.
+     * 
+     * This object is used in the GUI to display the projection parameter. It defines :
+     * <ul>
+     * <li>The name of the parameter.
+     * <li>The PV keyword related to the name.
+     * <li>The valid interval of the parameter
+     * <li>The default value of the parameter to display in the GUI.    
+     * </ul>
+     * To define an undefined value, the value is set to Double.POSITIVE_INFINITY 
+     * for positive number and Double.NEGATIVE_INFINITY for negative number.
+     */
     public class ProjectionParameter {
         
-        private final String name;
+        /**
+         * Name of the parameter.
+         */
+        private final String name ;
+        /**
+         * PV keyword related to the name of the parameter.
+         */
         private final String PVName;
+        /**
+         * valid interval of the parameter.
+         */
         private final double[] validInterval;
+        /**
+         * Default value of the parameter.
+         */
         private final double defaultValue;
         
+        /**
+         * Creates a new parameter.
+         * @param name its name
+         * @param PVName its related PV keyword in FITS
+         * @param validInterval its valid interval
+         * @param defaultValue  its default value.
+         */
         public ProjectionParameter(String name, String PVName, double[] validInterval, double defaultValue) {
             this.name = name;
             this.PVName = PVName;
@@ -539,18 +562,34 @@ public abstract class Projection {
             this.defaultValue = defaultValue;
         }
         
+        /**
+         * Returns the name of the parameter.
+         * @return the name of the parameter
+         */
         public String getName() {
             return this.name;
         }
         
+        /**
+         * Returns the related keyword to PV.
+         * @return the related keyword to PV
+         */
         public String getPVName() {
             return this.PVName;
         }
         
+        /**
+         * Returns the valid interval of the parameter.
+         * @return the valid interval of the parameter
+         */
         public double[] getValidInterval() {
             return this.validInterval;
         }
         
+        /**
+         * Returns the default value of the parameter.
+         * @return the default value
+         */
         public double getDefaultValue() {
             return this.defaultValue;
         } 

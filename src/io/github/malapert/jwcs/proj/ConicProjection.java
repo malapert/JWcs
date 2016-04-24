@@ -16,7 +16,9 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,60 +82,63 @@ public abstract class ConicProjection extends Projection {
      */
     private double theta0;
     
+    protected double theta1;
+    
+    protected double theta2;
+    
     /**
      * Creates a new conic projection.
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta_a (theta1 + theta2) / 2 in degrees
      * @param eta abs(theta1 - theta2) / 2 in degrees
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    protected ConicProjection(double crval1, double crval2, double theta_a, double eta) {
+    protected ConicProjection(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "theta_a[deg]", theta_a);
         LOG.log(Level.FINER, "eta[deg]", eta);
-        double[] angles = fixInputParameters(theta_a, eta);
-        this.theta_a = Math.toRadians(angles[0]);
-        this.eta = Math.toRadians(angles[1]);        
+        this.theta_a = Math.toRadians(theta_a);
+        this.eta = Math.toRadians(eta);        
+        this.theta1 = this.theta_a - this.eta;
+        this.theta2 = this.theta_a + this.eta;
+        checkParameters(theta1, theta2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.theta_a);
         setPhip(computeDefaultValueForPhip());
     }
     
+    /**
+     * Checks \u03B8<sub>1</sub>,\u03B8<sub>2</sub> parameters.
+     * @param theta1 \u03B8<sub>1</sub> in radians
+     * @param theta2 \u03B8<sub>2</sub> in radians
+     * @throws BadProjectionParameterException When projection parameters are wrong
+     */
+    private void checkParameters(double theta1, double theta2) throws BadProjectionParameterException {
+        boolean inRangeTheta1 = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+        boolean inRangeTheta2 = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+        if(!inRangeTheta1 || !inRangeTheta2) {
+            throw new BadProjectionParameterException(this,"(theta1,theta2). Each angle must be -90<=theta1,theta2<=90");
+        }
+        
+    }
+    
     @Override
     public String getNameFamily() {
         return NAME;
-    }     
+    }         
     
-    /**
-     * Fix Theta_a and eta.
-     * 
-     * <p>
-     * Sets theta_a to 45 when theta_a = 0. Sets eta to 0 when eta is
-     * too large     
-     * </p>
-     * @param theta_a in degrees
-     * @param eta in degrees
-     * @return corrected values of (theta_a, eta)
-     */
-    private double[] fixInputParameters(double theta_a, double eta) {
-        double theta_fixed;
-        double eta_fixed;
-        if (NumericalUtils.equal(theta_a,0,DOUBLE_TOLERANCE)) {
-            LOG.log(Level.WARNING, "ThetaA=0 not allowed -- defaulting to 45 deg", theta_a);
-            theta_fixed = 45;
-        } else {
-            theta_fixed = theta_a;
-        }
-        
-        if ((theta_a-Math.abs(eta) < -180) || (theta_a+Math.abs(eta) > 180)) {
-            LOG.log(Level.WARNING, "Eta too large, set eta to 0");
-            eta_fixed = 0;
-        } else {
-            eta_fixed = eta;
-        }
-        double angles[] = {theta_fixed, eta_fixed};
-        return angles;
+    protected double computePhi(double x, double y, double r_theta, double y0, double c) {
+        return NumericalUtils.equal(r_theta, 0) ? 0 : NumericalUtils.aatan2(x/r_theta, (y0-y)/r_theta)/c;
     }
+    
+    protected double computeX(double phi, double r_theta, double c) {
+        return r_theta * Math.sin(c*phi);
+    }
+    
+    protected double computeY(double phi, double r_theta, double c, double y0) {
+        return -r_theta * Math.cos(c*phi) + y0;
+    }    
 
     @Override
     public final double getPhi0() {
@@ -167,7 +172,7 @@ public abstract class ConicProjection extends Projection {
      * Returns eta in radians.
      * @return the eta
      */
-    protected double getEta() {
+    protected final double getEta() {
         return eta;
     }
     
@@ -182,10 +187,10 @@ public abstract class ConicProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {     
        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-       if(NumericalUtils.equal(angle, Projection.HALF_PI, DOUBLE_TOLERANCE)) {
-           angle = Projection.HALF_PI;
+       if(NumericalUtils.equal(angle, HALF_PI)) {
+           angle = HALF_PI;
        }
-       return (angle < Projection.HALF_PI);
+       return (angle < HALF_PI);
     }   
     
     @Override

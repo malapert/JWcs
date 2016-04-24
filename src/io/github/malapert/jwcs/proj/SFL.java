@@ -60,7 +60,7 @@ public class SFL extends CylindricalProjection {
         double theta = Math.toRadians(y);
         double cosTheta = Math.cos(theta);
         double phi;
-        if(NumericalUtils.equal(cosTheta, 0, DOUBLE_TOLERANCE)) {
+        if(NumericalUtils.equal(cosTheta, 0)) {
             phi = 0;
         } else {
             phi = Math.toRadians(x) / Math.cos(theta);

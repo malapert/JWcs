@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.proj.exception;
 
+import io.github.malapert.jwcs.proj.Projection;
+
 /**
  * Projection Exception.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
@@ -24,19 +26,25 @@ package io.github.malapert.jwcs.proj.exception;
  * an exception associated with use of a Projection object.
  */
 public class ProjectionException extends JWcsException {
+    
+    private Projection projectionName;
 
     /**
-     * Creates a ProjectionException bases on a message.
+     * Creates a ProjectionException based on the projection class and a message.
+     * @param projectionName projection class
      * @param s message
      */
-    public ProjectionException(final String s) {
+    public ProjectionException(final Projection projectionName, final String s) {
         super(s);
+        this.projectionName = projectionName;
+    }
+    
+    public Projection getProjection() {
+        return this.projectionName;
     }
 
-    /**
-     * Creates a ProjectionException.
-     */
-    public ProjectionException() {
-        super();
-    }
+    @Override
+    public String toString() {
+        return this.projectionName.getName()+" - "+this.getMessage();
+    }           
 }

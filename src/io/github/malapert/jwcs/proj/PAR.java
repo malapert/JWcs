@@ -16,37 +16,37 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 
 /**
  * Parabolic.
- * 
+ *
  * <p>
- * The meridians are projected as parabolic arcs
- * which intersect the poles and correctly divide the equator, and
- * the parallels of latitude are spaced so as to make it an equal
- * area projection.
+ * The meridians are projected as parabolic arcs which intersect the poles and
+ * correctly divide the equator, and the parallels of latitude are spaced so as
+ * to make it an equal area projection.
  * </p>
- * 
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
 public class PAR extends CylindricalProjection {
-    
+
     /**
      * Projection's name.
      */
     private static final String NAME_PROJECTION = "Parabolic";
-    
+
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "no limits";    
+    private static final String DESCRIPTION = "no limits";
 
-   /**
+    /**
      * Constructs a PAR projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
-     * 
+     *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
@@ -57,21 +57,24 @@ public class PAR extends CylindricalProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(double x, double y) throws PixelBeyondProjectionException {
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double theta = 3 * NumericalUtils.aasin(yr / Math.PI);
-        double phi = xr / (1 - 4*Math.pow(yr / Math.PI, 2));
+        if (Double.isNaN(theta)) {
+            throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
+        }
+        double phi = xr / (1 - 4 * Math.pow(yr / Math.PI, 2));
         double[] pos = {phi, theta};
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {        
+    protected double[] projectInverse(double phi, double theta) {
         phi = phiRange(phi);
         double y = Math.toDegrees(Math.PI * Math.sin(theta / 3d));
-        double x = Math.toDegrees(phi * (2d*Math.cos(theta/1.5d) - 1d));
-        double[] coord = {x, y};        
+        double x = Math.toDegrees(phi * (2d * Math.cos(theta / 1.5d) - 1d));
+        double[] coord = {x, y};
         return coord;
     }
 
