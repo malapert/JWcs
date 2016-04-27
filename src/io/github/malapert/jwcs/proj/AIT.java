@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * The Hammer-Aitoff projection.
@@ -61,10 +62,13 @@ public class AIT extends CylindricalProjection {
      */
     public AIT(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
+
     }
 
     @Override
     public double[] project(double x, double y) throws PixelBeyondProjectionException  {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double z = 1 - Math.pow(xr / 4, 2) - Math.pow(yr / 2, 2);
@@ -78,6 +82,7 @@ public class AIT extends CylindricalProjection {
             throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
         }
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
         return pos;
     }
 
@@ -92,15 +97,17 @@ public class AIT extends CylindricalProjection {
      */    
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {         
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                
         phi = phiRange(phi);         
         double d = 1 + Math.cos(theta) * Math.cos(phi * 0.5d);
         if (NumericalUtils.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + phi + ", " + theta+")");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + Math.toDegrees(phi) + ", " + Math.toDegrees(theta)+")");
         }
         double gamma = Math.toDegrees(Math.sqrt(2.0d / d));        
         double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
         double y = gamma * Math.sin(theta);
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        
         return coord;
     }
 

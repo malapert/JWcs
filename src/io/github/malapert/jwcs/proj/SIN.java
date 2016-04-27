@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Slant orthographic.
@@ -51,11 +52,11 @@ public class SIN extends ZenithalProjection {
     public static final double DEFAULT_VALUE = 0;
 
     /**
-     * \u03BE is defined as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
+     * \u03BE is deFINERd as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
      */
     private final double ksi;
     /**
-     * \u03B7 is defined as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
+     * \u03B7 is deFINERd as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
      */
     private final double eta;
 
@@ -87,12 +88,14 @@ public class SIN extends ZenithalProjection {
      */    
     public SIN(double crval1, double crval2, double ksi, double eta) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,ksi,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,ksi,eta});                                                
         this.ksi = ksi;
         this.eta = eta;
     }
 
     @Override
     public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double phi, theta;
@@ -127,19 +130,22 @@ public class SIN extends ZenithalProjection {
         }
 
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                        
         phi = phiRange(phi);
         double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(phi));
         if (theta < thetax) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+phi+","+theta+")");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+Math.toDegrees(phi)+","+Math.toDegrees(theta)+")");
         }
         double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
         double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         return coord;
     }
 

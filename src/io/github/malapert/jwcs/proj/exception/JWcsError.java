@@ -16,41 +16,57 @@
  */
 package io.github.malapert.jwcs.proj.exception;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * JWcs Error.
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class JWcsError extends RuntimeException {
-    
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = Logger.getLogger(JWcsError.class.getName());
+
     /**
      * Creates an error.
      */
     public JWcsError() {
         super();
+        LOG.log(Level.SEVERE, "Undefined exception");
     }
-    
+
     /**
      * Creates an error based on a message.
+     *
      * @param message message
      */
     public JWcsError(String message) {
         super(message);
-    }    
-    
+        LOG.log(Level.SEVERE, message);        
+    }
+
     /**
      * Creates an error based on a cause.
+     *
      * @param cause cause
      */
     public JWcsError(Throwable cause) {
         super(cause);
-    }    
-    
+        LOG.log(Level.SEVERE, cause.getMessage());        
+    }
+
     /**
      * Creates an error based on a message and a cause.
+     *
      * @param message message
      * @param cause cause
      */
     public JWcsError(String message, Throwable cause) {
         super(message, cause);
-    }    
+        LOG.log(Level.SEVERE, message);        
+    }
 }

@@ -18,6 +18,7 @@
 package io.github.malapert.jwcs.proj.exception;
 
 import io.github.malapert.jwcs.proj.Projection;
+import java.util.logging.Level;
 
 /**
  * Bad Projection Parameter Exception.
@@ -32,6 +33,7 @@ public class BadProjectionParameterException extends ProjectionException{
      */
     public BadProjectionParameterException(Projection projectionName, final String message) {
         super(projectionName, message);
+        projectionName.getLogger().log(Level.SEVERE, "{0}- Bad projection parameter for {1}", new Object[]{getProjection().getClass().getName(), getMessage()});
     }
 
     @Override

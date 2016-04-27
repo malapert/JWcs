@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * The cylindrical equal area projection.
@@ -82,10 +83,11 @@ public class CEA extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      * @param lambda \u03BB dimensionless.
-     * @throws BadProjectionParameterException When projection parameters are wrong
+     * @throws BadProjectionParameterException lambda not in ]0,1]
      */
     public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,lambda)=({0},{1},{2})", new Object[]{crval1,crval2,lambda});                        
         if (NumericalUtils.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
             throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside of range (0,1]");
         }
@@ -94,6 +96,7 @@ public class CEA extends CylindricalProjection {
 
     @Override
     protected double[] project(double x, double y) throws ProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double phi = xr;
@@ -103,15 +106,18 @@ public class CEA extends CylindricalProjection {
             throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
         }
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) throws ProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
         phi = phiRange(phi);
         double x = Math.toDegrees(phi);
         double y = Math.toDegrees(Math.sin(theta) / getLambda());
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;
     }
 

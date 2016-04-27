@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * Parabolic.
@@ -54,10 +55,12 @@ public class PAR extends CylindricalProjection {
      */
     public PAR(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                
     }
 
     @Override
     protected double[] project(double x, double y) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double theta = 3 * NumericalUtils.aasin(yr / Math.PI);
@@ -66,15 +69,18 @@ public class PAR extends CylindricalProjection {
         }
         double phi = xr / (1 - 4 * Math.pow(yr / Math.PI, 2));
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                
         phi = phiRange(phi);
         double y = Math.toDegrees(Math.PI * Math.sin(theta / 3d));
         double x = Math.toDegrees(phi * (2d * Math.cos(theta / 1.5d) - 1d));
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
         return coord;
     }
 

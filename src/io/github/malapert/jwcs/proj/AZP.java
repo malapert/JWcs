@@ -22,6 +22,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Zenithal perspective.
@@ -95,6 +96,7 @@ public class AZP extends ZenithalProjection {
         super(crval1, crval2);
         this.gamma = Math.toRadians(gamma);
         this.mu = mu;
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,gamma)=({0},{1},{2},{3})", new Object[]{crval1,crval2,mu,gamma});        
         checkParameters(this.gamma);
     }
     
@@ -180,17 +182,20 @@ public class AZP extends ZenithalProjection {
 
     @Override
     public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
         double xr = computeXr(Math.toRadians(x));
         double yr = computeYr(Math.toRadians(y));
         double r = computeRadius(xr, yr);
         double theta = computeTheta(xr, yr, r);
         double phi = computePhi(xr, yr, r);              
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                        
         return pos;
     }
 
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                
         double thetax;
         if (NumericalUtils.equal(mu, 0)) {
             thetax = 0;
@@ -204,7 +209,7 @@ public class AZP extends ZenithalProjection {
         double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
 
         if (NumericalUtils.equal(denom, 0) || theta < thetax) {
-            throw new PixelBeyondProjectionException(this,"theta = " + theta);
+            throw new PixelBeyondProjectionException(this,"theta[deg] = " + Math.toDegrees(theta));
         }
 
         double r = (mu + 1) * Math.cos(theta) / denom;        
@@ -212,6 +217,7 @@ public class AZP extends ZenithalProjection {
         double x = r * Math.sin(phi);
         double y = -r * Math.cos(phi) / Math.cos(gamma);
         double[] pos = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         return pos;
     }
 

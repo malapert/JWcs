@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * Gnomonic.
@@ -57,30 +58,36 @@ public class TAN extends ZenithalProjection {
      */
     public TAN(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                
+        
     }
 
     @Override
     public double[] project(double x, double y) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                        
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double r_theta = computeRadius(xr, yr);        
         double phi = computePhi(x, y, r_theta);       
         double theta = NumericalUtils.aatan2(1, r_theta);        
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
         return pos;
     }
 
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {        
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                
         phi = phiRange(phi);
         double s = Math.sin(theta);
         if (NumericalUtils.equal(s, 0)) {
-            throw new PixelBeyondProjectionException(this, "theta = " + theta);
+            throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
         double r_theta = Math.cos(theta) / s;
         double x = computeX(r_theta, phi);
         double y = computeY(r_theta, phi);
         double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                
         return coord;
     }       
 

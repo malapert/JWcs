@@ -115,7 +115,7 @@ public class FK4 implements ReferenceSystemInterface {
         //Eccentricity of the Earth's orbit
         double ec = 0.01673011d-(0.00004193d+0.000000126d*T)*T;
         //Mean obliquity of the ecliptic. Method is different compared to 
-        //functions for the obliquity defined earlier. This function depends
+        //functions for the obliquity deFINERd earlier. This function depends
         //on time wrt. epoch 1950 not epoch 2000.
         double ob = (84404.836d-(46.8495d+(0.00319d+0.00181d*T)*T)*T);
         ob = Math.toRadians(ob/3600.0d);

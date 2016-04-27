@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Slant zenithal perspective.
@@ -121,6 +122,7 @@ public class SZP extends ZenithalProjection {
      */
     public SZP(double crval1, double crval2, double mu, double phic, double thetac) throws BadProjectionParameterException {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,phic,thetac)=({0},{1},{2},{3},{4})", new Object[]{crval1,crval2,mu,phic,thetac});                                                                                                                                                
         this.mu = mu;
         this.thetac = Math.toRadians(thetac);
         this.phic = Math.toRadians(phic);
@@ -145,10 +147,9 @@ public class SZP extends ZenithalProjection {
 
     @Override
     public double[] project(double x, double y) throws PixelBeyondProjectionException {
-
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                
         double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        
+        double yr = Math.toRadians(y);        
         double X = xr;
         double Y = yr;
         double X1 = (X - xp) / zp;
@@ -179,19 +180,22 @@ public class SZP extends ZenithalProjection {
         }
         double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
         phi = phiRange(phi);
         double denom = zp - (1 - Math.sin(theta));
         if (NumericalUtils.equal(denom, 0)) {
-            throw new PixelBeyondProjectionException(this, "theta = " + theta);
+            throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
         double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
         double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;
         double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                        
         return coord;
     }  
     

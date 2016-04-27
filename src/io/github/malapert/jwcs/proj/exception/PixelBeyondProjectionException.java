@@ -14,29 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package io.github.malapert.jwcs.proj.exception;
 
 import io.github.malapert.jwcs.proj.Projection;
+import java.util.logging.Level;
 
 /**
  * Pixel Beyond Projection Exception
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class PixelBeyondProjectionException extends ProjectionException {
 
     /**
      * Creates a PixelBeyondProjectionException based on a message.
+     *
      * @param projectionName Projection
      * @param message message
      */
     public PixelBeyondProjectionException(final Projection projectionName, final String message) {
         super(projectionName, message);
-    } 
+        getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for {1}", new Object[]{this.getProjection().getClass().getName(), getMessage()});
+        
+    }
 
     @Override
     public String toString() {
-        return this.getProjection().getClass().getName()+" - Solution not defined for "+getMessage();
+        return this.getProjection().getClass().getName() + " - Solution not defined for " + getMessage();
     }
-        
+
 }

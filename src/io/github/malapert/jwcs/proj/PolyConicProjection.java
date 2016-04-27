@@ -22,32 +22,33 @@ import java.util.logging.Logger;
 
 /**
  * Polyconic projection.
- * 
+ *
  * <p>
- * Polyconics are generalizations of the standard conic projections; 
- * the parallels of latitude are projected as circular arcs which may or may 
- * not be concentric, and meridians are curved rather than straight as in the 
- * standard conics.
- * </p> 
+ * Polyconics are generalizations of the standard conic projections; the
+ * parallels of latitude are projected as circular arcs which may or may not be
+ * concentric, and meridians are curved rather than straight as in the standard
+ * conics.
+ * </p>
  * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
+ * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p21
  * </p>
- * 
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
 public abstract class PolyConicProjection extends Projection {
+
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());  
-    
+    protected static final Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());
+
     /**
      * Projection name.
      */
     public static final String NAME = "Polyconic and pseudoconic projections";
-    
+
     /**
      * Native longitude value in radians for cylindrical projection.
      */
@@ -56,42 +57,46 @@ public abstract class PolyConicProjection extends Projection {
      * Native latitude value in radians for cylindrical projection.
      */
     protected static final double DEFAULT_THETA0 = 0;
-    
+
     private final double theta1;
     /**
      * Native longitude in radians of the ﬁducial point for the polyconic
      * Projection.
-     */    
+     */
     private double phio;
     /**
      * Native latitude in radians of the ﬁducial point for the polyconic
      * Projection.
-     */    
+     */
     private double theta0;
 
     /**
      * Creates a new polyconic projection
+     *
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta1 theta1 in degrees
      */
     protected PolyConicProjection(double crval1, double crval2, double theta1) {
         super(crval1, crval2);
-        LOG.log(Level.FINER, "theta1[deg]", theta1);
-        if (NumericalUtils.equal(theta1,0)) {
-            LOG.log(Level.WARNING, "ThetaA=0 not allowed -- defaulting to 45 deg", theta1);
-            theta1 = 45;
-        }        
+        LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta1) = ({0},{1},{2})", new Object[]{crval1, crval2, theta1});
+
+        if (NumericalUtils.equal(theta1, 0)) {
+            theta1=45;
+            LOG.log(Level.WARNING,"theta1=0 not allowed, reseting to 45");
+        }
         this.theta1 = Math.toRadians(theta1);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
         setPhip(computeDefaultValueForPhip());
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(DEFAULT_THETA0)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));
     }
-    
+
     @Override
     public String getNameFamily() {
         return NAME;
-    }     
+    }
 
     @Override
     public double getPhi0() {
@@ -101,8 +106,8 @@ public abstract class PolyConicProjection extends Projection {
     @Override
     public double getTheta0() {
         return theta0;
-    }  
-    
+    }
+
     @Override
     public final void setPhi0(double phio) {
         this.phio = phio;
@@ -111,23 +116,31 @@ public abstract class PolyConicProjection extends Projection {
     @Override
     public final void setTheta0(double theta0) {
         this.theta0 = theta0;
-    }    
+    }
 
     /**
      * Returns theta1 in radians.
+     *
      * @return the theta1
      */
     protected double getTheta1() {
         return theta1;
     }
-    
+
     @Override
-    public boolean inside(double lon, double lat) {      
-       return true;
-    }     
-    
+    public boolean inside(double lon, double lat) {
+        LOG.log(Level.FINER, "true");
+        return true;
+    }
+
     @Override
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        LOG.log(Level.FINER, "(pos1,pos2)=({0},{1}) ({2},{3})", new Object[]{pos1[0],pos1[1],pos2[0],pos2[1]});
         return Math.abs(pos1[0] - pos2[0]) < 50;
+    }
+    
+    @Override
+    public final Logger getLogger() {
+        return LOG;
     }    
 }

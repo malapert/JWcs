@@ -216,12 +216,7 @@ is divided into following sections:
                 </not>
             </and>
         </condition>
-        <condition else="false" property="javac.fork">
-            <or>
-                <istrue value="${jdkBug6558476}"/>
-                <istrue value="${javac.external.vm}"/>
-            </or>
-        </condition>
+        <property name="javac.fork" value="${jdkBug6558476}"/>
         <property name="jar.index" value="false"/>
         <property name="jar.index.metainf" value="${jar.index}"/>
         <property name="copylibs.rebase" value="true"/>
@@ -247,7 +242,6 @@ is divided into following sections:
         <condition else="" property="testng.debug.mode" value="-mixed">
             <istrue value="${junit+testng.available}"/>
         </condition>
-        <property name="java.failonerror" value="true"/>
     </target>
     <target name="-post-init">
         <!-- Empty placeholder for easier customization. -->
@@ -724,7 +718,7 @@ is divided into following sections:
             <sequential>
                 <property environment="env"/>
                 <resolve name="profiler.current.path" value="${profiler.info.pathvar}"/>
-                <java classname="@{classname}" dir="${profiler.info.dir}" failonerror="${java.failonerror}" fork="true" jvm="${profiler.info.jvm}">
+                <java classname="@{classname}" dir="${profiler.info.dir}" fork="true" jvm="${profiler.info.jvm}">
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg value="${profiler.info.jvmargs.agent}"/>
                     <jvmarg line="${profiler.info.jvmargs}"/>
@@ -799,7 +793,7 @@ is divided into following sections:
             <attribute default="${debug.classpath}" name="classpath"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <java classname="@{classname}" dir="${work.dir}" failonerror="${java.failonerror}" fork="true">
+                <java classname="@{classname}" dir="${work.dir}" fork="true">
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${debug-args-line}"/>
                     <jvmarg value="-Xrunjdwp:transport=${debug-transport},address=${jpda.address}"/>
@@ -826,7 +820,7 @@ is divided into following sections:
             <attribute default="jvm" name="jvm"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <java classname="@{classname}" dir="${work.dir}" failonerror="${java.failonerror}" fork="true">
+                <java classname="@{classname}" dir="${work.dir}" fork="true">
                     <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg value="-Dfile.encoding=${runtime.encoding}"/>
                     <redirector errorencoding="${runtime.encoding}" inputencoding="${runtime.encoding}" outputencoding="${runtime.encoding}"/>
@@ -1441,4 +1435,40 @@ is divided into following sections:
             </propertyset>
         </ant>
     </target>
+    <target name="package-for-store" depends="jar">
+
+        <!-- Change the value of this property to be the name of your JAR,
+             minus the .jar extension. It should not have spaces.
+             <property name="store.jar.name" value="MyJarName"/>
+        -->
+        <property name="store.jar.name" value="wcslib"/>
+
+
+        <!-- don't edit below this line -->
+
+        <property name="store.dir" value="store"/>
+        <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
+
+        <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+
+        <delete dir="${store.dir}"/>
+        <mkdir dir="${store.dir}"/>
+
+        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
+            <zipgroupfileset dir="dist" includes="*.jar"/>
+            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+
+        <zip destfile="${store.jar}">
+            <zipfileset src="${store.dir}/temp_final.jar"
+                        excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        </zip>
+
+        <delete file="${store.dir}/temp_final.jar"/>
+
+    </target>      
 </project>

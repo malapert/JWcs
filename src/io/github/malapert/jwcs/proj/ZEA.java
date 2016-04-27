@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Zenithal equal-area.
@@ -53,10 +54,12 @@ public class ZEA extends ZenithalProjection {
      */
     public ZEA(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                        
     }
 
     @Override
     public double[] project(double x, double y) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double r_theta = computeRadius(xr, yr);
@@ -68,16 +71,19 @@ public class ZEA extends ZenithalProjection {
 	    theta = HALF_PI - 2*NumericalUtils.aasin(r_theta * 0.5);
 	}        
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                
         return pos;      
     }
 
     @Override
     public double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                        
         phi = phiRange(phi);
         double r = 2 * Math.sin((HALF_PI-theta)*0.5d);
         double x = computeX(r, phi);
         double y = computeY(r, phi);
         double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{pos[0],pos[1]});                                                                                                                                                        
         return pos;
     }
 

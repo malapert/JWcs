@@ -298,7 +298,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Define equality based on the value
+     * DeFINER equality based on the value
      */
     @Override
     public int hashCode() {

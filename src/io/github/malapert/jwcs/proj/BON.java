@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * Bonnes's equal area.
@@ -60,6 +61,7 @@ public class BON extends PolyConicProjection {
      */
     public BON(double crval1, double crval2, double theta1) {
         super(crval1, crval2, theta1);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta1)=({0},{1},{2})", new Object[]{crval1,crval2,theta1});                
         if (NumericalUtils.equal(theta1,0)) {
             this.sfl = new SFL(crval1, crval2);
         }
@@ -67,6 +69,7 @@ public class BON extends PolyConicProjection {
 
     @Override
     protected double[] project(double x, double y) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         double[] result;
         if (this.sfl == null) {
             double xr = Math.toRadians(x);
@@ -84,21 +87,28 @@ public class BON extends PolyConicProjection {
                 phi = aphi * r_theta / cos_theta;
             }
             double[] pos = {phi, theta};
-            return pos;
+            result = pos;
         } else {
             result = this.sfl.project(x, y);
         }
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(result[0]),Math.toDegrees(result[1])});                                
         return result;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                        
         double[] result;
         if (sfl == null) {
             phi = phiRange(phi);
-            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
+            double y0 = getTheta1() + 1.0d * Math.cos(getTheta1()) / Math.sin(getTheta1());
             double r_theta = y0 - theta;
-            double aphi = phi * Math.cos(theta) / r_theta;
+            double aphi;
+            if (NumericalUtils.equal(r_theta, 0)) {
+                aphi=0;
+            } else {
+                aphi = phi * Math.cos(theta) / r_theta;
+            }
             double x = r_theta * Math.sin(aphi);
             double y = -r_theta * Math.cos(aphi) + y0;
             double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
@@ -106,6 +116,7 @@ public class BON extends PolyConicProjection {
         } else {
             result = sfl.projectInverse(phi, theta);
         }
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{result[0],result[1]});                                
         return result;
     }
     

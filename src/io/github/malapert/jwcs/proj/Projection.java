@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.malapert.jwcs.proj;
-
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -109,8 +108,8 @@ public abstract class Projection {
     protected Projection(double crval1, double crval2) {
         this.crval1 = Math.toRadians(crval1);
         this.crval2 = Math.toRadians(crval2);
-        LOG.log(Level.FINER, "crval1[deg]", crval1);
-        LOG.log(Level.FINER, "crval2[deg]", crval2);
+        LOG.log(Level.FINER, "INPUTS: crval1[deg]={0} crval2[deg]={1}", new Object[]{crval1,crval2});        
+        LOG.log(Level.FINEST, "Theta_p[deg]={0}", new Object[]{Math.toDegrees(DEFAULT_THETAP)});
         setThetap(DEFAULT_THETAP);
     }
 
@@ -215,21 +214,23 @@ public abstract class Projection {
      */
     protected double[] computeCelestialSpherical(double phi, double theta) {
         double ra, dec;
+        LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
+        
         double alphap = getCoordNativePole()[0];
         double deltap = getCoordNativePole()[1];
-        LOG.log(Level.FINER, "computeCelestialSpherical:phi[rad]", phi);
-        LOG.log(Level.FINER, "computeCelestialSpherical:theta[rad]", theta);
+        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(alphap),Math.toDegrees(deltap)});        
+        
         if (NumericalUtils.equal(deltap, HALF_PI)) {
             ra = alphap + phi - getPhip() - Math.PI;
             dec = theta;
         } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
             ra = alphap - phi + getPhip();
             dec = -theta;
-        } else {
+        } else {            
             ra = alphap + NumericalUtils.aatan2(-Math.cos(theta) * Math.sin(phi - phip),
                     Math.sin(theta) * Math.cos(deltap)
                     - Math.cos(theta) * Math.sin(deltap)
-                    * Math.cos(phi - getPhip()));
+                    * Math.cos(phi - getPhip()),0);            
 
             dec = NumericalUtils.aasin(Math.sin(theta) * Math.sin(deltap)
                     + Math.cos(theta) * Math.cos(deltap)
@@ -241,8 +242,9 @@ public abstract class Projection {
         if (ra < 0) {
             ra += 360;
         }
+        
         double[] pos = {ra, dec};
-        LOG.log(Level.FINER, "computeCelestialSpherical:pos[deg]", pos);
+        LOG.log(Level.FINER, "OUTPUTS[deg] pos=({0},{1})", new Object[]{Math.toDegrees(pos[0]),Math.toDegrees(pos[1])});
         return pos;
     }
 
@@ -260,10 +262,11 @@ public abstract class Projection {
      * @return Returns native longitude and latitude in radians
      */
     protected double[] computeNativeSpherical(double ra, double dec) {
-        LOG.log(Level.FINER, "computeNativeSpherical:ra[rad]", ra);
-        LOG.log(Level.FINER, "computeNativeSpherical:dec[rad]", dec);
+        LOG.log(Level.FINER, "INPUTS[deg]: (ra,dec)=({0},{1})", new Object[]{Math.toDegrees(ra),Math.toDegrees(dec)});        
+
         double ra_p = getCoordNativePole()[0];
         double dec_p = getCoordNativePole()[1];
+        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(ra_p),Math.toDegrees(dec_p)});                
         
         double phi, theta;
         if (NumericalUtils.equal(dec_p, HALF_PI)) {
@@ -276,13 +279,13 @@ public abstract class Projection {
             phi = getPhip() + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
                     Math.sin(dec) * Math.cos(dec_p)
                     - Math.cos(dec) * Math.sin(dec_p)
-                    * Math.cos(ra - ra_p));
+                    * Math.cos(ra - ra_p), 0);
             theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
                      + Math.cos(dec) * Math.cos(dec_p)
                      * Math.cos(ra - ra_p));      
         }                   
         double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "computeNativeSpherical:pos[rad]", pos);
+        LOG.log(Level.FINER, "OUTPUTS[deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});
         return pos;
     }
 
@@ -305,12 +308,12 @@ public abstract class Projection {
 
         if (NumericalUtils.equal(getPhi0(), 0)
                 && NumericalUtils.equal(getTheta0(), HALF_PI)) {
+            LOG.log(Level.FINEST,"No need to compute the coordinates of the native pole");
             return new double[]{getCrval1(), getCrval2()};
         }
 
         // native longitude of the celestial pole in radians
         double alphap, deltap;
-        LOG.log(Level.FINER, "computeCoordNativePole:phi_p[rad]", phi_p);
         if (NumericalUtils.equal(getTheta0(), 0.0d) && NumericalUtils.equal(getCrval2(), 0) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
@@ -354,7 +357,6 @@ public abstract class Projection {
             alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
         }
         double[] pos = {alphap, deltap};        
-        LOG.log(Level.FINER, "computeCoordNativePole:pos[rad]", pos);
         return pos;
     }
 
@@ -437,13 +439,9 @@ public abstract class Projection {
      * an error happens while the projection
      */
     public double[] wcs2projectionPlane(double ra, double dec) throws ProjectionException {
-        LOG.log(Level.FINER, "wcs2projectionPlane:ra[rad]", ra);
-        LOG.log(Level.FINER, "wcs2projectionPlane:dec[rad]", dec);
         ra = NumericalUtils.normalizeLongitude(ra);
         double[] nativeSpherical = computeNativeSpherical(ra, dec);
-        double[] projectionPlane = projectInverse(nativeSpherical[0], nativeSpherical[1]);
-        LOG.log(Level.FINER, "wcs2projectionPlane:pos[rad]", projectionPlane);
-        return projectionPlane;
+        return projectInverse(nativeSpherical[0], nativeSpherical[1]);
     }
 
     /**
@@ -509,6 +507,12 @@ public abstract class Projection {
     protected double[] getCoordNativePole() {
         return coordNativePole;
     }
+    
+    /**
+     * Returns the logger of the projection family.
+     * @return the logger
+     */
+    public abstract Logger getLogger();
 
     /**
      * Returns the projection parameters for a specific projection.
@@ -517,16 +521,16 @@ public abstract class Projection {
     public abstract ProjectionParameter[] getProjectionParameters();
     
     /**
-     * The ProjectionParameter object defines few metadata about a projection parameter.
+     * The ProjectionParameter object deFINERs few metadata about a projection parameter.
      * 
-     * This object is used in the GUI to display the projection parameter. It defines :
+     * This object is used in the GUI to display the projection parameter. It deFINERs :
      * <ul>
      * <li>The name of the parameter.
      * <li>The PV keyword related to the name.
      * <li>The valid interval of the parameter
      * <li>The default value of the parameter to display in the GUI.    
      * </ul>
-     * To define an undefined value, the value is set to Double.POSITIVE_INFINITY 
+     * To deFINER an undeFINERd value, the value is set to Double.POSITIVE_INFINITY 
      * for positive number and Double.NEGATIVE_INFINITY for negative number.
      */
     public class ProjectionParameter {

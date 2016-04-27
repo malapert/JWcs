@@ -55,6 +55,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.TimeUtils;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -66,7 +67,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * The FITS "World Coordinate System" (WCS) standard defines keywords and usage
+ * The FITS "World Coordinate System" (WCS) standard deFINERs keywords and usage
  * that provide for the description of astronomical coordinate systems in a FITS
  * image header.
  *
@@ -162,15 +163,15 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public static final String CUNIT2 = "CUNIT2";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     * Scale (degrees / pixel) along X axis when CD matrix is not deFINERd.
      */
     public static final String CDELT1 = "CDELT1";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     * Scale (degrees / pixel) along X axis when CD matrix is not deFINERd.
      */
     public static final String CDELT2 = "CDELT2";
     /**
-     * Rotation in degrees when CD matrix is not defined.
+     * Rotation in degrees when CD matrix is not deFINERd.
      */
     public static final String CROTA2 = "CROTA2";
     /**
@@ -469,7 +470,11 @@ public abstract class JWcs implements JWcsKeyProvider {
      * error occurs
      */
     public abstract void doInit() throws JWcsException;
-
+    
+    /**
+     * Returns the projection parameters of the projection.
+     * @return the projection parameters.
+     */
     public final ProjectionParameter[] getProjectionParameters() {
         return getProj().getProjectionParameters();
     } 
@@ -744,84 +749,109 @@ public abstract class JWcs implements JWcsKeyProvider {
 
         switch (codeProjection) {
             case "AIT":
+                LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new AIT(crval(1) * cx, crval(2) * cy);
                 break;
             case "ARC":
+                LOG.log(Level.INFO, "Creates a ARC projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                
                 projection = new ARC(crval(1) * cx, crval(2) * cy);
                 break;
             case "AZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
                     double mu = getValueAsDouble(PV21);
                     double gamma = getValueAsDouble(PV22);
+                    LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) (mu,gamma)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, mu, gamma});                    
                     projection = new AZP(crval(1) * cx, crval(2) * cy, mu, gamma);
                 } else {
+                    LOG.log(Level.INFO, "Creates a AZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                    
                     projection = new AZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "BON":
+                LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) theta1={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});                                    
                 projection = new BON(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0));
                 break;
             case "CAR":
+                LOG.log(Level.INFO, "Creates a CAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                    
                 projection = new CAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "CEA":
+                LOG.log(Level.INFO, "Creates a CEA projection with (crval1,crval2)=({0},{1}) lambda={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});                                                    
                 projection = new CEA(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 1));
                 break;
             case "COD":
+                LOG.log(Level.INFO, "Creates a COD projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                    
                 projection = new COD(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COE":
+                LOG.log(Level.INFO, "Creates a COE projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
                 projection = new COE(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COO":
+                LOG.log(Level.INFO, "Creates a COO projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
                 projection = new COO(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COP":
+                LOG.log(Level.INFO, "Creates a COP projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
                 projection = new COP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
+                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1}) (mu,lambda)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                        
                     projection = new CYP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
+                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});           
                     projection = new CYP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "MER":
+                LOG.log(Level.INFO, "Creates a MER projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                           
                 projection = new MER(crval(1) * cx, crval(2) * cy);
                 break;
             case "MOL":
+                LOG.log(Level.INFO, "Creates a MOL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                           
                 projection = new MOL(crval(1) * cx, crval(2) * cy);
                 break;
             case "PAR":
+                LOG.log(Level.INFO, "Creates a PAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
                 projection = new PAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "PCO":
+                LOG.log(Level.INFO, "Creates a PCO projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
                 projection = new PCO(crval(1) * cx, crval(2) * cy);
                 break;
             case "SFL":
+                LOG.log(Level.INFO, "Creates a SFL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
                 projection = new SFL(crval(1) * cx, crval(2) * cy);
                 break;
             case "SIN":                
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
+                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1}) (ksi,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                                        
                     projection = new SIN(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
+                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                               
                     projection = new SIN(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "STG":
+                LOG.log(Level.INFO, "Creates a STG projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                               
                 projection = new STG(crval(1) * cx, crval(2) * cy);
                 break;
             case "SZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22) && hasKeyword(PV23)) {
+                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1}) (mu,phic,thetac)=({2},{3},{4})", new Object[]{crval(1) * cx, crval(2) * cx,getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23)});                                                                                       
                     projection = new SZP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
                 } else {
+                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                   
                     projection = new SZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "TAN":
+                LOG.log(Level.INFO, "Creates a TAN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                                   
                 projection = new TAN(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZEA":
+                LOG.log(Level.INFO, "Creates a ZEA projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                                                   
                 projection = new ZEA(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZPN":
@@ -846,21 +876,26 @@ public abstract class JWcs implements JWcsKeyProvider {
                 for (int i = 0; i < pvMap.size(); i++) {
                     pvsPrimitif[i] = pvMap.get("PV2_" + i);
                 }
+                LOG.log(Level.INFO, "Creates a ZPN projection with (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval(1) * cx, crval(2) * cx, Arrays.toString(pvsPrimitif)});                                                                                                   
                 projection = new ZPN(crval(1) * cx, crval(2) * cy, pvsPrimitif);
                 break;
             default:
                 throw new JWcsError("code projection : " + codeProjection + " is not supported");
         }
         if (hasKeyword(PV11)) {
+            LOG.log(Level.INFO, "Sets phi0 to {0}", getValueAsDouble(PV11));
             projection.setPhi0(getValueAsDouble(PV11));
         }
         if (hasKeyword(PV12)) {
+            LOG.log(Level.INFO, "Sets theta0 to {0}", getValueAsDouble(PV12));            
             projection.setTheta0(getValueAsDouble(PV12));
         }
         if (!Double.isNaN(lonpole())) {
+            LOG.log(Level.INFO, "Sets phip to {0}", lonpole());            
             projection.setPhip(Math.toRadians(lonpole()));
         }
         if (!Double.isNaN(latpole())) {
+            LOG.log(Level.INFO, "Sets thetap to {0}", latpole());              
             projection.setThetap(Math.toRadians(latpole()));
         }
         return projection;

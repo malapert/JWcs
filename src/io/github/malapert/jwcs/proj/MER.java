@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Mercator.
@@ -59,37 +60,42 @@ public class MER extends CylindricalProjection {
      */
     public MER(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                
     }
 
     @Override
     protected double[] project(double x, double y) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
         double phi = xr;
         double theta = 2*Math.atan(Math.exp(yr)) - HALF_PI;
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException  {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
         phi = phiRange(phi);
         double x = phi;
         if (NumericalUtils.equal(Math.abs(theta), HALF_PI)) {
-            throw new PixelBeyondProjectionException(this,"theta = "+theta);            
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));            
         }
         double angle = (HALF_PI + theta) * 0.5d;
         if(NumericalUtils.equal(Math.abs(angle), HALF_PI)) {
-            throw new PixelBeyondProjectionException(this,"theta = "+theta);        
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));        
         }
         double d = Math.tan(angle);
         if (d<0 || NumericalUtils.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"theta = "+theta);        
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));       
         }
         double y = Math.log(d);
         x = Math.toDegrees(x);
         y = Math.toDegrees(y);
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                        
         return coord;        
     }
 

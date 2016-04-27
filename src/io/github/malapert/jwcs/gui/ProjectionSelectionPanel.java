@@ -6,12 +6,10 @@
 package io.github.malapert.jwcs.gui;
 
 import io.github.malapert.jwcs.*;
-import io.github.malapert.jwcs.coordsystem.Utility;
 import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +26,11 @@ import javax.swing.JSlider;
  * @author Bernhard Jenny, Institute of Cartography, ETH Zurich.
  */
 public class ProjectionSelectionPanel extends javax.swing.JPanel {
+    
+    /**
+     * Logger.
+     */
+    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());    
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
@@ -36,6 +39,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     private List<MapLine> lines = new ArrayList();
     private final List<MapLine> linesFromClient = new ArrayList();
     private static final int STEP_GRID = 5;
+    private String previousNameProjection = "";
 
     /**
      * Creates new form ProjectionSelectionPanel
@@ -52,51 +56,6 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         projectionComboBox.setModel(new DefaultComboBoxModel(projNames));
     }
 
-    protected final List<MapLine> drawBorder(JWcs wcs) {
-        List<MapLine> borderLines = new ArrayList<>();
-        JWcsMap wcsMap = (JWcsMap) wcs;
-        double crval1 = wcsMap.getValueAsDouble(JWcs.CRVAL1);
-        double crval2 = wcsMap.getValueAsDouble(JWcs.CRVAL2);
-        double[] center = new double[]{
-            crval1, crval2
-        };
-
-        double[] pos1 = new double[2];
-        pos1[0] = Double.NaN;
-        double[] xyzCenter = NumericalUtils.radec2xyz(center);
-        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
-            double[] pos2;
-            try {
-                double latRad = Utility.getBorderLatitude(xyzCenter, Math.toRadians(lon));
-                if (latRad > HALF_PI) {
-                    latRad = HALF_PI - latRad;
-                }
-                if (latRad < -HALF_PI) {
-                    latRad = -HALF_PI - latRad;
-                }
-
-//                if (latRad>Projection.HALF_PI) {
-//                    latRad = Math.PI - latRad;
-//                }                
-//                if (latRad<-Projection.HALF_PI) {
-//                    latRad = -Math.PI + Math.abs(latRad);
-//                }                  
-                pos2 = wcs.wcs2pix((double) lon, Math.toDegrees(latRad));
-                if (Double.isFinite(pos1[0])) {
-                    MapLine line = new MapLine();
-                    line.addPoint(pos1[0], pos1[1]);
-                    line.addPoint(pos2[0], pos2[1]);
-                    borderLines.add(line);
-                }
-                System.arraycopy(pos2, 0, pos1, 0, pos2.length);
-            } catch (ProjectionException ex) {
-                //Logger.getLogger(ProjectionFrame.class.getName()).log(Level.SEVERE, null, ex);
-                pos1[0] = Double.NaN;
-            }
-        }
-        return borderLines;
-    }
-
     protected final List<MapLine> drawLatitudeLines(JWcs wcs) {
         List<MapLine> latitudes = new ArrayList<>();
         double[] pos1 = new double[2];
@@ -107,7 +66,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
+                        //LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});
                         if (wcs.isLineToDraw(pos1, pos2)) {
+                            //LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                            
                             MapLine line = new MapLine();
                             line.addPoint(pos1[0], pos1[1]);
                             line.addPoint(pos2[0], pos2[1]);
@@ -129,14 +90,16 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     protected final List<MapLine> drawLongitudeLines(JWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lon = JWcs.MIN_LONGITUDE; lon < JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
+        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
             pos1[0] = Double.NaN;
             for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
+                        LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});                        
                         if (wcs.isLineToDraw(pos1, pos2)) {
+                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                                                        
                             MapLine line = new MapLine();
                             line.addPoint(pos1[0], pos1[1]);
                             line.addPoint(pos2[0], pos2[1]);
@@ -204,6 +167,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
         try {
             JWcsMap jwcsMap = (JWcsMap) init();
+            String currentName = jwcsMap.getName();
             ProjectionParameter[] params = jwcsMap.getProjectionParameters();
             switch (params.length) {
                 case 1:
@@ -215,7 +179,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     PV21_Slider.setVisible(true);
                     PV21_Slider.setMinimum((int) min);
                     PV21_Slider.setMaximum((int) max);
-                    //PV21_Slider.setValue((int) p1.getDefaultValue());
+                    if (!currentName.equals(previousNameProjection)) {
+                        PV21_Slider.setValue((int) p1.getDefaultValue());
+                    }
                     PV21_text.setName(p1.getName());
                     PV21_label.setVisible(true);
                     PV21_text.setVisible(true);
@@ -242,10 +208,13 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     PV22_Slider.setVisible(true);
                     PV22_Slider.setMinimum((int) min);
                     PV22_Slider.setMaximum((int) max);
-                    //PV22_Slider.setValue((int) p2.getDefaultValue());
                     PV22_text.setText(p2.getName());
                     PV22_label.setVisible(true);
                     PV22_text.setVisible(true);
+                    if (!currentName.equals(previousNameProjection)) {
+                        PV21_Slider.setValue((int) p1.getDefaultValue());
+                        PV22_Slider.setValue((int) p2.getDefaultValue());                        
+                    }                    
                     break;
                 case 3:
                     p1 = params[0];
@@ -255,8 +224,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     max = Double.isInfinite(max) ? 15 : max;
                     PV21_Slider.setVisible(true);
                     PV21_Slider.setMinimum((int) min);
-                    PV21_Slider.setMaximum((int) max);
-                    //PV21_Slider.setValue((int) p1.getDefaultValue());
+                    PV21_Slider.setMaximum((int) max);                    
                     PV21_text.setText(p1.getName());
                     PV21_label.setVisible(true);
                     PV21_text.setVisible(true);
@@ -268,8 +236,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     max = Double.isInfinite(max) ? 15 : max;
                     PV22_Slider.setVisible(true);
                     PV22_Slider.setMinimum((int) min);
-                    PV22_Slider.setMaximum((int) max);
-                    //PV22_Slider.setValue((int) p2.getDefaultValue());
+                    PV22_Slider.setMaximum((int) max);                    
                     PV22_text.setText(p2.getName());
                     PV22_label.setVisible(true);
                     PV22_text.setVisible(true);
@@ -282,15 +249,20 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     PV23_Slider.setVisible(true);
                     PV23_Slider.setMinimum((int) min);
                     PV23_Slider.setMaximum((int) max);
-                    //PV23_Slider.setValue((int) p3.getDefaultValue());
                     PV23_text.setText(p3.getName());
                     PV23_label.setVisible(true);
                     PV23_text.setVisible(true);
+                    if (!currentName.equals(previousNameProjection)) {
+                        PV21_Slider.setValue((int) p1.getDefaultValue());
+                        PV22_Slider.setValue((int) p2.getDefaultValue());                        
+                        PV23_Slider.setValue((int) p3.getDefaultValue());                        
+                    }                     
                     break;
                 default:
                     break;
 
             }
+            this.previousNameProjection = currentName;
             if (!NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.CRVAL1), lon0Slider.getValue(), 1e-13)) {
                 jwcsMap.getKeywords().put(JWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
             }

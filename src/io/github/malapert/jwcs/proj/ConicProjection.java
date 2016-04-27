@@ -96,23 +96,25 @@ public abstract class ConicProjection extends Projection {
      */
     protected ConicProjection(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
-        LOG.log(Level.FINER, "theta_a[deg]", theta_a);
-        LOG.log(Level.FINER, "eta[deg]", eta);
+        LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta_a,eta) = ({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
         this.theta_a = Math.toRadians(theta_a);
         this.eta = Math.toRadians(eta);        
         this.theta1 = this.theta_a - this.eta;
         this.theta2 = this.theta_a + this.eta;
+        LOG.log(Level.FINEST, "(theta1,theta2)[deg]=({0},{1})", new Object[]{Math.toDegrees(this.theta1),Math.toDegrees(this.theta2)}); 
         checkParameters(theta1, theta2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.theta_a);
         setPhip(computeDefaultValueForPhip());
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(this.theta_a)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));         
     }
     
     /**
      * Checks \u03B8<sub>1</sub>,\u03B8<sub>2</sub> parameters.
      * @param theta1 \u03B8<sub>1</sub> in radians
      * @param theta2 \u03B8<sub>2</sub> in radians
-     * @throws BadProjectionParameterException When projection parameters are wrong
+     * @throws BadProjectionParameterException When (theta1,theta2) not in range [-90,90]
      */
     private void checkParameters(double theta1, double theta2) throws BadProjectionParameterException {
         boolean inRangeTheta1 = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
@@ -187,14 +189,19 @@ public abstract class ConicProjection extends Projection {
     @Override
     public boolean inside(double lon, double lat) {     
        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-       if(NumericalUtils.equal(angle, HALF_PI)) {
-           angle = HALF_PI;
-       }
-       return (angle < HALF_PI);
+        LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
+        return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
     }   
     
     @Override
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
+        LOG.log(Level.FINER, "True");
         return true;
     }    
+
+    @Override
+    public final Logger getLogger() {
+        return LOG;
+    }
+        
 }

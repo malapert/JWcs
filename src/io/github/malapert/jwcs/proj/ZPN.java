@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  * Zenithal polynomial.
@@ -93,6 +94,7 @@ public final class ZPN extends ZenithalProjection {
      */
     public ZPN(double crval1, double crval2, double[] PV) throws BadProjectionParameterException {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval1,crval2,Arrays.toString(PV)});                                                
         this.PV = PV;
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
@@ -409,6 +411,7 @@ public final class ZPN extends ZenithalProjection {
 
     @Override
     protected double[] project(double x, double y) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                        
         try {
             double xr = Math.toRadians(x);
             double yr = Math.toRadians(y);
@@ -416,6 +419,7 @@ public final class ZPN extends ZenithalProjection {
             double phi = computePhi(xr, yr, r_theta);
             double theta = HALF_PI - computeSolution(r_theta, PV);
             double[] pos = {phi, theta};
+            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                    
             return pos;
         } catch (Exception ex) {
             throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
@@ -424,11 +428,13 @@ public final class ZPN extends ZenithalProjection {
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                
         phi = phiRange(phi);
         double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
         double x = computeX(r_theta, phi);
         double y = computeY(r_theta, phi);
         double[] coord = {x, y};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                                
         return coord;
     }
 

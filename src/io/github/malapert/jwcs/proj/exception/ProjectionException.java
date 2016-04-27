@@ -27,7 +27,7 @@ import io.github.malapert.jwcs.proj.Projection;
  */
 public class ProjectionException extends JWcsException {
     
-    private Projection projectionName;
+    private final Projection projectionName;
 
     /**
      * Creates a ProjectionException based on the projection class and a message.
@@ -36,10 +36,10 @@ public class ProjectionException extends JWcsException {
      */
     public ProjectionException(final Projection projectionName, final String s) {
         super(s);
-        this.projectionName = projectionName;
+        this.projectionName = projectionName;        
     }
     
-    public Projection getProjection() {
+    public final Projection getProjection() {
         return this.projectionName;
     }
 

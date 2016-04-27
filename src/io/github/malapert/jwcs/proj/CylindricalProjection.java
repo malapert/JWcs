@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -72,9 +73,12 @@ public abstract class CylindricalProjection extends Projection {
      */
     protected CylindricalProjection(double crval1, double crval2) {
         super(crval1, crval2);
+        LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2) = ({0},{1})", new Object[]{crval1, crval2});
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
         setPhip(computeDefaultValueForPhip());        
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(DEFAULT_THETA0)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));        
     }
     
     @Override
@@ -116,5 +120,10 @@ public abstract class CylindricalProjection extends Projection {
     public ProjectionParameter[] getProjectionParameters() {
         return new ProjectionParameter[]{};
     }
+    
+    @Override
+    public final Logger getLogger() {
+        return LOG;
+    }    
 
 }

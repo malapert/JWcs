@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.logging.Level;
 
 /**
  * Conic equal area.
@@ -79,12 +80,13 @@ public class COE extends ConicProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
-     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
+     * @param theta_a \u03B8<sub>a</sub> in degrees and deFINERd as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and deFINERd as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
     public COE(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);  
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                                
         gamma = Math.sin(this.theta1) + Math.sin(this.theta2);
         c = gamma * 0.5;
         if (NumericalUtils.equal(c, 0)) {
@@ -95,6 +97,7 @@ public class COE extends ConicProjection {
 
     @Override
     protected double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);                              
         double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
@@ -105,16 +108,19 @@ public class COE extends ConicProjection {
             throw new PixelBeyondProjectionException(this,"(x,y) = ("+x+","+y+")");
         }        
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                
         phi = phiRange(phi);
         double r_theta = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(theta)) / c;      
         double x = computeX(phi, r_theta, c);
         double y = computeY(phi, r_theta, c, y0);
         double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
         return coord;
     }
     
@@ -130,6 +136,7 @@ public class COE extends ConicProjection {
     
     @Override
     public boolean inside(double lon, double lat) {
+        LOG.log(Level.FINER, "True");        
         return true;
     }    
     

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package io.github.malapert.jwcs.proj.exception;
 
 /**
  * Exception
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class JWcsException extends Exception {
@@ -29,30 +29,33 @@ public class JWcsException extends Exception {
     public JWcsException() {
         super();
     }
-    
+
     /**
      * Creates an exception based on a message.
+     *
      * @param message message
      */
     public JWcsException(String message) {
         super(message);
     }
-    
+
     /**
      * Creates an exception based on a cause.
+     *
      * @param cause cause
      */
     public JWcsException(Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Creates an exception based on a message and a cause.
+     *
      * @param message message
      * @param cause cause
      */
     public JWcsException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
 }

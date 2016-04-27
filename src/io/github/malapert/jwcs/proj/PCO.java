@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import java.util.logging.Level;
 
 /**
  * Polyconic.
@@ -69,6 +70,7 @@ public class PCO extends PolyConicProjection {
      */
     public PCO(double crval1, double crval2) {
         super(crval1, crval2, 45);
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1,crval2});                                        
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
     }
@@ -111,6 +113,7 @@ public class PCO extends PolyConicProjection {
 
     @Override
     protected double[] project(double x, double y) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
 
@@ -166,7 +169,7 @@ public class PCO extends PolyConicProjection {
                     break;
                 }
 
-                // Redefine the interval. 
+                // RedeFINER the interval. 
                 if (f > 0.0) {
                     thepos = theta;
                     fpos = f;
@@ -186,11 +189,13 @@ public class PCO extends PolyConicProjection {
         }
 
         double[] pos = {phi, theta};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(double phi, double theta) {
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
         phi = phiRange(phi);
         double costhe = Math.cos(theta);
         double sinthe = Math.sin(theta);
@@ -205,6 +210,7 @@ public class PCO extends PolyConicProjection {
             y = cotthe * (1.0 - Math.cos(a)) + theta;
         }
         double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                
         return coord;
     }
 

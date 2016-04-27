@@ -569,14 +569,23 @@ public class Utility {
         double longitudeRad = Math.toRadians(longitude);
         double latitudeRad = Math.toRadians(latitude);
         return Utility.longlatRad2xyz(longitudeRad, latitudeRad);
-    }
+    }   
     
-    public final static double getBorderLatitude(double[] center, double longitude) {
-        double x = -(Math.cos(longitude)*center[0]+Math.sin(longitude)*center[1]);
-        double y = center[2];
-        return NumericalUtils.aatan2(y, x);
-    }
-    
+    /**
+     * Given two angles in longitude and latitude returns corresponding 
+     * Cartesian coordinates x,y,z.
+     * 
+     * Notes:     
+     * ------
+     * The three coordinate axes x, y and z, the set of right-handed Cartesian
+     * axes that correspond to the usual celestial spherical coordinate system. 
+     * The xy-plane is the equator, the z-axis points toward the north celestial
+     * pole, and the x-axis points toward the origin of right ascension.
+     * 
+     * @param longitudeRad longitude in radians
+     * @param latitudeRad latitude in radians
+     * @return Corresponding values of x,y,z in same order as input
+     */    
     public final static RealMatrix longlatRad2xyz(double longitudeRad, double latitudeRad) {
         double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
         double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
@@ -798,7 +807,7 @@ public class Utility {
      * 
      * Notes:      
      * ------
-     * The Supergalactic equator is conceptually defined by the plane of the 
+     * The Supergalactic equator is conceptually deFINERd by the plane of the 
      * local (Virgo-Hydra-Centaurus) supercluster, and the origin of 
      * supergalactic longitude is at the intersection of the supergalactic and 
      * galactic planes. (de Vaucouleurs) 
