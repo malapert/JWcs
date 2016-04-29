@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs;
 
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.util.Iterator;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class WcsNumericalMap extends JWcs {
         if (hasKeyword(keyword)) {
             return (int) this.keywords.get(keyword);
         } else {
-            throw new IllegalArgumentException("cannot get "+keyword);
+            throw new JWcsError("cannot get "+keyword);
         }
     }
 
@@ -75,7 +76,7 @@ public class WcsNumericalMap extends JWcs {
         if (hasKeyword(keyword)) {
             return (double) this.keywords.get(keyword);
         } else {
-            throw new IllegalArgumentException("cannot get "+keyword);
+            throw new JWcsError("cannot get "+keyword);
         }
     }
 
@@ -84,7 +85,7 @@ public class WcsNumericalMap extends JWcs {
         if (hasKeyword(keyword)) {
             return (float) this.keywords.get(keyword);
         } else {
-            throw new IllegalArgumentException("cannot get "+keyword);
+            throw new JWcsError("cannot get "+keyword);
         }
     }
 

@@ -129,6 +129,6 @@ public class JWcsFits extends JWcs {
      */
     private void setHdr(final Header hdr) {
         this.hdr = hdr;
-    }
+    }   
 
 }

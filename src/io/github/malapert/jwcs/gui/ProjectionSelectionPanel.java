@@ -66,9 +66,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        //LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});
+                        LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});
                         if (wcs.isLineToDraw(pos1, pos2)) {
-                            //LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                            
+                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                            
                             MapLine line = new MapLine();
                             line.addPoint(pos1[0], pos1[1]);
                             line.addPoint(pos2[0], pos2[1]);
@@ -79,7 +79,6 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                         pos1[0] = Double.NaN;
                     }
                 } catch (ProjectionException ex) {
-                    //LOG.log(Level.WARNING, ex.getMessage());
                     pos1[0] = Double.NaN;
                 }
             }
@@ -160,7 +159,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     private void computeGrid(JWcs wcs) {
         this.lines.addAll(drawLatitudeLines(wcs));
         this.lines.addAll(drawLongitudeLines(wcs));
-        //this.lines.addAll(drawLines(wcs));
+        ///this.lines.addAll(drawLines(wcs));
     }
 
     private void project() {

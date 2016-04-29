@@ -109,49 +109,67 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Number of pixels along X axis.
      */
-    public static final String NAXIS1 = "NAXIS1";
+    public static final String NAXIS1 = "NAXIS1";    
     /**
      * Number of pixels along Y axis.
      */
     public static final String NAXIS2 = "NAXIS2";
     /**
      * Reference along X axis in pixel frame.
+     * This keyword is required for projection computation.     
      */
     public static final String CRPIX1 = "CRPIX1";
     /**
      * Reference along Y axis in pixel frame.
+     * This keyword is required for projection computation.     
      */
     public static final String CRPIX2 = "CRPIX2";
     /**
      * Reference along longitude in degrees in celestial frame.
+     * This keyword is required for projection computation.     
      */
     public static final String CRVAL1 = "CRVAL1";
     /**
      * Reference along latitude in degrees in celestial frame.
+     * This keyword is required for projection computation.     
      */
     public static final String CRVAL2 = "CRVAL2";
     /**
      * Projection type along X axis.
+     * This keyword is required for projection computation.     
      */
     public static final String CTYPE1 = "CTYPE1";
     /**
      * Projection type along Y axis.
+     * This keyword is required for projection computation.     
      */
     protected static final String CTYPE2 = "CTYPE2";
     /**
      * Scale (degrees / pixel) and rotation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).
      */
     public static final String CD11 = "CD1_1";
     /**
      * Scale (degrees / pixel) and rotation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).    
      */
     public static final String CD12 = "CD1_2";
     /**
      * Scale (degrees / pixel) and rotation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).    
      */
     public static final String CD21 = "CD2_1";
     /**
      * Scale (degrees / pixel) and rotation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).    
      */
     public static final String CD22 = "CD2_2";
     /**
@@ -163,15 +181,23 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public static final String CUNIT2 = "CUNIT2";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not deFINERd.
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).
      */
     public static final String CDELT1 = "CDELT1";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not deFINERd.
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).    
      */
-    public static final String CDELT2 = "CDELT2";
+    public static final String CDELT2 = "CDELT2";    
     /**
-     * Rotation in degrees when CD matrix is not deFINERd.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).    
      */
     public static final String CROTA2 = "CROTA2";
     /**
@@ -180,18 +206,30 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final String EQUINOX = "EQUINOX";
     /**
      * Deformation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).     
      */
     public static final String PC11 = "PC1_1";
     /**
      * Deformation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).     
      */
     public static final String PC12 = "PC1_2";
     /**
      * Deformation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).     
      */
     public static final String PC21 = "PC2_1";
     /**
      * Deformation matrix.
+     * For projection computation, information about scale and rotation are needed.
+     * Either the CD matrix is provided or the following element (CDELT1, CDELT2, CROTA2)
+     * or (PC matrix, CDELT1, CDELT2).     
      */
     public static final String PC22 = "PC2_2";
     /**
@@ -275,10 +313,10 @@ public abstract class JWcs implements JWcsKeyProvider {
      * not valid
      */
     protected final void init() throws JWcsException {
+        checkWcs();
         setProj(createProjection());
         setCd(createCdMatrix());
-        setCdInverse(MatrixUtils.inverse(getCd()));
-        checkWcs();
+        setCdInverse(MatrixUtils.inverse(getCd()));        
     }
 
     /**
@@ -289,8 +327,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @throws JWcsException When WCS is not valid
      */
-    protected final void checkWcs() throws JWcsException {
-
+    protected void checkWcs() throws JWcsException {
+        
     }
 
     /**
@@ -470,15 +508,16 @@ public abstract class JWcs implements JWcsKeyProvider {
      * error occurs
      */
     public abstract void doInit() throws JWcsException;
-    
+
     /**
      * Returns the projection parameters of the projection.
+     *
      * @return the projection parameters.
      */
     public final ProjectionParameter[] getProjectionParameters() {
         return getProj().getProjectionParameters();
-    } 
-    
+    }
+
     /**
      * Returns the projection's name.
      *
@@ -486,7 +525,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public final String getName() {
         return getProj().getName();
-    }      
+    }
 
     /**
      * Returns the projection family.
@@ -607,7 +646,7 @@ public abstract class JWcs implements JWcsKeyProvider {
             double[][] cdTmp = JWcs.pc2cd(pc, cdelt);
             result = cdTmp[i - 1][j - 1];
         } else {
-            result = Double.NaN;
+            throw new JWcsError("cd" + i + j + " not found");
         }
         return result;
     }
@@ -640,27 +679,47 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public int wcsaxes() {
-        return getValueAsInt(NAXIS);
+        if (hasKeyword(NAXIS)) {
+            return getValueAsInt(NAXIS);
+        } else {
+            throw new JWcsError(NAXIS + " not found");
+        }
     }
 
     @Override
     public int naxis(int j) {
-        return getValueAsInt("NAXIS" + j);
+        if (hasKeyword("NAXIS" + j)) {
+            return getValueAsInt("NAXIS" + j);
+        } else {
+            throw new JWcsError("NAXIS" + j + " not found");
+        }
     }
 
     @Override
     public double crval(int n) {
-        return getValueAsDouble("CRVAL" + n);
+        if (hasKeyword("CRVAL" + n)) {
+            return getValueAsDouble("CRVAL" + n);
+        } else {
+            throw new JWcsError("CRVAL" + n + " not found");
+        }
     }
 
     @Override
     public double crpix(int n) {
-        return getValueAsDouble("CRPIX" + n);
+        if (hasKeyword("CRPIX" + n)) {
+            return getValueAsDouble("CRPIX" + n);
+        } else {
+            throw new JWcsError("CRPIX" + n + " not found");
+        }
     }
 
     @Override
     public String ctype(int n) {
-        return getValueAsString("CTYPE" + n);
+        if (hasKeyword("CTYPE" + n)) {
+            return getValueAsString("CTYPE" + n);
+        } else {
+            throw new JWcsError("CTYPE" + n + " not found");
+        }
     }
 
     @Override
@@ -753,105 +812,105 @@ public abstract class JWcs implements JWcsKeyProvider {
                 projection = new AIT(crval(1) * cx, crval(2) * cy);
                 break;
             case "ARC":
-                LOG.log(Level.INFO, "Creates a ARC projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                
+                LOG.log(Level.INFO, "Creates a ARC projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new ARC(crval(1) * cx, crval(2) * cy);
                 break;
             case "AZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
                     double mu = getValueAsDouble(PV21);
                     double gamma = getValueAsDouble(PV22);
-                    LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) (mu,gamma)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, mu, gamma});                    
+                    LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) (mu,gamma)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, mu, gamma});
                     projection = new AZP(crval(1) * cx, crval(2) * cy, mu, gamma);
                 } else {
-                    LOG.log(Level.INFO, "Creates a AZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                    
+                    LOG.log(Level.INFO, "Creates a AZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                     projection = new AZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "BON":
-                LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) theta1={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});                                    
+                LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) theta1={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});
                 projection = new BON(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0));
                 break;
             case "CAR":
-                LOG.log(Level.INFO, "Creates a CAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                    
+                LOG.log(Level.INFO, "Creates a CAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new CAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "CEA":
-                LOG.log(Level.INFO, "Creates a CEA projection with (crval1,crval2)=({0},{1}) lambda={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});                                                    
+                LOG.log(Level.INFO, "Creates a CEA projection with (crval1,crval2)=({0},{1}) lambda={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});
                 projection = new CEA(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 1));
                 break;
             case "COD":
-                LOG.log(Level.INFO, "Creates a COD projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                    
+                LOG.log(Level.INFO, "Creates a COD projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COD(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COE":
-                LOG.log(Level.INFO, "Creates a COE projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
+                LOG.log(Level.INFO, "Creates a COE projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COE(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COO":
-                LOG.log(Level.INFO, "Creates a COO projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
+                LOG.log(Level.INFO, "Creates a COO projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COO(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "COP":
-                LOG.log(Level.INFO, "Creates a COP projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                    
+                LOG.log(Level.INFO, "Creates a COP projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
                 break;
             case "CYP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1}) (mu,lambda)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                        
+                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1}) (mu,lambda)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                     projection = new CYP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
-                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});           
+                    LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                     projection = new CYP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "MER":
-                LOG.log(Level.INFO, "Creates a MER projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                           
+                LOG.log(Level.INFO, "Creates a MER projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new MER(crval(1) * cx, crval(2) * cy);
                 break;
             case "MOL":
-                LOG.log(Level.INFO, "Creates a MOL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                           
+                LOG.log(Level.INFO, "Creates a MOL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new MOL(crval(1) * cx, crval(2) * cy);
                 break;
             case "PAR":
-                LOG.log(Level.INFO, "Creates a PAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
+                LOG.log(Level.INFO, "Creates a PAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new PAR(crval(1) * cx, crval(2) * cy);
                 break;
             case "PCO":
-                LOG.log(Level.INFO, "Creates a PCO projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
+                LOG.log(Level.INFO, "Creates a PCO projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new PCO(crval(1) * cx, crval(2) * cy);
                 break;
             case "SFL":
-                LOG.log(Level.INFO, "Creates a SFL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                           
+                LOG.log(Level.INFO, "Creates a SFL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new SFL(crval(1) * cx, crval(2) * cy);
                 break;
-            case "SIN":                
+            case "SIN":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1}) (ksi,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});                                                                                                        
+                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1}) (ksi,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                     projection = new SIN(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
                 } else {
-                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                               
+                    LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                     projection = new SIN(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "STG":
-                LOG.log(Level.INFO, "Creates a STG projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                               
+                LOG.log(Level.INFO, "Creates a STG projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new STG(crval(1) * cx, crval(2) * cy);
                 break;
             case "SZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22) && hasKeyword(PV23)) {
-                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1}) (mu,phic,thetac)=({2},{3},{4})", new Object[]{crval(1) * cx, crval(2) * cx,getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23)});                                                                                       
+                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1}) (mu,phic,thetac)=({2},{3},{4})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23)});
                     projection = new SZP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
                 } else {
-                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                   
+                    LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                     projection = new SZP(crval(1) * cx, crval(2) * cy);
                 }
                 break;
             case "TAN":
-                LOG.log(Level.INFO, "Creates a TAN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                                   
+                LOG.log(Level.INFO, "Creates a TAN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new TAN(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZEA":
-                LOG.log(Level.INFO, "Creates a ZEA projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});                                                                                                   
+                LOG.log(Level.INFO, "Creates a ZEA projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
                 projection = new ZEA(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZPN":
@@ -876,7 +935,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                 for (int i = 0; i < pvMap.size(); i++) {
                     pvsPrimitif[i] = pvMap.get("PV2_" + i);
                 }
-                LOG.log(Level.INFO, "Creates a ZPN projection with (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval(1) * cx, crval(2) * cx, Arrays.toString(pvsPrimitif)});                                                                                                   
+                LOG.log(Level.INFO, "Creates a ZPN projection with (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval(1) * cx, crval(2) * cx, Arrays.toString(pvsPrimitif)});
                 projection = new ZPN(crval(1) * cx, crval(2) * cy, pvsPrimitif);
                 break;
             default:
@@ -887,15 +946,15 @@ public abstract class JWcs implements JWcsKeyProvider {
             projection.setPhi0(getValueAsDouble(PV11));
         }
         if (hasKeyword(PV12)) {
-            LOG.log(Level.INFO, "Sets theta0 to {0}", getValueAsDouble(PV12));            
+            LOG.log(Level.INFO, "Sets theta0 to {0}", getValueAsDouble(PV12));
             projection.setTheta0(getValueAsDouble(PV12));
         }
         if (!Double.isNaN(lonpole())) {
-            LOG.log(Level.INFO, "Sets phip to {0}", lonpole());            
+            LOG.log(Level.INFO, "Sets phip to {0}", lonpole());
             projection.setPhip(Math.toRadians(lonpole()));
         }
         if (!Double.isNaN(latpole())) {
-            LOG.log(Level.INFO, "Sets thetap to {0}", latpole());              
+            LOG.log(Level.INFO, "Sets thetap to {0}", latpole());
             projection.setThetap(Math.toRadians(latpole()));
         }
         return projection;
@@ -993,6 +1052,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Checks if the line is visible.
+     *
      * @param pos1 first point of the line
      * @param pos2 last point of the line
      * @return True when the line is visible otherwise False.
@@ -1000,7 +1060,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public boolean isLineToDraw(double[] pos1, double[] pos2) {
         boolean result;
         boolean isFinite = Double.isFinite(pos1[0]) && Double.isFinite(pos1[1]) && Double.isFinite(pos2[0]) && Double.isFinite(pos2[1]);
-        if (isFinite) {            
+        if (isFinite) {
             result = this.getProj().isLineToDraw(pos1, pos2);
         } else {
             result = false;
@@ -1111,5 +1171,5 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     protected void setCdInverse(RealMatrix cdInverse) {
         this.cdInverse = cdInverse;
-    }   
+    }
 }

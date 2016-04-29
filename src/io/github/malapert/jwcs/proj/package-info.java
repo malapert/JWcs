@@ -29,7 +29,7 @@
  * </ul>
  * 
  * <h2>How to use it</h2>
- * @see <a href="../pos/package-summary.html">WCS</a>
+ * @see <a href="../package-summary.html">WCS</a>
  * 
  * <h2>Class diagram</h2>
  * <img alt="Class diagram of this package" src="doc-files/Architecture_proj.png">

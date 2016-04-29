@@ -101,7 +101,7 @@ public class BON extends PolyConicProjection {
         double[] result;
         if (sfl == null) {
             phi = phiRange(phi);
-            double y0 = getTheta1() + 1.0d * Math.cos(getTheta1()) / Math.sin(getTheta1());
+            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
             double r_theta = y0 - theta;
             double aphi;
             if (NumericalUtils.equal(r_theta, 0)) {

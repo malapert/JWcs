@@ -327,6 +327,7 @@ public final class ZPN extends ZenithalProjection {
      * </p>
      * @param r radius
      * @param pv projection parameters
+     * @param coeff coefficient
      * @return the solution for an equation where order &gt; 2
      * @throws Exception Exception When an exception occurs
      */    

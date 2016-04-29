@@ -114,7 +114,7 @@ public abstract class NumericalUtils {
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public final static double aatan2(double n, double d, double defaultValue) {
-        return ((Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE) ? 0 : Math.atan2(n, d));
+        return ((Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE) ? defaultValue : Math.atan2(n, d));
     }    
     
     /**

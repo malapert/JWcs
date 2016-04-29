@@ -17,9 +17,12 @@
 
 package io.github.malapert.jwcs;
 
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,19 +68,31 @@ public class JWcsMap extends JWcs {
     @Override
     public int getValueAsInt(String keyword) {
         String result = getValueAsString(keyword);
-        return (result == null) ? 0 : Integer.valueOf(result);        
+        if(result == null) {
+            throw new JWcsError(keyword+" not found");
+        } else {
+            return Integer.valueOf(result);
+        }       
     }
 
     @Override
     public double getValueAsDouble(String keyword) {
         String result = getValueAsString(keyword);
-        return (result == null) ? Double.NaN : Double.valueOf(result);
+        if(result == null) {
+            throw new JWcsError(keyword+" not found");
+        } else {
+            return Double.valueOf(result);
+        }
     }
     
     @Override
     public float getValueAsFloat(String keyword) {
         String result = getValueAsString(keyword);
-        return (result == null) ? Float.NaN : Float.valueOf(result);
+        if(result == null) {
+            throw new JWcsError(keyword+" not found");
+        } else {
+            return Float.valueOf(result);
+        }
     }    
 
     @Override
@@ -199,5 +214,41 @@ public class JWcsMap extends JWcs {
         JWcs wcs = new JWcsMap(wcsKeywords);
         wcs.doInit();
         return wcs;
+    }
+    
+    @Override
+    protected void checkWcs() throws JWcsException {    
+       boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
+       boolean hasCd = hasCd() || hasOldCd;
+       if(this.hasKeyword(CTYPE1) && this.hasKeyword(CTYPE2) 
+               && this.hasKeyword(CRPIX1) && this.hasKeyword(CRPIX2)
+               && this.hasKeyword(CRVAL1) && this.hasKeyword(CRVAL2)
+               && hasCd) {
+           
+       } else {
+           List<String> check = new ArrayList();
+           if(!hasCd) {
+               check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
+           }
+           if(!this.hasKeyword(CTYPE1)) {
+               check.add(CTYPE1+" is missing");
+           }
+           if(!this.hasKeyword(CTYPE2)) {
+               check.add(CTYPE2+" is missing");
+           }           
+           if(!this.hasKeyword(CRPIX1)) {
+               check.add(CRPIX1+" is missing");
+           }
+           if(!this.hasKeyword(CRPIX2)) {
+               check.add(CRPIX2+" is missing");
+           }
+           if(!this.hasKeyword(CRVAL1)) {
+               check.add(CRVAL1+" is missing");
+           }
+           if(!this.hasKeyword(CRVAL2)) {
+               check.add(CRVAL2+" is missing");
+           }           
+           throw new JWcsException(check.toString());
+       }
     }
 }

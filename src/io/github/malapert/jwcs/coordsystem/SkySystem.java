@@ -17,17 +17,25 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  *
- * A sky definition can consist of a <b>sky system</b>,
- * a <b>reference system</b>, an <b>equinox</b> and an <b>epoch of observation</b>. 
- * 
+ * A sky definition can consist of a <b>sky system</b>, a <b>reference
+ * system</b>, an <b>equinox</b> and an <b>epoch of observation</b>.
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
 public abstract class SkySystem {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = Logger.getLogger(SkySystem.class.getName());
 
     /**
      * List of supported sky systems
@@ -36,7 +44,7 @@ public abstract class SkySystem {
         /**
          * Galactic coordinates (lII, bII)
          */
-        GALACTIC, 
+        GALACTIC,
         /**
          * Equatorial coordinates (\u03B1, \u03B4),
          */
@@ -44,50 +52,55 @@ public abstract class SkySystem {
         /**
          * De Vaucouleurs Supergalactic coordinates (sgl, sgb)
          */
-        SUPER_GALACTIC, 
+        SUPER_GALACTIC,
         /**
-         * Ecliptic coordinates (\u03BB, \u03B2) referred to the ecliptic
-         * and mean equinox
+         * Ecliptic coordinates (\u03BB, \u03B2) referred to the ecliptic and
+         * mean equinox
          */
         ECLIPTIC
     };
 
     /**
      * Calculates the rotation matrix to from a reference frame to another one.
-     * 
-     * The methods in this class have been traduced from Python to JAVA 
-     * 
+     *
+     * The methods in this class have been traduced from Python to JAVA
+     *
      * @param refFrame the output reference frame
      * @return the rotation matrix in the output reference frame
-     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original code in Python</a>
+     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
+     * code in Python</a>
      */
     protected abstract RealMatrix getRotationMatrix(final SkySystem refFrame);
 
     /**
      * Returns the coordinate system name.
+     *
      * @return the coordinate system name
      */
     public abstract SkySystems getSkySystemName();
 
     /**
      * Returns the equinox.
+     *
      * @return the equinox
      */
-    protected abstract float getEquinox();        
+    protected abstract float getEquinox();
 
     /**
      * Returns Eterms matrix for the input reference system.
+     *
      * @return Eterms matrix
      */
     private RealMatrix getEtermsIn() {
         RealMatrix eterms = null;
         ReferenceSystemInterface.Type refSystem;
-        switch(getSkySystemName()) {
+        switch (getSkySystemName()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
                     float equinox = ((Equatorial) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
+                    LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});
                 }
                 break;
             case ECLIPTIC:
@@ -95,120 +108,176 @@ public abstract class SkySystem {
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
                     float equinox = ((Equatorial) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
-                }                
+                    LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
+                }
                 break;
         }
         return eterms;
     }
-    
+
     /**
      * Returns Eterms matrix for the output reference system.
+     *
      * @param refFrame the output reference system
      * @return Eterms matrix
      */
     private RealMatrix getEtermsOut(final SkySystem refFrame) {
         RealMatrix eterms = null;
         ReferenceSystemInterface.Type refSystem;
-        switch(refFrame.getSkySystemName()) {
+        switch (refFrame.getSkySystemName()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
                     float equinox = ((Equatorial) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
+                    LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
                 break;
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Equatorial) refFrame).getEquinox();                    
+                    float equinox = ((Equatorial) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
-                }                
+                    LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
+                }
                 break;
         }
-        return eterms;               
-    }    
+        return eterms;
+    }
 
     /**
-     * Converts the (longitude, latitude) coordinates into the output 
-     * reference system.
-     * 
+     * Converts the (longitude, latitude) coordinates into the output reference
+     * system.
+     *
      * The method has been traduced from Python to JAVA.
-     * 
+     *
      * @param refFrame the output reference system
      * @param longitude longitude in degrees
      * @param latitude latitude in degrees
      * @return the position in the sky in the output reference system
-     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original code in Python</a>
+     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
+     * code in Python</a>
      */
-    public SkyPosition convertTo(final SkySystem refFrame, double longitude, double latitude) {
-        RealMatrix xyz = Utility.longlat2xyz(longitude, latitude);        
+    public final SkyPosition convertTo(final SkySystem refFrame, double longitude, double latitude) {
+        RealMatrix xyz = Utility.longlat2xyz(longitude, latitude);
+        LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
         RealMatrix rotation = getRotationMatrix(refFrame);
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getSkySystemName(),refFrame.getSkySystemName(),rotation});        
         RealMatrix etermsIn = getEtermsIn();
-        RealMatrix etermsOut = getEtermsOut(refFrame);       
+        LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});        
+        RealMatrix etermsOut = getEtermsOut(refFrame);
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{refFrame.getSkySystemName(), etermsOut});        
         if (etermsIn != null) {
             xyz = Utility.removeEterms(xyz, etermsIn);
+            LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});            
         }
         xyz = rotation.multiply(xyz);
+        LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
         if (etermsOut != null) {
             xyz = Utility.addEterms(xyz, etermsOut);
+            LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});            
         }
         double[] position = Utility.xyz2longlat(xyz);
+        LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
+        LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this.getSkySystemName(), refFrame.getSkySystemName(), position[0], position[1]});
         return new SkyPosition(position[0], position[1], refFrame);
     }
-    
+
     /**
-     * Converts an array of (longitude1, latitude2, longitude2, latitude2, ...) coordinates into the output 
-     * reference system.
+     * Converts an array of (longitude1, latitude2, longitude2, latitude2, ...)
+     * coordinates into the output reference system.
+     *
      * @param refFrame the output reference system
-     * @param coordinates an array of (longitude1, latitude2, longitude2, latitude2, ...) in degrees
+     * @param coordinates an array of (longitude1, latitude2, longitude2,
+     * latitude2, ...) in degrees
      * @return an array of SkyPosition
-     * @throws IllegalArgumentException Raises an exception when numberEltsOfCoordinates % 2 != 0
+     * @throws IllegalArgumentException Raises an exception when
+     * numberEltsOfCoordinates % 2 != 0
      */
-    public SkyPosition[] convertTo(final SkySystem refFrame, double[] coordinates) throws IllegalArgumentException{
+    public final SkyPosition[] convertTo(final SkySystem refFrame, double[] coordinates) throws IllegalArgumentException {
+
         final int numberElts = coordinates.length;
         final int numberOfCoordinatesPerPoint = 3;
         if (numberElts % 2 != 0) {
             throw new IllegalArgumentException("coordinates should be an array containing a set of [longitude, latitude]");
         }
-        final SkyPosition[] skyPositionArray = new SkyPosition[(int)(numberElts * 0.5) * numberOfCoordinatesPerPoint];
+        final SkyPosition[] skyPositionArray = new SkyPosition[(int) (numberElts * 0.5) * numberOfCoordinatesPerPoint];
 
         RealMatrix rotation = getRotationMatrix(refFrame);
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getSkySystemName(),refFrame.getSkySystemName(),rotation});
         RealMatrix etermsIn = getEtermsIn();
+        LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});
         RealMatrix etermsOut = getEtermsOut(refFrame);
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{refFrame.getSkySystemName(), etermsOut});
 
         int indice = 0;
-        for (int i=0 ; i<numberElts ; i=i+2) {
-            RealMatrix xyz = Utility.longlat2xyz(coordinates[i], coordinates[i+1]); 
+        for (int i = 0; i < numberElts; i = i + 2) {
+            RealMatrix xyz = Utility.longlat2xyz(coordinates[i], coordinates[i + 1]);
+            LOG.log(Level.FINER, "xyz : {0}", new Object[]{xyz});
             if (etermsIn != null) {
                 xyz = Utility.removeEterms(xyz, etermsIn);
-            }            
+                LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});
+            }
             xyz = rotation.multiply(xyz);
+            LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});            
             if (etermsOut != null) {
                 xyz = Utility.addEterms(xyz, etermsOut);
-            }            
+                LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});
+            }
             double[] position = Utility.xyz2longlat(xyz);
+            LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0}", new Object[]{position});
             skyPositionArray[indice] = new SkyPosition(position[0], position[1], refFrame);
             indice++;
         }
-        
+        LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getSkySystemName(), refFrame.getSkySystemName(), Arrays.toString(skyPositionArray)});
         return skyPositionArray;
     }
-    
+
     /**
      * Computes the angular separation between two sky positions.
+     *
      * @param pos1 sky position in a reference frame
      * @param pos2 sky position in a reference frame
      * @return angular separation in degrees.
      */
-    public static double separation(final SkyPosition pos1, final SkyPosition pos2) {
+    public static final double separation(final SkyPosition pos1, final SkyPosition pos2) {
         SkySystem skySystem = pos1.getRefFrame();
         SkyPosition pos1InRefFramePos2 = skySystem.convertTo(pos2.getRefFrame(), pos1.getLongitude(), pos1.getLatitude());
         double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
         double[] pos2XYZ = pos2.getCartesian();
-        double normPos1 = Math.sqrt(pos1XYZ[0]*pos1XYZ[0]+pos1XYZ[1]*pos1XYZ[1]+pos1XYZ[2]*pos1XYZ[2]);
-        double normPos2 = Math.sqrt(pos2XYZ[0]*pos2XYZ[0]+pos2XYZ[1]*pos2XYZ[1]+pos2XYZ[2]*pos2XYZ[2]);
-        double separation = NumericalUtils.aacos((pos1XYZ[0]*pos2XYZ[0]+pos1XYZ[1]*pos2XYZ[1]+pos1XYZ[2]*pos2XYZ[2])/(normPos1*normPos2));
+        double normPos1 = Math.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
+        double normPos2 = Math.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
+        double separation = NumericalUtils.aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
+        LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, Math.toDegrees(separation)});
         return Math.toDegrees(separation);
+    }
+
+    /**
+     * Returns a SkySystem based on the sky system name.
+     *
+     * @param skySystemName sky system name
+     * @return the SkySystem
+     */
+    public static final SkySystem getSkySystemFromName(final SkySystems skySystemName) {
+        SkySystem skySystem;
+        LOG.log(Level.INFO, "Get sky system {0}", new Object[]{skySystemName.name()});
+        switch (skySystemName) {
+            case ECLIPTIC:
+                skySystem = new Ecliptic();
+                break;
+            case EQUATORIAL:
+                skySystem = new Equatorial();
+                break;
+            case GALACTIC:
+                skySystem = new Galactic();
+                break;
+            case SUPER_GALACTIC:
+                skySystem = new SuperGalactic();
+                break;
+            default:
+                throw new IllegalArgumentException(skySystemName + " not supported as sky system");
+        }
+        return skySystem;
     }
 
 }
