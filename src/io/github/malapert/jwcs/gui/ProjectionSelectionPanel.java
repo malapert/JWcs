@@ -31,6 +31,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * Logger.
      */
     protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());    
+    private static final long serialVersionUID = 5367008551020527277L;
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
