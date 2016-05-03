@@ -31,14 +31,15 @@ import io.github.malapert.jwcs.coordsystem.SkySystem;
 import io.github.malapert.jwcs.gui.MapLine;
 import io.github.malapert.jwcs.gui.ProjectionSelectionPanel;
 import io.github.malapert.jwcs.gui.UngenerateImporter;
-import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
+import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.HeaderFitsReader;
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,21 +54,75 @@ import javax.swing.JFrame;
 /**
  * The main class.
  *
- * @author Bernhard Jenny, Institute of Cartography, ETH Zurich.
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class Main {
 
+    /**
+     * Countries border.
+     */
     private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/gui/continents.ung";
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+
+    /**
+     * List of programs
+     */
+    private enum PROG {
+
+        SKY_CONVERTER(""),
+        PROJECT(""),
+        UNPROJECT(""),
+        GUI(null);
+
+        private String commandLine;
+
+        PROG(String commandLine) {
+            this.commandLine = commandLine;
+        }
+
+        public String getCommandLine() {
+            return this.commandLine;
+        }
+
+        public void setCommandLine(String commandLine) {
+            this.commandLine = commandLine;
+        }
+
+    }
+
+    /**
+     * Exit code.
+     */
+    private enum EXIT {
+
+        OK(0),
+        USER_INPUT_ERROR(1),
+        NO_EXIT(100);
+
+        private final int code;
+
+        EXIT(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return this.code;
+        }
+    }
 
     /**
      * Usage.
      */
     private static void usage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: java -jar JWcs.jar -d OFF -g\n\n");
-        sb.append("    or java -jar JWcs.jar -d OFF --project \"HDR_FILE X Y\"\n");
-        sb.append("    or java -jar JWcs.jar -d OFF --unproject \"HDR_FILE RA DEC\"\n");
-        sb.append("    or java -jar JWcs.jar -d OFF --convert \"RA,DEC SYS_ORGIN SYS_TARGET\"\n");
+        sb.append("Usage: java -jar JWcs.jar -g [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --project \"HDR_FILE X Y\" [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --unproject \"HDR_FILE RA DEC\" [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --convert \"RA,DEC SYS_ORGIN SYS_TARGET\" [OPTIONS]\n");
         sb.append("           where:\n");
         sb.append("               - HDR_FILE: Header FITS file\n");
         sb.append("               - X: pixel coordinate along X axis on the camera (starts to 1) \n");
@@ -107,68 +162,68 @@ public class Main {
         sb.append("  -p, --project            Project a pixel to the sky\n");
         sb.append("  -u, --unproject          Unproject a point on the sky to 2D \n");
         sb.append("  -c, --convert            Convert a sky coordinate from a sky system to antoher one\n");
-        sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
         sb.append("  -g, --gui                Display projections with a GUI\n");
         sb.append("  -h, --help               Display this help and exit\n");
+        sb.append("\n");
+        sb.append("OPTIONS are the following:\n");
+        sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
+
         System.out.println(sb.toString());
-        System.exit(0);
+        System.exit(EXIT.OK.getCode());
     }
 
     /**
      * Project camera to sky from command line.
      *
-     * @param g getopt
+     * @param commandLine options from command line
      */
-    private static void projectToSkyFromCommandLine(final Getopt g) {
-        try {
-            String[] arguments = g.getOptarg().split("\\s+");
-            if (arguments.length != 3) {
-                System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-                System.exit(2);
-            }
-            HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
-            List<List<String>> listKeywords = hdr.readKeywords();
-            Map<String, String> keyMap = new HashMap();
-            listKeywords.stream().forEach((keywordLine) -> {
-                keyMap.put(keywordLine.get(0), keywordLine.get(1));
-            });
-            JWcsMap wcs = new JWcsMap(keyMap);
-            wcs.doInit();
-            double[] result = wcs.pix2wcs(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
-            System.out.println("(ra,dec)=(" + result[0] + ", " + result[1] + ")");
-        } catch (IOException | JWcsException | JWcsError ex) {
-            System.err.println(ex.getMessage());
-            System.exit(3);
+    private static void projectToSkyFromCommandLine(final String commandLine) throws ProjectionException, JWcsException, IOException {
+        String[] arguments = commandLine.split("\\s+");
+        if (arguments.length != 3) {
+            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
+            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
+            System.exit(EXIT.USER_INPUT_ERROR.getCode());
         }
+        HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
+        List<List<String>> listKeywords = hdr.readKeywords();
+        Map<String, String> keyMap = new HashMap();
+        listKeywords.stream().forEach((keywordLine) -> {
+            keyMap.put(keywordLine.get(0), keywordLine.get(1));
+        });
+        JWcsMap wcs = new JWcsMap(keyMap);
+        wcs.doInit();
+        LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", arguments);
+        double[] result = wcs.pix2wcs(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
+        System.out.println("(ra,dec)=(" + result[0] + ", " + result[1] + ")");
+        LOG.log(Level.INFO, "(ra,dec) = (%s,%s)", result);
 
     }
 
     /**
      * Project sky to camera from command line.
      *
-     * @param g getopt
+     * @param String commandLine Options from command line
      */
-    private static void projectToCameraFromCommandLine(final Getopt g) {
-        try {
-            String[] arguments = g.getOptarg().split("\\s+");
-            if (arguments.length != 3) {
-                System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-                System.exit(2);
-            }
-            HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
-            List<List<String>> listKeywords = hdr.readKeywords();
-            Map<String, String> keyMap = new HashMap();
-            listKeywords.stream().forEach((keywordLine) -> {
-                keyMap.put(keywordLine.get(0), keywordLine.get(1));
-            });
-            JWcsMap wcs = new JWcsMap(keyMap);
-            wcs.doInit();
-            double[] result = wcs.wcs2pix(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
-            System.out.println("(x,y)=(" + result[0] + ", " + result[1] + ")");
-        } catch (IOException | JWcsException | JWcsError ex) {
-            System.err.println(ex.getMessage());
-            System.exit(3);
+    private static void projectToCameraFromCommandLine(final String commandLine) throws ProjectionException, JWcsException, IOException {
+
+        String[] arguments = commandLine.split("\\s+");
+        if (arguments.length != 3) {
+            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
+            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
+            System.exit(EXIT.USER_INPUT_ERROR.getCode());
         }
+        HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
+        List<List<String>> listKeywords = hdr.readKeywords();
+        Map<String, String> keyMap = new HashMap();
+        listKeywords.stream().forEach((keywordLine) -> {
+            keyMap.put(keywordLine.get(0), keywordLine.get(1));
+        });
+        JWcsMap wcs = new JWcsMap(keyMap);
+        wcs.doInit();
+        LOG.log(Level.INFO, "Executing wcs2pix(%s,%s)", arguments);
+        double[] result = wcs.wcs2pix(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
+        System.out.println("(x,y)=(" + result[0] + ", " + result[1] + ")");
+        LOG.log(Level.INFO, "(x,y) = (%s,%s)", result);
     }
 
     /**
@@ -295,29 +350,28 @@ public class Main {
     /**
      * Converts a position frome a sky system to another one.
      *
-     * @param g getopt
+     * @param commandLine Options from command line
      */
-    private static void convertFromCommandLine(final Getopt g) {
-        try {
-            String[] arguments = g.getOptarg().split("\\s+");
-            if (arguments.length != 3) {
-                System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-                System.exit(2);
-            }
-            String coordinates = arguments[0];
-            String skySystemOrigin = arguments[1];
-            String skySystemTarget = arguments[2];
-            double[] skyPos = Arrays.stream(coordinates.split(","))
-                    .mapToDouble(Double::parseDouble)
-                    .toArray();
-            SkySystem skySystemFrom = getSkySystem(skySystemOrigin);
-            SkySystem skySystemTo = getSkySystem(skySystemTarget);
-            SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
-            System.out.println(skyPosition.getLongitude() + " " + skyPosition.getLatitude());
-        } catch (RuntimeException ex) {
-            System.out.println(ex.getMessage());
-            System.exit(2);
+    private static void convertFromCommandLine(final String commandLine) {
+        String[] arguments = commandLine.split("\\s+");
+        if (arguments.length != 3) {
+            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
+            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
+            System.exit(EXIT.USER_INPUT_ERROR.getCode());
         }
+        String coordinates = arguments[0];
+        String skySystemOrigin = arguments[1];
+        String skySystemTarget = arguments[2];
+        double[] skyPos = Arrays.stream(coordinates.split(","))
+                .mapToDouble(Double::parseDouble)
+                .toArray();
+        SkySystem skySystemFrom = getSkySystem(skySystemOrigin);
+        SkySystem skySystemTo = getSkySystem(skySystemTarget);
+        LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
+        SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
+        System.out.println(skyPosition.getLongitude() + " " + skyPosition.getLatitude());
+        LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
+
     }
 
     /**
@@ -335,7 +389,7 @@ public class Main {
                 h.setLevel(levelInfo);
             } else if (h instanceof ConsoleHandler) {
                 h.setLevel(levelInfo);
-            }            
+            }
         }
         rootLogger.setLevel(levelInfo);
     }
@@ -346,8 +400,11 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        EXIT returnedCode = EXIT.OK;
+        boolean isGui = false;
         int c;
         String arg;
+        List<PROG> progChoice = new ArrayList<>();
         LongOpt[] longopts = new LongOpt[6];
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
@@ -366,42 +423,92 @@ public class Main {
         while ((c = g.getopt()) != -1) {
             switch (c) {
                 case 'g':
-                    java.awt.EventQueue.invokeLater(() -> {
-                        createWindow();
-                    });
+                    progChoice.add(PROG.GUI);
                     break;
                 case 'c':
-                    convertFromCommandLine(g);
+                    PROG.SKY_CONVERTER.setCommandLine(g.getOptarg());
+                    progChoice.add(PROG.SKY_CONVERTER);
                     break;
                 case 'd':
                     setDebug(rootLogger, g);
                     break;
                 case 'p':
-                    projectToSkyFromCommandLine(g);
+                    PROG.PROJECT.setCommandLine(g.getOptarg());
+                    progChoice.add(PROG.PROJECT);
                     break;
                 case 'u':
-                    projectToCameraFromCommandLine(g);
+                    PROG.UNPROJECT.setCommandLine(g.getOptarg());
+                    progChoice.add(PROG.UNPROJECT);
                     break;
                 case 'h':
                     usage();
                     break;
                 case ':':
-                    System.out.println("You need an argument for option "
+                    System.err.println("You need an argument for option "
                             + (char) g.getOptopt());
+                    LOG.log(Level.SEVERE, "You need an argument for option %s", new Object[]{g.getOptopt()});
+                    returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
                 //
                 case '?':
-                    System.out.println("The option '" + (char) g.getOptopt()
+                    System.err.println("The option '" + (char) g.getOptopt()
                             + "' is not valid");
+                    LOG.log(Level.SEVERE, "The option %s is not valid", new Object[]{g.getOptopt()});
+                    returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
                 //
                 default:
-                    System.out.println("getopt() returned " + c);
+                    System.err.println("getopt() returned " + c);
+                    LOG.log(Level.SEVERE, "getopt() returned %s", new Object[]{c});
+                    returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
             }
         }
         for (int i = g.getOptind(); i < args.length; i++) {
-            System.out.println("Non option argv element: " + args[i] + "\n");
+            System.err.println("Non option argv element: " + args[i] + "\n");
+            LOG.log(Level.SEVERE, "Non option argv element: %s", new Object[]{args[i]});
+            returnedCode = EXIT.USER_INPUT_ERROR;
+        }
+        if (EXIT.OK != returnedCode) {
+            System.exit(returnedCode.getCode());
+        }
+
+        if (progChoice.size() != 1) {
+            System.err.println("You need to select only one of the available program : gui, project, unproject, converter");
+            returnedCode = EXIT.USER_INPUT_ERROR;
+            System.exit(returnedCode.getCode());
+        }
+
+        try {
+
+            PROG prog = progChoice.get(0);
+            switch (prog) {
+                case GUI:
+                    java.awt.EventQueue.invokeLater(() -> {
+                        createWindow();
+                    });
+                    isGui = true;
+                    break;
+                case PROJECT:
+                    projectToSkyFromCommandLine(prog.getCommandLine());
+                    break;
+                case UNPROJECT:
+                    projectToCameraFromCommandLine(prog.getCommandLine());
+                    break;
+                case SKY_CONVERTER:
+                    convertFromCommandLine(prog.getCommandLine());
+                    break;
+                default:
+                    throw new IllegalArgumentException(prog.name() + " not supported");
+            }
+            returnedCode = EXIT.OK;
+        } catch (JWcsException | IOException | RuntimeException ex) {
+            LOG.log(Level.SEVERE, "Error : ", ex);
+            returnedCode = EXIT.USER_INPUT_ERROR;
+        } finally {
+            if (!isGui) {
+                System.exit(returnedCode.getCode());
+            }
         }
     }
 
@@ -430,7 +537,8 @@ public class Main {
             panel.draw();
 
         } catch (HeadlessException | IOException exc) {
-            System.exit(1);
+            LOG.log(Level.SEVERE, "Error : %s", new Object[]{exc.getMessage()});
+            System.exit(EXIT.USER_INPUT_ERROR.getCode());
         }
 
     }
