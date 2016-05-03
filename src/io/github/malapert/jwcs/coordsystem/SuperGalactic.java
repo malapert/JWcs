@@ -85,4 +85,10 @@ public class SuperGalactic extends SkySystem {
     protected float getEquinox() {
         return EQUINOX;
     }
+
+    @Override
+    public String toString() {
+        return SKY_NAME.name();
+    }
+        
 }

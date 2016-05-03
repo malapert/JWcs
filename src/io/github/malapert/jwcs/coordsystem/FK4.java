@@ -162,4 +162,10 @@ public class FK4 implements ReferenceSystemInterface {
     public void setEpochObs(float epochObs) {
         this.epochObs = epochObs;
     }
+
+    @Override
+    public String toString() {
+        return "FK4("+this.equinox+","+this.epochObs+")";
+    }
+        
 }

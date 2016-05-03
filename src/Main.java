@@ -24,8 +24,10 @@ import io.github.malapert.jwcs.coordsystem.FK4;
 import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.ICRS;
+import io.github.malapert.jwcs.coordsystem.J2000;
 import io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface;
 import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.FK5;
+import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.J2000;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
 import io.github.malapert.jwcs.coordsystem.SkySystem;
 import io.github.malapert.jwcs.gui.MapLine;
@@ -253,6 +255,9 @@ public class Main {
                 } else {
                     ref = new FK4_NO_E();
                 }
+                break;
+            case J2000: 
+                ref = new J2000();
                 break;
             default:
                 throw new IllegalArgumentException("Reference frame not supported");

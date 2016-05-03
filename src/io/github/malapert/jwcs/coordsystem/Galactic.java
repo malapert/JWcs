@@ -86,4 +86,10 @@ public class Galactic extends SkySystem {
     protected float getEquinox() {
         return this.equinox;
     }
+
+    @Override
+    public String toString() {
+        return SKY_NAME.name();
+    }
+        
 }

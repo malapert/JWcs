@@ -95,5 +95,5 @@ public interface ReferenceSystemInterface {
      * @return the equinox
      */
     float getEquinox();
-
+       
 }

@@ -125,4 +125,10 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
     public void setRefSystem(final ReferenceSystemInterface refSystem) {
         this.refSystem = refSystem;
     }
+
+    @Override
+    public String toString() {
+        return SKY_NAME.name();
+    }
+        
 }

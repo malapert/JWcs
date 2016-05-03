@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014-2016 Jean-Christophe Malapert
+/*
+ * Copyright (C) 2014-2016 malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,51 +17,36 @@
 package io.github.malapert.jwcs.coordsystem;
 
 /**
- * The International Celestial Reference System, for optical data 
- * realized through the Hipparcos catalog. 
- * 
- * By definition, ICRS is not an equatorial system, but it is 
- * very close to the FK5 (J2000) system. No Equinox value is required.
- * 
- * The International Celestial Reference System (ICRS) is the current standard
- * celestial reference system adopted by the International Astronomical Union
- * (IAU). Its origin is at the barycenter of the solar system, with axes that
- * are intended to be "fixed" with respect to space. ICRS coordinates are
- * approximately the same as equatorial coordinates: the mean pole at J2000.0
- * in the ICRS lies at 17.3±0.2 mas in the direction 12 h and 5.1±0.2 mas
- * in the direction 18 h. The mean equinox of J2000.0 is shifted from
- * the ICRS right ascension origin by 78±10 mas (direct rotation around
- * the polar axis).
- *         
- * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ *
+ * @author malapert
  */
-public class ICRS implements ReferenceSystemInterface {
-  
+public class J2000 implements ReferenceSystemInterface {
+
     /**
      * The name of this reference frame.
      */
-    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.ICRS;
+    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.J2000;
 
     /**
      * The default value of the equinox.
      */
     private final static float DEFAULT_EQUINOX = 2000.0f;
-    
+
     /**
      * The epoch of the equinox.
      */
     private float equinox;
 
-    /**
+    /*
      * Creates a new ICRS reference frame.
      */
-    public ICRS() {
+    public J2000() {
         init(DEFAULT_EQUINOX);
     }
 
     /**
      * initialization.
+     *
      * @param equinox the equinox
      */
     private void init(float equinox) {
@@ -69,7 +54,7 @@ public class ICRS implements ReferenceSystemInterface {
     }
 
     @Override
-    public ReferenceSystemInterface.Type getReferenceSystemType() {
+    public Type getReferenceSystemType() {
         return REF_SYSTEM;
     }
 
@@ -85,6 +70,7 @@ public class ICRS implements ReferenceSystemInterface {
 
     @Override
     public String toString() {
-        return "ICRS";
+        return "J2000";
     }        
+
 }

@@ -179,7 +179,7 @@ public abstract class SkySystem {
         }
         double[] position = Utility.xyz2longlat(xyz);
         LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
-        LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this.getSkySystemName(), refFrame.getSkySystemName(), position[0], position[1]});
+        LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, refFrame, position[0], position[1]});
         return new SkyPosition(position[0], position[1], refFrame);
     }
 

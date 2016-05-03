@@ -87,4 +87,10 @@ public class FK5 implements ReferenceSystemInterface {
     public void setEquinox(float equinox) {
         this.equinox = equinox;
     }
+
+    @Override
+    public String toString() {
+        return "FK5("+this.equinox+")";
+    }
+        
 }
