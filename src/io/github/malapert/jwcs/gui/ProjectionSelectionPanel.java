@@ -26,11 +26,11 @@ import javax.swing.JSlider;
  * @author Bernhard Jenny, Institute of Cartography, ETH Zurich.
  */
 public class ProjectionSelectionPanel extends javax.swing.JPanel {
-    
+
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());    
+    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
     private static final long serialVersionUID = 5367008551020527277L;
 
     /**
@@ -69,7 +69,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                         pos2 = wcs.wcs2pix(lon, lat);
                         LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});
                         if (wcs.isLineToDraw(pos1, pos2)) {
-                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                            
+                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});
                             MapLine line = new MapLine();
                             line.addPoint(pos1[0], pos1[1]);
                             line.addPoint(pos2[0], pos2[1]);
@@ -97,9 +97,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                 try {
                     if (wcs.inside(lon, lat)) {
                         pos2 = wcs.wcs2pix(lon, lat);
-                        LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});                        
+                        LOG.log(Level.FINE, "(long,lat)=({0},{1}) --> (x,y)=({2},{3})", new Object[]{lon, lat, pos2[0], pos2[1]});
                         if (wcs.isLineToDraw(pos1, pos2)) {
-                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});                                                        
+                            LOG.log(Level.FINE, "plot (x1,y1)=({0},{1}) --> (x2,y2)=({2},{3})", new Object[]{pos1[0], pos1[1], pos2[0], pos2[1]});
                             MapLine line = new MapLine();
                             line.addPoint(pos1[0], pos1[1]);
                             line.addPoint(pos2[0], pos2[1]);
@@ -213,8 +213,8 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     PV22_text.setVisible(true);
                     if (!currentName.equals(previousNameProjection)) {
                         PV21_Slider.setValue((int) p1.getDefaultValue());
-                        PV22_Slider.setValue((int) p2.getDefaultValue());                        
-                    }                    
+                        PV22_Slider.setValue((int) p2.getDefaultValue());
+                    }
                     break;
                 case 3:
                     p1 = params[0];
@@ -224,7 +224,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     max = Double.isInfinite(max) ? 15 : max;
                     PV21_Slider.setVisible(true);
                     PV21_Slider.setMinimum((int) min);
-                    PV21_Slider.setMaximum((int) max);                    
+                    PV21_Slider.setMaximum((int) max);
                     PV21_text.setText(p1.getName());
                     PV21_label.setVisible(true);
                     PV21_text.setVisible(true);
@@ -236,7 +236,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     max = Double.isInfinite(max) ? 15 : max;
                     PV22_Slider.setVisible(true);
                     PV22_Slider.setMinimum((int) min);
-                    PV22_Slider.setMaximum((int) max);                    
+                    PV22_Slider.setMaximum((int) max);
                     PV22_text.setText(p2.getName());
                     PV22_label.setVisible(true);
                     PV22_text.setVisible(true);
@@ -254,28 +254,24 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     PV23_text.setVisible(true);
                     if (!currentName.equals(previousNameProjection)) {
                         PV21_Slider.setValue((int) p1.getDefaultValue());
-                        PV22_Slider.setValue((int) p2.getDefaultValue());                        
-                        PV23_Slider.setValue((int) p3.getDefaultValue());                        
-                    }                     
+                        PV22_Slider.setValue((int) p2.getDefaultValue());
+                        PV23_Slider.setValue((int) p3.getDefaultValue());
+                    }
                     break;
                 default:
                     break;
 
             }
             this.previousNameProjection = currentName;
-            if (!NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.CRVAL1), lon0Slider.getValue(), 1e-13)) {
-                jwcsMap.getKeywords().put(JWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
-            }
-            if (!NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.CRVAL2), lat0Slider.getValue(), 1e-13)) {
-                jwcsMap.getKeywords().put(JWcs.CRVAL2, String.valueOf(lat0Slider.getValue()));
-            }
-            if (PV21_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV21), PV21_Slider.getValue(), 1e-13)) {
+            jwcsMap.getKeywords().put(JWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
+            jwcsMap.getKeywords().put(JWcs.CRVAL2, String.valueOf(lat0Slider.getValue()));
+            if (PV21_Slider.isVisible()) {
                 jwcsMap.getKeywords().put(JWcs.PV21, String.valueOf(PV21_Slider.getValue()));
             }
-            if (PV22_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV22), PV22_Slider.getValue(), 1e-13)) {
+            if (PV22_Slider.isVisible()) {
                 jwcsMap.getKeywords().put(JWcs.PV22, String.valueOf(PV22_Slider.getValue()));
             }
-            if (PV23_Slider.isVisible() && !NumericalUtils.equal(jwcsMap.getValueAsDouble(JWcs.PV23), PV23_Slider.getValue(), 1e-13)) {
+            if (PV23_Slider.isVisible()) {
                 jwcsMap.getKeywords().put(JWcs.PV23, String.valueOf(PV23_Slider.getValue()));
             }
             jwcsMap.doInit();
