@@ -129,8 +129,8 @@ public abstract class Projection {
      * Computes the projection plane coordinates (x, y) from the native spherical
      * coordinates (\u03D5, \u03B8).
      *
-     * @param phi native spherical coordinate (\u03D5) in radians along longitude
-     * @param theta native spherical coordinate (\u03B8) in radians along latitude
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
      * @return the projection plane coordinates
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * an error happens while the projection

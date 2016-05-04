@@ -40,6 +40,8 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +54,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import nom.tam.fits.Fits;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
+import nom.tam.util.Cursor;
 
 /**
  * The main class.
@@ -69,6 +75,8 @@ public class Main {
      * Logger.
      */
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    
+    private static final int DEFAULT_EXTENSION = 0;
 
     /**
      * List of programs
@@ -122,11 +130,12 @@ public class Main {
     private static void usage() {
         StringBuilder sb = new StringBuilder();
         sb.append("Usage: java -jar JWcs.jar -g [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --project \"HDR_FILE X Y\" [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --unproject \"HDR_FILE RA DEC\" [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --convert \"RA,DEC SYS_ORGIN SYS_TARGET\" [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --file HDR_FILE --project X,Y [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --file HDR_FILE --unproject RA,DEC [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --file HDR_FILE --convert RA,DEC --to SYS_TARGET [OPTIONS]\n");
+        sb.append("    or java -jar JWcs.jar --convert RA,DEC --from SYS_ORGIN --to SYS_TARGET [OPTIONS]\n");
         sb.append("           where:\n");
-        sb.append("               - HDR_FILE: Header FITS file\n");
+        sb.append("               - HDR_FILE: Header FITS or FITS file\n");
         sb.append("               - X: pixel coordinate along X axis on the camera (starts to 1) \n");
         sb.append("               - Y: pixel coordinate along Y axis on the camera (starts to 1) \n");
         sb.append("               - RA: sky coordinate\n");
@@ -139,6 +148,7 @@ public class Main {
         sb.append("               - SUPER_GALACTIC\n");
         sb.append("               - EQUATORIAL\n");
         sb.append("               - EQUATORIAL(ICRS())\n");
+        sb.append("               - EQUATORIAL(J2000())\n");
         sb.append("               - EQUATORIAL(FK5())\n");
         sb.append("               - EQUATORIAL(FK5(<equinox>))\n");
         sb.append("               - EQUATORIAL(FK4())\n");
@@ -149,6 +159,7 @@ public class Main {
         sb.append("               - EQUATORIAL(FK4_NO_E(<equinox>,<epoch>))\n");
         sb.append("               - ECLIPTIC\n");
         sb.append("               - ECLIPTIC(ICRS())\n");
+        sb.append("               - ECLIPTIC(J2000())\n");
         sb.append("               - ECLIPTIC(FK5())\n");
         sb.append("               - ECLIPTIC(FK5(<equinox>))\n");
         sb.append("               - ECLIPTIC(FK4())\n");
@@ -163,12 +174,17 @@ public class Main {
         sb.append("Mandatory arguments to long options are mandatory for short options too.\n");
         sb.append("  -p, --project            Project a pixel to the sky\n");
         sb.append("  -u, --unproject          Unproject a point on the sky to 2D \n");
+        sb.append("  -f, --file               Header file or Fits file starting by a scheme (ex: file://, http://)\n");
+        sb.append("  -s, --from               Origin sky system\n");
+        sb.append("  -t, --to                 Target sky system\n");
         sb.append("  -c, --convert            Convert a sky coordinate from a sky system to antoher one\n");
         sb.append("  -g, --gui                Display projections with a GUI\n");
         sb.append("  -h, --help               Display this help and exit\n");
         sb.append("\n");
         sb.append("OPTIONS are the following:\n");
         sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
+        sb.append("  -e, --extension          HDU number starting at 0 when --file argument is used. If not set, 0 is default\n");
+        
 
         System.out.println(sb.toString());
         System.exit(EXIT.OK.getCode());
@@ -177,25 +193,38 @@ public class Main {
     /**
      * Project camera to sky from command line.
      *
-     * @param commandLine options from command line
+     * @param pos position in the camera frame
      */
-    private static void projectToSkyFromCommandLine(final String commandLine) throws ProjectionException, JWcsException, IOException {
-        String[] arguments = commandLine.split("\\s+");
-        if (arguments.length != 3) {
-            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
-            System.exit(EXIT.USER_INPUT_ERROR.getCode());
-        }
-        HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
-        List<List<String>> listKeywords = hdr.readKeywords();
+    private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         Map<String, String> keyMap = new HashMap();
-        listKeywords.stream().forEach((keywordLine) -> {
-            keyMap.put(keywordLine.get(0), keywordLine.get(1));
-        });
+        String[] argumentsPos = pos.split(",");
+        if (argumentsPos.length != 2) {
+            throw new IllegalArgumentException("The position " + pos + " is not correct");
+        }
+        if (file == null) {
+            throw new IllegalArgumentException("--file argument is required");
+        } else {
+            URI uri = new URI(file);
+            try {
+                Fits fits = new Fits(uri.toURL());
+                Header hdr = fits.getHDU(extension).getHeader();
+                Cursor c = hdr.iterator();
+                while (c.hasNext()) {
+                    HeaderCard card = (HeaderCard) c.next();
+                    keyMap.put(card.getKey(), card.getValue());
+                }
+            } catch (nom.tam.fits.FitsException | IOException ex) {
+                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                List<List<String>> listKeywords = hdr.readKeywords();
+                listKeywords.stream().forEach((keywordLine) -> {
+                    keyMap.put(keywordLine.get(0), keywordLine.get(1));
+                });
+            }
+        }
         JWcsMap wcs = new JWcsMap(keyMap);
         wcs.doInit();
-        LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", arguments);
-        double[] result = wcs.pix2wcs(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
+        LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", argumentsPos);
+        double[] result = wcs.pix2wcs(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
         System.out.println("(ra,dec)=(" + result[0] + ", " + result[1] + ")");
         LOG.log(Level.INFO, "(ra,dec) = (%s,%s)", result);
 
@@ -204,26 +233,39 @@ public class Main {
     /**
      * Project sky to camera from command line.
      *
-     * @param String commandLine Options from command line
+     * @param pos Sky position
+     * @param file Header file
      */
-    private static void projectToCameraFromCommandLine(final String commandLine) throws ProjectionException, JWcsException, IOException {
-
-        String[] arguments = commandLine.split("\\s+");
-        if (arguments.length != 3) {
-            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
-            System.exit(EXIT.USER_INPUT_ERROR.getCode());
-        }
-        HeaderFitsReader hdr = new HeaderFitsReader(arguments[0]);
-        List<List<String>> listKeywords = hdr.readKeywords();
+    private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         Map<String, String> keyMap = new HashMap();
-        listKeywords.stream().forEach((keywordLine) -> {
-            keyMap.put(keywordLine.get(0), keywordLine.get(1));
-        });
+        String[] argumentsPos = pos.split(",");
+        if (argumentsPos.length != 2) {
+            throw new IllegalArgumentException("The position " + pos + " is not correct");
+        }
+        if (file == null) {
+            throw new IllegalArgumentException("--file argument is required");
+        } else {
+            URI uri = new URI(file);
+            try {
+                Fits fits = new Fits(uri.toURL());
+                Header hdr = fits.getHDU(extension).getHeader();
+                Cursor c = hdr.iterator();
+                while (c.hasNext()) {
+                    HeaderCard card = (HeaderCard) c.next();
+                    keyMap.put(card.getKey(), card.getValue());
+                }
+            } catch (nom.tam.fits.FitsException | IOException ex) {
+                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                List<List<String>> listKeywords = hdr.readKeywords();
+                listKeywords.stream().forEach((keywordLine) -> {
+                    keyMap.put(keywordLine.get(0), keywordLine.get(1));
+                });
+            }
+        }
         JWcsMap wcs = new JWcsMap(keyMap);
         wcs.doInit();
-        LOG.log(Level.INFO, "Executing wcs2pix(%s,%s)", arguments);
-        double[] result = wcs.wcs2pix(Double.valueOf(arguments[1]), Double.valueOf(arguments[2]));
+        LOG.log(Level.INFO, "Executing wcs2pix(%s,%s)", argumentsPos);
+        double[] result = wcs.wcs2pix(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
         System.out.println("(x,y)=(" + result[0] + ", " + result[1] + ")");
         LOG.log(Level.INFO, "(x,y) = (%s,%s)", result);
     }
@@ -311,7 +353,7 @@ public class Main {
                     ref = new FK4_NO_E();
                 }
                 break;
-            case J2000: 
+            case J2000:
                 ref = new J2000();
                 break;
             default:
@@ -355,22 +397,44 @@ public class Main {
     /**
      * Converts a position frome a sky system to another one.
      *
-     * @param commandLine Options from command line
+     * @param pos Sky position
+     * @param file Fits or header file
+     * @param from source sky system
+     * @param to target sky system
      */
-    private static void convertFromCommandLine(final String commandLine) {
-        String[] arguments = commandLine.split("\\s+");
-        if (arguments.length != 3) {
-            System.err.println("3 arguments are needed, please use -h option to have a look on the help");
-            LOG.log(Level.SEVERE, "3 arguments are needed, please use -h option to have a look on the help");
-            System.exit(EXIT.USER_INPUT_ERROR.getCode());
+    private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension) throws URISyntaxException, IOException, JWcsException {
+        Map<String, String> keyMap = new HashMap();
+        SkySystem skySystemFrom;
+        if (file == null && from == null && to == null) {
+            throw new IllegalArgumentException("Either --file argument or --from and --to arguments are required");
+        } else if (file != null) {
+            URI uri = new URI(file);
+            try {
+                Fits fits = new Fits(uri.toURL());
+                Header hdr = fits.getHDU(extension).getHeader();
+                Cursor c = hdr.iterator();
+                while (c.hasNext()) {
+                    HeaderCard card = (HeaderCard) c.next();
+                    keyMap.put(card.getKey(), card.getValue());
+                }
+            } catch (nom.tam.fits.FitsException | IOException ex) {
+                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                List<List<String>> listKeywords = hdr.readKeywords();
+                listKeywords.stream().forEach((keywordLine) -> {
+                    keyMap.put(keywordLine.get(0), keywordLine.get(1));
+                });
+            }
+            JWcsMap wcs = new JWcsMap(keyMap);
+            wcs.doInit();
+            skySystemFrom = wcs.getSkySystem();
+
+        } else {
+            skySystemFrom = getSkySystem(from);
         }
-        String coordinates = arguments[0];
-        String skySystemOrigin = arguments[1];
-        String skySystemTarget = arguments[2];
-        double[] skyPos = Arrays.stream(coordinates.split(","))
+        String skySystemTarget = to;
+        double[] skyPos = Arrays.stream(pos.split(","))
                 .mapToDouble(Double::parseDouble)
                 .toArray();
-        SkySystem skySystemFrom = getSkySystem(skySystemOrigin);
         SkySystem skySystemTo = getSkySystem(skySystemTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
         SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
@@ -408,9 +472,13 @@ public class Main {
         EXIT returnedCode = EXIT.OK;
         boolean isGui = false;
         int c;
+        int extension = DEFAULT_EXTENSION;
         String arg;
+        String from = null;
+        String to = null;
+        String file = null;
         List<PROG> progChoice = new ArrayList<>();
-        LongOpt[] longopts = new LongOpt[6];
+        LongOpt[] longopts = new LongOpt[10];
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
         // 
@@ -421,12 +489,34 @@ public class Main {
         longopts[3] = new LongOpt("unproject", LongOpt.REQUIRED_ARGUMENT, null, 'u');
         longopts[4] = new LongOpt("convert", LongOpt.REQUIRED_ARGUMENT, null, 'c');
         longopts[5] = new LongOpt("debug", LongOpt.REQUIRED_ARGUMENT, null, 'd');
+        longopts[6] = new LongOpt("file", LongOpt.REQUIRED_ARGUMENT, null, 'f');
+        longopts[7] = new LongOpt("from", LongOpt.REQUIRED_ARGUMENT, null, 's');
+        longopts[8] = new LongOpt("to", LongOpt.REQUIRED_ARGUMENT, null, 't');
+        longopts[9] = new LongOpt("extension", LongOpt.REQUIRED_ARGUMENT, null, 'e');
+        
         // 
-        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:gh;", longopts);
+        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:gh;", longopts);
         g.setOpterr(true);
         //
         while ((c = g.getopt()) != -1) {
             switch (c) {
+                case 'e':
+                    try {
+                        extension = Integer.valueOf(g.getOptarg());
+                    } catch (NumberFormatException ex) {
+                        System.err.println(ex);
+                        returnedCode = EXIT.USER_INPUT_ERROR;
+                    }
+                    break;
+                case 'f':
+                    file = g.getOptarg();
+                    break;
+                case 's':
+                    from = g.getOptarg();
+                    break;
+                case 't':
+                    to = g.getOptarg();
+                    break;
                 case 'g':
                     progChoice.add(PROG.GUI);
                     break;
@@ -495,20 +585,21 @@ public class Main {
                     isGui = true;
                     break;
                 case PROJECT:
-                    projectToSkyFromCommandLine(prog.getCommandLine());
+                    projectToSkyFromCommandLine(prog.getCommandLine(), file, extension);
                     break;
                 case UNPROJECT:
-                    projectToCameraFromCommandLine(prog.getCommandLine());
+                    projectToCameraFromCommandLine(prog.getCommandLine(), file, extension);
                     break;
                 case SKY_CONVERTER:
-                    convertFromCommandLine(prog.getCommandLine());
+                    convertFromCommandLine(prog.getCommandLine(), file, from, to, extension);
                     break;
                 default:
                     throw new IllegalArgumentException(prog.name() + " not supported");
             }
             returnedCode = EXIT.OK;
-        } catch (JWcsException | IOException | RuntimeException ex) {
-            LOG.log(Level.SEVERE, "Error : ", ex);
+        } catch (JWcsException | IOException | RuntimeException | URISyntaxException ex) {
+            LOG.log(Level.SEVERE, "Error : ", ex.getMessage());
+            System.err.println("Error: " + ex.getMessage());
             returnedCode = EXIT.USER_INPUT_ERROR;
         } finally {
             if (!isGui) {

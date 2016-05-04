@@ -57,7 +57,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         projectionComboBox.setModel(new DefaultComboBoxModel(projNames));
     }
 
-    protected final List<MapLine> drawLatitudeLines(JWcs wcs) {
+    /**
+     * Returns a list of latitude lines.
+     * @param wcs wcs object
+     * @return list of latitude lines
+     */
+    protected final List<MapLine> drawLatitudeLines(final JWcs wcs) {
         List<MapLine> latitudes = new ArrayList<>();
         double[] pos1 = new double[2];
         for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
@@ -87,7 +92,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         return latitudes;
     }
 
-    protected final List<MapLine> drawLongitudeLines(JWcs wcs) {
+    /**
+     * Returns a list of longitude lines.
+     * @param wcs wcs object
+     * @return list of latitude lines
+     */    
+    protected final List<MapLine> drawLongitudeLines(final JWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
         for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
@@ -304,11 +314,18 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         project();
     }
 
+    /**
+     * Adds lines to the current lines.
+     * @param lines the lines to add
+     */
     public void addLines(List<MapLine> lines) {
         // store the passed lines
         this.linesFromClient.addAll(lines);
     }
 
+    /**
+     * Draw.
+     */
     public void draw() {
         projectionComboBox.setSelectedIndex(0);
         project();

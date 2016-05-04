@@ -37,6 +37,12 @@ public class UngenerateImporter {
         return importData (new FileInputStream(filePath));
     }
     
+    /**
+     * Returns a list of lines from the import.
+     * @param inputStream input stream
+     * @return a list of lines
+     * @throws IOException File not found
+     */
     public static List<MapLine> importData(InputStream inputStream) throws IOException {
         // store the read lines in this vector.
         List<MapLine> lines = new ArrayList<>();

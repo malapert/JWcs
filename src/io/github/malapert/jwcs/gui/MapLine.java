@@ -55,6 +55,10 @@ public class MapLine {
         return points.get(pointID);
     }
 
+    /**
+     * Returns the list of points.
+     * @return the list of points
+     */
     public List<MapPoint> getPoints() {
         return points;
     }

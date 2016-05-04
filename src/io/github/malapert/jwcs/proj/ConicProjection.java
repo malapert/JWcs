@@ -82,8 +82,14 @@ public abstract class ConicProjection extends Projection {
      */
     private double theta0;
     
+    /**
+     * theta_a - eta.
+     */
     protected double theta1;
     
+    /**
+     * theta_a + eta.
+     */
     protected double theta2;
     
     /**
@@ -130,14 +136,38 @@ public abstract class ConicProjection extends Projection {
         return NAME;
     }         
     
+    /**
+     * Computes the native spherical coordinate (\u03D5) in radians along longitude.
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @param r_theta radius
+     * @param y0 y0
+     * @param c c
+     * @return native spherical coordinate (\u03D5) in radians along longitude
+     */
     protected double computePhi(double x, double y, double r_theta, double y0, double c) {
         return NumericalUtils.equal(r_theta, 0) ? 0 : NumericalUtils.aatan2(x/r_theta, (y0-y)/r_theta)/c;
     }
     
+    /**
+     * Computes the projection plane coordinate along X.
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param r_theta radius
+     * @param c c
+     * @return the projection plane coordinate along X
+     */
     protected double computeX(double phi, double r_theta, double c) {
         return r_theta * Math.sin(c*phi);
     }
-    
+
+    /**
+     * Computes the projection plane coordinate along Y.
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param r_theta radius
+     * @param c c
+     * @param y0 y0
+     * @return the projection plane coordinate along Y
+     */
     protected double computeY(double phi, double r_theta, double c, double y0) {
         return -r_theta * Math.cos(c*phi) + y0;
     }    

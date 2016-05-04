@@ -17,9 +17,16 @@
 package io.github.malapert.jwcs.utility;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,26 +36,76 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Reads data from a HeaderFits map.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
 public class HeaderFitsReader {
 
+    /**
+     * Separator between keyword/value.
+     */
     private static final String SEPARATOR = "=";
 
+    /**
+     * Reader.
+     */
     private final Reader source;
 
+    /**
+     * Constructs a HeaderFitsReader based on a reader.
+     * @param source reader
+     */
     public HeaderFitsReader(final Reader source) {
         this.source = source;
     }
+    
+    /**
+     * Constructs a HeaderFitsReader based on a file.
+     * @param file file
+     * @throws FileNotFoundException File not found
+     */
+    public HeaderFitsReader(final File file) throws FileNotFoundException {
+        Reader reader = new FileReader(file);        
+        this.source = reader;
+    }    
+    
+    /**
+     * Constructs a HeaderFitsReader based on a URI.
+     * @param uri uri of the file
+     * @throws FileNotFoundException  File not found
+     */
+    public HeaderFitsReader(final URI uri) throws FileNotFoundException {
+        Reader reader = new FileReader(new File(uri));
+        this.source = reader;
+    }            
+    
+    /**
+     * Constructs a HeaderFitsReader based on a URL.     
+     * @param url URL
+     * @throws IOException File not found
+     */
+    public HeaderFitsReader(final URL url) throws IOException  {
+        Reader reader = new InputStreamReader(url.openStream());
+        this.source = reader;
+    }      
 
-    public HeaderFitsReader(final String filename) throws IOException {
-        Path path = Paths.get(filename);
+    /**
+     * Constructs a HeaderFitsReader based on a filename.     
+     * @param filename filename
+     * @throws URISyntaxException URI syntax problem
+     * @throws IOException File not found
+     */
+    public HeaderFitsReader(final String filename) throws URISyntaxException, IOException  {
+        Path path = Paths.get(new URI(filename));
         Reader reader = Files.newBufferedReader(path, Charset.forName("UTF-8"));
         this.source = reader;
     }
 
+    /**
+     * Reads keywords from a reader
+     * @return the list of (keyword,value)
+     */
     public List<List<String>> readKeywords() {
         try (BufferedReader reader = new BufferedReader(source)) {
             return reader.lines()

@@ -37,8 +37,8 @@ public class J2000 implements ReferenceSystemInterface {
      */
     private float equinox;
 
-    /*
-     * Creates a new ICRS reference frame.
+    /**
+     * Creates J2000 frame.
      */
     public J2000() {
         init(DEFAULT_EQUINOX);

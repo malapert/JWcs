@@ -39,6 +39,10 @@ public class ProjectionException extends JWcsException {
         this.projectionName = projectionName;        
     }
     
+    /**
+     * Returns the projection name.
+     * @return the projection name
+     */
     public final Projection getProjection() {
         return this.projectionName;
     }

@@ -120,18 +120,43 @@ public abstract class ZenithalProjection extends Projection {
         return new double[]{getCrval1(), getCrval2()};
     }
 
+    /**
+     * Computes the radius.
+     * @param x the projection plane coordinate along X
+     * @param y the projection plane coordinate along Y
+     * @return the radius
+     */
     protected double computeRadius(double x, double y) {
         return Math.hypot(x, y);
     }
 
+    /**
+     * Computes the projection plane coordinate along X.
+     * @param radius the radius
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @return the projection plane coordinate along X
+     */
     protected double computeX(double radius, double phi) {
         return radius * Math.sin(phi);
     }
 
+    /**
+     * Computes the projection plane coordinate along Y.
+     * @param radius the radius
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @return the projection plane coordinate along Y
+     */    
     protected double computeY(double radius, double phi) {
         return -radius * Math.cos(phi);
     }
 
+    /**
+     * Computes the  native spherical coordinate (\u03D5) in radians along longitude.
+     * @param x the projection plane coordinate along X
+     * @param y the projection plane coordinate along Y
+     * @param radius the radius
+     * @return the  native spherical coordinate (\u03D5) in radians along longitude
+     */
     protected double computePhi(double x, double y, double radius) {
         return NumericalUtils.equal(radius, 0) ? 0 : NumericalUtils.aatan2(x, -y);
     }
