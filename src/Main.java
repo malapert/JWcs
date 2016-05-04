@@ -184,6 +184,7 @@ public class Main {
         sb.append("OPTIONS are the following:\n");
         sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
         sb.append("  -e, --extension          HDU number starting at 0 when --file argument is used. If not set, 0 is default\n");
+        sb.append("  -r, --precision          Precision such as %.6f. By default, precision is set to %.15f\n");
         
 
         System.out.println(sb.toString());
@@ -194,8 +195,11 @@ public class Main {
      * Project camera to sky from command line.
      *
      * @param pos position in the camera frame
+     * @param file file
+     * @param extension HDU number when file is a FITS file
+     * @param precision precision such as %.15f
      */
-    private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension) throws ProjectionException, JWcsException, IOException, URISyntaxException {
+    private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         Map<String, String> keyMap = new HashMap();
         String[] argumentsPos = pos.split(",");
         if (argumentsPos.length != 2) {
@@ -225,7 +229,8 @@ public class Main {
         wcs.doInit();
         LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", argumentsPos);
         double[] result = wcs.pix2wcs(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
-        System.out.println("(ra,dec)=(" + result[0] + ", " + result[1] + ")");
+        
+        System.out.printf("(ra,dec)=(" + precision + ", " + precision + ")\n", result[0], result[1]);
         LOG.log(Level.INFO, "(ra,dec) = (%s,%s)", result);
 
     }
@@ -235,8 +240,10 @@ public class Main {
      *
      * @param pos Sky position
      * @param file Header file
+     * @param extension HDU number when file is a FITS file
+     * @param precision precision such as %.15f
      */
-    private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension) throws ProjectionException, JWcsException, IOException, URISyntaxException {
+    private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         Map<String, String> keyMap = new HashMap();
         String[] argumentsPos = pos.split(",");
         if (argumentsPos.length != 2) {
@@ -266,7 +273,7 @@ public class Main {
         wcs.doInit();
         LOG.log(Level.INFO, "Executing wcs2pix(%s,%s)", argumentsPos);
         double[] result = wcs.wcs2pix(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
-        System.out.println("(x,y)=(" + result[0] + ", " + result[1] + ")");
+        System.out.printf("(x,y)=(" + precision + ", " + precision + ")\n", result[0], result[1]);
         LOG.log(Level.INFO, "(x,y) = (%s,%s)", result);
     }
 
@@ -401,8 +408,9 @@ public class Main {
      * @param file Fits or header file
      * @param from source sky system
      * @param to target sky system
+     * @param precision precision such as %.15f
      */
-    private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension) throws URISyntaxException, IOException, JWcsException {
+    private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
         Map<String, String> keyMap = new HashMap();
         SkySystem skySystemFrom;
         if (file == null && from == null && to == null) {
@@ -438,7 +446,7 @@ public class Main {
         SkySystem skySystemTo = getSkySystem(skySystemTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
         SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
-        System.out.println(skyPosition.getLongitude() + " " + skyPosition.getLatitude());
+        System.out.printf(precision+", "+precision+"\n", skyPosition.getLongitude(), skyPosition.getLatitude());
         LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
 
     }
@@ -472,13 +480,14 @@ public class Main {
         EXIT returnedCode = EXIT.OK;
         boolean isGui = false;
         int c;
-        int extension = DEFAULT_EXTENSION;
+        int extension = DEFAULT_EXTENSION;        
         String arg;
         String from = null;
         String to = null;
         String file = null;
+        String precision = "%.15f";
         List<PROG> progChoice = new ArrayList<>();
-        LongOpt[] longopts = new LongOpt[10];
+        LongOpt[] longopts = new LongOpt[11];
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
         // 
@@ -493,13 +502,16 @@ public class Main {
         longopts[7] = new LongOpt("from", LongOpt.REQUIRED_ARGUMENT, null, 's');
         longopts[8] = new LongOpt("to", LongOpt.REQUIRED_ARGUMENT, null, 't');
         longopts[9] = new LongOpt("extension", LongOpt.REQUIRED_ARGUMENT, null, 'e');
-        
+        longopts[10] = new LongOpt("precision", LongOpt.REQUIRED_ARGUMENT, null, 'r');        
         // 
-        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:gh;", longopts);
+        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:r:gh;", longopts);
         g.setOpterr(true);
         //
         while ((c = g.getopt()) != -1) {
             switch (c) {
+                case 'r':
+                    precision = g.getOptarg();
+                    break;
                 case 'e':
                     try {
                         extension = Integer.valueOf(g.getOptarg());
@@ -585,13 +597,13 @@ public class Main {
                     isGui = true;
                     break;
                 case PROJECT:
-                    projectToSkyFromCommandLine(prog.getCommandLine(), file, extension);
+                    projectToSkyFromCommandLine(prog.getCommandLine(), file, extension, precision);
                     break;
                 case UNPROJECT:
-                    projectToCameraFromCommandLine(prog.getCommandLine(), file, extension);
+                    projectToCameraFromCommandLine(prog.getCommandLine(), file, extension, precision);
                     break;
                 case SKY_CONVERTER:
-                    convertFromCommandLine(prog.getCommandLine(), file, from, to, extension);
+                    convertFromCommandLine(prog.getCommandLine(), file, from, to, extension, precision);
                     break;
                 default:
                     throw new IllegalArgumentException(prog.name() + " not supported");
