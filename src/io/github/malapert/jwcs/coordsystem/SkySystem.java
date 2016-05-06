@@ -44,20 +44,91 @@ public abstract class SkySystem {
         /**
          * Galactic coordinates (lII, bII)
          */
-        GALACTIC,
+        GALACTIC("Galactic", false),
         /**
          * Equatorial coordinates (\u03B1, \u03B4),
          */
-        EQUATORIAL,
+        EQUATORIAL("Equatorial", true),
         /**
          * De Vaucouleurs Supergalactic coordinates (sgl, sgb)
          */
-        SUPER_GALACTIC,
+        SUPER_GALACTIC("Super Galactic", false),
         /**
          * Ecliptic coordinates (\u03BB, \u03B2) referred to the ecliptic and
          * mean equinox
          */
-        ECLIPTIC
+        ECLIPTIC("Ecliptic", true);
+        
+        /**
+         * Sky system name.
+         */
+        private final String name;
+        /**
+         * Indicates if the sky system has a reference frame.
+         */
+        private final boolean hasReferenceFrame;
+        
+        /**
+         * Constructor.
+         * @param name sky system name
+         * @param hasReferenceFrame Indicates if the sky system has e reference frame.
+         */
+        SkySystems(final String name, final boolean hasReferenceFrame) {
+            this.name = name;
+            this.hasReferenceFrame = hasReferenceFrame;
+        }
+        
+        /**
+         * Returns the name of the sky system.
+         * @return sky system name
+         */
+        public final String getName() {
+            return this.name;
+        }
+        
+        /**
+         * Tests if the sky system has a reference frame
+         * @return True when the sky system has a reference frame otherwise false
+         */
+        public final boolean hasReferenceFrame() {
+            return this.hasReferenceFrame;
+        }
+      
+        /**
+         * Returns the SkySystems based on the sky system name.
+         * @param name name of the sky system
+         * @return the SkySystems
+         */
+        public static SkySystems valueOfByName(final String name) {
+            SkySystems result = null;
+            SkySystems[] values = SkySystems.values();
+            for (SkySystems value : values) {
+                if(value.getName().equals(name)) {
+                    result = value;
+                    break;
+                }
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("SkySystem not found by searching by its name "+name);
+            } else {
+                return result;
+            }
+        }
+        
+        /**
+         * Returns the names of SkySystems.
+         * @return the names of SkySystems
+         */
+        public static String[] getSkySystemsName() {            
+            SkySystems[] values = SkySystems.values();
+            String[] result = new String[values.length];
+            int index = 0;
+            for (SkySystems value : values) {
+                result[index] = value.getName();
+                index++;
+            }
+            return result;
+        }
     };
 
     /**
@@ -144,6 +215,25 @@ public abstract class SkySystem {
         }
         return eterms;
     }
+  
+    /**
+     * Checks the coordinates.
+     * 
+     * @param longitude longitude in degrees
+     * @param latitude  latitude in degrees
+     * @exception IllegalArgumentException when the coordinates are out of range
+     */
+    private void checkCoordinates(double longitude, double latitude) {
+        boolean isLongInterval = NumericalUtils.isInInterval(longitude, 0, 360);
+        boolean isLatInterval = NumericalUtils.isInInterval(latitude, -90, 90);        
+        if(!isLongInterval && !isLatInterval) {
+            throw new IllegalArgumentException("longitude must be in [0,360] and latitude in [-90,90]");
+        } else if (!isLongInterval) {
+            throw new IllegalArgumentException("longitude must be in [0,360]");    
+        } else if (!isLatInterval) {
+            throw new IllegalArgumentException("latitude must be in [0,360]");    
+        }
+    }
 
     /**
      * Converts the (longitude, latitude) coordinates into the output reference
@@ -159,6 +249,7 @@ public abstract class SkySystem {
      * code in Python</a>
      */
     public final SkyPosition convertTo(final SkySystem refFrame, double longitude, double latitude) {
+        checkCoordinates(longitude, latitude);
         RealMatrix xyz = Utility.longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
         RealMatrix rotation = getRotationMatrix(refFrame);

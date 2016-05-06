@@ -43,13 +43,13 @@ public interface ReferenceSystemInterface {
          * By definition, ICRS is not an equatorial system, but it is 
          * very close to the FK5 (J2000) system. No Equinox value is required.
          */
-        ICRS,
+        ICRS("ICRS", false, false),
         /**
          * Mean place post IAU 1976 system. 
          * Also a barycentric equatorial coordinate system. 
          * This should be qualified by an Equinox value (only).
          */
-        FK5, 
+        FK5("FK5", true, false), 
         /**
          * Mean place pre-IAU 1976 system. 
          * FK4 is the old barycentric (i.e. w.r.t. the common 
@@ -58,14 +58,14 @@ public interface ReferenceSystemInterface {
          * For accurate work FK4 coordinate systems should also be qualified
          * by an Epoch value. This is the *epoch of observation*.
          */
-        FK4,
+        FK4("FK4", true, true),
         /**
          * The old FK4 (barycentric) equatorial system
          * but without the *E-terms of aberration*.
          * This coordinate system should also be 
          * qualified by both an Equinox and an Epoch value.
          */
-        FK4_NO_E, 
+        FK4_NO_E("FK4 NO E-terms", true, true), 
         /**
          * This is an equatorial coordinate system based on 
          * the mean dynamical equator and equinox at epoch J2000.
@@ -74,7 +74,91 @@ public interface ReferenceSystemInterface {
          * the ICRS system. This system need not be qualified 
          * by an Equinox value.
          */
-        J2000
+        J2000("J2000", false, false);
+        
+        /**
+         * Name of the reference frame.
+         */
+        private final String name;
+        
+        /**
+         * Needs an equinox value as parameter.
+         */
+        private final boolean hasEquinox;
+        
+        /**
+         * Needs an epoch value as parameter.
+         */
+        private final boolean hasEpoch;
+        
+        /**
+         * Constructor.
+         * @param name Name of the reference frame
+         * @param hasEquinox Can have equinox as parameter
+         * @param hasEpoch Can have epoch as parameter
+         */
+        Type(final String name, boolean hasEquinox, boolean hasEpoch) {
+            this.name = name;
+            this.hasEquinox = hasEquinox;
+            this.hasEpoch = hasEpoch;
+        }
+        
+        public String getName() {
+            return this.name;
+        }
+        
+        /**
+         * Returns True when the reference frame needs the equinox as parameter.
+         * @return True when the reference frame needs the equinox as parameter otherwise False
+         */
+        public boolean hasEquinox() {
+            return this.hasEquinox;
+        }
+
+        /**
+         * Returns True when the reference frame needs the epoch as parameter.
+         * @return True when the reference frame needs the epoch as parameter otherwise False
+         */        
+        public boolean hasEpoch() {
+            return this.hasEpoch;
+        }
+        
+        /**
+         * Returns the ReferenceFrame based on its name.
+         * @param name name of the reference frame
+         * @return the ReferenceFrame type
+         */
+        public static Type valueOfByName(final String name) {
+            Type result = null;
+            Type[] values = Type.values();
+            for (Type value : values) {
+                if(value.getName().equals(name)) {
+                    result = value;
+                    break;
+                }
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Referenc frame not found by searching by its name "+name);
+            } else {
+                return result;
+            }
+        }
+        
+        /**
+         * Returns the names of ReferenceFrame.
+         * @return the names of ReferenceFrame
+         */
+        public static String[] ReferenceFramesName() {            
+            Type[] values = Type.values();
+            String[] result = new String[values.length];
+            int index = 0;
+            for (Type value : values) {
+                result[index] = value.getName();
+                index++;
+            }
+            return result;
+        }
+                
     };    
    
     /**
