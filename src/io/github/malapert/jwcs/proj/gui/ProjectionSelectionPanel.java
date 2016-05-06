@@ -3,18 +3,23 @@
  *
  * Created on September 16, 2006, 2:54 PM
  */
-package io.github.malapert.jwcs.gui;
+package io.github.malapert.jwcs.proj.gui;
 
 import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
+import java.awt.BorderLayout;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 
@@ -32,6 +37,11 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      */
     protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
     private static final long serialVersionUID = 5367008551020527277L;
+
+    /**
+     * Countries border.
+     */
+    private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
@@ -59,6 +69,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
     /**
      * Returns a list of latitude lines.
+     *
      * @param wcs wcs object
      * @return list of latitude lines
      */
@@ -94,9 +105,10 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
     /**
      * Returns a list of longitude lines.
+     *
      * @param wcs wcs object
      * @return list of latitude lines
-     */    
+     */
     protected final List<MapLine> drawLongitudeLines(final JWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
@@ -316,6 +328,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
     /**
      * Adds lines to the current lines.
+     *
      * @param lines the lines to add
      */
     public void addLines(List<MapLine> lines) {
@@ -357,7 +370,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         projectionComboBox = new javax.swing.JComboBox();
         previousProjectionButton = new javax.swing.JButton();
         nextProjectionButton = new javax.swing.JButton();
-        map = new io.github.malapert.jwcs.gui.MapComponent();
+        map = new io.github.malapert.jwcs.proj.gui.MapComponent();
         infoPanel = new javax.swing.JPanel();
         javax.swing.JLabel descriptionLeadLabel = new javax.swing.JLabel();
         descriptionLabel = new javax.swing.JLabel();
@@ -662,11 +675,43 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JSlider lat0Slider;
     private javax.swing.JLabel lon0Label;
     private javax.swing.JSlider lon0Slider;
-    private io.github.malapert.jwcs.gui.MapComponent map;
+    private io.github.malapert.jwcs.proj.gui.MapComponent map;
     private javax.swing.JButton nextProjectionButton;
     private javax.swing.JButton previousProjectionButton;
     private javax.swing.JComboBox projectionComboBox;
     private javax.swing.JPanel selectionPanel;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Create a window, ask the user for lines to display, import the lines, and
+     * display them.
+     *
+     * @throws java.io.IOException
+     */
+    public static void createWindow() throws IOException {
+        // create a new window
+        JFrame mapWindow = new JFrame("JWcs - Projection");
+        mapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ProjectionSelectionPanel panel = new ProjectionSelectionPanel();
+        mapWindow.getContentPane().add(panel, BorderLayout.CENTER);
+        mapWindow.pack();
+        mapWindow.setLocationRelativeTo(null); // center on screen
+        mapWindow.setVisible(true);
+        URL url = ProjectionSelectionPanel.class.getResource(CONTINENTS_PATH);
+        InputStream stream = url.openStream();
+        List<MapLine> lines = UngenerateImporter.importData(stream);
+        // pass the lines to the map component
+        panel.addLines(lines);
+        panel.draw();
+    }
+    
+    public static void main(String[] args) {
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                createWindow();
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, null, ex);
+            }
+        });
+    }    
 }

@@ -6,7 +6,7 @@
  *
  */
 
-package io.github.malapert.jwcs.gui;
+package io.github.malapert.jwcs.proj.gui;
 
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;

@@ -1,7 +1,7 @@
 /**
  * Apache License 2
  */
-package io.github.malapert.jwcs.gui;
+package io.github.malapert.jwcs.proj.gui;
 
 public final class MapPoint {
 

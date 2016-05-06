@@ -84,7 +84,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="io.github.malapert.jwcs.gui.MapComponent" name="map">
+    <Container class="io.github.malapert.jwcs.proj.gui.MapComponent" name="map">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[400, 300]"/>

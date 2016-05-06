@@ -5,7 +5,7 @@
  * Apache License 2
  */
 
-package io.github.malapert.jwcs.gui;
+package io.github.malapert.jwcs.proj.gui;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

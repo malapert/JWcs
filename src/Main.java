@@ -30,19 +30,14 @@ import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.
 import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.J2000;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
 import io.github.malapert.jwcs.coordsystem.SkySystem;
-import io.github.malapert.jwcs.gui.MapLine;
-import io.github.malapert.jwcs.gui.ProjectionSelectionPanel;
-import io.github.malapert.jwcs.gui.UngenerateImporter;
+import io.github.malapert.jwcs.coordsystem.gui.ConvertSelectionPanel;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
+import io.github.malapert.jwcs.proj.gui.ProjectionSelectionPanel;
 import io.github.malapert.jwcs.utility.HeaderFitsReader;
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,7 +48,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -67,15 +61,10 @@ import nom.tam.util.Cursor;
 public class Main {
 
     /**
-     * Countries border.
-     */
-    private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/gui/continents.ung";
-
-    /**
      * Logger.
      */
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
-    
+
     private static final int DEFAULT_EXTENSION = 0;
 
     /**
@@ -129,12 +118,13 @@ public class Main {
      */
     private static void usage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: java -jar JWcs.jar -g [OPTIONS]\n");
+        sb.append("Usage: java -jar JWcs.jar -g PROG [OPTIONS]\n");
         sb.append("    or java -jar JWcs.jar --file HDR_FILE --project X,Y [OPTIONS]\n");
         sb.append("    or java -jar JWcs.jar --file HDR_FILE --unproject RA,DEC [OPTIONS]\n");
         sb.append("    or java -jar JWcs.jar --file HDR_FILE --convert RA,DEC --to SYS_TARGET [OPTIONS]\n");
         sb.append("    or java -jar JWcs.jar --convert RA,DEC --from SYS_ORGIN --to SYS_TARGET [OPTIONS]\n");
         sb.append("           where:\n");
+        sb.append("               - PROG: either projection or converter\n");
         sb.append("               - HDR_FILE: Header FITS or FITS file\n");
         sb.append("               - X: pixel coordinate along X axis on the camera (starts to 1) \n");
         sb.append("               - Y: pixel coordinate along Y axis on the camera (starts to 1) \n");
@@ -178,14 +168,13 @@ public class Main {
         sb.append("  -s, --from               Origin sky system\n");
         sb.append("  -t, --to                 Target sky system\n");
         sb.append("  -c, --convert            Convert a sky coordinate from a sky system to antoher one\n");
-        sb.append("  -g, --gui                Display projections with a GUI\n");
+        sb.append("  -g, --gui                Display projection or converter with a GUI\n");
         sb.append("  -h, --help               Display this help and exit\n");
         sb.append("\n");
         sb.append("OPTIONS are the following:\n");
         sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
         sb.append("  -e, --extension          HDU number starting at 0 when --file argument is used. If not set, 0 is default\n");
         sb.append("  -r, --precision          Precision such as %.6f. By default, precision is set to %.15f\n");
-        
 
         System.out.println(sb.toString());
         System.exit(EXIT.OK.getCode());
@@ -229,7 +218,7 @@ public class Main {
         wcs.doInit();
         LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", argumentsPos);
         double[] result = wcs.pix2wcs(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
-        
+
         System.out.printf("(ra,dec)=(" + precision + ", " + precision + ")\n", result[0], result[1]);
         LOG.log(Level.INFO, "(ra,dec) = (%s,%s)", result);
 
@@ -446,7 +435,7 @@ public class Main {
         SkySystem skySystemTo = getSkySystem(skySystemTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
         SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
-        System.out.printf(precision+", "+precision+"\n", skyPosition.getLongitude(), skyPosition.getLatitude());
+        System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());
         LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
 
     }
@@ -480,12 +469,13 @@ public class Main {
         EXIT returnedCode = EXIT.OK;
         boolean isGui = false;
         int c;
-        int extension = DEFAULT_EXTENSION;        
+        int extension = DEFAULT_EXTENSION;
         String arg;
         String from = null;
         String to = null;
         String file = null;
         String precision = "%.15f";
+        String progGui = null;
         List<PROG> progChoice = new ArrayList<>();
         LongOpt[] longopts = new LongOpt[11];
         Logger rootLogger = Logger.getLogger("");
@@ -493,7 +483,7 @@ public class Main {
         // 
         StringBuilder sb = new StringBuilder();
         longopts[0] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
-        longopts[1] = new LongOpt("gui", LongOpt.NO_ARGUMENT, null, 'g');
+        longopts[1] = new LongOpt("gui", LongOpt.REQUIRED_ARGUMENT, null, 'g');
         longopts[2] = new LongOpt("project", LongOpt.REQUIRED_ARGUMENT, null, 'p');
         longopts[3] = new LongOpt("unproject", LongOpt.REQUIRED_ARGUMENT, null, 'u');
         longopts[4] = new LongOpt("convert", LongOpt.REQUIRED_ARGUMENT, null, 'c');
@@ -502,9 +492,9 @@ public class Main {
         longopts[7] = new LongOpt("from", LongOpt.REQUIRED_ARGUMENT, null, 's');
         longopts[8] = new LongOpt("to", LongOpt.REQUIRED_ARGUMENT, null, 't');
         longopts[9] = new LongOpt("extension", LongOpt.REQUIRED_ARGUMENT, null, 'e');
-        longopts[10] = new LongOpt("precision", LongOpt.REQUIRED_ARGUMENT, null, 'r');        
+        longopts[10] = new LongOpt("precision", LongOpt.REQUIRED_ARGUMENT, null, 'r');
         // 
-        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:r:gh;", longopts);
+        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:r:g:h;", longopts);
         g.setOpterr(true);
         //
         while ((c = g.getopt()) != -1) {
@@ -531,6 +521,7 @@ public class Main {
                     break;
                 case 'g':
                     progChoice.add(PROG.GUI);
+                    progGui = g.getOptarg();
                     break;
                 case 'c':
                     PROG.SKY_CONVERTER.setCommandLine(g.getOptarg());
@@ -591,9 +582,27 @@ public class Main {
             PROG prog = progChoice.get(0);
             switch (prog) {
                 case GUI:
-                    java.awt.EventQueue.invokeLater(() -> {
-                        createWindow();
-                    });
+                    if (null != progGui) {
+                        switch (progGui) {
+                            case "projection":
+                                java.awt.EventQueue.invokeLater(() -> {
+                                    try {
+                                        ProjectionSelectionPanel.createWindow();
+                                    } catch (IOException ex) {
+                                        System.err.println("Error : "+ex.getMessage());
+                                        LOG.log(Level.SEVERE, null, ex);                                        
+                                    }
+                                });
+                                break;
+                            case "converter":
+                                java.awt.EventQueue.invokeLater(() -> {
+                                    ConvertSelectionPanel.createWindow();
+                                });
+                                break;
+                            default:
+                                throw new IllegalArgumentException("The GUI program " + progGui + " is not supported");
+                        }
+                    }
                     isGui = true;
                     break;
                 case PROJECT:
@@ -619,36 +628,4 @@ public class Main {
             }
         }
     }
-
-    /**
-     * Create a window, ask the user for lines to display, import the lines, and
-     * display them.
-     *
-     */
-    private static void createWindow() {
-
-        try {
-
-            // create a new window
-            JFrame mapWindow = new JFrame("JWcs");
-            mapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            ProjectionSelectionPanel panel = new ProjectionSelectionPanel();
-            mapWindow.getContentPane().add(panel, BorderLayout.CENTER);
-            mapWindow.pack();
-            mapWindow.setLocationRelativeTo(null); // center on screen
-            mapWindow.setVisible(true);
-            URL url = Main.class.getResource(CONTINENTS_PATH);
-            InputStream stream = url.openStream();
-            List<MapLine> lines = UngenerateImporter.importData(stream);
-            // pass the lines to the map component
-            panel.addLines(lines);
-            panel.draw();
-
-        } catch (HeadlessException | IOException exc) {
-            LOG.log(Level.SEVERE, "Error : %s", new Object[]{exc.getMessage()});
-            System.exit(EXIT.USER_INPUT_ERROR.getCode());
-        }
-
-    }
-
 }
