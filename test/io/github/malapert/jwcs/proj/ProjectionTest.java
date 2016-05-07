@@ -61,8 +61,8 @@ public class ProjectionTest {
         double deltaLongitudeMax = 0.0;
         double deltaLatitudeMax = 0.0;
 
-        for (double latitude = -90; latitude <= 90; latitude++) {
-            for (double longitude = 0; longitude < 360; longitude++) {
+        for (int latitude = -90; latitude <= 90; latitude++) {
+            for (int longitude = 0; longitude < 360; longitude++) {
                 try {
                     if (wcs.inside(longitude, latitude)) {
                         double[] pixels = wcs.wcs2pix(longitude, latitude);
@@ -80,13 +80,13 @@ public class ProjectionTest {
                         }
 
                         if (deltaLatitude > tolerance) {
-                            System.out.printf("longitude = %20.15f lat = %20.15f\n", longitude, latitude);
+                            System.out.printf("longitude = %d lat = %d\n", longitude, latitude);
                             System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
                             System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
                             System.out.println();
                         } else if (Math.abs(latitude) != 90) {
                             if (deltaLongitude > tolerance) {
-                                System.out.printf("longitue = %20.15f lat = %20.15f\n", longitude, latitude);
+                                System.out.printf("longitue = %d lat = %d\n", longitude, latitude);
                                 System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
                                 System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
                                 System.out.println();
@@ -94,7 +94,7 @@ public class ProjectionTest {
                         }
                     }
                 } catch (ProjectionException err) {
-                    System.out.printf("Error: lng = %20.15f  lat = %20.15f\n",
+                    System.out.printf("Error: lng = %d  lat = %d\n",
                             longitude, latitude);
                     System.out.println(err.getMessage());
                 }

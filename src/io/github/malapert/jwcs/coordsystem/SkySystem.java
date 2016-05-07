@@ -177,7 +177,7 @@ public abstract class SkySystem {
             case ECLIPTIC:
                 refSystem = ((Ecliptic) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Equatorial) this).getEquinox();
+                    float equinox = ((Ecliptic) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
@@ -207,7 +207,7 @@ public abstract class SkySystem {
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Equatorial) refFrame).getEquinox();
+                    float equinox = ((Ecliptic) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
                 }
@@ -286,7 +286,7 @@ public abstract class SkySystem {
      * numberEltsOfCoordinates % 2 != 0
      */
     public final SkyPosition[] convertTo(final SkySystem refFrame, double[] coordinates) throws IllegalArgumentException {
-
+        
         final int numberElts = coordinates.length;
         final int numberOfCoordinatesPerPoint = 3;
         if (numberElts % 2 != 0) {
@@ -303,6 +303,7 @@ public abstract class SkySystem {
 
         int indice = 0;
         for (int i = 0; i < numberElts; i = i + 2) {
+            checkCoordinates(coordinates[i], coordinates[i + 1]);
             RealMatrix xyz = Utility.longlat2xyz(coordinates[i], coordinates[i + 1]);
             LOG.log(Level.FINER, "xyz : {0}", new Object[]{xyz});
             if (etermsIn != null) {

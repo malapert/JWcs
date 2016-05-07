@@ -616,7 +616,7 @@ public class Utility {
         double x = xyz.getEntry(0, 0);
         double y = xyz.getEntry(1, 0);
         double z = xyz.getEntry(2, 0);
-        double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x));
+        double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x, 0));
         longitude = (longitude < 0) ? longitude + 360.0d : longitude;
         double latitude = Math.toDegrees(NumericalUtils.aasin(z));
         double coord[] = {longitude, latitude};
