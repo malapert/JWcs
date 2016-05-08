@@ -30,12 +30,12 @@ public class J2000 implements ReferenceSystemInterface {
     /**
      * The default value of the equinox.
      */
-    private final static float DEFAULT_EQUINOX = 2000.0f;
+    private final static double DEFAULT_EQUINOX = 2000.0d;
 
     /**
      * The epoch of the equinox.
      */
-    private float equinox;
+    private double equinox;
 
     /**
      * Creates J2000 frame.
@@ -49,7 +49,7 @@ public class J2000 implements ReferenceSystemInterface {
      *
      * @param equinox the equinox
      */
-    private void init(float equinox) {
+    private void init(double equinox) {
         this.equinox = equinox;
     }
 
@@ -59,12 +59,12 @@ public class J2000 implements ReferenceSystemInterface {
     }
 
     @Override
-    public Float getEpochObs() {
+    public Double getEpochObs() {
         return null;
     }
 
     @Override
-    public float getEquinox() {
+    public double getEquinox() {
         return this.equinox;
     }
 

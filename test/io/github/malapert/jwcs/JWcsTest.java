@@ -70,8 +70,8 @@ public class JWcsTest {
     public void testGetSkySystem() {
         System.out.println("getSkySystem");
         SkySystem result = wcs.getSkySystem();
-        float equinox = ((Equatorial)result).getEquinox();
-        Float epoch = ((Equatorial)result).getEpochObs();
+        double equinox = ((Equatorial)result).getEquinox();
+        Double epoch = ((Equatorial)result).getEpochObs();
         String refSystem = ((Equatorial)result).getRefSystem().getReferenceSystemType().name();       
         assertEquals(2000.0, equinox, 1e-12);
         assertEquals(null, epoch);

@@ -120,5 +120,174 @@ public class TimeUtilsTest {
         expResult = TimeUtils.modifiedJulianDateToISO(result);
         assertEquals(expResult, dateObs);           
     }
+
+    /**
+     * Test of epochJulian2JD method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochJulian2JD() {
+        System.out.println("epochJulian2JD");
+        double jEpoch = 1983.99863107d;
+        double expResult = 2445700.5d;
+        double result = TimeUtils.epochJulian2JD(jEpoch);
+        assertEquals(expResult, result, 1e-1);
+    }
+
+    /**
+     * Test of JD2epochJulian method, of class TimeUtils.
+     */
+    @Test
+    public void testJD2epochJulian() {
+        System.out.println("JD2epochJulian");
+        double jd = 2445700.5d;
+        double expResult = 1983.99863107d;
+        double result = TimeUtils.JD2epochJulian(jd);
+        assertEquals(expResult, result, 1e-7);
+    }
+
+    /**
+     * Test of epochBessel2JD method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochBessel2JD() {
+        System.out.println("epochBessel2JD");
+        double bEpoch = 1983.99956681d;
+        double expResult = 1983.99956681d;
+        double jd = TimeUtils.epochBessel2JD(bEpoch);
+        double result = TimeUtils.JD2epochBessel(jd);
+        assertEquals(expResult, result, 1e-7);
+    }
+
+    /**
+     * Test of epochs method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochs() {
+        System.out.println("epochs");
+        String epoch = "F2008-03-31T8:09";
+        double[] expResult = new double[]{2008.2474210134737, 2008.2459673739454, 2454556.8395833336};
+        double[] result = TimeUtils.epochs(epoch);
+        assertArrayEquals(expResult, result, 1e-12);
+    }
+
+    /**
+     * Test of epochs method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochs1() {
+        System.out.println("epochs");
+        String epoch = "F2007-01-14T13:18:59.9";
+        double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
+        double[] result = TimeUtils.epochs(epoch);
+        assertArrayEquals(expResult, result, 1e-12);
+    }
+
+    /**
+     * Test of epochs method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochs2() {
+        System.out.println("epochs");
+        String epoch = "j2007.0364267212976";
+        double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
+        double[] result = TimeUtils.epochs(epoch);
+        assertArrayEquals(expResult, result, 1e-12);
+    }
+
+    /**
+     * Test of epochs method, of class TimeUtils.
+     */
+    @Test
+    public void testEpochs3() {
+        System.out.println("epochs");
+        String epoch = "b2007.0378545262108";
+        double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
+        double[] result = TimeUtils.epochs(epoch);
+        assertArrayEquals(expResult, result, 1e-12);
+    }
     
+
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd() {
+        System.out.println("jd");
+        int year = -4712;
+        int month = 1;
+        double dayNumber = 1.5d;
+        double expResult = 0.0d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }
+    
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd1() {
+        System.out.println("jd");
+        int year = 0;
+        int month = 1;
+        double dayNumber = 1.0d;
+        double expResult = 1721057.5d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }    
+
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd2() {
+        System.out.println("jd");
+        int year = 1582;
+        int month = 10;
+        double dayNumber = 4.0d;
+        double expResult = 2299159.5d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }      
+    
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd3() {
+        System.out.println("jd");
+        int year = 1582;
+        int month = 10;
+        double dayNumber = 15.0d;
+        double expResult = 2299170.5d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }       
+    
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd4() {
+        System.out.println("jd");
+        int year = 1582;
+        int month = 10;
+        double dayNumber = 15.5d;
+        double expResult = 2299161.0d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }     
+    
+    /**
+     * Test of jd method, of class TimeUtils.
+     */
+    @Test
+    public void testJd5() {
+        System.out.println("jd");
+        int year = 1970;
+        int month = 1;
+        double dayNumber = 1d;
+        double expResult = 2440587.5d;
+        double result = TimeUtils.jd(year, month, dayNumber);
+        assertEquals(expResult, result, 0.0);
+    }      
 }

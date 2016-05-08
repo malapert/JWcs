@@ -36,22 +36,22 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     /**
      * The default value of the equinox.
      */      
-    private final static float DEFAULT_EQUINOX = 1950f;
+    private final static double DEFAULT_EQUINOX = 1950d;
     
     /**
      * The default value of the epoch of observation.
      */     
-    private final static float DEFAULT_EPOCH = 1950f;
+    private final static double DEFAULT_EPOCH = 1950d;
     
     /**
      * The epoch of the equinox.
      */
-    private float equinox;
+    private double equinox;
     
     /**
      * The epoch of observation.
      */
-    private float epochObs;
+    private double epochObs;
     
     /**
      * Creates a FK4 reference frame with default values of both equinox
@@ -65,7 +65,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * Creates a FK4_NO_E reference frame with a equinox.
      * @param equinox the equinox
      */    
-    public FK4_NO_E(float equinox) {       
+    public FK4_NO_E(double equinox) {       
         init(equinox, DEFAULT_EPOCH);
     }
     
@@ -74,7 +74,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * @param equinox the equinox
      * @param epoch the epoch of observation
      */    
-    public FK4_NO_E(float equinox, float epoch) {       
+    public FK4_NO_E(double equinox, double epoch) {       
         init(equinox, epoch);
     }
     
@@ -83,7 +83,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * @param equinox the equinox
      * @param epochObs the epoch of observation
      */
-    private void init(float equinox, float epochObs) {
+    private void init(double equinox, double epochObs) {
         this.setEpochObs(epochObs);
         this.setEquinox(equinox);
     }
@@ -94,12 +94,12 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     }
 
     @Override
-    public Float getEpochObs() {
+    public Double getEpochObs() {
         return this.epochObs;
     }
 
     @Override
-    public float getEquinox() {
+    public double getEquinox() {
         return this.equinox;
     }
 
@@ -107,7 +107,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
-    public void setEquinox(float equinox) {
+    public void setEquinox(double equinox) {
         this.equinox = equinox;
     }
 
@@ -115,7 +115,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * Sets the epoch.
      * @param epochObs the epochObs to set
      */
-    public void setEpochObs(float epochObs) {
+    public void setEpochObs(double epochObs) {
         this.epochObs = epochObs;
     }
 

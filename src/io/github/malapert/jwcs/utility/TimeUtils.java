@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TimeUtils class for handling time.
@@ -40,8 +42,18 @@ public abstract class TimeUtils {
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
      */
-    public final static double epochJulian2JD(float jEpoch) {
+    public final static double epochJulian2JD(double jEpoch) {
         return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
+    }
+
+    /**
+     * Convert a Julian date to a Julian epoch
+     *
+     * @param jd Julian date
+     * @return a Julian epoch
+     */
+    public static double JD2epochJulian(double jd) {
+        return 2000.0d + (jd - 2451545.0d) / 365.25d;
     }
 
     /**
@@ -50,8 +62,18 @@ public abstract class TimeUtils {
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
      */
-    public final static double epochBessel2JD(float bEpoch) {
-        return (bEpoch - 1900.0) * 365.242198781 + 2415020.31352;
+    public final static double epochBessel2JD(double bEpoch) {
+        return (bEpoch - 1900.0d) * 365.242198781d + 2415020.31352d;
+    }
+    
+    /**
+     * Convert a julian date to a Besselian epoch
+     *
+     * @param jd julian date
+     * @return a Besselian epoch
+     */
+    public final static double JD2epochBessel(double jd) {
+        return 1900.0d + (jd - 2415020.31352d) / 365.242198781d;
     }
 
     /**
@@ -130,7 +152,6 @@ public abstract class TimeUtils {
         return julianDateToISO(julianDate);
     }
 
-
     /**
      * Transforms an ISO date to a julian date.
      *
@@ -169,7 +190,7 @@ public abstract class TimeUtils {
                 + day + ((hour + ((minute + (second / 60.0)) / 60.0)) / 24.0)
                 + 1721013.5 - ((0.5 * extra) / Math.abs(extra)) + 0.5;
     }
-    
+
     /**
      * Transforms an ISO date to a modified julian date.
      *
@@ -181,6 +202,147 @@ public abstract class TimeUtils {
         double jd = ISOToJulianDate(dateObs);
         double modifiedJulianDate = jd - 2400000.5;
         return modifiedJulianDate;
+    }
+
+    /**
+     * Flexible epoch parser. The functions in this module have different input
+     * parameters (Julian epoch, Besselian epochs, Julian dates) because the
+     * algorithms came from different sources. What we needed was a routine that
+     * could convert a string which represents a date in various formats, to
+     * values for a Julian epoch, Besselian epochs and a Julian date. This
+     * function returns these value for any valid input date.
+     *
+     * @param epoch Epoch
+     * @return Returns in order **Besselian epoch**, **Julian epoch** and
+     * **Julian date**.
+     */
+    public static double[] epochs(final String epoch) {
+        double b, j, jd, mjd, rjd;
+        String spec = epoch;
+        int i = spec.indexOf("_");
+        if (i != -1) {
+            spec = spec.substring(0, i);
+        }
+        
+        String[] valTmp1 = spec.split("(\\d.*)");       
+        String valTmp2 = spec.replace(valTmp1[0],"");
+        String[] val = new String[]{valTmp1[0], valTmp2};
+        if (val.length != 2) {
+            throw new IllegalArgumentException("No prefix or cannot convert epoch to a number");
+        }
+        String prefix = val[0].toUpperCase();
+        switch (prefix) {
+            case "B":
+            case "-B":
+                b = Double.valueOf(val[1]);
+                if (prefix.equals(("-B"))) {
+                    b *= -1.0;
+                }
+                jd = epochBessel2JD(b);
+                j = JD2epochJulian(jd);
+                break;
+            case "J":
+            case "-J":
+                j = Double.valueOf(val[1]);
+                if (prefix.equals(("-J"))) {
+                    j *= -1.0;
+                }
+                jd = epochJulian2JD(j);
+                b = JD2epochBessel(jd);
+                break;
+            case "JD":
+                jd = Double.valueOf(val[1]);
+                b = JD2epochBessel(jd);
+                j = JD2epochJulian(jd);
+                break;
+            case "MJD":
+                mjd = Double.valueOf(val[1]);
+                jd = mjd + 2400000.5d;
+                b = JD2epochBessel(jd);
+                j = JD2epochJulian(jd);
+                break;
+            case "RJD":
+                rjd = Double.valueOf(val[1]);
+                jd = rjd + 2400000d;
+                b = JD2epochBessel(jd);
+                j = JD2epochJulian(jd);
+                break;
+            case "F":
+                Object[] fd = fitsdate(val[1]);
+                jd = jd((int)fd[0], (int)fd[1], (double)fd[2]);
+                b = JD2epochBessel(jd);
+                j = JD2epochJulian(jd);                
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown prefix for epoch : " + prefix);
+        }
+        return new double[]{b, j, jd};
+    }
+    
+    /**
+     * Converts a fits date into a [integer year, integer month, fractional day].
+     * Given a string from a FITS file, try to parse it and 
+     * convert the string into three parts: an integer year, an
+     * integer month and a fractional day.
+     * It processes the following formats:
+     * <ul>
+     *  <li>DD/MM/YY or DD/MM/19YY
+     *  <li>YYYY-MM-DD
+     *  <li>YYYY-MM-DDTHH:MM:SS
+     * </ul>
+     * @param date A string, representing a date in FITS format
+     * @return Integer year, integer month, fractional day.
+     */
+    public final static Object[] fitsdate(final String date) {
+        String dateTmp = date;
+        String[] parts = date.split("/");
+        if (parts.length==3) {
+            int year = (Integer.parseInt(parts[2])%1900)+1900;
+            int month = Integer.parseInt(parts[1]);
+            double fractionalDay = Double.parseDouble(parts[0]);
+            return new Object[]{year,month,fractionalDay};
+        }
+
+        parts = dateTmp.split("T");
+        double time;
+        if (parts.length == 2) {
+           dateTmp = parts[0];
+           parts = parts[1].split(":");
+           double[] facts = new double[]{3600.0d, 60.0d, 1.0d};
+           time = 0.0d;
+           for (int i = 0; i < parts.length; i++) {
+               time += Double.parseDouble(parts[i])*facts[i];
+           }
+        } else {
+            time = 0.0d;
+        }
+        parts = dateTmp.split("-");
+        return new Object[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Double.parseDouble(parts[2])+time/86400.0d};
+    }
+    
+    public final static double jd(int year, int month, double dayNumber) {
+        int y = 0,m = 0,A,B;
+        double jd;
+        if (month > 2){
+            y = year;
+            m = month;
+        } else if (month == 1 || month == 2) {
+            y = year - 1;
+            m = month + 12;
+        }
+        double calday = year + month/100.0d + dayNumber / 10000.0d;
+        if (calday > 1582.1015){
+            A = (int)(y/100.0);
+            B = 2 - A + (int)(A/4.0);
+        } else {
+            B = 0;
+        }    
+        if (calday > 0.0229) {  // Dates after 29 February year 0
+            jd = (int)(365.25*y) + (int)(30.6001*(m+1)) + dayNumber + 1720994.50d + B;
+        } else {
+            jd = (int)(365.25*y-0.75) + (int)(30.6001*(m+1)) + dayNumber + 1720994.50d + B;
+        }    
+        return jd;        
     }
 
 }

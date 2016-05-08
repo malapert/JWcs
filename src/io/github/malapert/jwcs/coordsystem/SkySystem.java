@@ -155,21 +155,21 @@ public abstract class SkySystem {
      *
      * @return the equinox
      */
-    protected abstract float getEquinox();
+    protected abstract double getEquinox();
 
     /**
      * Returns Eterms matrix for the input reference system.
      *
      * @return Eterms matrix
      */
-    private RealMatrix getEtermsIn() {
+    protected final RealMatrix getEtermsIn() {
         RealMatrix eterms = null;
         ReferenceSystemInterface.Type refSystem;
         switch (getSkySystemName()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Equatorial) this).getEquinox();
+                    double equinox = ((Equatorial) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});
                 }
@@ -177,7 +177,7 @@ public abstract class SkySystem {
             case ECLIPTIC:
                 refSystem = ((Ecliptic) this).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Ecliptic) this).getEquinox();
+                    double equinox = ((Ecliptic) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
@@ -192,14 +192,14 @@ public abstract class SkySystem {
      * @param refFrame the output reference system
      * @return Eterms matrix
      */
-    private RealMatrix getEtermsOut(final SkySystem refFrame) {
+    protected final RealMatrix getEtermsOut(final SkySystem refFrame) {
         RealMatrix eterms = null;
         ReferenceSystemInterface.Type refSystem;
         switch (refFrame.getSkySystemName()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Equatorial) refFrame).getEquinox();
+                    double equinox = ((Equatorial) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
@@ -207,7 +207,7 @@ public abstract class SkySystem {
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceSystemType();
                 if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
-                    float equinox = ((Ecliptic) refFrame).getEquinox();
+                    double equinox = ((Ecliptic) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
                 }

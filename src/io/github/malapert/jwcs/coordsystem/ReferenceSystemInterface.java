@@ -172,12 +172,12 @@ public interface ReferenceSystemInterface {
      * @return null when epoch of observation is not required other the epoch
      * of observation
      */
-    Float getEpochObs();
+    Double getEpochObs();
     
     /**
      * Returns the equinox.
      * @return the equinox
      */
-    float getEquinox();
+    double getEquinox();
        
 }

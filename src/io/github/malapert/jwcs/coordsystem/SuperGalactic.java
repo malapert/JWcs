@@ -48,7 +48,7 @@ public class SuperGalactic extends SkySystem {
     /**
      * Value of the epoch of the equinox.
      */
-    private static final float EQUINOX = 2000.0f;
+    private static final double EQUINOX = 2000.0d;
     
     @Override
     protected RealMatrix getRotationMatrix(final SkySystem refFrame) {
@@ -56,7 +56,7 @@ public class SuperGalactic extends SkySystem {
         if (refFrame instanceof Equatorial) {
             RealMatrix m1 = Utility.MatrixGal2Sgal().transpose(); 
             RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0f, (float)((Equatorial) refFrame).getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial) refFrame).getReferenceSystemType(), null);
+            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, ((Equatorial) refFrame).getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial) refFrame).getReferenceSystemType(), null);
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Galactic) {
             m = Utility.MatrixGal2Sgal().transpose();       
@@ -66,7 +66,7 @@ public class SuperGalactic extends SkySystem {
             RealMatrix m1 = Utility.MatrixGal2Sgal().transpose();
             RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
             //TODO : Revérifier après implémentation
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0f, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
+            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
             RealMatrix m4 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ReferenceSystemInterface.Type.FK5);
             ///
             m = m4.multiply(m3).multiply(m2).multiply(m1);
@@ -82,7 +82,7 @@ public class SuperGalactic extends SkySystem {
     }
 
     @Override
-    protected float getEquinox() {
+    protected double getEquinox() {
         return EQUINOX;
     }
 

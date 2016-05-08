@@ -70,12 +70,12 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
             m = m2.multiply(m1);
         } else if (refFrame instanceof Galactic) {
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(), getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0f, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
             RealMatrix m3 = Utility.MatrixEqB19502Gal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof SuperGalactic) {
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(),getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0f, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
             RealMatrix m3 = Utility.MatrixEqB19502Gal();
             RealMatrix m4 = Utility.MatrixGal2Sgal();
             m = m4.multiply(m3).multiply(m2).multiply(m1);
@@ -96,12 +96,12 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
     }
 
     @Override
-    public float getEquinox() {
+    public double getEquinox() {
         return this.getRefSystem().getEquinox();
     }
     
     @Override
-    public Float getEpochObs() {
+    public Double getEpochObs() {
         return this.getRefSystem().getEpochObs();
     }
     

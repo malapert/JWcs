@@ -41,12 +41,12 @@ public class Galactic extends SkySystem {
     /**
      * Default value for equinox.
      */
-    private final static float DEFAULT_EQUINOX = 2000.0f;
+    private final static double DEFAULT_EQUINOX = 2000.0d;
     
     /**
      * The equinox.
      */
-    private final float equinox;
+    private final double equinox;
     
     /**
      * Creates a Galactic coordinate system.
@@ -60,7 +60,7 @@ public class Galactic extends SkySystem {
         RealMatrix m;
         if (refFrame instanceof Equatorial) {
             RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose(); 
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0f, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial)refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial)refFrame).getReferenceSystemType(), null);
             m = m2.multiply(m1);
         } else if (refFrame instanceof Galactic) {
             m = MatrixUtils.createRealIdentityMatrix(3);
@@ -68,7 +68,7 @@ public class Galactic extends SkySystem {
             m = Utility.MatrixGal2Sgal();
         } else if (refFrame instanceof Ecliptic) {
             RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0f, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
             RealMatrix m3 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ReferenceSystemInterface.Type.FK5);
             m = m3.multiply(m2).multiply(m1);
         } else {
@@ -83,7 +83,7 @@ public class Galactic extends SkySystem {
     }
 
     @Override
-    protected float getEquinox() {
+    protected double getEquinox() {
         return this.equinox;
     }
 

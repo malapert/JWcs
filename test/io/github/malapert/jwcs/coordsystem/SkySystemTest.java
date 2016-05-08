@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -463,5 +464,53 @@ public class SkySystemTest {
         }
 
     }
+    
+    @Test
+    public void testSkyMatrixFK4toFK5() {
+        ReferenceSystemInterface fk4 = new FK4();
+        ReferenceSystemInterface fk5 = new FK5();
+        SkySystem eq1 = new Equatorial(fk4);
+        SkySystem eq2 = new Equatorial(fk5);
+        RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
+        RealMatrix etermsIn = eq1.getEtermsIn();
+        RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        assertArrayEquals(new double[]{9.99925679e-01,  -1.11814832e-02,  -4.85900382e-03}, rotationMatrix.getRow(0), 1e-9);
+        assertArrayEquals(new double[]{1.11814832e-02,   9.99937485e-01,  -2.71625947e-05}, rotationMatrix.getRow(1), 1e-9);
+        assertArrayEquals(new double[]{4.85900377e-03,  -2.71702937e-05,   9.99988195e-01}, rotationMatrix.getRow(2), 1e-9);
+        assertArrayEquals(new double[]{-1.6255503575995309e-06,-3.1918587795578522e-07,-1.3842701121066153e-07}, etermsIn.getRow(0),1e-20);
+        assertEquals(null, etermsOut);        
+    }
+    
+    @Test
+    public void testSkyMatrixFK4NOEB1950toFK4B1950() {
+        ReferenceSystemInterface fk4 = new FK4(1950f);
+        ReferenceSystemInterface fk4NOE = new FK4_NO_E(1950f);
+        SkySystem eq1 = new Equatorial(fk4NOE);
+        SkySystem eq2 = new Equatorial(fk4);
+        RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
+        RealMatrix etermsIn = eq1.getEtermsIn();
+        RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        assertArrayEquals(new double[]{1.,  0.,  -0.}, rotationMatrix.getRow(0), 1e-9);
+        assertArrayEquals(new double[]{0.,   1.,  0.}, rotationMatrix.getRow(1), 1e-9);
+        assertArrayEquals(new double[]{0.,  0.,   1.}, rotationMatrix.getRow(2), 1e-9);
+        assertArrayEquals(new double[]{-1.6255503575995309e-06,-3.1918587795578522e-07,-1.3842701121066153e-07}, etermsOut.getRow(0),1e-20);
+        assertEquals(null, etermsIn);        
+    }    
+    
+    @Test
+    public void testSkyMatrixFK4B1950J1983_5toFK52000() {
+        ReferenceSystemInterface fk4 = new FK4(1950f, 1983.5f);
+        ReferenceSystemInterface fk5 = new FK5(1950f);
+        SkySystem eq1 = new Equatorial(fk4);
+        SkySystem eq2 = new Equatorial(fk5);
+        RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
+        RealMatrix etermsIn = eq1.getEtermsIn();
+        RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        assertArrayEquals(new double[]{9.99925679e-01,  -1.11818698e-02,  -4.85829658e-03}, rotationMatrix.getRow(0), 1e-9);
+        assertArrayEquals(new double[]{1.11818699e-02,   9.99937481e-01,  -2.71546879e-05}, rotationMatrix.getRow(1), 1e-9);
+        assertArrayEquals(new double[]{4.85829648e-03,  -2.71721706e-05,   9.99988198e-01}, rotationMatrix.getRow(2), 1e-9);
+        assertArrayEquals(new double[]{-1.6255503575995309e-06,-3.1918587795578522e-07,-1.3842701121066153e-07}, etermsIn.getRow(0),1e-20);
+        assertEquals(null, etermsOut);        
+    }       
 
 }

@@ -64,16 +64,16 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
         if (refFrame instanceof Equatorial) {
             m = Utility.MatrixEpoch12Epoch2(getEquinox(), ((Equatorial) refFrame).getEquinox(), getReferenceSystemType(), ((Equatorial) refFrame).getReferenceSystemType(), getEpochObs());
         } else if (refFrame instanceof Galactic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0f, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
             RealMatrix m2 = Utility.MatrixEqB19502Gal();
             m = m2.multiply(m1);
         } else if (refFrame instanceof SuperGalactic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0f, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
             RealMatrix m2 = Utility.MatrixEqB19502Gal();
             RealMatrix m3 = Utility.MatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 2000f, getReferenceSystemType(), ReferenceSystemInterface.Type.FK5, null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 2000d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK5, null);
             RealMatrix m2 = Utility.MatrixEq2Ecl(2000f, ReferenceSystemInterface.Type.FK5);
             m = m2.multiply(m1);
         } else {
@@ -88,12 +88,12 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
     }
 
     @Override
-    public float getEquinox() {
+    public double getEquinox() {
         return this.getRefSystem().getEquinox();
     }
 
     @Override
-    public Float getEpochObs() {
+    public Double getEpochObs() {
         return this.getRefSystem().getEpochObs();
     }
 

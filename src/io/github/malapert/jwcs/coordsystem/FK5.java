@@ -35,12 +35,12 @@ public class FK5 implements ReferenceSystemInterface {
     /**
      * The default value of the equinox;
      */    
-    private final static float DEFAULT_EQUINOX = 2000.0f;
+    private final static double DEFAULT_EQUINOX = 2000.0d;
     
     /**
      * The epoch of the equinox.
      */    
-    private float equinox;
+    private double equinox;
     
     /**
      * Creates a FK5 reference frame with the DEFAULT_EQUINOX value.
@@ -53,7 +53,7 @@ public class FK5 implements ReferenceSystemInterface {
      * Creates a FK5 reference frame with a equinox value.
      * @param equinox the equinox
      */    
-    public FK5(float equinox) {
+    public FK5(double equinox) {
         init(equinox);
     } 
 
@@ -61,17 +61,17 @@ public class FK5 implements ReferenceSystemInterface {
      * initialization.
      * @param equinox the equinox 
      */
-    private void init(float equinox) {    
+    private void init(double equinox) {    
         this.setEquinox(equinox);
     }
 
     @Override
-    public float getEquinox() {
+    public double getEquinox() {
         return this.equinox;
     }
 
     @Override
-    public Float getEpochObs() {
+    public Double getEpochObs() {
         return null;
     }
 
@@ -84,7 +84,7 @@ public class FK5 implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
-    public void setEquinox(float equinox) {
+    public void setEquinox(double equinox) {
         this.equinox = equinox;
     }
 
