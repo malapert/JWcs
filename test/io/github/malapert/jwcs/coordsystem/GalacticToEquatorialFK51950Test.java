@@ -26,7 +26,7 @@ public class GalacticToEquatorialFK51950Test extends ConverterTest {
     
     public GalacticToEquatorialFK51950Test() throws JWcsException {
         super();
-        ReferenceSystemInterface fk5 = new FK5(1950.0f);
+        ReferenceSystemInterface fk5 = new FK5("J1950.0");
         this.source = new Galactic();
         this.target = new Equatorial(fk5);        
         

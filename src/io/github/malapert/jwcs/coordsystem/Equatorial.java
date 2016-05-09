@@ -73,8 +73,8 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
             RealMatrix m3 = Utility.MatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 2000d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK5, null);
-            RealMatrix m2 = Utility.MatrixEq2Ecl(2000f, ReferenceSystemInterface.Type.FK5);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), ((Ecliptic) refFrame).getEquinox(), getReferenceSystemType(), ((Ecliptic) refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEq2Ecl(((Ecliptic) refFrame).getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
             m = m2.multiply(m1);
         } else {
             throw new IllegalArgumentException(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));

@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+
 /**
  *
  * @author malapert
@@ -30,7 +32,7 @@ public class J2000 implements ReferenceSystemInterface {
     /**
      * The default value of the equinox.
      */
-    private final static double DEFAULT_EQUINOX = 2000.0d;
+    private final static String DEFAULT_EPOCH = "J2000";
 
     /**
      * The epoch of the equinox.
@@ -41,16 +43,16 @@ public class J2000 implements ReferenceSystemInterface {
      * Creates J2000 frame.
      */
     public J2000() {
-        init(DEFAULT_EQUINOX);
+        init(DEFAULT_EPOCH);
     }
 
     /**
      * initialization.
      *
-     * @param equinox the equinox
+     * @param equinox the epoch
      */
-    private void init(double equinox) {
-        this.equinox = equinox;
+    private void init(final String epoch) {
+        this.equinox = epochs(epoch)[1];
     }
 
     @Override

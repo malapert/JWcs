@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+
 
 /**
  * Mean place post IAU 1976 system. 
@@ -35,7 +37,7 @@ public class FK5 implements ReferenceSystemInterface {
     /**
      * The default value of the equinox;
      */    
-    private final static double DEFAULT_EQUINOX = 2000.0d;
+    private final static String DEFAULT_EPOCH = "J2000";
     
     /**
      * The epoch of the equinox.
@@ -43,26 +45,26 @@ public class FK5 implements ReferenceSystemInterface {
     private double equinox;
     
     /**
-     * Creates a FK5 reference frame with the DEFAULT_EQUINOX value.
+     * Creates a FK5 reference frame with the DEFAULT_EPOCH value.
      */
     public FK5(){
-        init(DEFAULT_EQUINOX);
+        init(DEFAULT_EPOCH);
     }
     
     /**
      * Creates a FK5 reference frame with a equinox value.
-     * @param equinox the equinox
+     * @param epoch the epoch
      */    
-    public FK5(double equinox) {
-        init(equinox);
+    public FK5(final String epoch) {
+        init(epoch);
     } 
 
     /**
      * initialization.
      * @param equinox the equinox 
      */
-    private void init(double equinox) {    
-        this.setEquinox(equinox);
+    private void init(final String epoch) {          
+        this.setEquinox(epoch);
     }
 
     @Override
@@ -84,8 +86,8 @@ public class FK5 implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
-    public void setEquinox(double equinox) {
-        this.equinox = equinox;
+    public void setEquinox(final String equinox) {
+        this.equinox = epochs(equinox)[1];
     }
 
     @Override

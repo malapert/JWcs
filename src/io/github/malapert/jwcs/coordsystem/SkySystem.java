@@ -261,13 +261,13 @@ public abstract class SkySystem {
         if (etermsIn != null) {
             xyz = Utility.removeEterms(xyz, etermsIn);
             LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});            
-        }
+        }      
         xyz = rotation.multiply(xyz);
-        LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
         if (etermsOut != null) {
             xyz = Utility.addEterms(xyz, etermsOut);
             LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});            
-        }
+        }          
+        LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
         double[] position = Utility.xyz2longlat(xyz);
         LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
         LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, refFrame, position[0], position[1]});

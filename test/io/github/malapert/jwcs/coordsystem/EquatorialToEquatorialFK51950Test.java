@@ -22,13 +22,13 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  *
  * @author malapert
  */
-public class GalacticToEclipticFK51950Test extends ConverterTest {
+public class EquatorialToEquatorialFK51950Test extends ConverterTest {
     
-    public GalacticToEclipticFK51950Test() throws JWcsException {
+    public EquatorialToEquatorialFK51950Test() throws JWcsException {
         super();
         ReferenceSystemInterface fk5 = new FK5("J1950");
-        this.source = new Galactic();
-        this.target = new Ecliptic(fk5);        
+        this.source = new Equatorial();
+        this.target = new Equatorial(fk5);        
         
     }
 }

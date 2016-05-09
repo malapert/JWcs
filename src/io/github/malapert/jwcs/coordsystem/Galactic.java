@@ -68,8 +68,8 @@ public class Galactic extends SkySystem {
             m = Utility.MatrixGal2Sgal();
         } else if (refFrame instanceof Ecliptic) {
             RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
-            RealMatrix m3 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ReferenceSystemInterface.Type.FK5);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Ecliptic)refFrame).getReferenceSystemType(), null);
+            RealMatrix m3 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic)refFrame).getReferenceSystemType());
             m = m3.multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));

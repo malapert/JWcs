@@ -26,7 +26,7 @@ public class EquatorialToEclipticFK51950Test extends ConverterTest {
     
     public EquatorialToEclipticFK51950Test() throws JWcsException {
         super();
-        ReferenceSystemInterface fk5 = new FK5(1950.0f);
+        ReferenceSystemInterface fk5 = new FK5("J1950");
         this.source = new Equatorial();
         this.target = new Ecliptic(fk5);        
         

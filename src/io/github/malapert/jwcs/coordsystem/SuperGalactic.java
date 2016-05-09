@@ -65,10 +65,8 @@ public class SuperGalactic extends SkySystem {
         } else if (refFrame instanceof Ecliptic) {
             RealMatrix m1 = Utility.MatrixGal2Sgal().transpose();
             RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
-            //TODO : Revérifier après implémentation
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ReferenceSystemInterface.Type.FK5, null);
-            RealMatrix m4 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ReferenceSystemInterface.Type.FK5);
-            ///
+            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Ecliptic) refFrame).getReferenceSystemType(), null);
+            RealMatrix m4 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));

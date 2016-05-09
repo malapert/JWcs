@@ -314,17 +314,17 @@ public class Main {
                 if (parameters == null) {
                     ref = new FK5();
                 } else {
-                    ref = new FK5(Float.valueOf(parameters[0]));
+                    ref = new FK5(parameters[0]);
                 }
                 break;
             case FK4:
                 if (parameters != null) {
                     switch (parameters.length) {
                         case 1:
-                            ref = new FK4(Float.valueOf(parameters[0]));
+                            ref = new FK4(parameters[0]);
                             break;
                         case 2:
-                            ref = new FK4(Float.valueOf(parameters[0]), Float.valueOf(parameters[1]));
+                            ref = new FK4(parameters[0], parameters[1]);
                             break;
                         default:
                             throw new IllegalArgumentException("");
@@ -337,10 +337,10 @@ public class Main {
                 if (parameters != null) {
                     switch (parameters.length) {
                         case 1:
-                            ref = new FK4_NO_E(Float.valueOf(parameters[0]));
+                            ref = new FK4_NO_E(parameters[0]);
                             break;
                         case 2:
-                            ref = new FK4_NO_E(Float.valueOf(parameters[0]), Float.valueOf(parameters[1]));
+                            ref = new FK4_NO_E(parameters[0], parameters[1]);
                             break;
                         default:
                             throw new IllegalArgumentException("");

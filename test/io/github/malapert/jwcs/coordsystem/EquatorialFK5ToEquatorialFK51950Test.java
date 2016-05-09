@@ -27,7 +27,7 @@ public class EquatorialFK5ToEquatorialFK51950Test extends ConverterTest {
     public EquatorialFK5ToEquatorialFK51950Test() throws JWcsException {
         super();
         ReferenceSystemInterface fk5 = new FK5();
-        ReferenceSystemInterface fk51950 = new FK5(1950);
+        ReferenceSystemInterface fk51950 = new FK5("J1950");
         this.source = new Equatorial(fk5);
         this.target = new Equatorial(fk51950);        
         

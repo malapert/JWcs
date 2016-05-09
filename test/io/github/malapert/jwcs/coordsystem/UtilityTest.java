@@ -17,6 +17,8 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.utility.TimeUtils;
+import static io.github.malapert.jwcs.utility.TimeUtils.jd;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,22 +67,20 @@ public class UtilityTest {
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
-//
-//    /**
-//     * Test of lieskeprecangles method, of class Utility.
-//     */
-//    @Test
-//    public void testLieskeprecangles() {
-//        System.out.println("lieskeprecangles");
-//        double jd1 = 0.0;
-//        double jd2 = 0.0;
-//        double[] expResult = null;
-//        double[] result = Utility.lieskeprecangles(jd1, jd2);
-//        assertArrayEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+
+    /**
+     * Test of lieskeprecangles method, of class Utility.
+     */
+    @Test
+    public void testLieskeprecangles() {
+        System.out.println("lieskeprecangles");
+        double jd1 = jd(1984,1,1);
+        double jd2 = jd(2000,1,1.5);
+        double[] expResult = new double[]{0.10249958598931658, 0.10250522534285664, 0.089091092843880629};
+        double[] result = Utility.lieskeprecangles(jd1, jd2);
+        assertArrayEquals(expResult, result, 1e-15);
+    }
+
 //    /**
 //     * Test of precessionMatrix method, of class Utility.
 //     */
@@ -236,22 +236,20 @@ public class UtilityTest {
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
-//
-//    /**
-//     * Test of longlat2xyz method, of class Utility.
-//     */
-//    @Test
-//    public void testLonglat2xyz() {
-//        System.out.println("longlat2xyz");
-//        double longitude = 0.0;
-//        double latitude = 0.0;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.longlat2xyz(longitude, latitude);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+
+    /**
+     * Test of longlat2xyz method, of class Utility.
+     */
+    @Test
+    public void testLonglat2xyz() {
+        System.out.println("longlat2xyz");
+        double longitude = 11.109013566461968;
+        double latitude = -89.9698527254359;
+        RealMatrix result = Utility.longlat2xyz(longitude, latitude);
+        double[]resultLongLat = Utility.xyz2longlat(result);
+        assertArrayEquals(new double[]{longitude, latitude}, resultLongLat, 1e-12);
+    }
+
 //    /**
 //     * Test of longlatRad2xyz method, of class Utility.
 //     */
@@ -266,21 +264,25 @@ public class UtilityTest {
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
-//
-//    /**
-//     * Test of xyz2longlat method, of class Utility.
-//     */
-//    @Test
-//    public void testXyz2longlat() {
-//        System.out.println("xyz2longlat");
-//        RealMatrix xyz = null;
-//        double[] expResult = null;
-//        double[] result = Utility.xyz2longlat(xyz);
-//        assertArrayEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+
+    /**
+     * Test of xyz2longlat method, of class Utility.
+     */
+    @Test
+    public void testXyz2longlat() {
+        System.out.println("xyz2longlat");
+        double[][] array = {
+            {1.6255503576607638E-6},
+            {3.191858779557839E-7},
+            {-0.9999998615729888}               
+        };        
+        RealMatrix xyz = MatrixUtils.createRealMatrix(array);
+        double[] expResult = xyz.getColumn(0);
+        double[] result = Utility.xyz2longlat(xyz);
+        RealMatrix lonlat = Utility.longlat2xyz(result[0], result[1]);
+        assertArrayEquals(expResult, lonlat.getColumn(0), 1e-6);
+    }
+
 //    /**
 //     * Test of removeEterms method, of class Utility.
 //     */

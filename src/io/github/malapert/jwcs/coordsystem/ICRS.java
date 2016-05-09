@@ -16,6 +16,9 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.TimeUtils;
+import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+
 /**
  * The International Celestial Reference System, for optical data 
  * realized through the Hipparcos catalog. 
@@ -44,9 +47,9 @@ public class ICRS implements ReferenceSystemInterface {
     private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.ICRS;
 
     /**
-     * The default value of the equinox.
+     * The default value of the epoch.
      */
-    private final static double DEFAULT_EQUINOX = 2000.0d;
+    private final static String DEFAULT_EPOCH = "J2000";
     
     /**
      * The epoch of the equinox.
@@ -57,15 +60,15 @@ public class ICRS implements ReferenceSystemInterface {
      * Creates a new ICRS reference frame.
      */
     public ICRS() {
-        init(DEFAULT_EQUINOX);
+        init(DEFAULT_EPOCH);
     }
 
     /**
      * initialization.
      * @param equinox the equinox
      */
-    private void init(double equinox) {
-        this.equinox = equinox;
+    private void init(String equinox) {
+        this.equinox = epochs(equinox)[1];
     }
 
     @Override

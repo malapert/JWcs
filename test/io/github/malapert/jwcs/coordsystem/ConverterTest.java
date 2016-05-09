@@ -38,7 +38,7 @@ public class ConverterTest {
     protected double maxLat;
     protected double tolerance;
 
-    private static final double TOLERANCE = 1.0e-10;
+    private static final double TOLERANCE = 1.0e-7;
     static final Logger LOG = Logger.getLogger("");
 
     public ConverterTest() {

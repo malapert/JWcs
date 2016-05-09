@@ -16,6 +16,8 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+
 /**
  * The old FK4 (barycentric) equatorial system
  * but without the *E-terms of aberration*.
@@ -34,14 +36,9 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.FK4_NO_E;
     
     /**
-     * The default value of the equinox.
+     * The default value of the epoch.
      */      
-    private final static double DEFAULT_EQUINOX = 1950d;
-    
-    /**
-     * The default value of the epoch of observation.
-     */     
-    private final static double DEFAULT_EPOCH = 1950d;
+    private final static String DEFAULT_EPOCH = "B1950";    
     
     /**
      * The epoch of the equinox.
@@ -51,41 +48,41 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     /**
      * The epoch of observation.
      */
-    private double epochObs;
+    private Double epochObs;
     
     /**
-     * Creates a FK4 reference frame with default values of both equinox
+     * Creates a FK4 reference frame with default values of both epoch
      * and epoch of observation.
      */
     public FK4_NO_E() {
-        init(DEFAULT_EQUINOX, DEFAULT_EPOCH);
+        init(DEFAULT_EPOCH, null);
     }
     
     /**
      * Creates a FK4_NO_E reference frame with a equinox.
-     * @param equinox the equinox
+     * @param epoch the epoch
      */    
-    public FK4_NO_E(double equinox) {       
-        init(equinox, DEFAULT_EPOCH);
+    public FK4_NO_E(final String epoch) {       
+        init(epoch, null);
     }
     
     /**
      * Creates a FK4_NO_E reference frame with both equinox and epoch of observation.
-     * @param equinox the equinox
-     * @param epoch the epoch of observation
+     * @param epoch the epoch
+     * @param epochObs the epoch of observation
      */    
-    public FK4_NO_E(double equinox, double epoch) {       
-        init(equinox, epoch);
+    public FK4_NO_E(final String epoch, final String epochObs) {       
+        init(epoch, epochObs);
     }
     
     /**
      * initialization.
-     * @param equinox the equinox
+     * @param epoch the epoch
      * @param epochObs the epoch of observation
      */
-    private void init(double equinox, double epochObs) {
-        this.setEpochObs(epochObs);
-        this.setEquinox(equinox);
+    private void init(final String epoch, final String epochObs) {        
+        this.setEpochObs(epochObs);        
+        this.setEquinox(epoch);
     }
     
     @Override
@@ -107,16 +104,16 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
-    public void setEquinox(double equinox) {
-        this.equinox = equinox;
+    public void setEquinox(final String equinox) {
+        this.equinox = epochs(equinox)[0];
     }
 
     /**
      * Sets the epoch.
      * @param epochObs the epochObs to set
      */
-    public void setEpochObs(double epochObs) {
-        this.epochObs = epochObs;
+    public void setEpochObs(final String epochObs) {
+        this.epochObs = (epochObs == null) ? null : epochs(epochObs)[0];
     }
 
     @Override

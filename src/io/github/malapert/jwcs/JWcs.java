@@ -400,27 +400,27 @@ public abstract class JWcs implements JWcsKeyProvider {
                 case "FK5":
                     refSystem = new FK5();
                     if (hasKeyword(EQUINOX)) {
-                        ((FK5) refSystem).setEquinox(getValueAsFloat(EQUINOX));
+                        ((FK5) refSystem).setEquinox("J"+getValueAsFloat(EQUINOX));
                     }
                     break;
 
                 case "FK4":
                     refSystem = new FK4();
                     if (hasKeyword(EQUINOX)) {
-                        ((FK4) refSystem).setEquinox(getValueAsFloat(EQUINOX));
+                        ((FK4) refSystem).setEquinox("B"+getValueAsFloat(EQUINOX));
                     }
                     if (mjdObs != null) {
-                        ((FK4) refSystem).setEpochObs(Float.valueOf(mjdObs));
+                        ((FK4) refSystem).setEpochObs("MJD"+Float.valueOf(mjdObs));
                     }
                     break;
 
                 case "FK4-NO-E":
                     refSystem = new FK4_NO_E();
                     if (hasKeyword(EQUINOX)) {
-                        ((FK4_NO_E) refSystem).setEquinox(getValueAsFloat(EQUINOX));
+                        ((FK4_NO_E) refSystem).setEquinox("B"+getValueAsFloat(EQUINOX));
                     }
                     if (mjdObs != null) {
-                        ((FK4_NO_E) refSystem).setEpochObs(Float.valueOf(mjdObs));
+                        ((FK4_NO_E) refSystem).setEpochObs("MJD"+Float.valueOf(mjdObs));
                     }
                     break;
 
@@ -430,12 +430,12 @@ public abstract class JWcs implements JWcsKeyProvider {
         } else if (hasKeyword(EQUINOX)) {
             float equinox = getValueAsFloat(EQUINOX);
             if (equinox < 1984.0) {
-                refSystem = new FK4(equinox);
+                refSystem = new FK4("B"+equinox);
                 if (mjdObs != null) {
-                    ((FK4) refSystem).setEpochObs(Float.valueOf(mjdObs));
+                    ((FK4) refSystem).setEpochObs("MJD"+Float.valueOf(mjdObs));
                 }
             } else {
-                refSystem = new FK5(equinox);
+                refSystem = new FK5("J"+equinox);
             }
         } else {
             // RADESYSa defaults to ICRS if both it and EQUINOX a are absent.

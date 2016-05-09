@@ -533,13 +533,13 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         ReferenceSystemInterface result;
         switch (type) {
             case FK4:
-                result = new FK4(equinox, epoch);
+                result = new FK4("B"+equinox, "B"+epoch);
                 break;
             case FK4_NO_E:
-                result = new FK4_NO_E(equinox, epoch);
+                result = new FK4_NO_E("B"+equinox, "B"+epoch);
                 break;
             case FK5:
-                result = new FK5(equinox);
+                result = new FK5("J"+equinox);
                 break;
             case ICRS:
                 result = new ICRS();
