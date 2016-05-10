@@ -56,7 +56,7 @@ public class SuperGalactic extends SkySystem {
         if (refFrame instanceof Equatorial) {
             RealMatrix m1 = Utility.MatrixGal2Sgal().transpose(); 
             RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, ((Equatorial) refFrame).getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial) refFrame).getReferenceSystemType(), null);
+            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial) refFrame).getReferenceSystemType(), null);
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Galactic) {
             m = Utility.MatrixGal2Sgal().transpose();       

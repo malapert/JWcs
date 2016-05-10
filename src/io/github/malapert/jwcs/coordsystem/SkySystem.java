@@ -26,9 +26,12 @@ import org.apache.commons.math3.linear.RealMatrix;
  *
  * A sky definition can consist of a <b>sky system</b>, a <b>reference
  * system</b>, an <b>equinox</b> and an <b>epoch of observation</b>.
+ * 
+ * An equinox is an astronomical event in which the plane of Earth's equator 
+ * passes through the center of the Sun.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class SkySystem {
 
@@ -38,7 +41,7 @@ public abstract class SkySystem {
     private static final Logger LOG = Logger.getLogger(SkySystem.class.getName());
 
     /**
-     * List of supported sky systems
+     * List of supported sky systems.
      */
     public enum SkySystems {
         /**
@@ -132,7 +135,7 @@ public abstract class SkySystem {
     };
 
     /**
-     * Calculates the rotation matrix to from a reference frame to another one.
+     * Calculates the rotation matrix from a reference frame to another one.
      *
      * The methods in this class have been traduced from Python to JAVA
      *

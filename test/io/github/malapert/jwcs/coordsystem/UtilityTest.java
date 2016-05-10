@@ -53,20 +53,22 @@ public class UtilityTest {
     }
 
 
-//    /**
-//     * Test of julianMatrixEpoch12Epoch2 method, of class Utility.
-//     */
-//    @Test
-//    public void testJulianMatrixEpoch12Epoch2() {
-//        System.out.println("julianMatrixEpoch12Epoch2");
-//        float jEpoch1 = 0.0F;
-//        float jEpoch2 = 0.0F;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.julianMatrixEpoch12Epoch2(jEpoch1, jEpoch2);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
+    /**
+     * Test of julianMatrixEpoch12Epoch2 method, of class Utility.
+     */
+    @Test
+    public void testJulianMatrixEpoch12Epoch2() {
+        System.out.println("julianMatrixEpoch12Epoch2");
+        double jEpoch1 = 1950.0d;
+        double jEpoch2 = 2000.0d;
+        RealMatrix result1 = Utility.julianMatrixEpoch12Epoch2(jEpoch1, jEpoch2);
+        RealMatrix result2 = Utility.julianMatrixEpoch12Epoch2(jEpoch2, jEpoch1);
+        RealMatrix result = result1.multiply(result2);
+        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+    }
 
     /**
      * Test of lieskeprecangles method, of class Utility.
@@ -78,7 +80,7 @@ public class UtilityTest {
         double jd2 = jd(2000,1,1.5);
         double[] expResult = new double[]{0.10249958598931658, 0.10250522534285664, 0.089091092843880629};
         double[] result = Utility.lieskeprecangles(jd1, jd2);
-        assertArrayEquals(expResult, result, 1e-15);
+        assertArrayEquals(expResult, result, 1e-9);
     }
 
 //    /**
@@ -155,32 +157,21 @@ public class UtilityTest {
 //        fail("The test case is a prototype.");
 //    }
 //
-//    /**
-//     * Test of FK52FK4Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testFK52FK4Matrix_0args() {
-//        System.out.println("FK52FK4Matrix");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.FK52FK4Matrix();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of FK52FK4Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testFK52FK4Matrix_float() {
-//        System.out.println("FK52FK4Matrix");
-//        float t = 0.0F;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.FK52FK4Matrix(t);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
+    /**
+     * Test of FK52FK4Matrix method, of class Utility.
+     */
+    @Test
+    public void testFK52FK4Matrix() {
+        System.out.println("FK52FK4Matrix");        
+        RealMatrix resultTest1 = Utility.FK42FK5Matrix(null);
+        RealMatrix resultTest2 = Utility.FK52FK4Matrix(null);
+        RealMatrix result = resultTest1.multiply(resultTest2);
+        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+    }
+
 //
 //    /**
 //     * Test of ICRS2FK5Matrix method, of class Utility.
@@ -312,20 +303,22 @@ public class UtilityTest {
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
 //    }
-//
-//    /**
-//     * Test of MatrixEqB19502Gal method, of class Utility.
-//     */
-//    @Test
-//    public void testMatrixEqB19502Gal() {
-//        System.out.println("MatrixEqB19502Gal");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.MatrixEqB19502Gal();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+
+    /**
+     * Test of MatrixEqB19502Gal method, of class Utility.
+     */
+    @Test
+    public void testMatrixEqB19502Gal() {
+        System.out.println("MatrixEqB19502Gal");
+        RealMatrix result1 = Utility.MatrixEqB19502Gal();
+        RealMatrix result2 = Utility.MatrixEqB19502Gal().transpose();
+        RealMatrix result = result1.multiply(result2);
+        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+    }
+
 //    /**
 //     * Test of MatrixGal2Sgal method, of class Utility.
 //     */

@@ -62,7 +62,7 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
     protected RealMatrix getRotationMatrix(final SkySystem refFrame) {
         RealMatrix m;
         if (refFrame instanceof Equatorial) {
-            m = Utility.MatrixEpoch12Epoch2(getEquinox(), ((Equatorial) refFrame).getEquinox(), getReferenceSystemType(), ((Equatorial) refFrame).getReferenceSystemType(), getEpochObs());
+            m = Utility.MatrixEpoch12Epoch2(getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Equatorial) refFrame).getReferenceSystemType(), getEpochObs());
         } else if (refFrame instanceof Galactic) {
             RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
             RealMatrix m2 = Utility.MatrixEqB19502Gal();
@@ -73,8 +73,8 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
             RealMatrix m3 = Utility.MatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), ((Ecliptic) refFrame).getEquinox(), getReferenceSystemType(), ((Ecliptic) refFrame).getReferenceSystemType(), null);
-            RealMatrix m2 = Utility.MatrixEq2Ecl(((Ecliptic) refFrame).getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Ecliptic) refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
             m = m2.multiply(m1);
         } else {
             throw new IllegalArgumentException(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));

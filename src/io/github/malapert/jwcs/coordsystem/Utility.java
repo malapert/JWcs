@@ -66,9 +66,9 @@ public class Utility {
     public final static RealMatrix rotX(final double angle) {
         double angleRadians = Math.toRadians(angle);
         double[][] array = {
-            {1.d, 0.d, 0.d},
-            {0.d, Math.cos(angleRadians), Math.sin(angleRadians)},
-            {0.d, -1 * Math.sin(angleRadians), Math.cos(angleRadians)}
+            {1, 0, 0},
+            {0, Math.cos(angleRadians), Math.sin(angleRadians)},
+            {0, -Math.sin(angleRadians), Math.cos(angleRadians)}
         };
         return MatrixUtils.createRealMatrix(array);
     }
@@ -91,9 +91,9 @@ public class Utility {
     public final static RealMatrix rotY(double angle) {
         double angleRadians = Math.toRadians(angle);
         double[][] array = {
-            {Math.cos(angleRadians), 0.d, -1 * Math.sin(angleRadians)},
-            {0.d, 1.d, 0.d},
-            {Math.sin(angleRadians), 0.d, Math.cos(angleRadians)}
+            {Math.cos(angleRadians), 0, -Math.sin(angleRadians)},
+            {0, 1, 0},
+            {Math.sin(angleRadians), 0, Math.cos(angleRadians)}
         };
         return MatrixUtils.createRealMatrix(array);
     }
@@ -107,9 +107,9 @@ public class Utility {
     public final static RealMatrix rotZ(double angle) {
         double angleRadians = Math.toRadians(angle);
         double[][] array = {
-            {Math.cos(angleRadians), Math.sin(angleRadians), 0.d},
-            {-1 * Math.sin(angleRadians), Math.cos(angleRadians), 0.d},
-            {0.d, 0.d, 1.d}
+            {Math.cos(angleRadians), Math.sin(angleRadians), 0},
+            {-Math.sin(angleRadians), Math.cos(angleRadians), 0},
+            {0, 0, 1}
         };
         return MatrixUtils.createRealMatrix(array);
     }
@@ -139,12 +139,10 @@ public class Utility {
      * Calculates IAU 1976 precession angles for a precession of epoch
      * corresponding to Julian date jd1 to epoch corresponds to Julian date jd2.
      *
-     * Reference: ---------- Lieske,J.H., 1979. Astron.Astrophys.,73,282.
-     * equations (6) and (7), p283.
-     *
-     * Notes: ------ The ES (Explanatory Supplement to the Astronomical Almanac)
-     * lists for a IAU1976 precession from 1984, January 1d0h to J2000 the
-     * angles in **arcsec**: ``xi_a=368.9985, ze_a=369.0188 and th_a=320.7279``
+     * References:
+     *  Lieske,J.H., 1979. Astron.Astrophys.,73,282.
+     *  equations (6) and (7), p283.
+     *  Kaplan,G.H., 1981. USNO circular no. 163, pA2.
      *
      * @param jd1 Julian date for start epoch
      * @param jd2 Julian date for end epoch
@@ -152,30 +150,15 @@ public class Utility {
      */
     public final static double[] lieskeprecangles(double jd1, double jd2) {
         // T = (Current epoch - 1 jan, 2000, 12h noon)
-        double T = (jd1 - 2451545.0d) / 36525.0d;
-        double t = (jd2 - jd1) / 36525.0d;
-        double d1 = 2306.2181d;
-        double d2 = 1.39656d;
-        double d3 = -0.000139d;
-        double d4 = 0.30188d;
-        double d5 = 0.000344d;
-        double d6 = 0.017998d;
-        double D1 = d1 + T * (d2 + T * d3);
-        double zeta_a = t * (D1 + t * ((d4 + d5 * T) + t * d6));
-        d4 = 1.09468d;
-        d5 = -0.000066d;
-        d6 = 0.018203d;
-        double z_a = t * (D1 + t * ((d4 + d5 * T) + t * d6));
-        d1 = 2004.3109d;
-        d2 = -0.85330d;
-        d3 = -0.000217d;
-        d4 = -0.42665d;
-        d5 = -0.000217d;
-        d6 = -0.041833d;
-        D1 = d1 + T * (d2 + T * d3);
-        double theta_a = t * (D1 + t * ((d4 + d5 * T) + t * d6));
+        double T0 = (jd1 - 2451545.0d) / 36525.0d;
+        double T = (jd2 - jd1) / 36525.0d;
+
+        double W = 2306.2181d+(1.39656d-0.000139d*T0)*T0;
+        double ZETA = (W+((0.30188d-0.000344d*T0)+0.017998d*T)*T)*T;
+        double Z = (W+((1.09468d+0.000066d*T0)+0.018203d*T)*T)*T;
+        double THETA = ((2004.3109d+(-0.85330d-0.000217d*T0)*T0)+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
         //Return values in degrees
-        double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
+        double[] precessionAngles = {ZETA / 3600.0d, Z / 3600.0d, THETA / 3600.0d};
         return precessionAngles;
     }
 
@@ -302,28 +285,30 @@ public class Utility {
      * @param t Besselian epoch as epoch of observation
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
-    public static final RealMatrix FK42FK5Matrix(double t) {
+    public static final RealMatrix FK42FK5Matrix(final Double t) {
         RealMatrix mat = FK42FK5Matrix();
-        double jd = epochBessel2JD(t);
-        double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
-        double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
-        double r01 = mat.getEntry(0, 1) - 1.1539918689d * T / 1000000.0d;
-        double r02 = mat.getEntry(0, 2) + 2.1111346190d * T / 1000000.0d;
-        double r10 = mat.getEntry(1, 0) + 1.1540628161d * T / 1000000.0d;
-        double r11 = mat.getEntry(1, 1) - 0.0129042997d * T / 1000000.0d;
-        double r12 = mat.getEntry(1, 2) + 0.0236021478d * T / 1000000.0d;
-        double r20 = mat.getEntry(2, 0) - 2.1112979048d * T / 1000000.0d;
-        double r21 = mat.getEntry(2, 1) - 0.0056024448d * T / 1000000.0d;
-        double r22 = mat.getEntry(2, 2) + 0.0102587734d * T / 1000000.0d;
-        mat.setEntry(0, 0, r00);
-        mat.setEntry(0, 1, r01);
-        mat.setEntry(0, 2, r02);
-        mat.setEntry(1, 0, r10);
-        mat.setEntry(1, 1, r11);
-        mat.setEntry(1, 2, r12);
-        mat.setEntry(2, 0, r20);
-        mat.setEntry(2, 1, r21);
-        mat.setEntry(2, 2, r22);
+        if (t != null) {
+            double jd = epochBessel2JD(t);
+            double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
+            double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
+            double r01 = mat.getEntry(0, 1) - 1.1539918689d * T / 1000000.0d;
+            double r02 = mat.getEntry(0, 2) + 2.1111346190d * T / 1000000.0d;
+            double r10 = mat.getEntry(1, 0) + 1.1540628161d * T / 1000000.0d;
+            double r11 = mat.getEntry(1, 1) - 0.0129042997d * T / 1000000.0d;
+            double r12 = mat.getEntry(1, 2) + 0.0236021478d * T / 1000000.0d;
+            double r20 = mat.getEntry(2, 0) - 2.1112979048d * T / 1000000.0d;
+            double r21 = mat.getEntry(2, 1) - 0.0056024448d * T / 1000000.0d;
+            double r22 = mat.getEntry(2, 2) + 0.0102587734d * T / 1000000.0d;
+            mat.setEntry(0, 0, r00);
+            mat.setEntry(0, 1, r01);
+            mat.setEntry(0, 2, r02);
+            mat.setEntry(1, 0, r10);
+            mat.setEntry(1, 1, r11);
+            mat.setEntry(1, 2, r12);
+            mat.setEntry(2, 0, r20);
+            mat.setEntry(2, 1, r21);
+            mat.setEntry(2, 2, r22);
+        }
         return mat;
     }
 
@@ -342,15 +327,6 @@ public class Utility {
     }
 
     /**
-     * Returns the matrix FK5 to FK4.
-     *
-     * @return a matrix
-     */
-    public final static RealMatrix FK52FK4Matrix() {
-        return MatrixUtils.inverse(FK42FK5Matrix());
-    }
-
-    /**
      * Creates a matrix to convert a position in fk5 to fk4 using the inverse
      * matrix FK42FK5Matrix.
      *
@@ -358,7 +334,7 @@ public class Utility {
      * proper motion in fk4
      * @return Rotation matrix M as in XYZfk5 = M * XYZfk4
      */
-    public final static RealMatrix FK52FK4Matrix(double t) {
+    public final static RealMatrix FK52FK4Matrix(final Double t) {
         return MatrixUtils.inverse(FK42FK5Matrix(t));
     }
 
@@ -880,14 +856,14 @@ public class Utility {
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(ReferenceSystemInterface.Type.FK5) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000d);
-            RealMatrix m2 = (epobs == null) ? FK52FK4Matrix() : FK52FK4Matrix(epobs);
+            RealMatrix m2 = FK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.ICRS)) {
             return MatrixUtils.createRealIdentityMatrix(3);
         } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
             RealMatrix m1 = ICRS2FK5Matrix();
-            RealMatrix m2 = (epobs == null) ? FK52FK4Matrix() : FK52FK4Matrix(epobs);
+            RealMatrix m2 = FK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.FK5)) {
@@ -920,7 +896,7 @@ public class Utility {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
-            RealMatrix m4 = (epobs == null) ? FK52FK4Matrix() : FK52FK4Matrix(epobs);
+            RealMatrix m4 = FK52FK4Matrix(epobs);
             RealMatrix m5 = besselianMatrixEpoch12Epoch2(1950d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
@@ -935,7 +911,7 @@ public class Utility {
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if ((s1.equals(ReferenceSystemInterface.Type.FK4) || s1.equals(ReferenceSystemInterface.Type.FK4_NO_E)) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = (epobs == null) ? FK52FK4Matrix().transpose() : FK52FK4Matrix(epobs).transpose();
+            RealMatrix m2 = FK52FK4Matrix(epobs).transpose();
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
             RealMatrix m4 = ICRS2J2000Matrix();
             RealMatrix m5 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
