@@ -50,14 +50,6 @@
                               <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                               <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
-                                      <Component id="targetLong" min="-2" pref="127" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                                      <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="targetLat" min="-2" pref="143" max="-2" attributes="0"/>
-                                  </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -79,16 +71,34 @@
                                           <Component id="targetEpoch" min="-2" pref="136" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="targetSexa" min="-2" pref="291" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Component id="targetLong" min="-2" pref="127" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                                              <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="targetLat" min="-2" pref="143" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel9" min="-2" pref="94" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                              <Component id="originLong" min="-2" pref="107" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                              <Component id="originLat" min="-2" pref="107" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel9" min="-2" pref="94" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                      <Component id="originLong" min="-2" pref="107" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                                      <Component id="originLat" min="-2" pref="107" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="sourceSexa" min="-2" pref="226" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel11" min="-2" pref="26" max="-2" attributes="0"/>
                           </Group>
@@ -97,7 +107,7 @@
                   </Group>
               </Group>
           </Group>
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace min="-2" pref="144" max="-2" attributes="0"/>
               <Component id="jLabel13" min="-2" pref="392" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -165,7 +175,12 @@
                   <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="targetLat" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="22" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="sourceSexa" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="targetSexa" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="18" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="convertButton" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                   <Component id="errorMsg" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -243,7 +258,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="originEquinox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="2000.0"/>
+        <Property name="text" type="java.lang.String" value="J2000.0"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -255,7 +270,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="originEpoch">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1950"/>
+        <Property name="text" type="java.lang.String" value="B1950"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -317,7 +332,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="targetEquinox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="2000.0"/>
+        <Property name="text" type="java.lang.String" value="J2000.0"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -329,7 +344,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="targetEpoch">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1950"/>
+        <Property name="text" type="java.lang.String" value="B1950"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -343,6 +358,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="originLong">
       <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="originLongCaretUpdate"/>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="originLongKeyReleased"/>
       </Events>
     </Component>
@@ -353,6 +369,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="originLat">
       <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="originLatCaretUpdate"/>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="originLatKeyReleased"/>
       </Events>
     </Component>
@@ -410,6 +427,16 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="1b" green="1b" red="ed" type="rgb"/>
         </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="sourceSexa">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="targetSexa">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

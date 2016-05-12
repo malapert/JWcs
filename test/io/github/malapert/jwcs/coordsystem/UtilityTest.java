@@ -120,7 +120,7 @@ public class UtilityTest {
     @Test
     public void testNewcombPrecAngles() {
         System.out.println("newcombPrecAngles");
-        double epoch1 = 1950.0;
+        double epoch1 = 1950.0;        
         double epoch2 = TimeUtils.epochs("F1984-01-01")[0];
         double[] expResult = new double[]{783.70924627097793, 783.80093464073127, 681.38829828393466};
         double[] result = Utility.newcombPrecAngles(epoch1, epoch2);

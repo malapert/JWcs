@@ -30,6 +30,8 @@ import io.github.malapert.jwcs.coordsystem.SkyPosition;
 import io.github.malapert.jwcs.coordsystem.SkySystem;
 import io.github.malapert.jwcs.coordsystem.SkySystem.SkySystems;
 import io.github.malapert.jwcs.coordsystem.SuperGalactic;
+import io.github.malapert.jwcs.utility.DMS;
+import io.github.malapert.jwcs.utility.HMS;
 import java.awt.BorderLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
@@ -40,7 +42,7 @@ import javax.swing.JFrame;
  */
 public class ConvertSelectionPanel extends javax.swing.JPanel {
     
-    private static final String DEFAULT_PRECISION = "%.12f";
+    private static final String DEFAULT_PRECISION = "%.10f";
     
     private String precision = DEFAULT_PRECISION;
 
@@ -97,6 +99,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         convertButton = new javax.swing.JButton();
         errorMsg = new javax.swing.JLabel();
+        sourceSexa = new javax.swing.JTextField();
+        targetSexa = new javax.swing.JTextField();
 
         jSeparator1.setBackground(new java.awt.Color(247, 125, 25));
         jSeparator1.setForeground(new java.awt.Color(247, 125, 25));
@@ -128,13 +132,13 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         originEquinoxLabel.setText("Equinox");
         originEquinoxLabel.setEnabled(false);
 
-        originEquinox.setText("2000.0");
+        originEquinox.setText("J2000.0");
         originEquinox.setEnabled(false);
 
         originEpochLabel.setText("Epoch");
         originEpochLabel.setEnabled(false);
 
-        originEpoch.setText("1950");
+        originEpoch.setText("B1950");
         originEpoch.setEnabled(false);
         originEpoch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,18 +167,23 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         targetEquinoxLabel.setText("Equinox");
         targetEquinoxLabel.setEnabled(false);
 
-        targetEquinox.setText("2000.0");
+        targetEquinox.setText("J2000.0");
         targetEquinox.setEnabled(false);
 
         targetEpochLabel.setText("Epoch");
         targetEpochLabel.setEnabled(false);
 
-        targetEpoch.setText("1950");
+        targetEpoch.setText("B1950");
         targetEpoch.setEnabled(false);
 
         jLabel9.setFont(new java.awt.Font("Ubuntu", 1, 14)); // NOI18N
         jLabel9.setText("Sky position :");
 
+        originLong.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                originLongCaretUpdate(evt);
+            }
+        });
         originLong.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 originLongKeyReleased(evt);
@@ -183,6 +192,11 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
         jLabel10.setText(",");
 
+        originLat.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                originLatCaretUpdate(evt);
+            }
+        });
         originLat.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 originLatKeyReleased(evt);
@@ -213,6 +227,10 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         });
 
         errorMsg.setForeground(new java.awt.Color(237, 27, 27));
+
+        sourceSexa.setEnabled(false);
+
+        targetSexa.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -246,13 +264,6 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                                 .addGap(49, 49, 49)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addGap(98, 98, 98)
-                                        .addComponent(targetLong, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5, 5, 5)
-                                        .addComponent(jLabel12)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(targetLat, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(92, 92, 92)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -268,15 +279,28 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                                         .addGap(30, 30, 30)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(targetEquinox)
-                                            .addComponent(targetEpoch, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addComponent(targetEpoch, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(98, 98, 98)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(targetSexa, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(targetLong, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(5, 5, 5)
+                                                .addComponent(jLabel12)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(targetLat, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(1, 1, 1)
-                                .addComponent(originLong, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel10)
-                                .addGap(3, 3, 3)
-                                .addComponent(originLat, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(originLong, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel10)
+                                        .addGap(3, 3, 3)
+                                        .addComponent(originLat, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(sourceSexa, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(27, Short.MAX_VALUE))))
@@ -337,7 +361,11 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                     .addComponent(targetLong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
                     .addComponent(targetLat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sourceSexa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(targetSexa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(convertButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(errorMsg))
@@ -373,7 +401,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
     private void originLatKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_originLatKeyReleased
         try {
-            updateConvertButton();
+            updateConvertButton();            
         } catch (RuntimeException ex) {
             this.errorMsg.setText(ex.getMessage());
         }
@@ -382,6 +410,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
     private void convertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertButtonActionPerformed
         try {
             convertToTargetSkySystem();
+            updateTargetSexagecimalCoordinates();
         } catch (RuntimeException ex) {
             this.errorMsg.setText(ex.getMessage());
         }
@@ -392,6 +421,9 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
             if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
                 updateMenuBySkySystem(false);
             }
+            this.targetSexa.setText("");
+            this.targetLong.setText("");
+            this.targetLat.setText("");
         } catch (RuntimeException ex) {
             this.errorMsg.setText(ex.getMessage());
         }
@@ -408,10 +440,21 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
     private void targetRfItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetRfItemStateChanged
         try {
             setEnableReferenceFrameParameter(String.valueOf(this.targetRf.getSelectedItem()), false);
+            this.targetSexa.setText("");
+            this.targetLong.setText("");
+            this.targetLat.setText("");
         } catch (RuntimeException ex) {
             this.errorMsg.setText(ex.getMessage());
         }
     }//GEN-LAST:event_targetRfItemStateChanged
+
+    private void originLatCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_originLatCaretUpdate
+        updateOriginSexagecimalCoordinates();
+    }//GEN-LAST:event_originLatCaretUpdate
+
+    private void originLongCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_originLongCaretUpdate
+        updateOriginSexagecimalCoordinates();
+    }//GEN-LAST:event_originLongCaretUpdate
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -433,6 +476,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JTextField originLong;
     private javax.swing.JComboBox<String> originRf;
     private javax.swing.JLabel originRfLabel;
+    private javax.swing.JTextField sourceSexa;
     private javax.swing.JTextField targetEpoch;
     private javax.swing.JLabel targetEpochLabel;
     private javax.swing.JTextField targetEquinox;
@@ -441,6 +485,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JTextField targetLong;
     private javax.swing.JComboBox<String> targetRf;
     private javax.swing.JLabel targetRfLabel;
+    private javax.swing.JTextField targetSexa;
     private javax.swing.JLabel targetSkySLabel;
     private javax.swing.JComboBox<String> targetSkySystem;
     // End of variables declaration//GEN-END:variables
@@ -496,6 +541,32 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
             this.convertButton.setEnabled(true);
         }
     }
+    
+    private void updateOriginSexagecimalCoordinates() {
+        String result = "";
+        if(!this.originLong.getText().isEmpty()) {
+            HMS hms = new HMS(this.originLong.getText());
+            result+=hms.toString(true)+" ";
+        }
+        if(!this.originLat.getText().isEmpty()) {
+            DMS dms = new DMS(this.originLat.getText());
+            result+=dms.toString(true);
+        }
+        this.sourceSexa.setText(result);
+    }    
+    
+    private void updateTargetSexagecimalCoordinates() {
+        String result = "";
+        if(!this.targetLong.getText().isEmpty()) {
+            HMS hms = new HMS(this.targetLong.getText());
+            result+=hms.toString(true)+" ";
+        }
+        if(!this.targetLat.getText().isEmpty()) {
+            DMS dms = new DMS(this.targetLat.getText());
+            result+=dms.toString(true);
+        }
+        this.targetSexa.setText(result);
+    }     
 
     private void convertToTargetSkySystem() {
         String originSkySystemName = orginSkySystem.getSelectedItem().toString();
@@ -503,8 +574,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         ReferenceSystemInterface originRefFrame = null;
         if (originSkySystemC.hasReferenceFrame()) {
             String refFrameName = originRf.getSelectedItem().toString();
-            float equinox = (originEquinox.isEnabled()) ? Float.valueOf(originEquinox.getText()) : Float.NaN;
-            float epoch = (originEpoch.isEnabled()) ? Float.valueOf(originEpoch.getText()) : Float.NaN;
+            String equinox = (originEquinox.isEnabled()) ? originEquinox.getText() : null;
+            String epoch = (originEpoch.isEnabled()) ? originEpoch.getText() : null;
             originRefFrame = createReferenceFrame(Type.valueOfByName(refFrameName), equinox, epoch);
         }
         SkySystem originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
@@ -514,8 +585,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         ReferenceSystemInterface targetRefFrame = null;
         if (targetSkySystemC.hasReferenceFrame()) {
             String refFrameName = targetRf.getSelectedItem().toString();
-            float equinox = (targetEquinox.isEnabled()) ? Float.valueOf(targetEquinox.getText()) : Float.NaN;
-            float epoch = (targetEpoch.isEnabled()) ? Float.valueOf(targetEpoch.getText()) : Float.NaN;
+            String equinox = (targetEquinox.isEnabled()) ? targetEquinox.getText() : null;
+            String epoch = (targetEpoch.isEnabled()) ? targetEpoch.getText() : null;
             targetRefFrame = createReferenceFrame(Type.valueOfByName(refFrameName), equinox, epoch);
         }
         SkySystem tgetSkySystem = createSkySystem(targetSkySystemC, targetRefFrame);
@@ -529,17 +600,29 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         this.errorMsg.setText("");
     }
 
-    private ReferenceSystemInterface createReferenceFrame(Type type, float equinox, float epoch) {
+    private ReferenceSystemInterface createReferenceFrame(Type type, String equinox, String epoch) {
         ReferenceSystemInterface result;
         switch (type) {
             case FK4:
-                result = new FK4("B"+equinox, "B"+epoch);
+                if(equinox.isEmpty() && epoch.isEmpty()) {
+                    result = new FK4();
+                } else if (epoch.isEmpty()) {
+                    result = new FK4(equinox);
+                } else {
+                    result = new FK4(equinox, epoch);
+                }
                 break;
             case FK4_NO_E:
-                result = new FK4_NO_E("B"+equinox, "B"+epoch);
+                if(equinox.isEmpty() && epoch.isEmpty()) {
+                    result = new FK4_NO_E();
+                } else if (epoch.isEmpty()) {
+                    result = new FK4_NO_E(equinox);
+                } else {
+                    result = new FK4_NO_E(equinox, epoch);
+                }
                 break;
             case FK5:
-                result = new FK5("J"+equinox);
+                result = (equinox.isEmpty()) ? new FK5() : new FK5(equinox);
                 break;
             case ICRS:
                 result = new ICRS();

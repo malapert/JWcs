@@ -21,8 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * TimeUtils class for handling time.
@@ -224,7 +222,10 @@ public abstract class TimeUtils {
             spec = spec.substring(0, i);
         }
         
-        String[] valTmp1 = spec.split("(\\d.*)");       
+        String[] valTmp1 = spec.split("(\\d.*)");  
+        if (valTmp1.length == 0) {
+            throw new IllegalArgumentException("Epochs should start by \"J\", \"B\" or date format");
+        }
         String valTmp2 = spec.replace(valTmp1[0],"");
         String[] val = new String[]{valTmp1[0], valTmp2};
         if (val.length != 2) {
