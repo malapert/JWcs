@@ -23,8 +23,7 @@ import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
-import io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface;
-import io.github.malapert.jwcs.coordsystem.SkySystem;
+import io.github.malapert.jwcs.coordsystem.Crs;
 import io.github.malapert.jwcs.proj.AIT;
 import io.github.malapert.jwcs.proj.ARC;
 import io.github.malapert.jwcs.proj.AZP;
@@ -65,6 +64,7 @@ import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
 
 /**
  * The FITS "World Coordinate System" (WCS) standard deFINERs keywords and usage
@@ -387,9 +387,9 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @return the reference system
      */
-    private ReferenceSystemInterface getReferenceSystem() {
+    private CoordinateReferenceFrame getReferenceSystem() {
         String mjdObs = getMJDObs();
-        ReferenceSystemInterface refSystem;
+        CoordinateReferenceFrame refSystem;
         if (hasKeyword(RADESYS)) {
             String radesys = getValueAsString(RADESYS);
             switch (radesys) {
@@ -452,51 +452,51 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @return the sky system
      */
-    public SkySystem getSkySystem() {
-        SkySystem skySystem;
-        ReferenceSystemInterface refSystem = getReferenceSystem();
+    public Crs getCrs() {
+        Crs crs;
+        CoordinateReferenceFrame refSystem = getReferenceSystem();
         if (hasKeyword("CTYPE1")) {
             String ctype1 = getValueAsString("CTYPE1");
             ctype1 = ctype1.substring(0, ctype1.indexOf('-'));
             switch (ctype1) {
                 case "RA":
-                    skySystem = new Equatorial();
+                    crs = new Equatorial();
                     if (refSystem != null) {
-                        ((Equatorial) skySystem).setRefSystem(refSystem);
+                        ((Equatorial) crs).setRefSystem(refSystem);
                     }
                     break;
                 case "DEC":
-                    skySystem = new Equatorial();
+                    crs = new Equatorial();
                     if (refSystem != null) {
-                        ((Equatorial) skySystem).setRefSystem(refSystem);
+                        ((Equatorial) crs).setRefSystem(refSystem);
                     }
                     break;
                 case "GLON":
-                    skySystem = new Galactic();
+                    crs = new Galactic();
                     break;
                 case "GLAT":
-                    skySystem = new Galactic();
+                    crs = new Galactic();
                     break;
                 case "ELON":
-                    skySystem = new Ecliptic();
+                    crs = new Ecliptic();
                     if (refSystem != null) {
-                        ((Ecliptic) skySystem).setRefSystem(refSystem);
+                        ((Ecliptic) crs).setRefSystem(refSystem);
                     }
                     break;
                 case "ELAT":
-                    skySystem = new Ecliptic();
+                    crs = new Ecliptic();
                     if (refSystem != null) {
-                        ((Ecliptic) skySystem).setRefSystem(refSystem);
+                        ((Ecliptic) crs).setRefSystem(refSystem);
                     }
                     break;
                 default:
                     throw new JWcsError("The coordinate system " + ctype1 + " is not supported");
             }
         } else {
-            throw new JWcsError("Cannot find sky system.");
+            throw new JWcsError("Cannot find crs.");
         }
 
-        return skySystem;
+        return crs;
 
     }
 

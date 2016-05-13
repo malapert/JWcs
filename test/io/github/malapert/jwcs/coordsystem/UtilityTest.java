@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import io.github.malapert.jwcs.utility.TimeUtils;
 import static io.github.malapert.jwcs.utility.TimeUtils.jd;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -65,9 +66,9 @@ public class UtilityTest {
         RealMatrix result2 = Utility.julianMatrixEpoch12Epoch2(jEpoch2, jEpoch1);
         RealMatrix result = result1.multiply(result2);
         RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
     }
 
     /**
@@ -83,37 +84,6 @@ public class UtilityTest {
         assertArrayEquals(expResult, result, 1e-9);
     }
 
-//    /**
-//     * Test of precessionMatrix method, of class Utility.
-//     */
-//    @Test
-//    public void testPrecessionMatrix() {
-//        System.out.println("precessionMatrix");
-//        double zeta = 0.0;
-//        double z = 0.0;
-//        double theta = 0.0;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.precessionMatrix(zeta, z, theta);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of besselianMatrixEpoch12Epoch2 method, of class Utility.
-//     */
-//    @Test
-//    public void testBesselianMatrixEpoch12Epoch2() {
-//        System.out.println("besselianMatrixEpoch12Epoch2");
-//        double bEpoch1 = 0.0;
-//        double bEpoch2 = 0.0;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.besselianMatrixEpoch12Epoch2(bEpoch1, bEpoch2);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
     /**
      * Test of newcombPrecAngles method, of class Utility.
      */
@@ -127,106 +97,23 @@ public class UtilityTest {
         result[0]*=3600;
         result[1]*=3600;
         result[2]*=3600;
-        assertArrayEquals(expResult, result, 1e-12);
+        assertArrayEquals(expResult, result, NumericalUtils.DOUBLE_TOLERANCE);
     }
-//
-//    /**
-//     * Test of FK42FK5Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testFK42FK5Matrix_float() {
-//        System.out.println("FK42FK5Matrix");
-//        float t = 0.0F;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.FK42FK5Matrix(t);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of FK42FK5Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testFK42FK5Matrix_0args() {
-//        System.out.println("FK42FK5Matrix");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.FK42FK5Matrix();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+
     /**
      * Test of FK52FK4Matrix method, of class Utility.
      */
     @Test
     public void testFK52FK4Matrix() {
         System.out.println("FK52FK4Matrix");        
-        RealMatrix resultTest1 = Utility.FK42FK5Matrix(null);
-        RealMatrix resultTest2 = Utility.FK52FK4Matrix(null);
+        RealMatrix resultTest1 = Utility.FK42FK5Matrix(Double.NaN);
+        RealMatrix resultTest2 = Utility.FK52FK4Matrix(Double.NaN);
         RealMatrix result = resultTest1.multiply(resultTest2);
         RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
     }
-
-//
-//    /**
-//     * Test of ICRS2FK5Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testICRS2FK5Matrix() {
-//        System.out.println("ICRS2FK5Matrix");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.ICRS2FK5Matrix();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of ICRS2J2000Matrix method, of class Utility.
-//     */
-//    @Test
-//    public void testICRS2J2000Matrix() {
-//        System.out.println("ICRS2J2000Matrix");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.ICRS2J2000Matrix();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of IAU2006MatrixEpoch12Epoch2 method, of class Utility.
-//     */
-//    @Test
-//    public void testIAU2006MatrixEpoch12Epoch2() {
-//        System.out.println("IAU2006MatrixEpoch12Epoch2");
-//        float epoch1 = 0.0F;
-//        float epoch2 = 0.0F;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.IAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of IAU2006PrecAngles method, of class Utility.
-//     */
-//    @Test
-//    public void testIAU2006PrecAngles() {
-//        System.out.println("IAU2006PrecAngles");
-//        float epoch = 0.0F;
-//        double[] expResult = null;
-//        double[] result = Utility.IAU2006PrecAngles(epoch);
-//        assertArrayEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
 
     /**
      * Test of longlat2xyz method, of class Utility.
@@ -238,23 +125,8 @@ public class UtilityTest {
         double latitude = -89.9698527254359;
         RealMatrix result = Utility.longlat2xyz(longitude, latitude);
         double[]resultLongLat = Utility.xyz2longlat(result);
-        assertArrayEquals(new double[]{longitude, latitude}, resultLongLat, 1e-12);
+        assertArrayEquals(new double[]{longitude, latitude}, resultLongLat, NumericalUtils.DOUBLE_TOLERANCE);
     }
-
-//    /**
-//     * Test of longlatRad2xyz method, of class Utility.
-//     */
-//    @Test
-//    public void testLonglatRad2xyz() {
-//        System.out.println("longlatRad2xyz");
-//        double longitudeRad = 0.0;
-//        double latitudeRad = 0.0;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.longlatRad2xyz(longitudeRad, latitudeRad);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
 
     /**
      * Test of xyz2longlat method, of class Utility.
@@ -274,36 +146,6 @@ public class UtilityTest {
         assertArrayEquals(expResult, lonlat.getColumn(0), 1e-6);
     }
 
-//    /**
-//     * Test of removeEterms method, of class Utility.
-//     */
-//    @Test
-//    public void testRemoveEterms() {
-//        System.out.println("removeEterms");
-//        RealMatrix xyz = null;
-//        RealMatrix eterm = null;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.removeEterms(xyz, eterm);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of addEterms method, of class Utility.
-//     */
-//    @Test
-//    public void testAddEterms() {
-//        System.out.println("addEterms");
-//        RealMatrix xyz = null;
-//        RealMatrix eterm = null;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.addEterms(xyz, eterm);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-
     /**
      * Test of MatrixEqB19502Gal method, of class Utility.
      */
@@ -314,66 +156,10 @@ public class UtilityTest {
         RealMatrix result2 = Utility.MatrixEqB19502Gal().transpose();
         RealMatrix result = result1.multiply(result2);
         RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), 1e-12);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), 1e-12);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), 1e-12);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
     }
-
-//    /**
-//     * Test of MatrixGal2Sgal method, of class Utility.
-//     */
-//    @Test
-//    public void testMatrixGal2Sgal() {
-//        System.out.println("MatrixGal2Sgal");
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.MatrixGal2Sgal();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of obliquity2000 method, of class Utility.
-//     */
-//    @Test
-//    public void testObliquity2000() {
-//        System.out.println("obliquity2000");
-//        double jd = 0.0;
-//        double expResult = 0.0;
-//        double result = Utility.obliquity2000(jd);
-//        assertEquals(expResult, result, 0.0);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of obliquity1980 method, of class Utility.
-//     */
-//    @Test
-//    public void testObliquity1980() {
-//        System.out.println("obliquity1980");
-//        double jd = 0.0;
-//        double expResult = 0.0;
-//        double result = Utility.obliquity1980(jd);
-//        assertEquals(expResult, result, 0.0);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of MatrixEq2Ecl method, of class Utility.
-//     */
-//    @Test
-//    public void testMatrixEq2Ecl() {
-//        System.out.println("MatrixEq2Ecl");
-//        float epoch = 0.0F;
-//        ReferenceSystemInterface.Type refSystem = null;
-//        RealMatrix expResult = null;
-//        RealMatrix result = Utility.MatrixEq2Ecl(epoch, refSystem);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
 
     /**
      * Test of MatrixEpoch12Epoch2 method, of class Utility.
@@ -383,8 +169,8 @@ public class UtilityTest {
         System.out.println("MatrixEpoch12Epoch2");
         double epoch1 = 1940d;
         double epoch2 = 1960d;
-        ReferenceSystemInterface.Type s1 = ReferenceSystemInterface.Type.FK4;
-        ReferenceSystemInterface.Type s2 = ReferenceSystemInterface.Type.FK5;
+        CoordinateReferenceFrame.ReferenceFrame s1 = CoordinateReferenceFrame.ReferenceFrame.FK4;
+        CoordinateReferenceFrame.ReferenceFrame s2 = CoordinateReferenceFrame.ReferenceFrame.FK5;
         Double epobs = 1950d;
         RealMatrix result = Utility.MatrixEpoch12Epoch2(epoch1, epoch2, s1, s2, epobs);
         assertArrayEquals(new double[]{9.99988107e-01,  -4.47301372e-03,  -1.94362889e-03}, result.getRow(0), 1e-9);

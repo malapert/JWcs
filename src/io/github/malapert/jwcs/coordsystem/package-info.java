@@ -21,14 +21,14 @@
  * between theses reference systems.
  *
  * <p>
- * These classes are capable of converting a Sky system to another one.
- * This package contains three main groups of classes:
+ * These classes are capable of converting a coordinate reference system (crs)
+ * to another one. This package contains three main groups of classes:
  * <ul>
- * <li>classes representing the supported sky systems : Ecliptic, Equatorial,
+ * <li>classes representing the supported coordinate systems : Ecliptic, Equatorial,
  * galactic and super-galactic.</li>
- * <li>classes representing the supported reference frame : FK4, FK4_NO_E, FK5 
- * and ICRS</li>
- * <li>classes converting sky coordinates from a sky system to another one</li>
+ * <li>classes representing the supported reference frame : FK4, FK4_NO_E, FK5, 
+ * J2000 and ICRS</li>
+ * <li>classes converting sky coordinates from a crs to another one</li>
  * </ul>
  * 
  * <h2>How to use it</h2>
@@ -36,8 +36,8 @@
  * want to convert sky coordinates from an equatorial system in ICRS to a 
  * super-galactic system. Then use the converTo method from a SkySystem object:
  * <pre>
- *    SkySystem sys1 = new Equatorial(new ICRS());
- *    SkySystem sys2 = new SuperGalactic();
+ *    Crs sys1 = new Equatorial(new ICRS());
+ *    Crs sys2 = new SuperGalactic();
  *    SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
  * </pre>
  * 

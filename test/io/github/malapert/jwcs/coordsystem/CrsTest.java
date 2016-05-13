@@ -38,11 +38,11 @@ import static org.junit.Assert.*;
  *
  * @author Jean-Christophe Malapert
  */
-public class SkySystemTest {
+public class CrsTest {
 
     private final static double EPSILON_SINGLE = 1e-12;
 
-    public SkySystemTest() {
+    public CrsTest() {
     }
 
     @BeforeClass
@@ -64,13 +64,13 @@ public class SkySystemTest {
     @Test
     public void separation() {
         System.out.println("separation");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        ReferenceSystemInterface fk5 = new FK5();
-        SkySystem sysEqFK5 = new Equatorial(fk5);
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        CoordinateReferenceFrame fk5 = new FK5();
+        Crs sysEqFK5 = new Equatorial(fk5);
         SkyPosition pos1 = new SkyPosition(10, 9, sysEqIcrs);
         SkyPosition pos2 = new SkyPosition(11, 10, sysEqFK5);
-        double separation = SkySystem.separation(pos1, pos2);
+        double separation = Crs.separation(pos1, pos2);
         double expectedSeparation = 1.4045335865d;
         assertEquals(expectedSeparation, separation, 1e-8);
     }
@@ -78,10 +78,10 @@ public class SkySystemTest {
     @Test
     public void testConvertFK4B1950ToFK5J2000() {
         System.out.println("convert FK4 B1950 to FK5 J2000");
-        ReferenceSystemInterface fk4 = new FK4("B1950");
-        SkySystem sysEqFK4 = new Equatorial(fk4);
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem sysEqFK5 = new Equatorial(fk5);
+        CoordinateReferenceFrame fk4 = new FK4("B1950");
+        Crs sysEqFK4 = new Equatorial(fk4);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs sysEqFK5 = new Equatorial(fk5);
         SkyPosition pos = sysEqFK4.convertTo(sysEqFK5, 0.0d, 0.0d);
         double expectedLongitude = 0.640691d;
         double expectedLatitude = 0.27840944d;
@@ -92,10 +92,10 @@ public class SkySystemTest {
     @Test
     public void testConvertInverseFK4B1950ToFK5J2000() {
         System.out.println("convert FK4 B1950 to FK5 J2000 and inverse");
-        ReferenceSystemInterface fk4 = new FK4("B1950");
-        SkySystem sysEqFK4 = new Equatorial(fk4);
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem sysEqFK5 = new Equatorial(fk5);
+        CoordinateReferenceFrame fk4 = new FK4("B1950");
+        Crs sysEqFK4 = new Equatorial(fk4);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs sysEqFK5 = new Equatorial(fk5);
         SkyPosition pos = sysEqFK4.convertTo(sysEqFK5, 30.031d, 10.031d);
         pos = sysEqFK5.convertTo(sysEqFK4, pos.getLongitude(), pos.getLatitude());
         double expectedLongitude = 30.031d;
@@ -110,9 +110,9 @@ public class SkySystemTest {
      */
     public void testConvertIcrsToGal() {
         System.out.println("convert ICRS to Gal");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        SkySystem galactic = new Galactic();
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        Crs galactic = new Galactic();
         SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
         double expectedLongitude = 121.174241811d;
         double expectedLatitude = -21.5728855724d;
@@ -126,9 +126,9 @@ public class SkySystemTest {
      */
     public void testConvertInverseIcrsToGal() {
         System.out.println("convert ICRS to Gal and Inverse");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        SkySystem galactic = new Galactic();
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        Crs galactic = new Galactic();
         SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
         posInGal = galactic.convertTo(sysEqIcrs, posInGal.getLongitude(), posInGal.getLatitude());
         double expectedLongitude = 10.68458d;
@@ -143,9 +143,9 @@ public class SkySystemTest {
      */
     public void testConvertArrayIcrsToGal() {
         System.out.println("convert Array ICRS to Gal");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        SkySystem galactic = new Galactic();
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        Crs galactic = new Galactic();
         SkyPosition posInGal = sysEqIcrs.convertTo(galactic, 10.68458d, 41.26917d);
         double expectedLongitude1 = posInGal.getLongitude();
         double expectedLatitude1 = posInGal.getLatitude();
@@ -167,10 +167,10 @@ public class SkySystemTest {
      */
     public void testConvertIcrsToFK5J2000() {
         System.out.println("convert ICRS to FK5 J2000");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem EqFk5 = new Equatorial(fk5);
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs EqFk5 = new Equatorial(fk5);
         SkyPosition posInFk5 = sysEqIcrs.convertTo(EqFk5, 10.68458d, 41.26917d);
         double expectedLongitude = 10.6845915393d;
         double expectedLatitude = 41.2691714591d;
@@ -184,10 +184,10 @@ public class SkySystemTest {
      */
     public void testConvertInverseIcrsToFK5J2000() {
         System.out.println("convert ICRS to FK5 J2000 and inverse");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem EqFk5 = new Equatorial(fk5);
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs EqFk5 = new Equatorial(fk5);
         SkyPosition posInFk5 = sysEqIcrs.convertTo(EqFk5, 10.68458d, 41.26917d);
         posInFk5 = EqFk5.convertTo(sysEqIcrs, posInFk5.getLongitude(), posInFk5.getLatitude());
         double expectedLongitude = 10.68458d;
@@ -202,13 +202,13 @@ public class SkySystemTest {
      */
     public void testConvertToFK5J1975() {
         System.out.println("convert FK5J2000 to FK5 J1975");
-        ReferenceSystemInterface icrs = new ICRS();
-        SkySystem sysEqIcrs = new Equatorial(icrs);
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem EqFk5J2000 = new Equatorial(fk5);
+        CoordinateReferenceFrame icrs = new ICRS();
+        Crs sysEqIcrs = new Equatorial(icrs);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs EqFk5J2000 = new Equatorial(fk5);
         SkyPosition posInFk5J2000 = sysEqIcrs.convertTo(EqFk5J2000, 10.68458d, 41.26917d);
-        ReferenceSystemInterface fk5_1975 = new FK5("J1975");
-        SkySystem EqFk5J1975 = new Equatorial(fk5_1975);
+        CoordinateReferenceFrame fk5_1975 = new FK5("J1975");
+        Crs EqFk5J1975 = new Equatorial(fk5_1975);
         SkyPosition posInFk5J1975 = EqFk5J2000.convertTo(EqFk5J1975, posInFk5J2000.getLongitude(), posInFk5J2000.getLatitude());
         double expectedLongitude = 10.3420913461d;
         double expectedLatitude = 41.1323211229d;
@@ -223,11 +223,11 @@ public class SkySystemTest {
     public void testConvertInverseToFK5J1975() {
         System.out.println("convert FK5J2000 to FK5 J1975 and inverse");
 
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem EqFk5J2000 = new Equatorial(fk5);
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs EqFk5J2000 = new Equatorial(fk5);
 
-        ReferenceSystemInterface fk5_1975 = new FK5("J1975");
-        SkySystem EqFk5J1975 = new Equatorial(fk5_1975);
+        CoordinateReferenceFrame fk5_1975 = new FK5("J1975");
+        Crs EqFk5J1975 = new Equatorial(fk5_1975);
 
         SkyPosition posInFk5J1975 = EqFk5J2000.convertTo(EqFk5J1975, 10.3420913461d, 41.1323211229d);
         posInFk5J1975 = EqFk5J1975.convertTo(EqFk5J2000, posInFk5J1975.getLongitude(), posInFk5J1975.getLatitude());
@@ -238,14 +238,14 @@ public class SkySystemTest {
     }
 
     /**
-     * Test of convertTo method, of class SkySystem.
+     * Test of convertTo method, of class Crs.
      */
     @Test
     public void testIcrsToFK5() {
         System.out.println("convert ICRS To FK5");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Equatorial(new FK5());
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Equatorial(new FK5());
         SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
         double expectedLongitude = 182.63867d;
         double expectedLatitude = 39.401165d;
@@ -256,9 +256,9 @@ public class SkySystemTest {
     @Test
     public void testIcrsToFK5Inverse() {
         System.out.println("convert ICRS To FK5 and Inverse");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Equatorial(new FK5());
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Equatorial(new FK5());
         SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
         double expectedLongitude = 182.63867d;
         double expectedLatitude = 39.401167d;
@@ -270,9 +270,9 @@ public class SkySystemTest {
     @Test
     public void testIcrsToFK4() {
         System.out.println("convert ICRS To FK4");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Equatorial(new FK4());
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Equatorial(new FK4());
         SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
         double expectedLongitude = 182.0073;
         double expectedLatitude = 39.679217;
@@ -283,9 +283,9 @@ public class SkySystemTest {
     @Test
     public void testIcrsToFK4Inverse() {
         System.out.println("convert ICRS To FK4 and inverse");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Equatorial(new FK4());
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Equatorial(new FK4());
         SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
         position = sys2.convertTo(sys1, position.getLongitude(), position.getLatitude());
         double expectedLongitude = 182.63867d;
@@ -297,9 +297,9 @@ public class SkySystemTest {
     @Test
     public void testIcrsToGalactic() {
         System.out.println("convert ICRS To Galactic");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Galactic();
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Galactic();
         SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
         double expectedLongitude = 155.08125;
         double expectedLatitude = 75.068157;
@@ -310,9 +310,9 @@ public class SkySystemTest {
     @Test
     public void testIcrsToGalacticInverse() {
         System.out.println("convert ICRS To Galactic and inverse");
-        ReferenceSystemInterface ref = new ICRS();
-        SkySystem sys1 = new Equatorial(ref);
-        SkySystem sys2 = new Galactic();
+        CoordinateReferenceFrame ref = new ICRS();
+        Crs sys1 = new Equatorial(ref);
+        Crs sys2 = new Galactic();
         SkyPosition position = sys1.convertTo(sys2, 182.63867d, 39.401167d);
         position = sys2.convertTo(sys1, position.getLongitude(), position.getLatitude());
         double expectedLongitude = 182.63867d;
@@ -338,8 +338,8 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Equatorial();
-        SkySystem sk2 = new Galactic();
+        Crs sk1 = new Equatorial();
+        Crs sk2 = new Galactic();
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
@@ -356,8 +356,8 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Equatorial();
-        SkySystem sk2 = new SuperGalactic();
+        Crs sk1 = new Equatorial();
+        Crs sk2 = new SuperGalactic();
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
@@ -374,8 +374,8 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Galactic();
-        SkySystem sk2 = new SuperGalactic();
+        Crs sk1 = new Galactic();
+        Crs sk2 = new SuperGalactic();
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
@@ -392,8 +392,8 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Equatorial();
-        SkySystem sk2 = new Equatorial(new FK5());
+        Crs sk1 = new Equatorial();
+        Crs sk2 = new Equatorial(new FK5());
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
@@ -410,8 +410,8 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Equatorial(new FK5("J2000"));
-        SkySystem sk2 = new Equatorial(new FK5("B1950"));
+        Crs sk1 = new Equatorial(new FK5("J2000"));
+        Crs sk2 = new Equatorial(new FK5("B1950"));
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
@@ -428,12 +428,12 @@ public class SkySystemTest {
             {359, 60},
             {86, -35}
         };
-        SkySystem sk1 = new Equatorial(new FK5("J2000"));
-        SkySystem sk2 = new Equatorial(new FK4());
+        Crs sk1 = new Equatorial(new FK5("J2000"));
+        Crs sk2 = new Equatorial(new FK4());
         for (double[] coordinate : coordinates) {
             SkyPosition[] result = sk1.convertTo(sk2, coordinate);
             result = sk2.convertTo(sk1, result[0].getDoubleArray());
-            assertArrayEquals(coordinate, result[0].getDoubleArray(), 1e-4);
+            assertArrayEquals(coordinate, result[0].getDoubleArray(), 1e-10);
         }
     }
 
@@ -446,9 +446,9 @@ public class SkySystemTest {
             // convert pixel(1,1) to Sky
             double[] posOrigin = wcs.pix2wcs(1, 1);
             //convert (ra,dec) To galactic
-            SkySystem sysOrigin = wcs.getSkySystem();
-            SkySystem sysTarget = new Galactic();
-            assertEquals(sysOrigin.getSkySystemName().name(), "EQUATORIAL");
+            Crs sysOrigin = wcs.getCrs();
+            Crs sysTarget = new Galactic();
+            assertEquals(sysOrigin.getCoordinateSystem().name(), "EQUATORIAL");
             SkyPosition skyPosTarget = sysOrigin.convertTo(sysTarget, posOrigin[0], posOrigin[1]);
             
             //convert skyPos (galatic frame) to Equatorial
@@ -458,19 +458,19 @@ public class SkySystemTest {
             double[] returnedPosCamera = wcs.wcs2pix(newPosOrigin.getLongitude(), newPosOrigin.getLatitude());
             assertArrayEquals(new double[]{1, 1}, returnedPosCamera, 0.5);//Set the precision at the half pixel
         } catch (FitsException | IOException | ProjectionException ex) {
-            Logger.getLogger(SkySystemTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrsTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JWcsException ex) {
-            Logger.getLogger(SkySystemTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrsTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
     
     @Test
     public void testSkyMatrixFK4toFK5() {
-        ReferenceSystemInterface fk4 = new FK4();
-        ReferenceSystemInterface fk5 = new FK5();
-        SkySystem eq1 = new Equatorial(fk4);
-        SkySystem eq2 = new Equatorial(fk5);
+        CoordinateReferenceFrame fk4 = new FK4();
+        CoordinateReferenceFrame fk5 = new FK5();
+        Crs eq1 = new Equatorial(fk4);
+        Crs eq2 = new Equatorial(fk5);
         RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
         RealMatrix etermsIn = eq1.getEtermsIn();
         RealMatrix etermsOut = eq1.getEtermsOut(eq2);
@@ -483,10 +483,10 @@ public class SkySystemTest {
     
     @Test
     public void testSkyMatrixFK4NOEB1950toFK4B1950() {
-        ReferenceSystemInterface fk4 = new FK4("B1950");
-        ReferenceSystemInterface fk4NOE = new FK4_NO_E("B1950");
-        SkySystem eq1 = new Equatorial(fk4NOE);
-        SkySystem eq2 = new Equatorial(fk4);
+        CoordinateReferenceFrame fk4 = new FK4("B1950");
+        CoordinateReferenceFrame fk4NOE = new FK4_NO_E("B1950");
+        Crs eq1 = new Equatorial(fk4NOE);
+        Crs eq2 = new Equatorial(fk4);
         RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
         RealMatrix etermsIn = eq1.getEtermsIn();
         RealMatrix etermsOut = eq1.getEtermsOut(eq2);
@@ -499,10 +499,10 @@ public class SkySystemTest {
     
     @Test
     public void testSkyMatrixFK4B1950J1983_5toFK52000() {
-        ReferenceSystemInterface fk4 = new FK4("B1950", "J1983.5");
-        ReferenceSystemInterface fk5 = new FK5("J2000");
-        SkySystem eq1 = new Equatorial(fk4);
-        SkySystem eq2 = new Equatorial(fk5);
+        CoordinateReferenceFrame fk4 = new FK4("B1950", "J1983.5");
+        CoordinateReferenceFrame fk5 = new FK5("J2000");
+        Crs eq1 = new Equatorial(fk4);
+        Crs eq2 = new Equatorial(fk5);
         RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
         RealMatrix etermsIn = eq1.getEtermsIn();
         RealMatrix etermsOut = eq1.getEtermsOut(eq2);

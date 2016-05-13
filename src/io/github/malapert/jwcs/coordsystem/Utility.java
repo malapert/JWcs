@@ -287,7 +287,7 @@ public class Utility {
      */
     public static final RealMatrix FK42FK5Matrix(final Double t) {
         RealMatrix mat = FK42FK5Matrix();
-        if (t != null) {
+        if (!Double.isNaN(t)) {
             double jd = epochBessel2JD(t);
             double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
             double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
@@ -801,15 +801,15 @@ public class Utility {
      * or J coordinates
      * @return 3x3 Matrix M as in XYZecl = M * XYZeq
      */
-    public final static RealMatrix MatrixEq2Ecl(double epoch, final ReferenceSystemInterface.Type refSystem) {
+    public final static RealMatrix MatrixEq2Ecl(double epoch, final CoordinateReferenceFrame.ReferenceFrame refSystem) {
         double jd;
-        if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
+        if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
             jd = epochBessel2JD(epoch);
         } else {
             jd = epochJulian2JD(epoch);
         }
         double eps;
-        if (ReferenceSystemInterface.Type.ICRS.equals(refSystem) || ReferenceSystemInterface.Type.J2000.equals(refSystem)) {
+        if (CoordinateReferenceFrame.ReferenceFrame.ICRS.equals(refSystem) || CoordinateReferenceFrame.ReferenceFrame.J2000.equals(refSystem)) {
             eps = obliquity2000(jd);
         } else {
             eps = obliquity1980(jd);
@@ -844,72 +844,72 @@ public class Utility {
      * systems *S1* with *epoch1* to an equatorial system with equator and
      * equinox at *epoch2* in reference system *S2*.
      */
-    public static RealMatrix MatrixEpoch12Epoch2(double epoch1, double epoch2, final ReferenceSystemInterface.Type s1, final ReferenceSystemInterface.Type s2, Double epobs) {
-        if (s1.equals(ReferenceSystemInterface.Type.FK5) && s2.equals(ReferenceSystemInterface.Type.FK5)) {
+    public static RealMatrix MatrixEpoch12Epoch2(double epoch1, double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, double epobs) {
+        if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             return julianMatrixEpoch12Epoch2(epoch1, epoch2);
-        } else if ((s1.equals(ReferenceSystemInterface.Type.FK4) || s1.equals(ReferenceSystemInterface.Type.FK4_NO_E)) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
+        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             return besselianMatrixEpoch12Epoch2(epoch1, epoch2);
-        } else if ((s1.equals(ReferenceSystemInterface.Type.FK4) || s1.equals(ReferenceSystemInterface.Type.FK4_NO_E)) && s2.equals(ReferenceSystemInterface.Type.FK5)) {
+        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = (epobs == null) ? FK42FK5Matrix() : FK42FK5Matrix(epobs);
+            RealMatrix m2 = FK42FK5Matrix(epobs);
             RealMatrix m3 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.FK5) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000d);
             RealMatrix m2 = FK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.ICRS)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             return MatrixUtils.createRealIdentityMatrix(3);
-        } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = ICRS2FK5Matrix();
             RealMatrix m2 = FK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.FK5)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             RealMatrix m1 = ICRS2FK5Matrix();
             RealMatrix m2 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.FK5) && s2.equals(ReferenceSystemInterface.Type.ICRS)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2FK5Matrix().transpose();
             return m2.multiply(m1);
-        } else if ((s1.equals(ReferenceSystemInterface.Type.FK4) || s1.equals(ReferenceSystemInterface.Type.FK4_NO_E)) && s2.equals(ReferenceSystemInterface.Type.ICRS)) {
+        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = (epobs == null) ? FK42FK5Matrix() : FK42FK5Matrix(epobs);
+            RealMatrix m2 = FK42FK5Matrix(epobs);
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
             return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.J2000) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
             return m1;
-        } else if (s1.equals(ReferenceSystemInterface.Type.J2000) && s2.equals(ReferenceSystemInterface.Type.ICRS)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2J2000Matrix().transpose();
             return m2.multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.J2000) && s2.equals(ReferenceSystemInterface.Type.FK5)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
             RealMatrix m4 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.J2000) && (s2.equals(ReferenceSystemInterface.Type.FK4) || s2.equals(ReferenceSystemInterface.Type.FK4_NO_E))) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
             RealMatrix m4 = FK52FK4Matrix(epobs);
             RealMatrix m5 = besselianMatrixEpoch12Epoch2(1950d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.ICRS) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = ICRS2J2000Matrix();
             RealMatrix m2 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
-        } else if (s1.equals(ReferenceSystemInterface.Type.FK5) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
+        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2FK5Matrix().transpose();
             RealMatrix m3 = ICRS2J2000Matrix();
             RealMatrix m4 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
-        } else if ((s1.equals(ReferenceSystemInterface.Type.FK4) || s1.equals(ReferenceSystemInterface.Type.FK4_NO_E)) && s2.equals(ReferenceSystemInterface.Type.J2000)) {
+        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
             RealMatrix m2 = FK52FK4Matrix(epobs).transpose();
             RealMatrix m3 = ICRS2FK5Matrix().transpose();

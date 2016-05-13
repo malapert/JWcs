@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import io.github.malapert.jwcs.coordsystem.SkySystem.SkySystems;
+import io.github.malapert.jwcs.coordsystem.Crs.CoordinateSystem;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
 
@@ -45,10 +45,10 @@ public class SkyPosition {
      */    
     private double latitude;
     /**
-     * SkySystem of the position.
+     * Crs of the position.
      * @see #getRefFrame() 
      */
-    private SkySystem refFrame;
+    private Crs refFrame;
 
     /**
      * Creates a position in the sky.
@@ -59,7 +59,7 @@ public class SkyPosition {
      * @param latitude latitude in decimal degrees of the position
      * @param refFrame sky system of the position
      */
-    public SkyPosition(double longitude, double latitude, final SkySystem refFrame) {
+    public SkyPosition(double longitude, double latitude, final Crs refFrame) {
         this.longitude = longitude%360;
         this.latitude = latitude;
         this.refFrame = refFrame;
@@ -127,7 +127,7 @@ public class SkyPosition {
      * Returns the sky system.
      * @return the refFrame
      */
-    public SkySystem getRefFrame() {
+    public Crs getRefFrame() {
         return refFrame;
     }
 
@@ -135,7 +135,7 @@ public class SkyPosition {
      * Sets the sky system.
      * @param refFrame the refFrame to set
      */
-    public void setRefFrame(final SkySystem refFrame) {
+    public void setRefFrame(final Crs refFrame) {
         this.refFrame = refFrame;
     }
 
@@ -150,7 +150,7 @@ public class SkyPosition {
     @Override
     public String toString() {
         String referenceSystem;
-        SkySystems skySystemName = getRefFrame().getSkySystemName();
+        CoordinateSystem skySystemName = getRefFrame().getCoordinateSystem();
         switch (skySystemName) {
             case EQUATORIAL:
                 referenceSystem = ((Equatorial) getRefFrame()).getReferenceSystemType().name();

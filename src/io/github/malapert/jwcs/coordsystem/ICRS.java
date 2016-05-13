@@ -16,7 +16,6 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import io.github.malapert.jwcs.utility.TimeUtils;
 import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
 
 /**
@@ -39,12 +38,12 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class ICRS implements ReferenceSystemInterface {
+public class ICRS implements CoordinateReferenceFrame {
   
     /**
      * The name of this reference frame.
      */
-    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.ICRS;
+    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.ICRS;
 
     /**
      * The default value of the epoch.
@@ -72,19 +71,59 @@ public class ICRS implements ReferenceSystemInterface {
     }
 
     @Override
-    public ReferenceSystemInterface.Type getReferenceSystemType() {
+    public CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType() {
         return REF_SYSTEM;
     }
 
     @Override
-    public Double getEpochObs() {
-        return null;
+    /**
+     * Returns Double.NaN
+     * No need to specify an epoch of observation in ICRS reference frame
+     */
+    public double getEpochObs() {
+        return Double.NaN;
     }
 
     @Override
+    /**
+     * Returns the equinox as a Julian epoch.
+     */
     public double getEquinox() {
         return this.equinox;
     }
+    
+
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of equinox
+     */    
+    public void setEquinox(final String equinox) {        
+    }    
+    
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of equinox
+     */
+    public void setEquinox(final double equinox) {
+    }      
+    
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation in FK5 reference frame
+     */
+    public void setEpochObs(final String epochObs) {       
+    }
+
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation in FK5 reference frame
+     */    
+    public void setEpochObs(final double epochObs) {
+    }     
 
     @Override
     public String toString() {

@@ -34,23 +34,23 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
+public class Ecliptic extends Crs implements CoordinateReferenceFrame {
  
     /**
      * This coordinate system name.
      */
-    private final static SkySystems SKY_NAME = SkySystems.ECLIPTIC;
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.ECLIPTIC;
     
     /**
      * The reference system of the ecliptic coordinate system.
      */
-    private ReferenceSystemInterface refSystem;    
+    private CoordinateReferenceFrame refSystem;    
     
     /**
      * Creates the Ecliptic coordinate system based on the reference system.
      * @param refSystem the reference system
      */
-    public Ecliptic(final ReferenceSystemInterface refSystem) {
+    public Ecliptic(final CoordinateReferenceFrame refSystem) {
         this.refSystem = refSystem;
     }     
     
@@ -59,39 +59,61 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
      */
     public Ecliptic() {
         this(new FK5());
-    }                    
+    }
+    
+    /**
+     * Transforms the coordinate reference frame if necessary.
+     * In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
+     * we read that all reference systems are allowed for both equatorial- and 
+     * ecliptic coordinates, except FK4-NO-E, which is only allowed for equatorial 
+     * coordinates. If FK4-NO-E is given in combination with an ecliptic 
+     * sky system then silently FK4 is assumed.     
+     * @param refSystem the coordinate reference system
+     * @return the coordinate reference system
+     */
+    protected CoordinateReferenceFrame init(CoordinateReferenceFrame refSystem) {
+        CoordinateReferenceFrame result;
+        if (ReferenceFrame.FK4_NO_E.equals(refSystem.getReferenceSystemType())) {
+            result = new FK4(); 
+            result.setEpochObs(refSystem.getEpochObs());
+            result.setEquinox(refSystem.getEquinox());
+        } else {
+            result = refSystem;
+        }
+        return result;
+    }
 
     @Override
-    protected RealMatrix getRotationMatrix(final SkySystem refFrame) {
+    protected RealMatrix getRotationMatrix(final Crs refFrame) {
         RealMatrix m;
        if (refFrame instanceof Equatorial) {         
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(), getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Equatorial)refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Equatorial)refFrame).getReferenceSystemType(), Double.NaN);
             m = m2.multiply(m1);
         } else if (refFrame instanceof Galactic) {
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(), getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m3 = Utility.MatrixEqB19502Gal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof SuperGalactic) {
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(),getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceSystemType(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m3 = Utility.MatrixEqB19502Gal();
             RealMatrix m4 = Utility.MatrixGal2Sgal();
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (refFrame instanceof Ecliptic) {
             RealMatrix m1 = Utility.MatrixEq2Ecl(this.getEquinox(), getReferenceSystemType()).transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Ecliptic)refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(this.getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Ecliptic)refFrame).getReferenceSystemType(), Double.NaN);
             RealMatrix m3 = Utility.MatrixEq2Ecl(this.getEquinox(), ((Ecliptic)refFrame).getReferenceSystemType());
             m = m3.multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));
+            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getCoordinateSystem()));
         }
         return m; 
     }
 
     @Override
-    public SkySystems getSkySystemName() {
+    public CoordinateSystem getCoordinateSystem() {
         return SKY_NAME;
     }
 
@@ -101,12 +123,32 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
     }
     
     @Override
-    public Double getEpochObs() {
+    public double getEpochObs() {
         return this.getRefSystem().getEpochObs();
     }
     
     @Override
-    public ReferenceSystemInterface.Type getReferenceSystemType() {
+    public void setEquinox(final String equinox) {
+        this.getRefSystem().setEquinox(equinox);
+    }
+    
+    @Override
+    public void setEpochObs(final String epoch) {
+        this.getRefSystem().setEpochObs(epoch);
+    }  
+    
+    @Override
+    public void setEquinox(final double equinox) {
+        this.getRefSystem().setEquinox(equinox);
+    }
+    
+    @Override
+    public void setEpochObs(final double epoch) {
+        this.getRefSystem().setEpochObs(epoch);
+    }     
+    
+    @Override
+    public CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType() {
         return this.getRefSystem().getReferenceSystemType();
     }    
 
@@ -114,7 +156,7 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
      * Returns the reference system.
      * @return the refSystem
      */
-    public ReferenceSystemInterface getRefSystem() {
+    public CoordinateReferenceFrame getRefSystem() {
         return refSystem;
     }
 
@@ -122,7 +164,7 @@ public class Ecliptic extends SkySystem implements ReferenceSystemInterface {
      * Sets the reference system.
      * @param refSystem the refSystem to set
      */
-    public void setRefSystem(final ReferenceSystemInterface refSystem) {
+    public void setRefSystem(final CoordinateReferenceFrame refSystem) {
         this.refSystem = refSystem;
     }
 

@@ -22,12 +22,12 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  *
  * @author malapert
  */
-public class J2000 implements ReferenceSystemInterface {
+public class J2000 implements CoordinateReferenceFrame {
 
     /**
      * The name of this reference frame.
      */
-    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.J2000;
+    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.J2000;
 
     /**
      * The default value of the equinox.
@@ -49,26 +49,67 @@ public class J2000 implements ReferenceSystemInterface {
     /**
      * initialization.
      *
-     * @param equinox the epoch
+     * @param epoch the epoch of equinox
      */
     private void init(final String epoch) {
         this.equinox = epochs(epoch)[1];
     }
 
     @Override
-    public Type getReferenceSystemType() {
+    public ReferenceFrame getReferenceSystemType() {
         return REF_SYSTEM;
     }
 
     @Override
-    public Double getEpochObs() {
-        return null;
+    /**
+     * Returns Double.NaN.
+     * 
+     * No need to specify an epoch of observation in J2000 reference frame
+     */
+    public double getEpochObs() {
+        return Double.NaN;
     }
 
     @Override
+    /**
+     * Returns the equinox as a Julian epoch.
+     */
     public double getEquinox() {
         return this.equinox;
     }
+    
+
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of equinox
+     */    
+    public void setEquinox(String equinox) {        
+    }    
+    
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of equinox
+     */
+    public void setEquinox(final double equinox) {
+    }      
+    
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation
+     */
+    public void setEpochObs(final String epochObs) {       
+    }
+
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation
+     */    
+    public void setEpochObs(final double epochObs) {
+    }     
 
     @Override
     public String toString() {

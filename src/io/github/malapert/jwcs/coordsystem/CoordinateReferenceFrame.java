@@ -17,10 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 /**
- * A frame of reference (or reference frame) refers 
- * to a coordinate system used to represent and 
- * measure properties of objects, such as their 
- * position and orientation, at different moments of time.
+ * Specifies the origin of the equatorial and ecliptic coordinate system. 
  * 
  * In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
  * we read that all reference systems are allowed for both equatorial- and 
@@ -31,12 +28,12 @@ package io.github.malapert.jwcs.coordsystem;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public interface ReferenceSystemInterface {
+public interface CoordinateReferenceFrame {
 
     /**
-     * A representation of the different reference systems.
+     * A representation of the different reference frame.
      */
-    public enum Type {
+    public enum ReferenceFrame {
         /**
          * The International Celestial Reference System, for optical data 
          * realized through the Hipparcos catalog. 
@@ -97,7 +94,7 @@ public interface ReferenceSystemInterface {
          * @param hasEquinox Can have equinox as parameter
          * @param hasEpoch Can have epoch as parameter
          */
-        Type(final String name, boolean hasEquinox, boolean hasEpoch) {
+        ReferenceFrame(final String name, boolean hasEquinox, boolean hasEpoch) {
             this.name = name;
             this.hasEquinox = hasEquinox;
             this.hasEpoch = hasEpoch;
@@ -124,14 +121,14 @@ public interface ReferenceSystemInterface {
         }
         
         /**
-         * Returns the ReferenceFrame based on its name.
+         * Returns the CoordinateReferenceFrame based on its name.
          * @param name name of the reference frame
-         * @return the ReferenceFrame type
+         * @return the CoordinateReferenceFrame type
          */
-        public static Type valueOfByName(final String name) {
-            Type result = null;
-            Type[] values = Type.values();
-            for (Type value : values) {
+        public static ReferenceFrame valueOfByName(final String name) {
+            ReferenceFrame result = null;
+            ReferenceFrame[] values = ReferenceFrame.values();
+            for (ReferenceFrame value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
                     break;
@@ -145,14 +142,14 @@ public interface ReferenceSystemInterface {
         }
         
         /**
-         * Returns the names of ReferenceFrame.
-         * @return the names of ReferenceFrame
+         * Returns the names of CoordinateReferenceFrame.
+         * @return the names of CoordinateReferenceFrame
          */
         public static String[] ReferenceFramesName() {            
-            Type[] values = Type.values();
+            ReferenceFrame[] values = ReferenceFrame.values();
             String[] result = new String[values.length];
             int index = 0;
-            for (Type value : values) {
+            for (ReferenceFrame value : values) {
                 result[index] = value.getName();
                 index++;
             }
@@ -165,19 +162,47 @@ public interface ReferenceSystemInterface {
      * Returns the reference system that is used.
      * @return the reference system that is used
      */
-    ReferenceSystemInterface.Type getReferenceSystemType();
+    CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType();
     
     /**
-     * Returns the epoch of observation
-     * @return null when epoch of observation is not required other the epoch
-     * of observation
+     * Returns the epoch of observation as a Besselian or a Julian value 
+     * according the reference frame.
+     * @return Double.NaN when epoch of observation is not required otherwise
+     * the epoch of observation
      */
-    Double getEpochObs();
+    double getEpochObs();
     
     /**
-     * Returns the equinox.
+     * Returns the equinox as a Besselian or a Julian value according to the 
+     * reference frame.
      * @return the equinox
      */
     double getEquinox();
+    
+    /**
+     * Sets the epoch of observation.
+     * @param epochObs the epoch of observation
+     */
+    void setEpochObs(final String epochObs);
+    
+    /**
+     * Sets the equinox.
+     * @param equinox the equinox
+     */
+    void setEquinox(final String equinox);
+    
+    /**
+     * Sets the epoch of observation as a Julian or Besselian epoch according to
+     * the reference frame.
+     * @param epochObs the epoch of observation
+     */
+    void setEpochObs(final double epochObs);
+    
+    /**
+     * Sets the equinox as a Julian or Besselian epoch according to
+     * the reference frame.
+     * @param equinox the equinox
+     */
+    void setEquinox(final double equinox);    
        
 }

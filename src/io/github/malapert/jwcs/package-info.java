@@ -71,7 +71,7 @@
  *      // convert the pixel (1,1) to the sky
  *      double[] posOrigin = wcs.pix2wcs(1, 1);
  *      // Get the sky system
- *      SkySystem sysOrigin = wcs.getSkySystem();
+ *      Crs sysOrigin = wcs.getCrs();
  *      // Convert the coordinates from the sysOrigin sky system to Galactic      
  *      SkySystem sysTarget = new Galactic();
  *      SkyPosition skyPosTarget = sysOrigin.convertTo(sysTarget, posOrigin[0], posOrigin[1]);      
@@ -86,8 +86,8 @@
  *           {359, 60},
  *           {86, -35}
  *       };
- *       SkySystem sk1 = new Equatorial();
- *       SkySystem sk2 = new Equatorial(new FK5());
+ *       Crs sk1 = new Equatorial();
+ *       Crs sk2 = new Equatorial(new FK5());
  *       for (double[] coordinate : coordinates) {
  *           SkyPosition[] result = sk1.convertTo(sk2, coordinate);
  *           result = sk2.convertTo(sk1, result[0].getDoubleArray());

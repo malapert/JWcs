@@ -25,11 +25,10 @@ import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.J2000;
-import io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface;
-import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.FK5;
-import static io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type.J2000;
+import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.FK5;
+import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.J2000;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.SkySystem;
+import io.github.malapert.jwcs.coordsystem.Crs;
 import io.github.malapert.jwcs.coordsystem.gui.ConvertSelectionPanel;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
@@ -52,6 +51,7 @@ import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.util.Cursor;
+import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
 
 /**
  * The main class.
@@ -304,8 +304,8 @@ public class Main {
      * @param parameters parameters of the reference frame
      * @return the reference frame
      */
-    private static ReferenceSystemInterface getReferenceFrame(final ReferenceSystemInterface.Type refFrame, final String[] parameters) {
-        ReferenceSystemInterface ref;
+    private static CoordinateReferenceFrame getReferenceFrame(final CoordinateReferenceFrame.ReferenceFrame refFrame, final String[] parameters) {
+        CoordinateReferenceFrame ref;
         switch (refFrame) {
             case ICRS:
                 ref = new ICRS();
@@ -362,19 +362,19 @@ public class Main {
      * Gets the sky system.
      *
      * @param skySystem the sky system name
-     * @return the SkySystem object
+     * @return the Crs object
      */
-    private static SkySystem getSkySystem(final String skySystem) {
-        SkySystem result;
+    private static Crs getSkySystem(final String skySystem) {
+        Crs result;
         if (hasReferenceFrame(skySystem)) {
             String skySystemName = skySystem.substring(0, skySystem.indexOf("("));
             String refFrameStr = extractReferenceFrame(skySystem);
             String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf("("));
-            ReferenceSystemInterface.Type refFrame = ReferenceSystemInterface.Type.valueOf(refFrameName);
+            CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             String[] parameters = extractReferenceFrameParameter(refFrameStr);
-            ReferenceSystemInterface refSystem = getReferenceFrame(refFrame, parameters);
-            result = SkySystem.getSkySystemFromName(SkySystem.SkySystems.valueOf(skySystemName));
-            switch (result.getSkySystemName()) {
+            CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
+            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
+            switch (result.getCoordinateSystem()) {
                 case EQUATORIAL:
                     ((Equatorial) result).setRefSystem(refSystem);
                     break;
@@ -385,7 +385,7 @@ public class Main {
                     throw new IllegalArgumentException("Unknown sky system");
             }
         } else {
-            result = SkySystem.getSkySystemFromName(SkySystem.SkySystems.valueOf(skySystem));
+            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystem));
         }
         return result;
     }
@@ -401,7 +401,7 @@ public class Main {
      */
     private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
         Map<String, String> keyMap = new HashMap();
-        SkySystem skySystemFrom;
+        Crs skySystemFrom;
         if (file == null && from == null && to == null) {
             throw new IllegalArgumentException("Either --file argument or --from and --to arguments are required");
         } else if (file != null) {
@@ -423,7 +423,7 @@ public class Main {
             }
             JWcsMap wcs = new JWcsMap(keyMap);
             wcs.doInit();
-            skySystemFrom = wcs.getSkySystem();
+            skySystemFrom = wcs.getCrs();
 
         } else {
             skySystemFrom = getSkySystem(from);
@@ -432,7 +432,7 @@ public class Main {
         double[] skyPos = Arrays.stream(pos.split(","))
                 .mapToDouble(Double::parseDouble)
                 .toArray();
-        SkySystem skySystemTo = getSkySystem(skySystemTarget);
+        Crs skySystemTo = getSkySystem(skySystemTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
         SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
         System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());

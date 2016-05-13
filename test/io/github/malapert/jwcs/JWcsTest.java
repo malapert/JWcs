@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs;
 
 import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.SkySystem;
+import io.github.malapert.jwcs.coordsystem.Crs;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.io.IOException;
 import java.net.URL;
@@ -64,24 +64,30 @@ public class JWcsTest {
 
 
     /**
-     * Test of getSkySystem method, of class JWcs.
+     * Test of getCrs method, of class JWcs.
      */
     @Test
-    public void testGetSkySystem() {
+    public void testGetCrs() {
         System.out.println("getSkySystem");
-        SkySystem result = wcs.getSkySystem();
+        Crs result = wcs.getCrs();
         double equinox = ((Equatorial)result).getEquinox();
         Double epoch = ((Equatorial)result).getEpochObs();
         String refSystem = ((Equatorial)result).getRefSystem().getReferenceSystemType().name();       
         assertEquals(2000.0, equinox, 1e-12);
+        if (Double.isNaN(epoch)) {
+            epoch = null;
+        }
         assertEquals(null, epoch);
         assertEquals("FK5", refSystem);
         
-        result = wcs1.getSkySystem();
+        result = wcs1.getCrs();
         equinox = ((Equatorial)result).getEquinox();
         epoch = ((Equatorial)result).getEpochObs();
         refSystem = ((Equatorial)result).getRefSystem().getReferenceSystemType().name();
         assertEquals(2000.0, equinox, 1e-12);
+        if (Double.isNaN(epoch)) {
+            epoch = null;
+        }        
         assertEquals(null, epoch);
         assertEquals("FK5", refSystem);        
     }

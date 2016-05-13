@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ public class EquatorialFK4ToEquatorialFK51950Test extends ConverterTest {
     
     public EquatorialFK4ToEquatorialFK51950Test() throws JWcsException {
         super();
-        ReferenceSystemInterface fk5 = new FK5("J1950");
-        ReferenceSystemInterface fk4 = new FK4();
+        CoordinateReferenceFrame fk5 = new FK5("J1950");
+        CoordinateReferenceFrame fk4 = new FK4();
         this.source = new Equatorial(fk4);
         this.target = new Equatorial(fk5);        
         

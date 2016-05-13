@@ -29,7 +29,7 @@ public abstract class NumericalUtils {
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
      */
-    protected static final double DOUBLE_TOLERANCE = 1e-12;
+    public static final double DOUBLE_TOLERANCE = 1e-12;
 
     /**
      * Half PI value.

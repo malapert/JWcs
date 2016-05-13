@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +24,17 @@ import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.J2000;
-import io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface;
-import io.github.malapert.jwcs.coordsystem.ReferenceSystemInterface.Type;
+import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.SkySystem;
-import io.github.malapert.jwcs.coordsystem.SkySystem.SkySystems;
+import io.github.malapert.jwcs.coordsystem.Crs;
+import io.github.malapert.jwcs.coordsystem.Crs.CoordinateSystem;
 import io.github.malapert.jwcs.coordsystem.SuperGalactic;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
 import java.awt.BorderLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
 
 /**
  *
@@ -51,14 +51,14 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
      */
     public ConvertSelectionPanel() {
         initComponents();
-        orginSkySystem.setModel(new DefaultComboBoxModel<>(SkySystems.getSkySystemsName()));
-        targetSkySystem.setModel(new DefaultComboBoxModel<>(SkySystems.getSkySystemsName()));
-        originRf.setModel(new DefaultComboBoxModel<>(Type.ReferenceFramesName()));
-        targetRf.setModel(new DefaultComboBoxModel<>(Type.ReferenceFramesName()));
-        setEnableReferenceFrame(SkySystems.values()[0].hasReferenceFrame(), true);
-        setEnableReferenceFrame(SkySystems.values()[0].hasReferenceFrame(), false);
-        setEnableReferenceFrameParameter(Type.ReferenceFramesName()[0], true);
-        setEnableReferenceFrameParameter(Type.ReferenceFramesName()[0], false);
+        orginSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
+        targetSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
+        originRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.ReferenceFramesName()));
+        targetRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.ReferenceFramesName()));
+        setEnableReferenceFrame(CoordinateSystem.values()[0].hasReferenceFrame(), true);
+        setEnableReferenceFrame(CoordinateSystem.values()[0].hasReferenceFrame(), false);
+        setEnableReferenceFrameParameter(ReferenceFrame.ReferenceFramesName()[0], true);
+        setEnableReferenceFrameParameter(ReferenceFrame.ReferenceFramesName()[0], false);
         this.errorMsg.setText("");
     }
 
@@ -512,7 +512,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
     private void updateMenuBySkySystem(boolean isOrigin) {
         String skySystemName = (isOrigin) ? (String) orginSkySystem.getSelectedItem() : (String) targetSkySystem.getSelectedItem();
-        SkySystems skySystem = SkySystems.valueOfByName(skySystemName);
+        CoordinateSystem skySystem = CoordinateSystem.valueOfByName(skySystemName);
         setEnableReferenceFrame(skySystem.hasReferenceFrame(), isOrigin);
     }
 
@@ -570,26 +570,26 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
     private void convertToTargetSkySystem() {
         String originSkySystemName = orginSkySystem.getSelectedItem().toString();
-        SkySystems originSkySystemC = SkySystems.valueOfByName(originSkySystemName);
-        ReferenceSystemInterface originRefFrame = null;
+        CoordinateSystem originSkySystemC = CoordinateSystem.valueOfByName(originSkySystemName);
+        CoordinateReferenceFrame originRefFrame = null;
         if (originSkySystemC.hasReferenceFrame()) {
             String refFrameName = originRf.getSelectedItem().toString();
             String equinox = (originEquinox.isEnabled()) ? originEquinox.getText() : null;
             String epoch = (originEpoch.isEnabled()) ? originEpoch.getText() : null;
-            originRefFrame = createReferenceFrame(Type.valueOfByName(refFrameName), equinox, epoch);
+            originRefFrame = createReferenceFrame(ReferenceFrame.valueOfByName(refFrameName), equinox, epoch);
         }
-        SkySystem originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
+        Crs originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
 
         String targetSkySystemName = targetSkySystem.getSelectedItem().toString();
-        SkySystems targetSkySystemC = SkySystems.valueOfByName(targetSkySystemName);
-        ReferenceSystemInterface targetRefFrame = null;
+        CoordinateSystem targetSkySystemC = CoordinateSystem.valueOfByName(targetSkySystemName);
+        CoordinateReferenceFrame targetRefFrame = null;
         if (targetSkySystemC.hasReferenceFrame()) {
             String refFrameName = targetRf.getSelectedItem().toString();
             String equinox = (targetEquinox.isEnabled()) ? targetEquinox.getText() : null;
             String epoch = (targetEpoch.isEnabled()) ? targetEpoch.getText() : null;
-            targetRefFrame = createReferenceFrame(Type.valueOfByName(refFrameName), equinox, epoch);
+            targetRefFrame = createReferenceFrame(ReferenceFrame.valueOfByName(refFrameName), equinox, epoch);
         }
-        SkySystem tgetSkySystem = createSkySystem(targetSkySystemC, targetRefFrame);
+        Crs tgetSkySystem = createSkySystem(targetSkySystemC, targetRefFrame);
 
         double longitude = Double.valueOf(originLong.getText());
         double latitude = Double.valueOf(originLat.getText());
@@ -600,8 +600,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         this.errorMsg.setText("");
     }
 
-    private ReferenceSystemInterface createReferenceFrame(Type type, String equinox, String epoch) {
-        ReferenceSystemInterface result;
+    private CoordinateReferenceFrame createReferenceFrame(ReferenceFrame type, String equinox, String epoch) {
+        CoordinateReferenceFrame result;
         switch (type) {
             case FK4:
                 if(equinox.isEmpty() && epoch.isEmpty()) {
@@ -636,8 +636,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         return result;
     }
 
-    private SkySystem createSkySystem(SkySystems name, ReferenceSystemInterface refFrame) {
-        SkySystem result;
+    private Crs createSkySystem(CoordinateSystem name, CoordinateReferenceFrame refFrame) {
+        Crs result;
         switch (name) {
             case ECLIPTIC:
                 result = new Ecliptic(refFrame);
@@ -658,7 +658,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
     }
 
     private void setEnableReferenceFrameParameter(String refFrameName, boolean isOrigin) {
-        Type refFrame = Type.valueOfByName(refFrameName);
+        ReferenceFrame refFrame = ReferenceFrame.valueOfByName(refFrameName);
         switch (refFrame) {
             case FK4:
                 if (isOrigin) {

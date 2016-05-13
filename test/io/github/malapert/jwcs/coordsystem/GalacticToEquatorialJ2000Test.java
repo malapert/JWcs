@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public class GalacticToEquatorialJ2000Test extends ConverterTest {
     
     public GalacticToEquatorialJ2000Test() throws JWcsException {
         super();
-        ReferenceSystemInterface j2000 = new J2000();
+        CoordinateReferenceFrame j2000 = new J2000();
         this.source = new Galactic();
         this.target = new Equatorial(j2000);        
         

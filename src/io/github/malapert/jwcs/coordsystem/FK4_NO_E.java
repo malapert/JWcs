@@ -28,12 +28,12 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class FK4_NO_E implements ReferenceSystemInterface {
+public class FK4_NO_E implements CoordinateReferenceFrame {
 
     /**
      * The name of this reference frame.
      */    
-    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.FK4_NO_E;
+    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E;
     
     /**
      * The default value of the epoch.
@@ -48,7 +48,7 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     /**
      * The epoch of observation.
      */
-    private Double epochObs;
+    private double epochObs;
     
     /**
      * Creates a FK4 reference frame with default values of both epoch
@@ -86,16 +86,22 @@ public class FK4_NO_E implements ReferenceSystemInterface {
     }
     
     @Override
-    public Type getReferenceSystemType() {
+    public ReferenceFrame getReferenceSystemType() {
         return REF_SYSTEM;
     }
 
     @Override
-    public Double getEpochObs() {
+    /**
+     * Returns the Besselian value of the epoch of observation.
+     */    
+    public double getEpochObs() {
         return this.epochObs;
     }
 
     @Override
+    /**
+     * Returns the Besselian value of the equinox.
+     */    
     public double getEquinox() {
         return this.equinox;
     }
@@ -104,21 +110,47 @@ public class FK4_NO_E implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
+    @Override
     public void setEquinox(final String equinox) {
         this.equinox = epochs(equinox)[0];
-    }
+    }        
 
     /**
      * Sets the epoch.
      * @param epochObs the epochObs to set
      */
+    @Override
     public void setEpochObs(final String epochObs) {
-        this.epochObs = (epochObs == null) ? null : epochs(epochObs)[0];
+        this.epochObs = (epochObs == null) ? Double.NaN : epochs(epochObs)[0];
     }
+    
+    /**
+     * Sets the Besselian epoch of the equinox.
+     * @param equinox the equinox to set
+     */
+    @Override
+    public void setEquinox(final double equinox) {
+        this.equinox = equinox;
+    }        
 
+    /**
+     * Sets the Besselian epoch of the epoch of observation.
+     * @param epochObs the epochObs to set
+     */
+    @Override
+    public void setEpochObs(final double epochObs) {
+        this.epochObs = epochObs;
+    }    
+    
     @Override
     public String toString() {
-        return "FK4_NO_E("+this.equinox+","+this.epochObs+")";
+        String result;
+        if (Double.isNaN(this.epochObs)) {
+            result = "FK4_NO_E(B"+this.equinox+")";
+        } else {
+            result = "FK4_NO_E(B"+this.equinox+",B"+this.epochObs+")";
+        }
+        return result;
     }
         
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public class GalacticToEclipticFK51950Test extends ConverterTest {
     
     public GalacticToEclipticFK51950Test() throws JWcsException {
         super();
-        ReferenceSystemInterface fk5 = new FK5("J1950");
+        CoordinateReferenceFrame fk5 = new FK5("J1950");
         this.source = new Galactic();
         this.target = new Ecliptic(fk5);        
         

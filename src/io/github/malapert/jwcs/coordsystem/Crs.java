@@ -23,27 +23,37 @@ import java.util.logging.Logger;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
+ * A Coordinate Reference System (crs) contains two different elements : 
+ * the <b>coordinate reference frame</b> and the <b>coordinate system</b>.
  *
- * A sky definition can consist of a <b>sky system</b>, a <b>reference
- * system</b>, an <b>equinox</b> and an <b>epoch of observation</b>.
- * 
+ * The coordinate reference frame defines how the CRS is related to the origin
+ * (position and the date of the origin - equinox, date of observation) and 
+ * the coordinate system describes how the coordinates expressed in the 
+ * coordinate reference frame (e.g. as cartesian coordinates, spherical 
+ * coordinates or coordinates of a map projection).
+ * <p>
  * An equinox is an astronomical event in which the plane of Earth's equator 
  * passes through the center of the Sun.
+ * <p>
+ * An epoch of observation is the moment in time when the coordinates are known 
+ * to be correct. Often, this will be the date of observation, and is important 
+ * in cases where coordinates systems move with respect to each other over the 
+ * course of time
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class SkySystem {
+public abstract class Crs {
 
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger(SkySystem.class.getName());
+    private static final Logger LOG = Logger.getLogger(Crs.class.getName());
 
     /**
-     * List of supported sky systems.
+     * List of supported CoordinateSystem. 
      */
-    public enum SkySystems {
+    public enum CoordinateSystem {
         /**
          * Galactic coordinates (lII, bII)
          */
@@ -63,70 +73,73 @@ public abstract class SkySystem {
         ECLIPTIC("Ecliptic", true);
         
         /**
-         * Sky system name.
+         * Coordinate system name.
          */
         private final String name;
         /**
-         * Indicates if the sky system has a reference frame.
+         * Indicates if the coordinate system has a coordinate reference frame.
          */
         private final boolean hasReferenceFrame;
         
         /**
          * Constructor.
-         * @param name sky system name
-         * @param hasReferenceFrame Indicates if the sky system has e reference frame.
+         * @param name coordinate system name
+         * @param hasReferenceFrame Indicates if the coordinate system has a 
+         * coordinate reference frame.
          */
-        SkySystems(final String name, final boolean hasReferenceFrame) {
+        CoordinateSystem(final String name, final boolean hasReferenceFrame) {
             this.name = name;
             this.hasReferenceFrame = hasReferenceFrame;
         }
         
         /**
-         * Returns the name of the sky system.
-         * @return sky system name
+         * Returns the name of the coordinate system.
+         * @return the coordinate system
          */
         public final String getName() {
             return this.name;
         }
         
         /**
-         * Tests if the sky system has a reference frame
-         * @return True when the sky system has a reference frame otherwise false
+         * Tests if the the coordinate system has a coordinate reference frame.
+         * @return True when the coordinate system has a coordinate reference 
+         * frame otherwise false
          */
         public final boolean hasReferenceFrame() {
             return this.hasReferenceFrame;
         }
       
         /**
-         * Returns the SkySystems based on the sky system name.
-         * @param name name of the sky system
-         * @return the SkySystems
+         * Returns the CoordinateSystem object based on its name.
+         * @param name name of the coordinate system
+         * @return the CoodinateSystem object
+         * @exception IllegalArgumentException Coordinate system not found
          */
-        public static SkySystems valueOfByName(final String name) {
-            SkySystems result = null;
-            SkySystems[] values = SkySystems.values();
-            for (SkySystems value : values) {
+        public static CoordinateSystem valueOfByName(final String name) {
+            CoordinateSystem result = null;
+            CoordinateSystem[] values = CoordinateSystem.values();
+            for (CoordinateSystem value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
                     break;
                 }
             }
             if (result == null) {
-                throw new IllegalArgumentException("SkySystem not found by searching by its name "+name);
+                throw new IllegalArgumentException("Coordinate system not found by searching by its name "+name);
             } else {
                 return result;
             }
         }
         
         /**
-         * Returns the names of SkySystems.
-         * @return the names of SkySystems
+         * Returns an array of the coordinate system name.
+         * @return An array of names of all coordinate system
          */
-        public static String[] getSkySystemsName() {            
-            SkySystems[] values = SkySystems.values();
+        public static String[] getCoordinateSystemArray() {            
+            CoordinateSystem[] values = CoordinateSystem.values();
             String[] result = new String[values.length];
             int index = 0;
-            for (SkySystems value : values) {
+            for (CoordinateSystem value : values) {
                 result[index] = value.getName();
                 index++;
             }
@@ -135,43 +148,41 @@ public abstract class SkySystem {
     };
 
     /**
-     * Calculates the rotation matrix from a reference frame to another one.
+     * Computes the rotation matrix from a reference frame to another one.
      *
-     * The methods in this class have been traduced from Python to JAVA
-     *
-     * @param refFrame the output reference frame
-     * @return the rotation matrix in the output reference frame
+     * @param crs the output coordinate Reference System
+     * @return the rotation matrix in the output coordinate Reference System
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */
-    protected abstract RealMatrix getRotationMatrix(final SkySystem refFrame);
+    protected abstract RealMatrix getRotationMatrix(final Crs crs);
 
     /**
-     * Returns the coordinate system name.
+     * Returns the type of the coordinate system.
      *
-     * @return the coordinate system name
+     * @return the type of the coordinate system
      */
-    public abstract SkySystems getSkySystemName();
+    public abstract CoordinateSystem getCoordinateSystem();
 
     /**
-     * Returns the equinox.
+     * Returns the equinox as a Julian or Besselian epoch.
      *
      * @return the equinox
      */
     protected abstract double getEquinox();
 
     /**
-     * Returns Eterms matrix for the input reference system.
+     * Returns Eterms matrix for the input coordinate Reference System.
      *
      * @return Eterms matrix
      */
     protected final RealMatrix getEtermsIn() {
         RealMatrix eterms = null;
-        ReferenceSystemInterface.Type refSystem;
-        switch (getSkySystemName()) {
+        CoordinateReferenceFrame.ReferenceFrame refSystem;
+        switch (getCoordinateSystem()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) this).getReferenceSystemType();
-                if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
+                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
                     double equinox = ((Equatorial) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});
@@ -179,7 +190,7 @@ public abstract class SkySystem {
                 break;
             case ECLIPTIC:
                 refSystem = ((Ecliptic) this).getReferenceSystemType();
-                if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
+                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
                     double equinox = ((Ecliptic) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
@@ -190,18 +201,18 @@ public abstract class SkySystem {
     }
 
     /**
-     * Returns Eterms matrix for the output reference system.
+     * Returns Eterms matrix for the output coordinate Reference System.
      *
      * @param refFrame the output reference system
      * @return Eterms matrix
      */
-    protected final RealMatrix getEtermsOut(final SkySystem refFrame) {
+    protected final RealMatrix getEtermsOut(final Crs refFrame) {
         RealMatrix eterms = null;
-        ReferenceSystemInterface.Type refSystem;
-        switch (refFrame.getSkySystemName()) {
+        CoordinateReferenceFrame.ReferenceFrame refSystem;
+        switch (refFrame.getCoordinateSystem()) {
             case EQUATORIAL:
                 refSystem = ((Equatorial) refFrame).getReferenceSystemType();
-                if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
+                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
                     double equinox = ((Equatorial) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
@@ -209,7 +220,7 @@ public abstract class SkySystem {
                 break;
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceSystemType();
-                if (ReferenceSystemInterface.Type.FK4.equals(refSystem)) {
+                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
                     double equinox = ((Ecliptic) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
@@ -222,11 +233,14 @@ public abstract class SkySystem {
     /**
      * Checks the coordinates.
      * 
-     * @param longitude longitude in degrees
-     * @param latitude  latitude in degrees
+     * The longitude must be included in [0,360] whereas the latitude must be 
+     * included in [-90,90]
+     * 
+     * @param longitude longitude in decimal degrees
+     * @param latitude  latitude in decimal degrees
      * @exception IllegalArgumentException when the coordinates are out of range
      */
-    private void checkCoordinates(double longitude, double latitude) {
+    private void checkCoordinates(final double longitude, final double latitude) {
         boolean isLongInterval = NumericalUtils.isInInterval(longitude, 0, 360);
         boolean isLatInterval = NumericalUtils.isInInterval(latitude, -90, 90);        
         if(!isLongInterval && !isLatInterval) {
@@ -239,28 +253,28 @@ public abstract class SkySystem {
     }
 
     /**
-     * Converts the (longitude, latitude) coordinates into the output reference
-     * system.
+     * Converts the (longitude, latitude) coordinates into the output coordinate
+     * Reference System.
      *
      * The method has been traduced from Python to JAVA.
      *
-     * @param refFrame the output reference system
-     * @param longitude longitude in degrees
-     * @param latitude latitude in degrees
-     * @return the position in the sky in the output reference system
+     * @param crs the output coordinate Reference System
+     * @param longitude longitude in decimal degrees
+     * @param latitude latitude in decimal degrees
+     * @return the position in the sky in the output coordinate Reference System
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */
-    public final SkyPosition convertTo(final SkySystem refFrame, double longitude, double latitude) {
+    public final SkyPosition convertTo(final Crs crs, double longitude, double latitude) {
         checkCoordinates(longitude, latitude);
         RealMatrix xyz = Utility.longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
-        RealMatrix rotation = getRotationMatrix(refFrame);
-        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getSkySystemName(),refFrame.getSkySystemName(),rotation});        
+        RealMatrix rotation = getRotationMatrix(crs);
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});        
         RealMatrix etermsIn = getEtermsIn();
         LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});        
-        RealMatrix etermsOut = getEtermsOut(refFrame);
-        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{refFrame.getSkySystemName(), etermsOut});        
+        RealMatrix etermsOut = getEtermsOut(crs);
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});        
         if (etermsIn != null) {
             xyz = Utility.removeEterms(xyz, etermsIn);
             LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});            
@@ -273,22 +287,22 @@ public abstract class SkySystem {
         LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
         double[] position = Utility.xyz2longlat(xyz);
         LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
-        LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, refFrame, position[0], position[1]});
-        return new SkyPosition(position[0], position[1], refFrame);
+        LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, crs, position[0], position[1]});
+        return new SkyPosition(position[0], position[1], crs);
     }
 
     /**
      * Converts an array of (longitude1, latitude2, longitude2, latitude2, ...)
-     * coordinates into the output reference system.
+     * coordinates into the coordinate Reference System.
      *
-     * @param refFrame the output reference system
+     * @param crs the output coordinate Reference System
      * @param coordinates an array of (longitude1, latitude2, longitude2,
      * latitude2, ...) in degrees
      * @return an array of SkyPosition
      * @throws IllegalArgumentException Raises an exception when
      * numberEltsOfCoordinates % 2 != 0
      */
-    public final SkyPosition[] convertTo(final SkySystem refFrame, double[] coordinates) throws IllegalArgumentException {
+    public final SkyPosition[] convertTo(final Crs crs, double[] coordinates) throws IllegalArgumentException {
         
         final int numberElts = coordinates.length;
         final int numberOfCoordinatesPerPoint = 3;
@@ -297,12 +311,12 @@ public abstract class SkySystem {
         }
         final SkyPosition[] skyPositionArray = new SkyPosition[(int) (numberElts * 0.5) * numberOfCoordinatesPerPoint];
 
-        RealMatrix rotation = getRotationMatrix(refFrame);
-        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getSkySystemName(),refFrame.getSkySystemName(),rotation});
+        RealMatrix rotation = getRotationMatrix(crs);
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});
         RealMatrix etermsIn = getEtermsIn();
         LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});
-        RealMatrix etermsOut = getEtermsOut(refFrame);
-        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{refFrame.getSkySystemName(), etermsOut});
+        RealMatrix etermsOut = getEtermsOut(crs);
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});
 
         int indice = 0;
         for (int i = 0; i < numberElts; i = i + 2) {
@@ -321,22 +335,22 @@ public abstract class SkySystem {
             }
             double[] position = Utility.xyz2longlat(xyz);
             LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0}", new Object[]{position});
-            skyPositionArray[indice] = new SkyPosition(position[0], position[1], refFrame);
+            skyPositionArray[indice] = new SkyPosition(position[0], position[1], crs);
             indice++;
         }
-        LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getSkySystemName(), refFrame.getSkySystemName(), Arrays.toString(skyPositionArray)});
+        LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getCoordinateSystem(), crs.getCoordinateSystem(), Arrays.toString(skyPositionArray)});
         return skyPositionArray;
     }
 
     /**
      * Computes the angular separation between two sky positions.
      *
-     * @param pos1 sky position in a reference frame
-     * @param pos2 sky position in a reference frame
-     * @return angular separation in degrees.
+     * @param pos1 sky position in a coordinate Reference System
+     * @param pos2 sky position in a coordinate Reference System
+     * @return angular separation in decimal degrees.
      */
     public static final double separation(final SkyPosition pos1, final SkyPosition pos2) {
-        SkySystem skySystem = pos1.getRefFrame();
+        Crs skySystem = pos1.getRefFrame();
         SkyPosition pos1InRefFramePos2 = skySystem.convertTo(pos2.getRefFrame(), pos1.getLongitude(), pos1.getLatitude());
         double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
         double[] pos2XYZ = pos2.getCartesian();
@@ -348,15 +362,19 @@ public abstract class SkySystem {
     }
 
     /**
-     * Returns a SkySystem based on the sky system name.
+     * Creates a CRS based on the coordinate system.
+     * 
+     * The CRS is built based on ICRS reference frame when the coordinate system
+     * is equatorial or ecliptic
      *
-     * @param skySystemName sky system name
-     * @return the SkySystem
+     * @param coordinateSystem the coordinate system
+     * @return the Crs the coordinate Reference System
+     * @exception IllegalArgumentException coordinate system not supported
      */
-    public static final SkySystem getSkySystemFromName(final SkySystems skySystemName) {
-        SkySystem skySystem;
-        LOG.log(Level.INFO, "Get sky system {0}", new Object[]{skySystemName.name()});
-        switch (skySystemName) {
+    public static final Crs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
+        Crs skySystem;
+        LOG.log(Level.INFO, "Get sky system {0}", new Object[]{coordinateSystem.name()});
+        switch (coordinateSystem) {
             case ECLIPTIC:
                 skySystem = new Ecliptic();
                 break;
@@ -370,7 +388,7 @@ public abstract class SkySystem {
                 skySystem = new SuperGalactic();
                 break;
             default:
-                throw new IllegalArgumentException(skySystemName + " not supported as sky system");
+                throw new IllegalArgumentException(coordinateSystem + " not supported as coordinate reference system");
         }
         return skySystem;
     }

@@ -31,23 +31,23 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class Equatorial extends SkySystem implements ReferenceSystemInterface {
+public class Equatorial extends Crs implements CoordinateReferenceFrame {
 
     /**
      * This coordinate system name.
      */
-    private final static SkySystems SKY_NAME = SkySystems.EQUATORIAL;
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.EQUATORIAL;
     
     /**
      * The reference frame of the Equatorial coordinate system.
      */
-    private ReferenceSystemInterface refSystem;
+    private CoordinateReferenceFrame refSystem;
 
     /**
      * Creates an Equatorial coordinate system based on the reference frame.
      * @param refSystem the reference frame
      */    
-    public Equatorial(final ReferenceSystemInterface refSystem) {
+    public Equatorial(final CoordinateReferenceFrame refSystem) {
         this.refSystem = refSystem;
     }
 
@@ -59,31 +59,31 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
     }
 
     @Override
-    protected RealMatrix getRotationMatrix(final SkySystem refFrame) {
+    protected RealMatrix getRotationMatrix(final Crs refFrame) {
         RealMatrix m;
         if (refFrame instanceof Equatorial) {
             m = Utility.MatrixEpoch12Epoch2(getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Equatorial) refFrame).getReferenceSystemType(), getEpochObs());
         } else if (refFrame instanceof Galactic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m2 = Utility.MatrixEqB19502Gal();
             m = m2.multiply(m1);
         } else if (refFrame instanceof SuperGalactic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), ReferenceSystemInterface.Type.FK4, null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceSystemType(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m2 = Utility.MatrixEqB19502Gal();
             RealMatrix m3 = Utility.MatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Ecliptic) refFrame).getReferenceSystemType(), null);
+            RealMatrix m1 = Utility.MatrixEpoch12Epoch2(getEquinox(), refFrame.getEquinox(), getReferenceSystemType(), ((Ecliptic) refFrame).getReferenceSystemType(), Double.NaN);
             RealMatrix m2 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
             m = m2.multiply(m1);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));
+            throw new IllegalArgumentException(String.format("Unknown output sky system: %s", refFrame.getCoordinateSystem()));
         }
         return m;
     }
 
     @Override
-    public SkySystems getSkySystemName() {
+    public CoordinateSystem getCoordinateSystem() {
         return SKY_NAME;
     }
 
@@ -93,12 +93,32 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
     }
 
     @Override
-    public Double getEpochObs() {
+    public double getEpochObs() {
         return this.getRefSystem().getEpochObs();
     }
+    
+    @Override
+    public void setEquinox(final String equinox) {
+        this.getRefSystem().setEquinox(equinox);
+    }
+    
+    @Override
+    public void setEpochObs(final String epoch) {
+        this.getRefSystem().setEpochObs(epoch);
+    }
+    
+    @Override
+    public void setEquinox(final double equinox) {
+        this.getRefSystem().setEquinox(equinox);
+    }
+    
+    @Override
+    public void setEpochObs(final double epoch) {
+        this.getRefSystem().setEpochObs(epoch);
+    }    
 
     @Override
-    public ReferenceSystemInterface.Type getReferenceSystemType() {
+    public CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType() {
         return this.getRefSystem().getReferenceSystemType();
     }
 
@@ -106,7 +126,7 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
      * Returns the reference system.
      * @return the refSystem
      */
-    public ReferenceSystemInterface getRefSystem() {
+    public CoordinateReferenceFrame getRefSystem() {
         return refSystem;
     }
 
@@ -114,7 +134,7 @@ public class Equatorial extends SkySystem implements ReferenceSystemInterface {
      * Sets the reference system.
      * @param refSystem the refSystem to set
      */
-    public void setRefSystem(final ReferenceSystemInterface refSystem) {
+    public void setRefSystem(final CoordinateReferenceFrame refSystem) {
         this.refSystem = refSystem;
     }
 

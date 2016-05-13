@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 malapert
+ * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public class GalacticToEquatorialFK4_NO_ETest extends ConverterTest {
     
     public GalacticToEquatorialFK4_NO_ETest() throws JWcsException {
         super();
-        ReferenceSystemInterface fk4 = new FK4_NO_E();
+        CoordinateReferenceFrame fk4 = new FK4_NO_E();
         this.source = new Galactic();
         this.target = new Equatorial(fk4);        
         

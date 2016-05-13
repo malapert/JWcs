@@ -32,11 +32,11 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class Galactic extends SkySystem {
+public class Galactic extends Crs {
     /**
      * Name of this coordinate system.
      */
-    private final static SkySystems SKY_NAME = SkySystems.GALACTIC;
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;
     
     /**
      * Default value for equinox.
@@ -56,11 +56,11 @@ public class Galactic extends SkySystem {
     }        
     
     @Override
-    protected RealMatrix getRotationMatrix(final SkySystem refFrame) {
+    protected RealMatrix getRotationMatrix(final Crs refFrame) {
         RealMatrix m;
         if (refFrame instanceof Equatorial) {
             RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose(); 
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Equatorial)refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Equatorial)refFrame).getReferenceSystemType(), Double.NaN);
             m = m2.multiply(m1);
         } else if (refFrame instanceof Galactic) {
             m = MatrixUtils.createRealIdentityMatrix(3);
@@ -68,17 +68,17 @@ public class Galactic extends SkySystem {
             m = Utility.MatrixGal2Sgal();
         } else if (refFrame instanceof Ecliptic) {
             RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), ReferenceSystemInterface.Type.FK4, ((Ecliptic)refFrame).getReferenceSystemType(), null);
+            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Ecliptic)refFrame).getReferenceSystemType(), Double.NaN);
             RealMatrix m3 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic)refFrame).getReferenceSystemType());
             m = m3.multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getSkySystemName()));
+            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getCoordinateSystem()));
         }
         return m;
     }
 
     @Override
-    public SkySystems getSkySystemName() {
+    public CoordinateSystem getCoordinateSystem() {
         return SKY_NAME;
     }
 

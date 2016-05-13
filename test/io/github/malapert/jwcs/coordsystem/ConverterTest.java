@@ -32,8 +32,8 @@ import org.junit.Test;
 @Ignore
 public class ConverterTest {
 
-    protected SkySystem source;
-    protected SkySystem target;
+    protected Crs source;
+    protected Crs target;
     protected double minLat;
     protected double maxLat;
     protected double tolerance;
@@ -46,11 +46,11 @@ public class ConverterTest {
         this.tolerance = TOLERANCE;
     }
 
-    public ConverterTest(SkySystem source, SkySystem target) throws JWcsException {
+    public ConverterTest(Crs source, Crs target) throws JWcsException {
         this(source, target, TOLERANCE);
     }
 
-    public ConverterTest(SkySystem source, SkySystem target, double tolerance) throws JWcsException {
+    public ConverterTest(Crs source, Crs target, double tolerance) throws JWcsException {
         this.source = source;
         this.target = target;
         this.tolerance = tolerance;

@@ -28,11 +28,11 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class FK5 implements ReferenceSystemInterface {    
+public class FK5 implements CoordinateReferenceFrame {    
     /**
      * The name of this reference frame.
      */    
-    private final static ReferenceSystemInterface.Type REF_SYSTEM = ReferenceSystemInterface.Type.FK5;
+    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK5;
     
     /**
      * The default value of the equinox;
@@ -68,17 +68,24 @@ public class FK5 implements ReferenceSystemInterface {
     }
 
     @Override
+    /**
+     * Returns the equinox as a Julian epoch.
+     */
     public double getEquinox() {
         return this.equinox;
     }
 
     @Override
-    public Double getEpochObs() {
-        return null;
-    }
+    /**
+     * Returns Double.NaN.
+     * No need to specify an epoch of observation in FK5 reference frame
+     */
+    public double getEpochObs() {
+        return Double.NaN;
+    }    
 
     @Override
-    public Type getReferenceSystemType() {
+    public ReferenceFrame getReferenceSystemType() {
         return REF_SYSTEM;
     }
 
@@ -86,9 +93,34 @@ public class FK5 implements ReferenceSystemInterface {
      * Sets the equinox.
      * @param equinox the equinox to set
      */
+    @Override
     public void setEquinox(final String equinox) {
         this.equinox = epochs(equinox)[1];
     }
+    
+    @Override
+    /**
+     * Sets the equinox as a Julian epoch.
+     */
+    public void setEquinox(final double equinox) {
+        this.equinox = equinox;
+    }      
+    
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation in FK5 reference frame
+     */
+    public void setEpochObs(final String epochObs) {       
+    }
+
+    @Override
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation in FK5 reference frame
+     */    
+    public void setEpochObs(double epochObs) {
+    }  
 
     @Override
     public String toString() {
