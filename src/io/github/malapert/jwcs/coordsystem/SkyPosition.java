@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame;
 import io.github.malapert.jwcs.coordsystem.Crs.CoordinateSystem;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
@@ -23,7 +24,7 @@ import io.github.malapert.jwcs.utility.HMS;
 /**
  * Represents a position in the sky.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class SkyPosition {
     
@@ -46,23 +47,23 @@ public class SkyPosition {
     private double latitude;
     /**
      * Crs of the position.
-     * @see #getRefFrame() 
+     * @see #getCrs() 
      */
-    private Crs refFrame;
+    private Crs crs;
 
     /**
      * Creates a position in the sky.
      * <p>
-     * The position can be created in different kind of sky system.
+     * The position can be created in different kind of CRS.
      * </p>
      * @param longitude longitude in decimal degrees of the position
      * @param latitude latitude in decimal degrees of the position
-     * @param refFrame sky system of the position
+     * @param crs CRS in which the position is stored
      */
-    public SkyPosition(double longitude, double latitude, final Crs refFrame) {
+    public SkyPosition(double longitude, double latitude, final Crs crs) {
         this.longitude = longitude%360;
         this.latitude = latitude;
-        this.refFrame = refFrame;
+        this.crs = crs;
     } 
 
     /**
@@ -125,18 +126,18 @@ public class SkyPosition {
 
     /**
      * Returns the sky system.
-     * @return the refFrame
+     * @return the crs
      */
-    public Crs getRefFrame() {
-        return refFrame;
+    public Crs getCrs() {
+        return crs;
     }
 
     /**
      * Sets the sky system.
-     * @param refFrame the refFrame to set
+     * @param crs the crs to set
      */
-    public void setRefFrame(final Crs refFrame) {
-        this.refFrame = refFrame;
+    public void setCrs(final Crs crs) {
+        this.crs = crs;
     }
 
     /**
@@ -148,20 +149,7 @@ public class SkyPosition {
     }
       
     @Override
-    public String toString() {
-        String referenceSystem;
-        CoordinateSystem skySystemName = getRefFrame().getCoordinateSystem();
-        switch (skySystemName) {
-            case EQUATORIAL:
-                referenceSystem = ((Equatorial) getRefFrame()).getReferenceSystemType().name();
-                break;
-            case ECLIPTIC:
-                referenceSystem = ((Ecliptic) getRefFrame()).getReferenceSystemType().name();
-                break;
-            default:
-                referenceSystem = "No reference";
-        }
-
-        return "SkyPosition : (" + getLongitude() + "," + getLatitude() + ") or (" + getLongitudeAsSexagesimal() + "," + getLatitudeAsSexagesimal() + ") in " + skySystemName.name() + " system with " + referenceSystem + " system";
+    public String toString() {        
+        return "SkyPosition : (" + getLongitude() + "," + getLatitude() + ") or (" + getLongitudeAsSexagesimal() + "," + getLatitudeAsSexagesimal() + ") in " + getCrs();
     }  
 }

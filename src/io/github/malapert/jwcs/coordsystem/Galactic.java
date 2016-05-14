@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import org.apache.commons.math3.linear.MatrixUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -30,49 +30,40 @@ import org.apache.commons.math3.linear.RealMatrix;
  * toward the north and toward the east in the fundamental plane.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class Galactic extends Crs {
     /**
      * Name of this coordinate system.
      */
-    private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;       
     
     /**
-     * Default value for equinox.
-     */
-    private final static double DEFAULT_EQUINOX = 2000.0d;
-    
-    /**
-     * The equinox.
-     */
-    private final double equinox;
-    
-    /**
-     * Creates a Galactic coordinate system.
-     */
-    public Galactic() {
-        this.equinox = DEFAULT_EQUINOX;
-    }        
-    
+     * Computes the rotation matrix from a reference frame to another one.
+     *
+     * @param crs the output coordinate Reference System
+     * @return the rotation matrix in the output coordinate Reference System
+     * @throws JWcsError Unknown output crs
+     */    
     @Override
-    protected RealMatrix getRotationMatrix(final Crs refFrame) {
+    protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
         RealMatrix m;
-        if (refFrame instanceof Equatorial) {
-            RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose(); 
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Equatorial)refFrame).getReferenceSystemType(), Double.NaN);
+        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
+        if (crs instanceof Equatorial) {
+            RealMatrix m1 = MatrixEqB19502Gal().transpose(); 
+            RealMatrix m2 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
             m = m2.multiply(m1);
-        } else if (refFrame instanceof Galactic) {
-            m = MatrixUtils.createRealIdentityMatrix(3);
-        } else if (refFrame instanceof SuperGalactic) {
-            m = Utility.MatrixGal2Sgal();
-        } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m2 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Ecliptic)refFrame).getReferenceSystemType(), Double.NaN);
-            RealMatrix m3 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic)refFrame).getReferenceSystemType());
+        } else if (crs instanceof Galactic) {
+            m = createRealIdentityMatrix(3);
+        } else if (crs instanceof SuperGalactic) {
+            m = MatrixGal2Sgal();
+        } else if (crs instanceof Ecliptic) {
+            RealMatrix m1 = MatrixEqB19502Gal().transpose();
+            RealMatrix m2 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            RealMatrix m3 = MatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
             m = m3.multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getCoordinateSystem()));
+            throw new JWcsError(String.format("Unknown output sky system: %s", crs.getCoordinateSystem()));
         }
         return m;
     }
@@ -83,13 +74,13 @@ public class Galactic extends Crs {
     }
 
     @Override
-    protected double getEquinox() {
-        return this.equinox;
-    }
-
-    @Override
     public String toString() {
         return SKY_NAME.name();
     }
-        
+
+    @Override
+    public CoordinateReferenceFrame getCoordinateReferenceFrame() {
+        return null;
+    }
+       
 }

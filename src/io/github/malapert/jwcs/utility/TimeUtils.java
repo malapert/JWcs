@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.utility;
 
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -213,23 +214,26 @@ public abstract class TimeUtils {
      * @param epoch Epoch
      * @return Returns in order **Besselian epoch**, **Julian epoch** and
      * **Julian date**.
+     * @throws JWcsError Epochs should start by \"J\", \"B\" or date format    
+     * @throws JWcsError No prefix or cannot convert epoch to a number
+     * @throws JWcsError Unknown prefix for epoch
      */
     public static double[] epochs(final String epoch) {
         double b, j, jd, mjd, rjd;
         String spec = epoch;
-        int i = spec.indexOf("_");
+        int i = spec.indexOf('_');
         if (i != -1) {
             spec = spec.substring(0, i);
         }
         
         String[] valTmp1 = spec.split("(\\d.*)");  
         if (valTmp1.length == 0) {
-            throw new IllegalArgumentException("Epochs should start by \"J\", \"B\" or date format");
+            throw new JWcsError("Epochs should start by \"J\", \"B\" or date format");
         }
         String valTmp2 = spec.replace(valTmp1[0],"");
         String[] val = new String[]{valTmp1[0], valTmp2};
         if (val.length != 2) {
-            throw new IllegalArgumentException("No prefix or cannot convert epoch to a number");
+            throw new JWcsError("No prefix or cannot convert epoch to a number");
         }
         String prefix = val[0].toUpperCase();
         switch (prefix) {
@@ -275,7 +279,7 @@ public abstract class TimeUtils {
                 j = JD2epochJulian(jd);                
                 break;
             default:
-                throw new IllegalArgumentException("Unknown prefix for epoch : " + prefix);
+                throw new JWcsError("Unknown prefix for epoch : " + prefix);
         }
         return new double[]{b, j, jd};
     }
@@ -321,6 +325,13 @@ public abstract class TimeUtils {
         return new Object[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Double.parseDouble(parts[2])+time/86400.0d};
     }
     
+    /**
+     * Computes the Julian day based on a date
+     * @param year year
+     * @param month month
+     * @param dayNumber day number
+     * @return the Julian day
+     */
     public final static double jd(int year, int month, double dayNumber) {
         int y = 0,m = 0,A,B;
         double jd;

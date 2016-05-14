@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class SuperGalacticToEclipticFK4_NO_ETest extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public SuperGalacticToEclipticFK4_NO_ETest() throws JWcsException {
         super();
         CoordinateReferenceFrame fk4 = new FK4_NO_E();

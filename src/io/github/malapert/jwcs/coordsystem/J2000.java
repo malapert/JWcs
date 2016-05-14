@@ -19,8 +19,15 @@ package io.github.malapert.jwcs.coordsystem;
 import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
 
 /**
- *
- * @author malapert
+ * This is an equatorial coordinate system based on 
+ * the mean dynamical equator and equinox at epoch J2000.
+ * The dynamical equator and equinox differ slightly 
+ * compared to the equator and equinox of FK5 at J2000 and 
+ * the ICRS system. This system need not be qualified 
+ * by an Equinox value.
+ *         
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
+ * @version 2.0
  */
 public class J2000 implements CoordinateReferenceFrame {
 
@@ -30,8 +37,8 @@ public class J2000 implements CoordinateReferenceFrame {
     private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.J2000;
 
     /**
-     * The default value of the equinox.
-     */
+     * The default value of the equinox sets to J2000.
+     */ 
     private final static String DEFAULT_EPOCH = "J2000";
 
     /**
@@ -40,14 +47,14 @@ public class J2000 implements CoordinateReferenceFrame {
     private double equinox;
 
     /**
-     * Creates J2000 frame.
+     * Creates J2000 frame based on {@link J2000#DEFAULT_EPOCH}.
      */
     public J2000() {
         init(DEFAULT_EPOCH);
     }
 
     /**
-     * initialization.
+     * Initialization.
      *
      * @param epoch the epoch of equinox
      */
@@ -56,58 +63,57 @@ public class J2000 implements CoordinateReferenceFrame {
     }
 
     @Override
-    public ReferenceFrame getReferenceSystemType() {
+    public ReferenceFrame getReferenceFrame() {
         return REF_SYSTEM;
     }
 
-    @Override
     /**
      * Returns Double.NaN.
      * 
      * No need to specify an epoch of observation in J2000 reference frame
-     */
+     */    
+    @Override
     public double getEpochObs() {
         return Double.NaN;
     }
 
-    @Override
     /**
      * Returns the equinox as a Julian epoch.
-     */
+     */    
+    @Override
     public double getEquinox() {
         return this.equinox;
     }
     
-
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of equinox
-     */    
+     */ 
+    @Override   
     public void setEquinox(String equinox) {        
     }    
     
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of equinox
-     */
+     */    
+    @Override
     public void setEquinox(final double equinox) {
     }      
     
-    @Override
-    /**
-     * Do nothing.
-     * No need to specify the epoch of observation
-     */
-    public void setEpochObs(final String epochObs) {       
-    }
-
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of observation
      */    
+    @Override
+    public void setEpochObs(final String epochObs) {       
+    }
+
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation
+     */     
+    @Override   
     public void setEpochObs(final double epochObs) {
     }     
 

@@ -26,7 +26,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * qualified by both an Equinox and an Epoch value.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class FK4_NO_E implements CoordinateReferenceFrame {
 
@@ -36,7 +36,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E;
     
     /**
-     * The default value of the epoch.
+     * The default value of the epoch sets to B1950.
      */      
     private final static String DEFAULT_EPOCH = "B1950";    
     
@@ -51,8 +51,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     private double epochObs;
     
     /**
-     * Creates a FK4 reference frame with default values of both epoch
-     * and epoch of observation.
+     * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4_NO_E#DEFAULT_EPOCH}
      */
     public FK4_NO_E() {
         init(DEFAULT_EPOCH, null);
@@ -60,7 +59,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     
     /**
      * Creates a FK4_NO_E reference frame with a equinox.
-     * @param epoch the epoch
+     * @param epoch the epoch of equinox
      */    
     public FK4_NO_E(final String epoch) {       
         init(epoch, null);
@@ -76,7 +75,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     }
     
     /**
-     * initialization.
+     * Initialization.
      * @param epoch the epoch
      * @param epochObs the epoch of observation
      */
@@ -86,7 +85,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     }
     
     @Override
-    public ReferenceFrame getReferenceSystemType() {
+    public ReferenceFrame getReferenceFrame() {
         return REF_SYSTEM;
     }
 
@@ -116,7 +115,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     }        
 
     /**
-     * Sets the epoch.
+     * Sets the epoch of observation.
      * @param epochObs the epochObs to set
      */
     @Override
@@ -151,6 +150,5 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
             result = "FK4_NO_E(B"+this.equinox+",B"+this.epochObs+")";
         }
         return result;
-    }
-        
+    }        
 }

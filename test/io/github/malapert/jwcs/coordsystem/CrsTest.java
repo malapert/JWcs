@@ -18,21 +18,25 @@ package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.JWcsFits;
+import static io.github.malapert.jwcs.coordsystem.Crs.MatrixEpoch12Epoch2;
+import static io.github.malapert.jwcs.coordsystem.Crs.MatrixEqB19502Gal;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
+import io.github.malapert.jwcs.utility.NumericalUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
-import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  *
@@ -42,25 +46,43 @@ public class CrsTest {
 
     private final static double EPSILON_SINGLE = 1e-12;
 
+    /**
+     *
+     */
     public CrsTest() {
     }
 
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
 
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
 
+    /**
+     *
+     */
     @Test
     public void separation() {
         System.out.println("separation");
@@ -75,6 +97,9 @@ public class CrsTest {
         assertEquals(expectedSeparation, separation, 1e-8);
     }
 
+    /**
+     *
+     */
     @Test
     public void testConvertFK4B1950ToFK5J2000() {
         System.out.println("convert FK4 B1950 to FK5 J2000");
@@ -89,6 +114,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, pos.getLatitude(), 0.000001);
     }
 
+    /**
+     *
+     */
     @Test
     public void testConvertInverseFK4B1950ToFK5J2000() {
         System.out.println("convert FK4 B1950 to FK5 J2000 and inverse");
@@ -104,6 +132,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, pos.getLatitude(), 0.0001);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -120,6 +151,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, posInGal.getLatitude(), 1e-8);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -137,6 +171,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, posInGal.getLatitude(), EPSILON_SINGLE);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -161,6 +198,9 @@ public class CrsTest {
         assertEquals(expectedLatitude2, posInGalArray[1].getLatitude(), EPSILON_SINGLE);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -178,6 +218,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, posInFk5.getLatitude(), 1e-10);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -196,6 +239,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, posInFk5.getLatitude(), EPSILON_SINGLE);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -216,6 +262,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, posInFk5J1975.getLatitude(), 0.00002);
     }
 
+    /**
+     *
+     */
     @Test
     /**
      * Test based on http://docs.astropy.org/en/stable/coordinates/
@@ -253,6 +302,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), 0.000001);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIcrsToFK5Inverse() {
         System.out.println("convert ICRS To FK5 and Inverse");
@@ -267,6 +319,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), EPSILON_SINGLE);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIcrsToFK4() {
         System.out.println("convert ICRS To FK4");
@@ -280,6 +335,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), 0.0001);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIcrsToFK4Inverse() {
         System.out.println("convert ICRS To FK4 and inverse");
@@ -294,6 +352,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), 0.0001);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIcrsToGalactic() {
         System.out.println("convert ICRS To Galactic");
@@ -307,6 +368,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), 0.00001);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIcrsToGalacticInverse() {
         System.out.println("convert ICRS To Galactic and inverse");
@@ -321,6 +385,9 @@ public class CrsTest {
         assertEquals(expectedLatitude, position.getLatitude(), EPSILON_SINGLE);
     }
 
+    /**
+     *
+     */
     @Test
     public void testConvertDegreeToHexa() {
         System.out.println("convert Degrees to hms/dms");
@@ -329,6 +396,9 @@ public class CrsTest {
         assertEquals("+39:24:04.20", pos.getLatitudeAsSexagesimal());
     }
 
+    /**
+     *
+     */
     @Test
     public void testICRS2GAL() {
         System.out.println("ICRS <--> GAL");
@@ -347,6 +417,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testICRS2SUPERGAL() {
         System.out.println("ICRS <--> SUPERGAL");
@@ -365,6 +438,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGAL2SUPERGAL() {
         System.out.println("GAL <--> SUPERGAL");
@@ -383,6 +459,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testICRS2FK5() {
         System.out.println("ICRS <--> FK5");
@@ -401,6 +480,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testFK5J20002FK5J1950() {
         System.out.println("FK5(J2000) <--> FK5(1950)");
@@ -419,6 +501,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testFK5J20002FK4() {
         System.out.println("FK5(J2000) <--> FK4");
@@ -437,6 +522,9 @@ public class CrsTest {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testCurrentSkySystemToGalacticFromFITS() {
         System.out.println("From Fits <--> Gal");
@@ -465,6 +553,9 @@ public class CrsTest {
 
     }
     
+    /**
+     *
+     */
     @Test
     public void testSkyMatrixFK4toFK5() {
         CoordinateReferenceFrame fk4 = new FK4();
@@ -481,6 +572,9 @@ public class CrsTest {
         assertEquals(null, etermsOut);        
     }
     
+    /**
+     *
+     */
     @Test
     public void testSkyMatrixFK4NOEB1950toFK4B1950() {
         CoordinateReferenceFrame fk4 = new FK4("B1950");
@@ -497,6 +591,9 @@ public class CrsTest {
         assertEquals(null, etermsIn);        
     }    
     
+    /**
+     *
+     */
     @Test
     public void testSkyMatrixFK4B1950J1983_5toFK52000() {
         CoordinateReferenceFrame fk4 = new FK4("B1950", "J1983.5");
@@ -511,5 +608,38 @@ public class CrsTest {
         assertArrayEquals(new double[]{4.85829648e-03,  -2.71721706e-05,   9.99988198e-01}, rotationMatrix.getRow(2), 1e-9);
         assertArrayEquals(new double[]{-1.6255503575995309e-06,-3.1918587795578522e-07,-1.3842701121066153e-07}, etermsIn.getRow(0),1e-20);
         assertEquals(null, etermsOut);        
-    }       
+    } 
+    
+    /**
+     * Test of MatrixEqB19502Gal method, of class Utility.
+     */
+    @Test
+    public void testMatrixEqB19502Gal() {
+        System.out.println("MatrixEqB19502Gal");
+        RealMatrix result1 = MatrixEqB19502Gal();
+        RealMatrix result2 = MatrixEqB19502Gal().transpose();
+        RealMatrix result = result1.multiply(result2);
+        RealMatrix expResult = createRealIdentityMatrix(3);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
+    }
+
+    /**
+     * Test of MatrixEpoch12Epoch2 method, of class Utility.
+     */
+    @Test
+    public void testMatrixEpoch12Epoch2() {
+        System.out.println("MatrixEpoch12Epoch2");
+        double epoch1 = 1940d;
+        double epoch2 = 1960d;
+        CoordinateReferenceFrame.ReferenceFrame s1 = CoordinateReferenceFrame.ReferenceFrame.FK4;
+        CoordinateReferenceFrame.ReferenceFrame s2 = CoordinateReferenceFrame.ReferenceFrame.FK5;
+        Double epobs = 1950d;
+        RealMatrix result = MatrixEpoch12Epoch2(epoch1, epoch2, s1, s2, epobs);
+        assertArrayEquals(new double[]{9.99988107e-01,  -4.47301372e-03,  -1.94362889e-03}, result.getRow(0), 1e-9);
+        assertArrayEquals(new double[]{4.47301372e-03,   9.99989996e-01,  -4.34712255e-06}, result.getRow(1), 1e-9);
+        assertArrayEquals(new double[]{1.94362889e-03,  -4.34680782e-06,   9.99998111e-01}, result.getRow(2), 1e-9);
+    }    
+    
 }

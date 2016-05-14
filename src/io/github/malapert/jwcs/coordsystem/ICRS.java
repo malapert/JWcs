@@ -36,7 +36,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * the polar axis).
  *         
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class ICRS implements CoordinateReferenceFrame {
   
@@ -46,7 +46,7 @@ public class ICRS implements CoordinateReferenceFrame {
     private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.ICRS;
 
     /**
-     * The default value of the epoch.
+     * The default value of the epoch sets to J2000.
      */
     private final static String DEFAULT_EPOCH = "J2000";
     
@@ -56,72 +56,71 @@ public class ICRS implements CoordinateReferenceFrame {
     private double equinox;
 
     /**
-     * Creates a new ICRS reference frame.
+     * Creates a new ICRS reference frame based on {@link ICRS#DEFAULT_EPOCH}.
      */
     public ICRS() {
         init(DEFAULT_EPOCH);
     }
 
     /**
-     * initialization.
-     * @param equinox the equinox
+     * Initialization.
+     * @param equinox the epoch of equinox
      */
     private void init(String equinox) {
         this.equinox = epochs(equinox)[1];
     }
 
     @Override
-    public CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType() {
+    public CoordinateReferenceFrame.ReferenceFrame getReferenceFrame() {
         return REF_SYSTEM;
     }
 
-    @Override
     /**
      * Returns Double.NaN
      * No need to specify an epoch of observation in ICRS reference frame
-     */
+     */    
+    @Override
     public double getEpochObs() {
         return Double.NaN;
     }
 
-    @Override
     /**
      * Returns the equinox as a Julian epoch.
-     */
+     */    
+    @Override
     public double getEquinox() {
         return this.equinox;
     }
     
-
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of equinox
-     */    
+     */ 
+    @Override   
     public void setEquinox(final String equinox) {        
     }    
     
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of equinox
-     */
+     */    
+    @Override
     public void setEquinox(final double equinox) {
     }      
     
-    @Override
-    /**
-     * Do nothing.
-     * No need to specify the epoch of observation in FK5 reference frame
-     */
-    public void setEpochObs(final String epochObs) {       
-    }
-
-    @Override
     /**
      * Do nothing.
      * No need to specify the epoch of observation in FK5 reference frame
      */    
+    @Override
+    public void setEpochObs(final String epochObs) {       
+    }
+
+    /**
+     * Do nothing.
+     * No need to specify the epoch of observation in FK5 reference frame
+     */    
+    @Override    
     public void setEpochObs(final double epochObs) {
     }     
 

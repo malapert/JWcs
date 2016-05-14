@@ -32,36 +32,77 @@ import org.junit.Test;
 @Ignore
 public class ConverterTest {
 
+    /**
+     *
+     */
     protected Crs source;
+
+    /**
+     *
+     */
     protected Crs target;
+
+    /**
+     *
+     */
     protected double minLat;
+
+    /**
+     *
+     */
     protected double maxLat;
+
+    /**
+     *
+     */
     protected double tolerance;
 
     private static final double TOLERANCE = 1.0e-7;
     static final Logger LOG = Logger.getLogger("");
 
+    /**
+     *
+     */
     public ConverterTest() {
         LOG.setLevel(Level.OFF);
         this.tolerance = TOLERANCE;
     }
 
+    /**
+     *
+     * @param source
+     * @param target
+     * @throws JWcsException
+     */
     public ConverterTest(Crs source, Crs target) throws JWcsException {
         this(source, target, TOLERANCE);
     }
 
+    /**
+     *
+     * @param source
+     * @param target
+     * @param tolerance
+     * @throws JWcsException
+     */
     public ConverterTest(Crs source, Crs target, double tolerance) throws JWcsException {
         this.source = source;
         this.target = target;
         this.tolerance = tolerance;
     }
 
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
         System.out.println();
         System.out.println("--------------------------");
     }
 
+    /**
+     *
+     */
     @Test
     public void testConvertUnconvert() {
         System.out.println("Convert & unconvert on the whole sphere");

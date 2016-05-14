@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import org.apache.commons.math3.linear.MatrixUtils;
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 
@@ -44,32 +44,29 @@ public class SuperGalactic extends Crs {
     /**
      * Name of this coordinate system.
      */
-    private static final CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;
-    /**
-     * Value of the epoch of the equinox.
-     */
-    private static final double EQUINOX = 2000.0d;
+    private static final CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;           
     
     @Override
-    protected RealMatrix getRotationMatrix(final Crs refFrame) {
+    protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
         RealMatrix m;
-        if (refFrame instanceof Equatorial) {
-            RealMatrix m1 = Utility.MatrixGal2Sgal().transpose(); 
-            RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Equatorial) refFrame).getReferenceSystemType(), Double.NaN);
+        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
+        if (crs instanceof Equatorial) {
+            RealMatrix m1 = MatrixGal2Sgal().transpose(); 
+            RealMatrix m2 = MatrixEqB19502Gal().transpose();
+            RealMatrix m3 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
             m = m3.multiply(m2).multiply(m1);
-        } else if (refFrame instanceof Galactic) {
-            m = Utility.MatrixGal2Sgal().transpose();       
-        } else if (refFrame instanceof SuperGalactic) {
-            m = MatrixUtils.createRealIdentityMatrix(3);
-        } else if (refFrame instanceof Ecliptic) {
-            RealMatrix m1 = Utility.MatrixGal2Sgal().transpose();
-            RealMatrix m2 = Utility.MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = Utility.MatrixEpoch12Epoch2(1950.0d, refFrame.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, ((Ecliptic) refFrame).getReferenceSystemType(), Double.NaN);
-            RealMatrix m4 = Utility.MatrixEq2Ecl(refFrame.getEquinox(), ((Ecliptic) refFrame).getReferenceSystemType());
+        } else if (crs instanceof Galactic) {
+            m = MatrixGal2Sgal().transpose();       
+        } else if (crs instanceof SuperGalactic) {
+            m = createRealIdentityMatrix(3);
+        } else if (crs instanceof Ecliptic) {
+            RealMatrix m1 = MatrixGal2Sgal().transpose();
+            RealMatrix m2 = MatrixEqB19502Gal().transpose();
+            RealMatrix m3 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            RealMatrix m4 = MatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError(String.format("Unknown output sky system: %s", refFrame.getCoordinateSystem()));
+            throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
         }
         return m;  
     }
@@ -80,13 +77,13 @@ public class SuperGalactic extends Crs {
     }
 
     @Override
-    protected double getEquinox() {
-        return EQUINOX;
+    public String toString() {
+        return SKY_NAME.name();
     }
 
     @Override
-    public String toString() {
-        return SKY_NAME.name();
+    public CoordinateReferenceFrame getCoordinateReferenceFrame() {
+        return null;
     }
         
 }

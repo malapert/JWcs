@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class GalacticToEclipticTest extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public GalacticToEclipticTest() throws JWcsException {
         super();
         this.source = new Galactic();

@@ -17,16 +17,14 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.utility.NumericalUtils;
-import io.github.malapert.jwcs.utility.TimeUtils;
-import static io.github.malapert.jwcs.utility.TimeUtils.jd;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  *
@@ -34,86 +32,41 @@ import static org.junit.Assert.*;
  */
 public class UtilityTest {
     
+    /**
+     *
+     */
     public UtilityTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
 
 
-    /**
-     * Test of julianMatrixEpoch12Epoch2 method, of class Utility.
-     */
-    @Test
-    public void testJulianMatrixEpoch12Epoch2() {
-        System.out.println("julianMatrixEpoch12Epoch2");
-        double jEpoch1 = 1950.0d;
-        double jEpoch2 = 2000.0d;
-        RealMatrix result1 = Utility.julianMatrixEpoch12Epoch2(jEpoch1, jEpoch2);
-        RealMatrix result2 = Utility.julianMatrixEpoch12Epoch2(jEpoch2, jEpoch1);
-        RealMatrix result = result1.multiply(result2);
-        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
-    }
-
-    /**
-     * Test of lieskeprecangles method, of class Utility.
-     */
-    @Test
-    public void testLieskeprecangles() {
-        System.out.println("lieskeprecangles");
-        double jd1 = jd(1984,1,1);
-        double jd2 = jd(2000,1,1.5);
-        double[] expResult = new double[]{0.10249958598931658, 0.10250522534285664, 0.089091092843880629};
-        double[] result = Utility.lieskeprecangles(jd1, jd2);
-        assertArrayEquals(expResult, result, 1e-9);
-    }
-
-    /**
-     * Test of newcombPrecAngles method, of class Utility.
-     */
-    @Test
-    public void testNewcombPrecAngles() {
-        System.out.println("newcombPrecAngles");
-        double epoch1 = 1950.0;        
-        double epoch2 = TimeUtils.epochs("F1984-01-01")[0];
-        double[] expResult = new double[]{783.70924627097793, 783.80093464073127, 681.38829828393466};
-        double[] result = Utility.newcombPrecAngles(epoch1, epoch2);
-        result[0]*=3600;
-        result[1]*=3600;
-        result[2]*=3600;
-        assertArrayEquals(expResult, result, NumericalUtils.DOUBLE_TOLERANCE);
-    }
-
-    /**
-     * Test of FK52FK4Matrix method, of class Utility.
-     */
-    @Test
-    public void testFK52FK4Matrix() {
-        System.out.println("FK52FK4Matrix");        
-        RealMatrix resultTest1 = Utility.FK42FK5Matrix(Double.NaN);
-        RealMatrix resultTest2 = Utility.FK52FK4Matrix(Double.NaN);
-        RealMatrix result = resultTest1.multiply(resultTest2);
-        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
-    }
 
     /**
      * Test of longlat2xyz method, of class Utility.
@@ -139,43 +92,11 @@ public class UtilityTest {
             {3.191858779557839E-7},
             {-0.9999998615729888}               
         };        
-        RealMatrix xyz = MatrixUtils.createRealMatrix(array);
+        RealMatrix xyz = createRealMatrix(array);
         double[] expResult = xyz.getColumn(0);
         double[] result = Utility.xyz2longlat(xyz);
         RealMatrix lonlat = Utility.longlat2xyz(result[0], result[1]);
         assertArrayEquals(expResult, lonlat.getColumn(0), 1e-6);
-    }
-
-    /**
-     * Test of MatrixEqB19502Gal method, of class Utility.
-     */
-    @Test
-    public void testMatrixEqB19502Gal() {
-        System.out.println("MatrixEqB19502Gal");
-        RealMatrix result1 = Utility.MatrixEqB19502Gal();
-        RealMatrix result2 = Utility.MatrixEqB19502Gal().transpose();
-        RealMatrix result = result1.multiply(result2);
-        RealMatrix expResult = MatrixUtils.createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
-    }
-
-    /**
-     * Test of MatrixEpoch12Epoch2 method, of class Utility.
-     */
-    @Test
-    public void testMatrixEpoch12Epoch2() {
-        System.out.println("MatrixEpoch12Epoch2");
-        double epoch1 = 1940d;
-        double epoch2 = 1960d;
-        CoordinateReferenceFrame.ReferenceFrame s1 = CoordinateReferenceFrame.ReferenceFrame.FK4;
-        CoordinateReferenceFrame.ReferenceFrame s2 = CoordinateReferenceFrame.ReferenceFrame.FK5;
-        Double epobs = 1950d;
-        RealMatrix result = Utility.MatrixEpoch12Epoch2(epoch1, epoch2, s1, s2, epobs);
-        assertArrayEquals(new double[]{9.99988107e-01,  -4.47301372e-03,  -1.94362889e-03}, result.getRow(0), 1e-9);
-        assertArrayEquals(new double[]{4.47301372e-03,   9.99989996e-01,  -4.34712255e-06}, result.getRow(1), 1e-9);
-        assertArrayEquals(new double[]{1.94362889e-03,  -4.34680782e-06,   9.99998111e-01}, result.getRow(2), 1e-9);
     }
     
 }

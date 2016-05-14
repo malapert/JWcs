@@ -35,6 +35,7 @@ import java.awt.BorderLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 
 /**
  *
@@ -516,14 +517,19 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         setEnableReferenceFrame(skySystem.hasReferenceFrame(), isOrigin);
     }
 
+    /**
+     * Main method
+     * @param args arguments
+     */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> {
             createWindow();
         });
     }
 
+    /**
+     */
     public static void createWindow() {
-
         // create a new window
         ConvertSelectionPanel panel = new ConvertSelectionPanel();
         JFrame mapWindow = new JFrame("JWcs Converter");
@@ -631,7 +637,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                 result = new J2000();
                 break;
             default:
-                throw new IllegalArgumentException("Reference frame " + type + " is not supported");
+                throw new JWcsError("Reference frame " + type + " is not supported");
         }
         return result;
     }
@@ -652,7 +658,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                 result = new SuperGalactic();
                 break;
             default:
-                throw new IllegalArgumentException("SkySystem " + name + " is not supported");
+                throw new JWcsError("coordinate system " + name + " is not supported");
         }
         return result;
     }

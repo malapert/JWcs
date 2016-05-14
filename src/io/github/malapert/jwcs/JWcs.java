@@ -62,12 +62,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
 import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtils.inverse;
+import org.apache.commons.math3.linear.RealMatrix;
+
 
 /**
- * The FITS "World Coordinate System" (WCS) standard deFINERs keywords and usage
+ * The FITS "World Coordinate System" (WCS) standard defines keywords and usage
  * that provide for the description of astronomical coordinate systems in a FITS
  * image header.
  *
@@ -316,7 +318,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         checkWcs();
         setProj(createProjection());
         setCd(createCdMatrix());
-        setCdInverse(MatrixUtils.inverse(getCd()));        
+        setCdInverse(inverse(getCd()));        
     }
 
     /**
@@ -462,13 +464,13 @@ public abstract class JWcs implements JWcsKeyProvider {
                 case "RA":
                     crs = new Equatorial();
                     if (refSystem != null) {
-                        ((Equatorial) crs).setRefSystem(refSystem);
+                        ((Equatorial) crs).setCoordinateReferenceFrame(refSystem);
                     }
                     break;
                 case "DEC":
                     crs = new Equatorial();
                     if (refSystem != null) {
-                        ((Equatorial) crs).setRefSystem(refSystem);
+                        ((Equatorial) crs).setCoordinateReferenceFrame(refSystem);
                     }
                     break;
                 case "GLON":
@@ -480,13 +482,13 @@ public abstract class JWcs implements JWcsKeyProvider {
                 case "ELON":
                     crs = new Ecliptic();
                     if (refSystem != null) {
-                        ((Ecliptic) crs).setRefSystem(refSystem);
+                        ((Ecliptic) crs).setCoordinateReferenceFrame(refSystem);
                     }
                     break;
                 case "ELAT":
                     crs = new Ecliptic();
                     if (refSystem != null) {
-                        ((Ecliptic) crs).setRefSystem(refSystem);
+                        ((Ecliptic) crs).setCoordinateReferenceFrame(refSystem);
                     }
                     break;
                 default:
@@ -620,7 +622,7 @@ public abstract class JWcs implements JWcsKeyProvider {
             double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
             arraycd = computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
         }
-        return MatrixUtils.createRealMatrix(arraycd);
+        return createRealMatrix(arraycd);
     }
 
     @Override
@@ -801,7 +803,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     protected final Projection createProjection() throws BadProjectionParameterException {
         String ctype1 = ctype(1);
-        String codeProjection = ctype1.substring(ctype1.lastIndexOf("-") + 1, ctype1.length());
+        String codeProjection = ctype1.substring(ctype1.lastIndexOf('-') + 1, ctype1.length());
         Projection projection;
         double cx = convertToDegree(cunit(1));
         double cy = convertToDegree(cunit(2));
@@ -975,7 +977,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         double[][] arraypj = {
             {x - crpix(1), y - crpix(2)}
         };
-        RealMatrix pj = MatrixUtils.createRealMatrix(arraypj);
+        RealMatrix pj = createRealMatrix(arraypj);
         RealMatrix pjt = pj.transpose();
         RealMatrix xi = this.getCd().multiply(pjt);
         return this.getProj().projectionPlane2wcs(xi.getEntry(0, 0), xi.getEntry(1, 0));
@@ -983,21 +985,18 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Transforms an array of pixel position in an array of position in the sky.
-     * <p>
-     * Raise an IllegalArgument Exception when the length of <code>pixels</code>
-     * is not a multiple of 2.
-     * </p>
      *
      * @param pixels an array of pixel
      * @return an array of sky position
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * there is a projection error
+     * @throws JWcsError the length of pixels must be a multiple of 2
      */
     @Override
     public double[] pix2wcs(double[] pixels) throws ProjectionException {
         int pixelsLength = pixels.length;
         if (pixelsLength % 2 != 0) {
-            throw new IllegalArgumentException("the length of pixels must be a multiple of 2");
+            throw new JWcsError("the length of pixels must be a multiple of 2");
         }
         double[] skyPositions = new double[pixelsLength];
         for (int i = 0; i < pixelsLength; i = i + 2) {
@@ -1022,19 +1021,17 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Checks validity of longitude and latitude.
-     * <p>
-     * Raise an IllegalArgumentException when the range is not valid.
-     * </p>
      *
      * @param longitude longitude [0, 360]
      * @param latitude latitude [-90, 90]
+     * @throws JWcsError the range is not valid
      */
     private void checkLongitudeLatitude(double longitude, double latitude) {
         if (longitude > MAX_LONGITUDE || longitude < MIN_LONGITUDE) {
-            throw new IllegalArgumentException("Longitude must be [0, 360], found " + longitude);
+            throw new JWcsError("Longitude must be [0, 360], found " + longitude);
         }
         if (latitude > MAX_LATITUDE || latitude < MIN_LATITUDE) {
-            throw new IllegalArgumentException("Latitude must be [-90, 90], found " + latitude);
+            throw new JWcsError("Latitude must be [-90, 90], found " + latitude);
         }
     }
 
@@ -1085,7 +1082,7 @@ public abstract class JWcs implements JWcsKeyProvider {
         double[][] coord = {
             {coordVal[0], coordVal[1]}
         };
-        RealMatrix coordM = MatrixUtils.createRealMatrix(coord);
+        RealMatrix coordM = createRealMatrix(coord);
         RealMatrix matrix = coordM.multiply(getCdInverse());
         return new double[]{matrix.getEntry(0, 0) + crpix(1), matrix.getEntry(0, 1) + crpix(2)};
     }

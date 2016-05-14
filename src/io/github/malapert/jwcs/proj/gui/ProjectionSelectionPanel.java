@@ -686,7 +686,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * Create a window, ask the user for lines to display, import the lines, and
      * display them.
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException Cannot import countries
      */
     public static void createWindow() throws IOException {
         // create a new window
@@ -705,6 +705,10 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         panel.draw();
     }
     
+    /**
+     * Main method.
+     * @param args arguments 
+     */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> {
             try {

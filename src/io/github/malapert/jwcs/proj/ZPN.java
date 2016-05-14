@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
@@ -190,10 +191,12 @@ public final class ZPN extends ZenithalProjection {
 
     /**
      * Checks validity of parameters.
+     * @throws JWcsError Non-standard PVi_1 and/or PVi_2 values
+     * @throws ArrayIndexOutOfBoundsException Need at least 10 projection parameters
      */
     private void check() {
         if ((!NumericalUtils.equal(getPhi0(),0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
-            throw new IllegalArgumentException("Non-standard PVi_1 and/or PVi_2 values");
+            throw new JWcsError("Non-standard PVi_1 and/or PVi_2 values");
         }
         if (this.PV.length < 8) {
             throw new ArrayIndexOutOfBoundsException("Need at least 10 projection parameters");

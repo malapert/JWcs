@@ -36,22 +36,40 @@ import org.junit.Test;
  */
 public class AZPTest extends ProjectionTest {    
     
+    /**
+     *
+     * @throws FitsException
+     * @throws IOException
+     * @throws JWcsException
+     */
     public AZPTest() throws FitsException, IOException, JWcsException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_AZP.fits"))));
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }

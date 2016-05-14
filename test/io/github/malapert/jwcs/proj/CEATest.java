@@ -33,10 +33,20 @@ import org.junit.Test;
  */
 public class CEATest extends ProjectionTest {
 
+    /**
+     *
+     * @throws JWcsException
+     * @throws FitsException
+     * @throws IOException
+     */
     public CEATest() throws JWcsException, FitsException, IOException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CEA.fits"))));
     }  
     
+    /**
+     *
+     * @throws ProjectionException
+     */
     @Test
     public void testProjectCEA() throws ProjectionException {
         System.out.println("project CEA");
@@ -59,6 +69,10 @@ public class CEATest extends ProjectionTest {
         assertArrayEquals(expectedResults[3], result, 1e-13);
     }   
     
+    /**
+     *
+     * @throws ProjectionException
+     */
     @Test
     public void testProjectInverseCEA() throws ProjectionException {
         System.out.println("projectInverse CEA");

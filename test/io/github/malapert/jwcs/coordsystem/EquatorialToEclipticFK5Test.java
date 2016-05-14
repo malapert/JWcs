@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class EquatorialToEclipticFK5Test extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public EquatorialToEclipticFK5Test() throws JWcsException {
         super();
         CoordinateReferenceFrame fk5 = new FK5();

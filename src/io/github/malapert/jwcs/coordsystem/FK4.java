@@ -16,10 +16,9 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
 import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
-import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-
 
 /**
  * Mean place pre-IAU 1976 system.
@@ -27,10 +26,10 @@ import org.apache.commons.math3.linear.RealMatrix;
  * FK4 is the old barycentric (i.e. w.r.t. the common center of mass) equatorial
  * coordinate system, which should be qualified by an Equinox value.
  * For accurate work FK4 coordinate systems should also be qualified
- * by an Epoch value. This is the *epoch of observation*.
+ * by an Epoch value. This is the <b>epoch of observation</b>.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class FK4 implements CoordinateReferenceFrame {
     /**
@@ -39,7 +38,7 @@ public class FK4 implements CoordinateReferenceFrame {
     private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK4;
     
     /**
-     * The default value of the epoch.
+     * The default value of the epoch set to B1950.
      */      
     private final static String DEFAULT_EPOCH = "B1950";   
     
@@ -54,8 +53,7 @@ public class FK4 implements CoordinateReferenceFrame {
     private double epochObs;       
     
     /**
-     * Creates a FK4 reference frame with default values of both epoch
-     * and epoch of observation.
+     * Creates a FK4 reference frame with default value of epoch {@link FK4#DEFAULT_EPOCH}
      */
     public FK4() {
         init(DEFAULT_EPOCH, null);
@@ -125,27 +123,27 @@ public class FK4 implements CoordinateReferenceFrame {
         double[][] array = {
             {ek*Math.sin(p), -ek*cp*Math.cos(ob), -ek*cp*Math.sin(ob)}
         };
-        return MatrixUtils.createRealMatrix(array);       
+        return createRealMatrix(array);       
     } 
 
-    @Override
     /**
      * Returns the Besselian value of the epoch of observation.
-     */
+     */    
+    @Override
     public double getEpochObs() {
         return this.epochObs;
     }
 
-    @Override
     /**
      * Returns the Besselian epoch of the equinox.
-     */
+     */    
+    @Override
     public double getEquinox() {
         return this.equinox;
     }   
 
     @Override
-    public ReferenceFrame getReferenceSystemType() {
+    public ReferenceFrame getReferenceFrame() {
         return REF_SYSTEM;
     }
 
@@ -189,6 +187,5 @@ public class FK4 implements CoordinateReferenceFrame {
     @Override
     public String toString() {
         return "FK4("+this.equinox+","+this.epochObs+")";
-    }
-        
+    }        
 }

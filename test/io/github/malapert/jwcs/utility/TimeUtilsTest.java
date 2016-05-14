@@ -29,21 +29,36 @@ import static org.junit.Assert.*;
  */
 public class TimeUtilsTest {
     
+    /**
+     *
+     */
     public TimeUtilsTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
@@ -101,6 +116,10 @@ public class TimeUtilsTest {
         assertEquals(expResultMJD, result, 1e-6);
     }
     
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void convertAndreverse() throws Exception {
         System.out.println("Convert and reverse");

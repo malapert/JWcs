@@ -18,6 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
@@ -135,10 +136,11 @@ public class SZP extends ZenithalProjection {
     /**
      * Check.
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     * @throws JWcsError Non-standard phi0 or theta0 values
      */
     protected final void check() throws BadProjectionParameterException {
         if ((!NumericalUtils.equal(getPhi0(), 0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
-            throw new IllegalArgumentException("Non-standard phi0 or theta0 values");
+            throw new JWcsError("Non-standard phi0 or theta0 values");
         }
         if (NumericalUtils.equal(this.zp, 0)) {
             throw new BadProjectionParameterException(this,"zp = 0. It must be !=0");

@@ -32,29 +32,61 @@ import org.junit.Test;
 @Ignore
 public class ProjectionTest {
 
+    /**
+     *
+     */
     protected JWcsFits wcs;
+
+    /**
+     *
+     */
     protected double minLat;
+
+    /**
+     *
+     */
     protected double maxLat;
+
+    /**
+     *
+     */
     protected double tolerance;
 
     private static final double TOLERANCE = 1.0e-10;
 
+    /**
+     *
+     * @param wcs
+     * @throws JWcsException
+     */
     public ProjectionTest(JWcsFits wcs) throws JWcsException {
         this(wcs, TOLERANCE);
     }
 
+    /**
+     *
+     * @param wcs
+     * @param tolerance
+     * @throws JWcsException
+     */
     public ProjectionTest(JWcsFits wcs, double tolerance) throws JWcsException {
         this.wcs = wcs;
         this.tolerance = tolerance;
         this.wcs.doInit();
     }
 
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
         System.out.println();
         System.out.println("--------------------------");
     }
 
+    /**
+     *
+     */
     @Test
     public void testProjUnproj() {
         System.out.println("project & inverse project on the whole sphere");

@@ -36,26 +36,48 @@ import org.junit.Test;
  */
 public class SINTest extends ProjectionTest {
     
+    /**
+     *
+     * @throws FitsException
+     * @throws IOException
+     * @throws JWcsException
+     */
     public SINTest() throws FitsException, IOException, JWcsException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SIN.fits"))));
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
     
+    /**
+     *
+     * @throws ProjectionException
+     */
     @Test
     public void testProjectSIN() throws ProjectionException {
         System.out.println("project SIN");
@@ -78,6 +100,10 @@ public class SINTest extends ProjectionTest {
         assertArrayEquals(expectedResults[3], result, 1e-13);
     }   
     
+    /**
+     *
+     * @throws ProjectionException
+     */
     @Test
     public void testProjectInverseSIN() throws ProjectionException {
         System.out.println("projectInverse SIN");

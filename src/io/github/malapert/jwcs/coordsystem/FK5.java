@@ -26,7 +26,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * This should be qualified by an Equinox value (only).
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class FK5 implements CoordinateReferenceFrame {    
     /**
@@ -35,7 +35,7 @@ public class FK5 implements CoordinateReferenceFrame {
     private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK5;
     
     /**
-     * The default value of the equinox;
+     * The default value of the equinox sets to J2000.
      */    
     private final static String DEFAULT_EPOCH = "J2000";
     
@@ -45,7 +45,7 @@ public class FK5 implements CoordinateReferenceFrame {
     private double equinox;
     
     /**
-     * Creates a FK5 reference frame with the DEFAULT_EPOCH value.
+     * Creates a FK5 reference frame with the {@link FK5#DEFAULT_EPOCH} value.
      */
     public FK5(){
         init(DEFAULT_EPOCH);
@@ -53,39 +53,39 @@ public class FK5 implements CoordinateReferenceFrame {
     
     /**
      * Creates a FK5 reference frame with a equinox value.
-     * @param epoch the epoch
+     * @param epoch the epoch of equinox
      */    
     public FK5(final String epoch) {
         init(epoch);
     } 
 
     /**
-     * initialization.
-     * @param equinox the equinox 
+     * Initialization.
+     * @param epoch the epoch of equinox
      */
     private void init(final String epoch) {          
         this.setEquinox(epoch);
     }
 
-    @Override
     /**
      * Returns the equinox as a Julian epoch.
-     */
+     */    
+    @Override
     public double getEquinox() {
         return this.equinox;
     }
 
-    @Override
     /**
      * Returns Double.NaN.
      * No need to specify an epoch of observation in FK5 reference frame
-     */
+     */    
+    @Override
     public double getEpochObs() {
         return Double.NaN;
     }    
 
     @Override
-    public ReferenceFrame getReferenceSystemType() {
+    public ReferenceFrame getReferenceFrame() {
         return REF_SYSTEM;
     }
 

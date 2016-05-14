@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class GalacticToEquatorialJ2000Test extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public GalacticToEquatorialJ2000Test() throws JWcsException {
         super();
         CoordinateReferenceFrame j2000 = new J2000();

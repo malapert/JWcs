@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class GalacticToSupergalacticTest extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public GalacticToSupergalacticTest() throws JWcsException {
         super();
         this.source = new Galactic();

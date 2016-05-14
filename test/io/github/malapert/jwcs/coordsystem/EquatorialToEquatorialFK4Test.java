@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class EquatorialToEquatorialFK4Test extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public EquatorialToEquatorialFK4Test() throws JWcsException {
         super();
         CoordinateReferenceFrame fk4 = new FK4();

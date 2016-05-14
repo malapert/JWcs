@@ -16,22 +16,31 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.proj.exception.JWcsError;
+
 /**
- * Specifies the origin of the equatorial and ecliptic coordinate system. 
+ * Specifies the origin of the equatorial and the ecliptic coordinate system. 
  * 
  * In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
- * we read that all reference systems are allowed for both equatorial- and 
+ * we read that all reference systems are allowed for both equatorial and 
  * ecliptic coordinates, except FK4-NO-E, which is only allowed for equatorial 
  * coordinates. If FK4-NO-E is given in combination with an ecliptic 
- * sky system then silently FK4 is assumed.
+ * crs then silently FK4 is assumed.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
+ * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
+ * "Representations of celestial coordinates in FITS, M. R. Calabretta and E. W. Greisen - page 6 "</a> 
+ * @see io.github.malapert.jwcs.coordsystem.Crs
  */
 public interface CoordinateReferenceFrame {
 
     /**
-     * A representation of the different reference frame.
+     * The supported reference frames.
+     * 
+     * The coordinate reference frame or reference frame defines how the CRS 
+     * is related to the origin (position and the date of the origin - equinox, 
+     * date of observation).
      */
     public enum ReferenceFrame {
         /**
@@ -94,12 +103,16 @@ public interface CoordinateReferenceFrame {
          * @param hasEquinox Can have equinox as parameter
          * @param hasEpoch Can have epoch as parameter
          */
-        ReferenceFrame(final String name, boolean hasEquinox, boolean hasEpoch) {
+        ReferenceFrame(final String name, final boolean hasEquinox, final boolean hasEpoch) {
             this.name = name;
             this.hasEquinox = hasEquinox;
             this.hasEpoch = hasEpoch;
         }
         
+        /**
+         * Returns the name of the CRS.
+         * @return the name of the CRS
+         */
         public String getName() {
             return this.name;
         }
@@ -124,6 +137,7 @@ public interface CoordinateReferenceFrame {
          * Returns the CoordinateReferenceFrame based on its name.
          * @param name name of the reference frame
          * @return the CoordinateReferenceFrame type
+         * @throws JWcsError Reference frame not found by searching by its name
          */
         public static ReferenceFrame valueOfByName(final String name) {
             ReferenceFrame result = null;
@@ -135,15 +149,15 @@ public interface CoordinateReferenceFrame {
                 }
             }
             if (result == null) {
-                throw new IllegalArgumentException("Referenc frame not found by searching by its name "+name);
+                throw new JWcsError("Reference frame not found by searching by its name "+name);
             } else {
                 return result;
             }
         }
         
         /**
-         * Returns the names of CoordinateReferenceFrame.
-         * @return the names of CoordinateReferenceFrame
+         * Returns the list of CoordinateReferenceFrame.
+         * @return all names of the CoordinateReferenceFrame
          */
         public static String[] ReferenceFramesName() {            
             ReferenceFrame[] values = ReferenceFrame.values();
@@ -154,19 +168,18 @@ public interface CoordinateReferenceFrame {
                 index++;
             }
             return result;
-        }
-                
+        }                
     };    
    
     /**
      * Returns the reference system that is used.
      * @return the reference system that is used
      */
-    CoordinateReferenceFrame.ReferenceFrame getReferenceSystemType();
+    CoordinateReferenceFrame.ReferenceFrame getReferenceFrame();
     
     /**
      * Returns the epoch of observation as a Besselian or a Julian value 
-     * according the reference frame.
+     * according to the reference frame.
      * @return Double.NaN when epoch of observation is not required otherwise
      * the epoch of observation
      */

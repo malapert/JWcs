@@ -283,7 +283,7 @@ public class Main {
      * @return Reference frame name
      */
     private static String extractReferenceFrame(final String skySystem) {
-        return skySystem.substring(skySystem.indexOf("(") + 1, skySystem.lastIndexOf(")"));
+        return skySystem.substring(skySystem.indexOf('(') + 1, skySystem.lastIndexOf(')'));
     }
 
     /**
@@ -293,7 +293,7 @@ public class Main {
      * @return parameters of the reference frame
      */
     private static String[] extractReferenceFrameParameter(final String referenceFrame) {
-        String parameters = referenceFrame.substring(referenceFrame.indexOf("(") + 1, referenceFrame.lastIndexOf(")"));
+        String parameters = referenceFrame.substring(referenceFrame.indexOf('(') + 1, referenceFrame.lastIndexOf(')'));
         return (parameters.isEmpty()) ? null : parameters.split(",");
     }
 
@@ -367,19 +367,19 @@ public class Main {
     private static Crs getSkySystem(final String skySystem) {
         Crs result;
         if (hasReferenceFrame(skySystem)) {
-            String skySystemName = skySystem.substring(0, skySystem.indexOf("("));
+            String skySystemName = skySystem.substring(0, skySystem.indexOf('('));
             String refFrameStr = extractReferenceFrame(skySystem);
-            String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf("("));
+            String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf('('));
             CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             String[] parameters = extractReferenceFrameParameter(refFrameStr);
             CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
             result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
             switch (result.getCoordinateSystem()) {
                 case EQUATORIAL:
-                    ((Equatorial) result).setRefSystem(refSystem);
+                    ((Equatorial) result).setCoordinateReferenceFrame(refSystem);
                     break;
                 case ECLIPTIC:
-                    ((Ecliptic) result).setRefSystem(refSystem);
+                    ((Ecliptic) result).setCoordinateReferenceFrame(refSystem);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown sky system");
@@ -398,6 +398,10 @@ public class Main {
      * @param from source sky system
      * @param to target sky system
      * @param precision precision such as %.15f
+     * @throws URISyntaxException Cannot retrieve the Header file
+     * @throws IOException Header file not found
+     * @throws JWcsException JWS Error
+     * @throws IllegalArgumentException Either --file argument or --from and --to arguments are required
      */
     private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
         Map<String, String> keyMap = new HashMap();
@@ -437,7 +441,6 @@ public class Main {
         SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
         System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());
         LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
-
     }
 
     /**

@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class EquatorialToEclipticTest extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public EquatorialToEclipticTest() throws JWcsException {
         super();
         this.source = new Equatorial();

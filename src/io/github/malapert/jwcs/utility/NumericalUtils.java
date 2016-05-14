@@ -18,6 +18,8 @@ package io.github.malapert.jwcs.utility;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import java.text.DecimalFormat;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * NumericalUtils class.
@@ -25,7 +27,7 @@ import java.text.DecimalFormat;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public abstract class NumericalUtils {
-    
+
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
      */
@@ -39,7 +41,7 @@ public abstract class NumericalUtils {
     /**
      * Two Pi value.
      */
-    public static final double TWO_PI = Math.PI * 2.0d;    
+    public static final double TWO_PI = Math.PI * 2.0d;
 
     /**
      * Compares two doubles.
@@ -96,51 +98,57 @@ public abstract class NumericalUtils {
 
     /**
      * Atan2 operation
+     *
      * @param n the ordinate coordinate
      * @param d the abscissa coordinate
-     * @return the theta component of the point (r, theta) in polar coordinates 
+     * @return the theta component of the point (r, theta) in polar coordinates
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public final static double aatan2(double n, double d) {
         return aatan2(n, d, Double.NaN);
     }
-    
+
     /**
      * Atan2 operation
+     *
      * @param n the ordinate coordinate
      * @param d the abscissa coordinate
      * @param defaultValue DefaultValue when atan2 is undefined
-     * @return the theta component of the point (r, theta) in polar coordinates 
+     * @return the theta component of the point (r, theta) in polar coordinates
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public final static double aatan2(double n, double d, double defaultValue) {
         return ((Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE) ? defaultValue : Math.atan2(n, d));
-    }    
-    
+    }
+
     /**
      * Asin operation.
-     * 
-     * Returns the arc sine of a value; the returned angle is in the range -pi/2 through pi/2. Special cases:
+     *
+     * Returns the arc sine of a value; the returned angle is in the range -pi/2
+     * through pi/2. Special cases:
      * <ul>
-     *   <li>If the argument is NaN or its absolute value is greater than 1, then the result is NaN.</li>
-     *   <li>If the argument is zero, then the result is a zero with the same sign as the argument.</li>
-     * </ul>     
-     * 
+     * <li>If the argument is NaN or its absolute value is greater than 1, then
+     * the result is NaN.</li>
+     * <li>If the argument is zero, then the result is a zero with the same sign
+     * as the argument.</li>
+     * </ul>
+     *
      * @param v the value whose arc sine is returned
-     * @return the arc sine of the argument. 
+     * @return the arc sine of the argument.
      */
-    public final static double aasin(double v) {       
+    public final static double aasin(double v) {
         if (equal(v, 1, DOUBLE_TOLERANCE)) {
-            return Math.PI/2;
+            return Math.PI / 2;
         } else if (equal(v, -1, DOUBLE_TOLERANCE)) {
-            return -Math.PI/2;
+            return -Math.PI / 2;
         } else {
             return Math.asin(v);
-        }        
+        }
     }
 
     /**
      * Acos operation.
+     *
      * @param v the value whose arc cosine is to be returned.
      * @return the value whose arc cosine is to be returned
      */
@@ -153,6 +161,7 @@ public abstract class NumericalUtils {
 
     /**
      * Normalizes the latitude
+     *
      * @param angle latitude in radians
      * @return the angle from -half_PI to half_PI
      */
@@ -170,7 +179,7 @@ public abstract class NumericalUtils {
         if (angle > Math.PI) {
             angle -= TWO_PI;
         }
-        
+
         if (angle < -Math.PI) {
             angle += TWO_PI;
         }
@@ -209,6 +218,7 @@ public abstract class NumericalUtils {
 
     /**
      * Formats the number with a precision with 3 digits after the comma.
+     *
      * @param number the number to format
      * @return the formatted number
      */
@@ -216,9 +226,10 @@ public abstract class NumericalUtils {
         DecimalFormat df = new DecimalFormat("0.###");
         return df.format(number);
     }
-    
+
     /**
      * Checks if the number is included in [min,max] with a numerical precision.
+     *
      * @param number number to test
      * @param min minimum value
      * @param max maximum value
@@ -231,29 +242,127 @@ public abstract class NumericalUtils {
         }
         if (NumericalUtils.equal(number, max, precision)) {
             return true;
-        }        
+        }
         return min < number && number < max;
-    } 
+    }
 
     /**
-     * Compares two doubles with a numerical precision of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     * Compares two doubles with a numerical precision of
+     * {@link NumericalUtils#DOUBLE_TOLERANCE}.
      *
      * @param val1 first double
      * @param val2 second double
      * @return True when <code>val1</code> and <code>val2</code> are equals.
-     */    
+     */
     public static boolean equal(double val1, double val2) {
         return equal(val1, val2, DOUBLE_TOLERANCE);
     }
 
     /**
-     * Checks if the number is included in [min,max] with a numerical precision of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     * Checks if the number is included in [min,max] with a numerical precision
+     * of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     *
      * @param number number to test
      * @param min minimum value
      * @param max maximum value
      * @return True when number is included in [min,max] otherwise False.
-     */    
+     */
     public static boolean isInInterval(double number, double min, double max) {
         return isInInterval(number, min, max, DOUBLE_TOLERANCE);
     }
+
+    /**
+     * Calculates the matrix that represents a 3d rotation around the X axis.
+     *
+     * Reference: ---------- Diebel, J. 2006, Stanford University, Representing
+     * Attitude: Euler angles, Unit Quaternions and Rotation Vectors.
+     * http://ai.stanford.edu/~diebel/attitude.html
+     *
+     * Notes: ------ Return the rotation matrix for a rotation around the X
+     * axis. This is a rotation in the YZ plane. Note that we construct a new
+     * vector with: xnew = R1.x In the literature, this rotation is usually
+     * called R1
+     *
+     * @param angle Rotation angle in degrees
+     * @return A 3x3 matrix representing the rotation about angle around X axis.
+     */
+    public final static RealMatrix rotX(final double angle) {
+        double angleRadians = Math.toRadians(angle);
+        double[][] array = {
+            {1, 0, 0},
+            {0, Math.cos(angleRadians), Math.sin(angleRadians)},
+            {0, -Math.sin(angleRadians), Math.cos(angleRadians)}
+        };
+        return createRealMatrix(array);
+    }
+
+    /**
+     * Calculates the matrix that represents a 3d rotation around the Y axis.
+     *
+     * Reference: ---------- Diebel, J. 2006, Stanford University, Representing
+     * Attitude: Euler angles, Unit Quaternions and Rotation Vectors.
+     * http://ai.stanford.edu/~diebel/attitude.html
+     *
+     * Notes: ------ Return the rotation matrix for a rotation around the X
+     * axis. This is a rotation in the YZ plane. Note that we construct a new
+     * vector with: xnew = R1.x In the literature, this rotation is usually
+     * called R1
+     *
+     * @param angle Rotation angle in degrees
+     * @return A 3x3 matrix representing the rotation about angle around Y axis.
+     */
+    public final static RealMatrix rotY(double angle) {
+        double angleRadians = Math.toRadians(angle);
+        double[][] array = {
+            {Math.cos(angleRadians), 0, -Math.sin(angleRadians)},
+            {0, 1, 0},
+            {Math.sin(angleRadians), 0, Math.cos(angleRadians)}
+        };
+        return createRealMatrix(array);
+    }
+
+    /**
+     * Calculates the matrix that represents a 3d rotation around the Z axis.
+     *
+     * @param angle Rotation angle in degrees
+     * @return A 3x3 matrix representing the rotation about angle around Z axis.
+     */
+    public final static RealMatrix rotZ(double angle) {
+        double angleRadians = Math.toRadians(angle);
+        double[][] array = {
+            {Math.cos(angleRadians), Math.sin(angleRadians), 0},
+            {-Math.sin(angleRadians), Math.cos(angleRadians), 0},
+            {0, 0, 1}
+        };
+        return createRealMatrix(array);
+    }
+
+    /**
+     * Creates an identity matrix
+     *
+     * @param dimension matrix dimension
+     * @return a matrix of dimension
+     */
+    public final static RealMatrix createRealIdentityMatrix(int dimension) {
+        return (RealMatrix) MatrixUtils.createRealIdentityMatrix(3);
+    }
+
+    /**
+     * A RealMatrix whose entries are the the values in the the input array.
+     *
+     * @param data input array
+     * @return RealMatrix containing the values of the array
+     */
+    public final static RealMatrix createRealMatrix(double[][] data) {
+        return (RealMatrix) MatrixUtils.createRealMatrix(data);
+    }
+
+    /**
+     *
+     * @param matrix
+     * @return
+     */
+    public final static RealMatrix inverse(RealMatrix matrix) {
+        return (RealMatrix) MatrixUtils.inverse(matrix);
+    }  
 }

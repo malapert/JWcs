@@ -24,6 +24,10 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
  */
 public class SuperGalacticToEclipticFK51950Test extends ConverterTest {
     
+    /**
+     *
+     * @throws JWcsException
+     */
     public SuperGalacticToEclipticFK51950Test() throws JWcsException {
         super();
         CoordinateReferenceFrame fk5 = new FK5("J1950");
