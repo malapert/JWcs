@@ -25,7 +25,8 @@ import java.util.Map;
  * A class allowing to compute the WCS by initializing the WCS structure by
  * reading a map containing the WCS keywords.
  *
- * @author Jean-Christophe Malapert
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
+ * @version 2.0 
  */
 public class WcsNumericalMap extends JWcs {
 

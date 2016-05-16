@@ -16,8 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame;
-import io.github.malapert.jwcs.coordsystem.Crs.CoordinateSystem;
+import static io.github.malapert.jwcs.coordsystem.Crs.longlat2xyz;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
 
@@ -145,7 +144,7 @@ public class SkyPosition {
      * @return the cartesian coordinates as an array
      */
     public double[] getCartesian() {
-        return Utility.longlat2xyz(this.longitude, this.latitude).getColumn(0);
+        return longlat2xyz(this.longitude, this.latitude).getColumn(0);
     }
       
     @Override

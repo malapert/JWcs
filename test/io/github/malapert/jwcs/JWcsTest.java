@@ -147,7 +147,7 @@ public class JWcsTest {
     @Test
     public void testGetFov() throws Exception {
         System.out.println("getFov");
-        double[] pixels = new double[]{1,1,100,1,100,100,1,100};
+        double[] pixels = new double[]{0.5,0.5,100+0.5,0.5,100+0.5,100+0.5,0.5,100+0.5};
         double[] expResult = wcs.pix2wcs(pixels);
         double[] result = wcs.getFov();
         assertArrayEquals(expResult, result, 1e-5);

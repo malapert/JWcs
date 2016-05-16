@@ -40,7 +40,7 @@ public final class ZPN extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Zenithal polynomia";
+    private static final String NAME_PROJECTION = "Zenithal polynomial";
     
     /**
      * Projection's description.

@@ -16,9 +16,8 @@
  */
 
 /**
- * Provides the classes necessary to handle 
- * astronomical projections and conversions   
- * between pixels to world coordinates.
+ * Provides the classes necessary to handle astronomical projections and 
+ * coordinate reference system conversions from a FITS file.
  * 
  * <h2>How to use it</h2>
  * <h3>1 - Astronomical projection</h3>
@@ -60,7 +59,7 @@
  *    </code>
  * </pre>
  * 
- * <h3>2 - System conversion</h3>
+ * <h3>2 - Coordinate reference systems conversion</h3>
  * <h4>2.1 - From a FITS file</h4>
  * First, you need to load a FITS file. This FITS file will be read to find 
  * necessary keywords for the computation.

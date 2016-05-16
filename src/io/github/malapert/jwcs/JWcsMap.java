@@ -28,7 +28,9 @@ import java.util.Map;
 /**
  * A class allowing to compute the WCS by initializing the WCS structure by 
  * reading a map containing the WCS keywords.
- * @author Jean-Christophe Malapert
+ * 
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
+ * @version 2.0 
  */
 public class JWcsMap extends JWcs {
     
@@ -38,7 +40,7 @@ public class JWcsMap extends JWcs {
      * Clones a JWcsMap.
      * @param wcs JWcsMap object
      */
-    public JWcsMap(JWcsMap wcs) {
+    public JWcsMap(final JWcsMap wcs) {
         setKeywords(wcs.keywords);
     }
     
@@ -46,7 +48,7 @@ public class JWcsMap extends JWcs {
      * Creates a JWcs bases on a map.
      * @param keywords map of keywords
      */
-    public JWcsMap(Map keywords) {
+    public JWcsMap(final Map keywords) {
         this.keywords = keywords;
     }
 
@@ -61,12 +63,17 @@ public class JWcsMap extends JWcs {
     }
 
     @Override
-    public boolean hasKeyword(String keyword) {
+    public boolean hasKeyword(final String keyword) {
         return this.getKeywords().containsKey(keyword);
     }
 
+    /** Get the <CODE>int</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value.
+     * @throws JWcsError when the keyword is not found
+     */     
     @Override
-    public int getValueAsInt(String keyword) {
+    public int getValueAsInt(final String keyword) {
         String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
@@ -75,8 +82,13 @@ public class JWcsMap extends JWcs {
         }       
     }
 
+    /** Get the <CODE>double</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value.
+     * @throws JWcsError when the keyword is not found
+     */     
     @Override
-    public double getValueAsDouble(String keyword) {
+    public double getValueAsDouble(final String keyword) {
         String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
@@ -85,8 +97,13 @@ public class JWcsMap extends JWcs {
         }
     }
     
+    /** Get the <CODE>float</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value.
+     * @throws JWcsError when the keyword is not found
+     */     
     @Override
-    public float getValueAsFloat(String keyword) {
+    public float getValueAsFloat(final String keyword) {
         String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
@@ -95,8 +112,12 @@ public class JWcsMap extends JWcs {
         }
     }    
 
+    /** Get the <CODE>String</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value or null when the keyword is not found
+     */     
     @Override
-    public String getValueAsString(String keyword) {
+    public String getValueAsString(final String keyword) {
         return (String) this.getKeywords().getOrDefault(keyword, null);
     }
 
@@ -127,7 +148,7 @@ public class JWcsMap extends JWcs {
      * @return Returns a JWcs projection
      * @throws JWcsException When a JWcsException happens
      */
-    public static JWcs getProjection(String projectionCode) throws JWcsException {
+    public static JWcs getProjection(final String projectionCode) throws JWcsException {
     Map wcsKeywords = new HashMap();
         wcsKeywords.put(JWcs.NAXIS, "2");
         wcsKeywords.put(JWcs.NAXIS1, "600");

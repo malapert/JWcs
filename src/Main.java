@@ -187,6 +187,10 @@ public class Main {
      * @param file file
      * @param extension HDU number when file is a FITS file
      * @param precision precision such as %.15f
+     * @throws ProjectionException an error during the projection
+     * @throws JWcsException JWcs error
+     * @throws IOException an error when loading the FITS file
+     * @throws URISyntaxException an error when loading the FITS file 
      */
     private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         Map<String, String> keyMap = new HashMap();
@@ -577,6 +581,7 @@ public class Main {
         if (progChoice.size() != 1) {
             System.err.println("You need to select only one of the available program : gui, project, unproject, converter");
             returnedCode = EXIT.USER_INPUT_ERROR;
+            usage();
             System.exit(returnedCode.getCode());
         }
 

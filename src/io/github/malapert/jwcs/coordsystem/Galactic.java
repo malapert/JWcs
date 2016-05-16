@@ -63,7 +63,7 @@ public class Galactic extends Crs {
             RealMatrix m3 = MatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
             m = m3.multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError(String.format("Unknown output sky system: %s", crs.getCoordinateSystem()));
+            throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));
         }
         return m;
     }

@@ -89,13 +89,13 @@ public class FK4 implements CoordinateReferenceFrame {
     /**
      * Compute the E-terms (elliptic terms of aberration) for a given epoch.
      * 
-     * Reference:
-     * ----------
+     * Reference:<br>
+     * ----------<br>
      * Seidelman, P.K.,  1992.  Explanatory Supplement to the Astronomical
      * Almanac.  University Science Books, Mill Valley
-     *
-     * Notes:     
-     * -------
+     *<p>
+     * Notes:<br>     
+     * -------<br>
      * The method is described on page 170/171 of the ES.
      * One needs to process the e-terms for the appropriate
      * epoch This routine returns the e-term vector for arbitrary epoch.

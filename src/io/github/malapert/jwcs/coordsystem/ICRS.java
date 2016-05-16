@@ -24,7 +24,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * 
  * By definition, ICRS is not an equatorial system, but it is 
  * very close to the FK5 (J2000) system. No Equinox value is required.
- * 
+ * <p>
  * The International Celestial Reference System (ICRS) is the current standard
  * celestial reference system adopted by the International Astronomical Union
  * (IAU). Its origin is at the barycenter of the solar system, with axes that

@@ -78,7 +78,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class JWcs implements JWcsKeyProvider {
 
@@ -103,8 +103,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public static final int MAX_LATITUDE = 90;
 
     /**
-     * Number of axes.
-     * <p>
+     * Number of axes.     
      * 2 for an image
      */
     public static final String NAXIS = "NAXIS";
@@ -356,9 +355,10 @@ public abstract class JWcs implements JWcsKeyProvider {
      * <p>
      * Returns the value of the MJD-OBS keyword when it is present otherwise
      * returns the value of the DATE-OBS and convert it on the modified Julian
-     * date. If no value found, raise a JWcsError.
+     * date. 
      *
      * @return the Modified Julia Date.
+     * @throws JWcsError Cannot find or compute MJD-OBS
      */
     private String getMJDObs() {
         String mjd;
@@ -387,9 +387,10 @@ public abstract class JWcs implements JWcsKeyProvider {
      * <li>Otherwise ICRS is set
      * </ul>
      *
-     * @return the reference system
+     * @return the coordinate reference frame
+     * @throws JWcsError the coordinate reference frame is not supported
      */
-    private CoordinateReferenceFrame getReferenceSystem() {
+    private CoordinateReferenceFrame getReferenceFrame() {
         String mjdObs = getMJDObs();
         CoordinateReferenceFrame refSystem;
         if (hasKeyword(RADESYS)) {
@@ -427,7 +428,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                     break;
 
                 default:
-                    throw new JWcsError("The reference frame, " + radesys + " is not supported");
+                    throw new JWcsError("The coordinate reference frame, " + radesys + " is not supported");
             }
         } else if (hasKeyword(EQUINOX)) {
             float equinox = getValueAsFloat(EQUINOX);
@@ -447,16 +448,16 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Returns the sky system.
+     * Returns the coordinate reference system.
      * <p>
-     * The sky system is found according to the CTYPE1 keyword. A JWcsError is
-     * raised when CTYPE1 is not found.
-     *
-     * @return the sky system
+     * The coordinate reference system is found according to the CTYPE1 keyword. 
+     *    
+     * @return the coordinate reference system
+     * @throws JWcsError The coordinate reference system is not supported
      */
     public Crs getCrs() {
         Crs crs;
-        CoordinateReferenceFrame refSystem = getReferenceSystem();
+        CoordinateReferenceFrame refSystem = getReferenceFrame();
         if (hasKeyword("CTYPE1")) {
             String ctype1 = getValueAsString("CTYPE1");
             ctype1 = ctype1.substring(0, ctype1.indexOf('-'));
@@ -492,10 +493,10 @@ public abstract class JWcs implements JWcsKeyProvider {
                     }
                     break;
                 default:
-                    throw new JWcsError("The coordinate system " + ctype1 + " is not supported");
+                    throw new JWcsError("The coordinate reference system " + ctype1 + " is not supported");
             }
         } else {
-            throw new JWcsError("Cannot find crs.");
+            throw new JWcsError("Cannot find the coordinate reference system.");
         }
 
         return crs;
@@ -512,7 +513,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public abstract void doInit() throws JWcsException;
 
     /**
-     * Returns the projection parameters of the projection.
+     * Returns the parameters of the projection.
      *
      * @return the projection parameters.
      */
@@ -758,7 +759,8 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Scale factor. This is used to convert the CRVAL into degree.
+     * Scale factor. 
+     * This is used to convert the CRVAL into degree.
      *
      * @param cunit The cunit axis
      * @return the scale factor to apply at CRVAL
@@ -1016,7 +1018,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public double[] getFov() throws ProjectionException {
-        return pix2wcs(new double[]{1, 1, naxis(1), 1, naxis(1), naxis(2), 1, naxis(2)});
+        return pix2wcs(new double[]{0.5, 0.5, naxis(1)+0.5, 0.5, naxis(1)+0.5, naxis(2)+0.5, 0.5, naxis(2)+0.5});
     }
 
     /**
@@ -1089,15 +1091,13 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Transforms an array of sky position in an array of pixel position.
-     * <p>
-     * Raise an JWcsError when the length of <code>skyPositions</code> is not a
-     * multiple of 2.
-     * </p>
      *
      * @param skyPositions array of sky positions
      * @return the sky position in the pixel grid.
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * there is a projection error
+     * @throws JWcsError When the length of <code>skyPositions</code> is not a
+     * multiple of 2
      */
     @Override
     public double[] wcs2pix(double[] skyPositions) throws ProjectionException {
@@ -1130,7 +1130,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param proj the projection to set
      */
-    protected void setProj(Projection proj) {
+    protected void setProj(final Projection proj) {
         this.proj = proj;
     }
 
@@ -1148,7 +1148,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param cd the cd to set
      */
-    protected void setCd(RealMatrix cd) {
+    protected void setCd(final RealMatrix cd) {
         this.cd = cd;
     }
 
@@ -1166,7 +1166,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param cdInverse the CD matrix inverse to set
      */
-    protected void setCdInverse(RealMatrix cdInverse) {
+    protected void setCdInverse(final RealMatrix cdInverse) {
         this.cdInverse = cdInverse;
     }
 }

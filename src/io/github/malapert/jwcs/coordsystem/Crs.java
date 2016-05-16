@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.NumericalUtils;
 import static io.github.malapert.jwcs.utility.NumericalUtils.aacos;
 import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
@@ -245,11 +246,12 @@ public abstract class Crs {
     /**
      * Checks the coordinates.
      * 
-     * The longitude must be included in [0,360] whereas the latitude must be 
+     * The longitude must be included in [0,360] while the latitude must be 
      * included in [-90,90].
      * 
      * @param longitude longitude in decimal degrees
      * @param latitude  latitude in decimal degrees
+     * @throws JWcsError latitude or longitude is out of range
      */
     private void checkCoordinates(final double longitude, final double latitude) throws JWcsError {
         boolean isLongInterval = isInInterval(longitude, 0, 360);
@@ -278,7 +280,7 @@ public abstract class Crs {
      */
     public final SkyPosition convertTo(final Crs crs, double longitude, double latitude) {
         checkCoordinates(longitude, latitude);
-        RealMatrix xyz = Utility.longlat2xyz(longitude, latitude);
+        RealMatrix xyz = longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
         RealMatrix rotation = getRotationMatrix(crs);
         LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});        
@@ -296,7 +298,7 @@ public abstract class Crs {
             LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});            
         }          
         LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
-        double[] position = Utility.xyz2longlat(xyz);
+        double[] position = xyz2longlat(xyz);
         LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
         LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, crs, position[0], position[1]});
         return new SkyPosition(position[0], position[1], crs);
@@ -310,7 +312,7 @@ public abstract class Crs {
      * @param coordinates an array of (longitude1, latitude2, longitude2,
      * latitude2, ...) in degrees
      * @return an array of SkyPosition
-     * @throws JWcsError Raises an exception when numberEltsOfCoordinates % 2 != 0
+     * @throws JWcsError coordinates should be an array containing a set of [longitude, latitude]
      */
     public final SkyPosition[] convertTo(final Crs crs, double[] coordinates) throws JWcsError {
         
@@ -331,7 +333,7 @@ public abstract class Crs {
         int indice = 0;
         for (int i = 0; i < numberElts; i = i + 2) {
             checkCoordinates(coordinates[i], coordinates[i + 1]);
-            RealMatrix xyz = Utility.longlat2xyz(coordinates[i], coordinates[i + 1]);
+            RealMatrix xyz = longlat2xyz(coordinates[i], coordinates[i + 1]);
             LOG.log(Level.FINER, "xyz : {0}", new Object[]{xyz});
             if (etermsIn != null) {
                 xyz = removeEterms(xyz, etermsIn);
@@ -343,7 +345,7 @@ public abstract class Crs {
                 xyz = addEterms(xyz, etermsOut);
                 LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});
             }
-            double[] position = Utility.xyz2longlat(xyz);
+            double[] position = xyz2longlat(xyz);
             LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0}", new Object[]{position});
             skyPositionArray[indice] = new SkyPosition(position[0], position[1], crs);
             indice++;
@@ -404,13 +406,14 @@ public abstract class Crs {
     }
     
     /**
-     * It handles precession and the transformation between **equatorial**
+     * It handles precession and the transformation between equatorial
      * systems.
      *
      * This function includes also conversions between reference systems.
      *
-     * Notes: ------ Return matrix to transform equatorial coordinates from
-     * *epoch1* to *epoch2* in either reference system FK4 or FK5. Or transform
+     * <p>
+     * Notes: Return matrix to transform equatorial coordinates from
+     * <code>epoch1</code> to <code>epoch2</code> in either reference frame FK4 or FK5. Or transform
      * from epoch, FK4 or FK5 to ICRS or J2000 vice versa. Note that each
      * transformation between FK4 and one of the other reference systems
      * involves a conversion to FK5 and therefore the epoch of observation will
@@ -427,8 +430,9 @@ public abstract class Crs {
      * @param epobs Epoch of observation. Only valid for conversions between FK4
      * and FK5.
      * @return Rotation matrix to transform a position in one of the reference
-     * systems *S1* with *epoch1* to an equatorial system with equator and
-     * equinox at *epoch2* in reference system *S2*.
+     * systems <code>S1</code> with <code>epoch1</code> to an equatorial system with equator and
+     * equinox at <code>epoch2</code> in reference system <code>S2</code>.
+     * @throws JWcsError Reference frame conversion is not supported
      */
     protected static RealMatrix MatrixEpoch12Epoch2(double epoch1, double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, double epobs) {
         if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
@@ -503,24 +507,18 @@ public abstract class Crs {
             RealMatrix m5 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else {
-            throw new JWcsError();
+            throw new JWcsError("Reference frame conversion is not supported");
         }
     }   
     
     /**
      * Remove the elliptic component of annual aberration when this is included
-     * in a catalogue fk4 position.
-     *
-     * Notes: ------ Return a new position where the elliptic terms of
-     * aberration are removed i.e. convert a apparent position from a catalog to
-     * a mean place. The effects of ecliptic aberration were included in the
-     * catalog positions to facilitate telescope pointing. See also notes at
-     * 'addEterms'.
+     * in a catalogue fk4 position..
      *
      * @param xyz vector xyz
-     * @param eterm E-terms vector (as returned by getEterms()). If input a is
-     * omitted (== *null*), the e-terms for 1950 will be substituted.
-     * @return **Mean place**
+     * @param eterm E-terms vector (as returned by getEterms()). If input is
+     * omitted (== <code>null</code>), the e-terms for 1950 will be substituted.
+     * @return Mean place
      */
     private static RealMatrix removeEterms(final RealMatrix xyz, RealMatrix eterm) {
         if (eterm == null) {
@@ -531,41 +529,12 @@ public abstract class Crs {
 
     /**
      * Add the elliptic component of annual aberration when the rsult must be a
-     * catalogue fk4 position.
+     * catalogue fk4 position.    
      *
-     * Reference: ---------- * Seidelman, P.K., 1992. Explanatory Supplement to
-     * the Astronomical Almanac. University Science Books, Mill Valley. * Yallop
-     * et al, Transformation of mean star places, AJ, 1989, vol 97, page 274 *
-     * Stumpff, On the relation between Classical and Relativistic Theory of
-     * Stellar Aberration, Astron, Astrophys, 84, 257-259 (1980)
-     *
-     * Notes: ------ There is a so called ecliptic component in the stellar
-     * aberration. This vector depends on the epoch at which we want to process
-     * these terms. It corresponds to the component of the earth's velocity
-     * perpendicular to the major axis of the ellipse in the ecliptic. The
-     * E-term corrections are as follows. A catalog FK4 position include
-     * corrections for elliptic terms of aberration. These positions are
-     * apparent places. For precession and/or rotations to other sky systems,
-     * one processes only mean places. So to get a mean place, one has to remove
-     * the E-terms vector. The ES suggests for the removal to use a
-     * decompositions of the E-term vector along the unit circle to get the
-     * approximate new vector, which has almost the correct angle and has almost
-     * length 1. The advantage is that when we add the E-term vector to this new
-     * vector, we obtain a new vector with the original angle, but with a length
-     * unequal to 1, which makes it suitable for closure tests. However, the
-     * procedure can be made more rigorous: For the subtraction we subtract the
-     * E-term vector from the start vector and normalize it afterwards. Then we
-     * have an exact new angle (opposed to the approximation in the ES). The
-     * procedure to go from a vector in the mean place system to a vector in the
-     * system of apparent places is a bit more complicated: Find a value for
-     * lambda so that the current vector is adjusted in length so that adding
-     * the e-term vector gives a new vector with length 1. This is by definition
-     * the new vector with the right angle.
-     *
-     * @param xyz Cartesian position(s) converted from lonlat
-     * @param eterm E-terms vector (as returned by getEterms()). If input *a* is
-     * omitted (i.e. *a == null*), the e-terms for 1950 will be substituted.
-     * @return **Apparent place**,
+     * @param xyz Cartesian position(s) converted from long/lat
+     * @param eterm E-terms vector (as returned by getEterms()). If input is
+     * omitted (i.e. == <code>null</code>), the e-terms for 1950 will be substituted.
+     * @return Apparent place,
      */
     private static RealMatrix addEterms(final RealMatrix xyz, RealMatrix eterm) {
         if (eterm == null) {
@@ -630,20 +599,20 @@ public abstract class Crs {
      *
      * Reference: ---------- Lahav, O., The supergalactic plane revisited with
      * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)
-     *
+     *<p>
      * Notes: ------ The Supergalactic equator is conceptually defined by the
      * plane of the local (Virgo-Hydra-Centaurus) supercluster, and the origin
      * of supergalactic longitude is at the intersection of the supergalactic
      * and galactic planes. (de Vaucouleurs)
-     *
+     *<p>
      * North SG pole at l=47.37 deg, b=6.32 deg. Node at l=137.37, sgl=0
      * (inclination 83.68 deg).
-     *
+     *<p>
      * Older references give for he position of the SG node 137.29 which differs
      * from 137.37 deg in the official definition.
-     *
-     * For the rotation matrix we chose the scheme *Rz.Ry.Rz* Then first we
-     * rotate about 47.37 degrees along the Z-axis ollowed by a rotation about
+     *<p>
+     * For the rotation matrix we chose the scheme <code>Rz.Ry.Rz</code> Then first we
+     * rotate about 47.37 degrees along the Z-axis allowed by a rotation about
      * 90-6.32 degrees is needed to set the pole to the right declination. The
      * new plane intersects the old one at two positions. One of them is
      * l=137.37, b=0 (in galactic coordinates). If we want this to be sgl=0 we
@@ -665,7 +634,7 @@ public abstract class Crs {
      * IAU Resolutions on Astronomical Reference Systems, TimeUtils Scales, and
      * Earth Rotation Models, United States Naval Observatory circular no. 179,
      * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
-     *
+     *<p>
      * Notes: ------ The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
      * equator and ecliptic, or, between the ecliptic pole and mean celestial
@@ -693,7 +662,7 @@ public abstract class Crs {
      * Reference: ---------- Explanatory Supplement to the Astronomical Almanac,
      * P. Kenneth Seidelmann (ed), University Science Books (1992), Expression
      * 3.222-1 (p114).
-     *
+     *<p>
      * Notes: ------ The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
      * equator and ecliptic, or, between the ecliptic pole and mean celestial
@@ -716,7 +685,7 @@ public abstract class Crs {
      * Reference: ---------- Representations of celestial coordinates in FITS,
      * Calabretta. M.R., and Greisen, E.W., (2002) Astronomy and Astrophysics,
      * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
-     *
+     *<p>
      * Notes: ------ 1. The origin for ecliptic longitude is the vernal equinox.
      * Therefore the coordinates of a fixed object is subject to shifts due to
      * precession. The rotation matrix uses the obliquity to do the conversion
@@ -724,7 +693,7 @@ public abstract class Crs {
      * Usually this is J2000, but it can also be the epoch of date. The
      * additional reference system indicates whether we need a Besselian or a
      * Julian epoch.
-     *
+     *<p>
      * 2. In the FITS paper of Calabretta and Greisen (2002), one observes the
      * following relations to FITS: -Keyword RADESYSa sets the catalog system
      * FK4, FK4-NO-E or FK5 This applies to equatorial and ecliptical
@@ -752,7 +721,7 @@ public abstract class Crs {
      * more convenient specification we here introduce the new keyword
      * MJD-OBS'.* So MJD-OBS is the modified Julian Date (JD - 2400000.5) of the
      * start of the observation.
-     *
+     *<p>
      * 3. Equatorial to ecliptic transformations use the time dependent
      * obliquity of the equator (also known as the obliquity of the ecliptic).
      * Again, start with: M = rotZ(0).rotX(eps).rotZ(0) = E.rotX(eps).E =
@@ -785,7 +754,7 @@ public abstract class Crs {
      * Reference: ---------- Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
-     *
+     *<p>
      * Notes: ------ The precession matrix is: M =
      * rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
@@ -804,9 +773,9 @@ public abstract class Crs {
      * Calculates IAU 1976 precession angles for a precession of epoch
      * corresponding to Julian date jd1 to epoch corresponds to Julian date jd2.
      *
-     * References:
-     *  Lieske,J.H., 1979. Astron.Astrophys.,73,282.
-     *  equations (6) and (7), p283.
+     * References:<br>
+     *  Lieske,J.H., 1979. Astron.Astrophys.,73,282.<br>
+     *  equations (6) and (7), p283.<br>
      *  Kaplan,G.H., 1981. USNO circular no. 163, pA2.
      *
      * @param jd1 Julian date for start epoch
@@ -849,7 +818,7 @@ public abstract class Crs {
      * Reference: ---------- Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
-     *
+     *<p>
      * Notes: ------ The precession matrix is: M =
      * rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
@@ -929,7 +898,7 @@ public abstract class Crs {
      * referred to J2000.0, Astronomy and Astrophysics (ISSN 0004-6361), vol.
      * 218, no. 1-2, July 1989, p. 325-329. * Poppe P.C.R.,, Martin, V.A.F.,
      * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas
-     *
+     *<p>
      * Notes: ------ Murray precesses from B1950 to J2000 using a precession
      * matrix by Lieske. Then applies the equinox correction and ends up with a
      * transformation matrix *X(0)* as given in this function. In Murray's
@@ -1009,7 +978,7 @@ public abstract class Crs {
      * Reference: ---------- Kaplan G.H., The IAU Resolutions on Astronomical
      * Reference systems, TimeUtils scales, and Earth Rotation Models, US Naval
      * Observatory, Circular No. 179
-     *
+     *<p>
      * Notes: ------ Return a matrix that converts a position vector in ICRS to
      * FK5, J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices from the same paper
@@ -1034,13 +1003,13 @@ public abstract class Crs {
      * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
      * Astronomical Reference systems, TimeUtils scales, and Earth Rotation
      * Models, US Naval Observatory, Circular No. 179
-     *
+     *<p>
      * Notes: ------ Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices to obtain the
      * exact. * Reference: ---------- Capitaine N. et al.: IAU 2000 precession A
      * and A 412, 567-586 (2003)
-     *
+     *<p>
      * Notes: ------ Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
      * from ICRS coordinates this means applying a frame bias. Therefore the
@@ -1062,7 +1031,7 @@ public abstract class Crs {
      *
      * Reference: ---------- Capitaine N. et al.: IAU 2000 precession A and A
      * 412, 567-586 (2003)
-     *
+     *<p>
      * Notes: ------ Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
      * from ICRS coordinates this means applying a frame bias. Therefore the
@@ -1072,7 +1041,7 @@ public abstract class Crs {
      * @param epoch1 Julian start epoch
      * @param epoch2 Julian epoch to precess to
      * @return RealMatrix to transform equatorial coordinates from epoch1 to epoch2
- as in XYZepoch2 = M * XYZepoch1
+     * as in XYZepoch2 = M * XYZepoch1
      */
     private static RealMatrix IAU2006MatrixEpoch12Epoch2(double epoch1, double epoch2) {
         RealMatrix result;
@@ -1098,7 +1067,7 @@ public abstract class Crs {
      *
      * Reference: ---------- Capitaine N. et al., IAU 2000 precession A and A
      * 412, 567-586 (2003)
-     *
+     *<p>
      * Notes: ------ Input are Julian epochs! ``T = (jd-2451545.0)/36525.0``
      * Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see
      * *epochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function
@@ -1139,6 +1108,81 @@ public abstract class Crs {
         //Return values in degrees
         double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
         return precessionAngles;
+    }    
+    
+    /**
+     * Given two angles in longitude and latitude returns corresponding
+     * Cartesian coordinates x,y,z.
+     *
+     * Notes: <br>
+     * ------ <br>
+     * The three coordinate axes x, y and z, the set of
+     * right-handed Cartesian axes that correspond to the usual celestial
+     * spherical coordinate system. The xy-plane is the equator, the z-axis
+     * points toward the north celestial pole, and the x-axis points toward the
+     * origin of right ascension.
+     *
+     * @param longitude longitude in decimal degree
+     * @param latitude latitude in decimal degree
+     * @return Corresponding values of x,y,z in same order as input
+     */
+    protected static RealMatrix longlat2xyz(double longitude, double latitude) {
+        return longlatRad2xyz(Math.toRadians(longitude), Math.toRadians(latitude));
+    }
+
+    /**
+     * Given two angles in longitude and latitude returns corresponding
+     * Cartesian coordinates x,y,z.
+     *
+     * Notes: <br>
+     * ------ <br>
+     * The three coordinate axes x, y and z, the set of
+     * right-handed Cartesian axes that correspond to the usual celestial
+     * spherical coordinate system. The xy-plane is the equator, the z-axis
+     * points toward the north celestial pole, and the x-axis points toward the
+     * origin of right ascension.
+     *
+     * @param longitudeRad longitude in radians
+     * @param latitudeRad latitude in radians
+     * @return Corresponding values of x,y,z in same order as input
+     */
+    protected static RealMatrix longlatRad2xyz(double longitudeRad, double latitudeRad) {
+        double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
+        double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
+        double z = Math.sin(latitudeRad);
+        double[][] array = {
+            {x},
+            {y},
+            {z}
+        };
+        return createRealMatrix(array);
+    }
+
+    /**
+     * Given Cartesian x,y,z return corresponding longitude and latitude in
+     * degrees.
+     *
+     * Notes: <br>
+     * ------ <br>
+     * Note that one can expect strange behavior for the values of
+     * the longitudes very close to the pole. In fact, at the poles itself, the
+     * longitudes are meaningless.
+     *
+     * @param xyz Vector with values for x,y,z
+     * @return The same number of positions (longitude, latitude and in the same
+     * order as the input.
+     */
+    protected static double[] xyz2longlat(final RealMatrix xyz) {
+        double[] vec = xyz.getColumn(0);
+        double len = Math.sqrt(Math.pow(vec[0], 2)+Math.pow(vec[1], 2)+Math.pow(vec[2], 2));
+        double x = vec[0]/len;
+        double y = vec[1]/len;
+        double z = vec[2]/len;
+        double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x, 0));
+        longitude = (longitude < 0) ? longitude + 360.0d : longitude;
+        double latitude = Math.toDegrees(NumericalUtils.aasin(z));
+        double coord[] = {longitude, latitude};
+        return coord;
     }    
 
     @Override

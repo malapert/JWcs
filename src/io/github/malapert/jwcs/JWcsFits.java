@@ -29,12 +29,12 @@ import nom.tam.fits.Header;
  * 
  * For example :
  * <pre>
-   JWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
-   double[] pos = wcs.pix2wcs(1, 1);
- </pre>
+ *  JWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
+ *  double[] pos = wcs.pix2wcs(1, 1);
+ * </pre>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public class JWcsFits extends JWcs {
 
@@ -47,7 +47,7 @@ public class JWcsFits extends JWcs {
      * Clone
      * @param wcs wcsFits
      */
-    public JWcsFits(JWcsFits wcs) {
+    public JWcsFits(final JWcsFits wcs) {
         setHdr(wcs.getHdr());
     }
 
@@ -68,7 +68,7 @@ public class JWcsFits extends JWcs {
      * @throws FitsException When an error happens when the FITS is handling
      * @throws IOException When an error happens when the FITS is handling
      */
-    public JWcsFits(final Fits fits, int extension) throws FitsException, IOException {
+    public JWcsFits(final Fits fits, final int extension) throws FitsException, IOException {
         this(fits.getHDU(extension).getHeader());
     }
     
@@ -90,16 +90,28 @@ public class JWcsFits extends JWcs {
         return this.getHdr().containsKey(keyword);
     }
 
-    @Override
+    /** Get the <CODE>int</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value or 0 if not found.
+     */    
+    @Override    
     public int getValueAsInt(final String keyword) {
         return this.getHdr().getIntValue(keyword);
     }
 
+    /** Get the <CODE>double</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value or 0.0 if not found.
+     */    
     @Override
     public double getValueAsDouble(final String keyword) {
         return this.getHdr().getDoubleValue(keyword);
     }
     
+    /** Get the <CODE>float</CODE> value associated with the given key.
+     * @param keyword  The header key.
+     * @return The associated value or 0.0 if not found.
+     */    
     @Override
     public float getValueAsFloat(final String keyword) {
         return this.getHdr().getFloatValue(keyword);
@@ -110,6 +122,11 @@ public class JWcsFits extends JWcs {
         return this.getHdr().iterator();
     }
 
+    /** Get the <CODE>String</CODE> value associated with the given key.
+     *
+     * @param keyword  The header key.
+     * @return The associated value or null if not found or if the value is not a string.
+     */    
     @Override
     public String getValueAsString(final String keyword) {
         return this.getHdr().getStringValue(keyword);

@@ -358,9 +358,9 @@ public abstract class NumericalUtils {
     }
 
     /**
-     *
-     * @param matrix
-     * @return
+     * Inverse matrix.
+     * @param matrix the matrix to inverse
+     * @return the inverse matrix
      */
     public final static RealMatrix inverse(RealMatrix matrix) {
         return (RealMatrix) MatrixUtils.inverse(matrix);

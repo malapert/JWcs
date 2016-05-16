@@ -17,8 +17,8 @@
 
 /**
  * Provides the classes necessary to handle 
- * astronomical reference system and conversion   
- * between theses reference systems.
+ * astronomical coordinate reference system and conversion   
+ * between the supported coordinate reference systems.
  *
  * <p>
  * These classes are capable of converting a coordinate reference system (crs)

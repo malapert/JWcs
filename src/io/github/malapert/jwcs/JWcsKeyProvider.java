@@ -23,7 +23,7 @@ import java.util.Iterator;
  * Interface to get the main WCS keywords.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 1.0
+ * @version 2.0
  */
 public interface JWcsKeyProvider {
     
@@ -91,19 +91,19 @@ public interface JWcsKeyProvider {
     String cunit(int i);
     
     /**
-     * lonpole.
+     * longitude of the pole.
      * @return long pole
      */
     double lonpole();
     
     /**
-     * latpole.
+     * latitude of the pole.
      * @return lat pole
      */
     double latpole();
     
     /**
-     * The equinox
+     * The epoch of the equinox
      * @return the equinox
      */
     double equinox();
@@ -167,7 +167,7 @@ public interface JWcsKeyProvider {
     /**
      * Returns the Field of view of the image in sky coordinates.
      * <p>
-     * Computes the following coordinates (0,0), (naxis1,0), (naxis1, naxis2), (0, naxis2).
+     * Computes the following coordinates (0.5,0.5), (naxis1+0.5,0.5), (naxis1+0.5, naxis2+0.5), (0.5, naxis2+0.5).
      * </p>
      * @return the field of view of the image.
      * @throws io.github.malapert.jwcs.proj.exception.JWcsException When there is a projection error
@@ -182,28 +182,28 @@ public interface JWcsKeyProvider {
     boolean hasKeyword(String keyword);
     
     /**
-     * Returns the value as Int.
+     * Returns the keyword value as integer.
      * @param keyword keyword to get
      * @return the value as Int
      */
     int getValueAsInt(String keyword);
     
     /**
-     * Returns the value as Double
+     * Returns the keyword value as double
      * @param keyword the keyword
      * @return the value
      */
     double getValueAsDouble(String keyword);
     
     /**
-     * Returns the value as Float
+     * Returns the keyword value as float
      * @param keyword the keyword
      * @return the value
      */
     float getValueAsFloat(String keyword);    
     
     /**
-     * Returns the value as String
+     * Returns the keyword value as String
      * @param keyword the keyword
      * @return the value.
      */

@@ -63,8 +63,8 @@ public class Ecliptic extends Crs implements CoordinateReferenceFrame {
     }
 
     /**
-     * Transforms the coordinate reference frame if necessary. In
-     * 'Representations of celestial coordinates in FITS' (Calabretta and
+     * Transforms the coordinate reference frame if necessary. 
+     * In 'Representations of celestial coordinates in FITS' (Calabretta and
      * Greisen) we read that all reference systems are allowed for both
      * equatorial- and ecliptic coordinates, except FK4-NO-E, which is only
      * allowed for equatorial coordinates. If FK4-NO-E is given in combination

@@ -15,23 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides the classes for handling the supported projections.
+ * Provides the graphical user interface for handling coordinate reference 
+ * systems conversion.
  *
- * <p>
- * These classes represents the different projections that are supported in the
- * WCS standard.
- * This package contains three main groups of classes:
- * <ul>
- * <li>classes representing the conic projections</li>
- * <li>classes representing the cylindrical projections</li>
- * <li>classes representing the polyconic projections</li>
- * <li>classes representing the zenithal projections</li>
- * </ul>
- * 
- * <h2>How to use it</h2>
- * @see <a href="../package-summary.html">WCS</a>
- * 
- * <h2>Class diagram</h2>
- * <img alt="Class diagram of this package" src="doc-files/Architecture_proj.png">
  */
-package io.github.malapert.jwcs.proj;
+package io.github.malapert.jwcs.coordsystem.gui;
