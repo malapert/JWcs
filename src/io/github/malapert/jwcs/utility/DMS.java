@@ -278,7 +278,7 @@ public final class DMS implements Serializable {
     }
 
     /**
-     * DeFINER equality based on the value.
+     * Define equality based on the value.
      */
     @Override
     public boolean equals(Object obj) {

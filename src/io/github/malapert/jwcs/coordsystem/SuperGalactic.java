@@ -35,7 +35,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * By convention, supergalactic latitude and supergalactic longitude are usually
  * denoted by SGB and SGL, respectively, by analogy to b and l conventionally
  * used for galactic coordinates. The zero point for supergalactic longitude
- * is deFINERd by the intersection of this plane with the galactic plane.
+ * is defined by the intersection of this plane with the galactic plane.
  *         
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0

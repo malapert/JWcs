@@ -631,7 +631,7 @@ public abstract class Crs {
      * Reference: ---------- Lahav, O., The supergalactic plane revisited with
      * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)
      *
-     * Notes: ------ The Supergalactic equator is conceptually deFINERd by the
+     * Notes: ------ The Supergalactic equator is conceptually defined by the
      * plane of the local (Virgo-Hydra-Centaurus) supercluster, and the origin
      * of supergalactic longitude is at the intersection of the supergalactic
      * and galactic planes. (de Vaucouleurs)

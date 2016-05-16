@@ -169,7 +169,7 @@ public class PCO extends PolyConicProjection {
                     break;
                 }
 
-                // RedeFINER the interval. 
+                // Redefine the interval. 
                 if (f > 0.0) {
                     thepos = theta;
                     fpos = f;

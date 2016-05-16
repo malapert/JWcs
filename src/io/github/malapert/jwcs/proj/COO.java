@@ -51,8 +51,8 @@ public class COO extends ConicProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @param theta_a \u03B8<sub>a</sub> in degrees and deFINERd as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
-     * @param eta \u03B7 in degrees and deFINERd as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
+     * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
     public COO(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {

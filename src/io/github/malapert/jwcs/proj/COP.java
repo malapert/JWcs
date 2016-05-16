@@ -42,7 +42,7 @@ public class COP extends ConicProjection {
     /**
      * Constant of the cone in radians.
      *
-     * This constant is deFINERd as c=sin\u03B8<sub>a</sub>
+     * This constant is defined as c=sin\u03B8<sub>a</sub>
      */
     private final double c;
 
@@ -59,7 +59,7 @@ public class COP extends ConicProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @param theta_a \u03B8<sub>a</sub> in degrees and deFINERd as
+     * @param theta_a \u03B8<sub>a</sub> in degrees and defined as
      * \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
      * @param eta \u03B7 in degrees and deFINERd as
      * \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
