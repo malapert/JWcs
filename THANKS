@@ -37,10 +37,11 @@
  
     2.2 - nom.tam Java FITS library
           http://heasarc.gsfc.nasa.gov/docs/heasarc/fits/
+          Version : 1.11.1
 
     2.3 - GNU Prolog for Java
           https://www.gnu.org/software/gnuprologjava/
-          Version : 1.11.1
+          Version : 0.2.6
 
 4. Test
 
