@@ -61,9 +61,9 @@ public abstract class ConicProjection extends Projection {
      */
     public static final String NAME = "Conic projections";    
     /**
-     * theta_a = (theta1 + theta2) / 2 in radians.
+     * thetaA = (theta1 + theta2) / 2 in radians.
      */
-    private final double theta_a;
+    private final double thetaA;
     /**
      * eta = abs(theta1 - theta2) / 2 in radians.
      */
@@ -83,12 +83,12 @@ public abstract class ConicProjection extends Projection {
     private double theta0;
     
     /**
-     * theta_a - eta.
+     * thetaA - eta.
      */
     protected double theta1;
     
     /**
-     * theta_a + eta.
+     * thetaA + eta.
      */
     protected double theta2;
     
@@ -103,16 +103,16 @@ public abstract class ConicProjection extends Projection {
     protected ConicProjection(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta_a,eta) = ({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
-        this.theta_a = Math.toRadians(theta_a);
+        this.thetaA = Math.toRadians(theta_a);
         this.eta = Math.toRadians(eta);        
-        this.theta1 = this.theta_a - this.eta;
-        this.theta2 = this.theta_a + this.eta;
+        this.theta1 = this.thetaA - this.eta;
+        this.theta2 = this.thetaA + this.eta;
         LOG.log(Level.FINEST, "(theta1,theta2)[deg]=({0},{1})", new Object[]{Math.toDegrees(this.theta1),Math.toDegrees(this.theta2)}); 
         checkParameters(theta1, theta2);
         setPhi0(DEFAULT_PHI0);
-        setTheta0(this.theta_a);
+        setTheta0(this.thetaA);
         setPhip(computeDefaultValueForPhip());
-        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(this.theta_a)});
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(this.thetaA)});
         LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));         
     }
     
@@ -193,11 +193,11 @@ public abstract class ConicProjection extends Projection {
     }    
 
     /**
-     * Returns theta_a in radians.
-     * @return the theta_a
+     * Returns thetaA in radians.
+     * @return the thetaA
      */
-    protected final double getTheta_a() {
-        return theta_a;
+    protected final double getThetaA() {
+        return thetaA;
     }
 
     /**

@@ -100,7 +100,7 @@ public class COE extends ConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);                              
-        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
+        double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
         double phi = computePhi(xr, yr, r_theta, y0, c);                   
         double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
         double theta = NumericalUtils.aasin(w);
@@ -131,7 +131,7 @@ public class COE extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
     }   
     
     @Override

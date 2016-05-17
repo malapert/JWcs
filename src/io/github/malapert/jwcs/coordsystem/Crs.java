@@ -25,8 +25,8 @@ import static io.github.malapert.jwcs.utility.NumericalUtils.inverse;
 import static io.github.malapert.jwcs.utility.NumericalUtils.rotX;
 import static io.github.malapert.jwcs.utility.NumericalUtils.rotY;
 import static io.github.malapert.jwcs.utility.NumericalUtils.rotZ;
-import static io.github.malapert.jwcs.utility.TimeUtils.epochBessel2JD;
-import static io.github.malapert.jwcs.utility.TimeUtils.epochJulian2JD;
+import static io.github.malapert.jwcs.utility.TimeUtils.convertEpochBessel2JD;
+import static io.github.malapert.jwcs.utility.TimeUtils.convertEpochJulian2JD;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -441,19 +441,19 @@ public abstract class Crs {
             return besselianMatrixEpoch12Epoch2(epoch1, epoch2);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = FK42FK5Matrix(epobs);
+            RealMatrix m2 = convertFK42FK5Matrix(epobs);
             RealMatrix m3 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000d);
-            RealMatrix m2 = FK52FK4Matrix(epobs);
+            RealMatrix m2 = convertFK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             return createRealIdentityMatrix(3);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = ICRS2FK5Matrix();
-            RealMatrix m2 = FK52FK4Matrix(epobs);
+            RealMatrix m2 = convertFK52FK4Matrix(epobs);
             RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
@@ -466,7 +466,7 @@ public abstract class Crs {
             return m2.multiply(m1);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = FK42FK5Matrix(epobs);
+            RealMatrix m2 = convertFK42FK5Matrix(epobs);
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
@@ -474,36 +474,36 @@ public abstract class Crs {
             return m1;
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = ICRS2J2000Matrix().transpose();
+            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = ICRS2J2000Matrix().transpose();
+            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
             RealMatrix m4 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
             RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = ICRS2J2000Matrix().transpose();
+            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
-            RealMatrix m4 = FK52FK4Matrix(epobs);
+            RealMatrix m4 = convertFK52FK4Matrix(epobs);
             RealMatrix m5 = besselianMatrixEpoch12Epoch2(1950d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = ICRS2J2000Matrix();
+            RealMatrix m1 = convertICRS2J2000Matrix();
             RealMatrix m2 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2FK5Matrix().transpose();
-            RealMatrix m3 = ICRS2J2000Matrix();
+            RealMatrix m3 = convertICRS2J2000Matrix();
             RealMatrix m4 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = FK52FK4Matrix(epobs).transpose();
+            RealMatrix m2 = convertFK52FK4Matrix(epobs).transpose();
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
-            RealMatrix m4 = ICRS2J2000Matrix();
+            RealMatrix m4 = convertICRS2J2000Matrix();
             RealMatrix m5 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else {
@@ -735,9 +735,9 @@ public abstract class Crs {
     protected final static RealMatrix MatrixEq2Ecl(double epoch, final CoordinateReferenceFrame.ReferenceFrame refSystem) {
         double jd;
         if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-            jd = epochBessel2JD(epoch);
+            jd = convertEpochBessel2JD(epoch);
         } else {
-            jd = epochJulian2JD(epoch);
+            jd = convertEpochJulian2JD(epoch);
         }
         double eps;
         if (CoordinateReferenceFrame.ReferenceFrame.ICRS.equals(refSystem) || CoordinateReferenceFrame.ReferenceFrame.J2000.equals(refSystem)) {
@@ -763,8 +763,8 @@ public abstract class Crs {
      * @return 3x3 rotation matrix M as in XYZepoch2 = M * XYZepoch1
      */
     private static RealMatrix julianMatrixEpoch12Epoch2(double jEpoch1, double jEpoch2) {
-        double jd1 = epochJulian2JD(jEpoch1);
-        double jd2 = epochJulian2JD(jEpoch2);
+        double jd1 = convertEpochJulian2JD(jEpoch1);
+        double jd2 = convertEpochJulian2JD(jEpoch2);
         double[] precessionAngles = lieskeprecangles(jd1, jd2);
         return precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
     }
@@ -919,10 +919,10 @@ public abstract class Crs {
      * @param t Besselian epoch as epoch of observation
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
-    private static RealMatrix FK42FK5Matrix(final Double t) {
+    private static RealMatrix convertFK42FK5Matrix(final Double t) {
         RealMatrix mat = FK42FK5Matrix();
         if (!Double.isNaN(t)) {
-            double jd = epochBessel2JD(t);
+            double jd = convertEpochBessel2JD(t);
             double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
             double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
             double r01 = mat.getEntry(0, 1) - 1.1539918689d * T / 1000000.0d;
@@ -947,7 +947,7 @@ public abstract class Crs {
     }
 
     /**
-     * See FK42FK5Matrix
+     * See convertFK42FK5Matrix
      *
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
@@ -962,14 +962,14 @@ public abstract class Crs {
 
     /**
      * Creates a matrix to convert a position in fk5 to fk4 using the inverse
-     * matrix FK42FK5Matrix.
+ matrix convertFK42FK5Matrix.
      *
      * @param t Epoch of observation for those situations where we allow no-zero
      * proper motion in fk4
      * @return Rotation matrix M as in XYZfk5 = M * XYZfk4
      */
-    private static RealMatrix FK52FK4Matrix(final Double t) {
-        return inverse(FK42FK5Matrix(t));
+    private static RealMatrix convertFK52FK4Matrix(final Double t) {
+        return inverse(convertFK42FK5Matrix(t));
     }
 
     /**
@@ -1018,7 +1018,7 @@ public abstract class Crs {
      *
      * @return Rotation matrix to transform positions from ICRS to dyn J2000
      */
-    private static RealMatrix ICRS2J2000Matrix() {
+    private static RealMatrix convertICRS2J2000Matrix() {
         double eta0 = -6.8192d / (3600d * 1000d); //Convert mas to degree
         double xi0 = -16.617d / (3600d * 1000d);
         double da0 = -14.6d / (3600d * 1000d);
@@ -1068,11 +1068,11 @@ public abstract class Crs {
      * Reference: ---------- Capitaine N. et al., IAU 2000 precession A and A
      * 412, 567-586 (2003)
      *<p>
-     * Notes: ------ Input are Julian epochs! ``T = (jd-2451545.0)/36525.0``
-     * Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see
-     * *epochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function
-     * should be updated as soon as there are IAU2006 adopted angles to replace
-     * the angles used in this function.
+ Notes: ------ Input are Julian epochs! ``T = (jd-2451545.0)/36525.0``
+ Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see
+ *convertEpochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function
+ should be updated as soon as there are IAU2006 adopted angles to replace
+ the angles used in this function.
      *
      * @param epoch Julian epoch of observation
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) in degrees to setup a

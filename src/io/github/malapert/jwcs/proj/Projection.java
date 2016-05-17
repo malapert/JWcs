@@ -213,7 +213,8 @@ public abstract class Projection {
      * degrees
      */
     protected double[] computeCelestialSpherical(double phi, double theta) {
-        double ra, dec;
+        double ra;
+        double dec;
         LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
         
         double alphap = getCoordNativePole()[0];

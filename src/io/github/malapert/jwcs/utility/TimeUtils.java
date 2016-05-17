@@ -41,7 +41,7 @@ public abstract class TimeUtils {
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
      */
-    public final static double epochJulian2JD(double jEpoch) {
+    public final static double convertEpochJulian2JD(double jEpoch) {
         return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
     }
 
@@ -51,7 +51,7 @@ public abstract class TimeUtils {
      * @param jd Julian date
      * @return a Julian epoch
      */
-    public static double JD2epochJulian(double jd) {
+    public static double convertJD2epochJulian(double jd) {
         return 2000.0d + (jd - 2451545.0d) / 365.25d;
     }
 
@@ -61,7 +61,7 @@ public abstract class TimeUtils {
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
      */
-    public final static double epochBessel2JD(double bEpoch) {
+    public final static double convertEpochBessel2JD(double bEpoch) {
         return (bEpoch - 1900.0d) * 365.242198781d + 2415020.31352d;
     }
     
@@ -71,7 +71,7 @@ public abstract class TimeUtils {
      * @param jd julian date
      * @return a Besselian epoch
      */
-    public final static double JD2epochBessel(double jd) {
+    public final static double convertJD2epochBessel(double jd) {
         return 1900.0d + (jd - 2415020.31352d) / 365.242198781d;
     }
 
@@ -81,7 +81,7 @@ public abstract class TimeUtils {
      * @param julianDate julian date
      * @return ISO date
      */
-    public static String julianDateToISO(final double julianDate) {
+    public static String convertJulianDateToISO(final double julianDate) {
 
         // Calcul date calendrier Grégorien à partir du jour Julien éphéméride
         // Tous les calculs sont issus du livre de Jean MEEUS "Calcul astronomique"
@@ -146,9 +146,9 @@ public abstract class TimeUtils {
      * @param modifiedJulianDate modified julian date
      * @return ISO date
      */
-    public static String modifiedJulianDateToISO(final double modifiedJulianDate) {
+    public static String convertModifiedJulianDateToISO(final double modifiedJulianDate) {
         final double julianDate = modifiedJulianDate + 2400000.5;
-        return julianDateToISO(julianDate);
+        return convertJulianDateToISO(julianDate);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class TimeUtils {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public static double ISOToJulianDate(String dateObs) throws ParseException {
+    public static double convertISOToJulianDate(String dateObs) throws ParseException {
         SimpleDateFormat sdf;
         if (dateObs.contains("T") && dateObs.contains(".")) {
             sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -197,8 +197,8 @@ public abstract class TimeUtils {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public static double ISOToModifiedJulianDate(String dateObs) throws ParseException {
-        double jd = ISOToJulianDate(dateObs);
+    public static double convertISOToModifiedJulianDate(String dateObs) throws ParseException {
+        double jd = convertISOToJulianDate(dateObs);
         double modifiedJulianDate = jd - 2400000.5;
         return modifiedJulianDate;
     }
@@ -243,8 +243,8 @@ public abstract class TimeUtils {
                 if (prefix.equals(("-B"))) {
                     b *= -1.0;
                 }
-                jd = epochBessel2JD(b);
-                j = JD2epochJulian(jd);
+                jd = convertEpochBessel2JD(b);
+                j = convertJD2epochJulian(jd);
                 break;
             case "J":
             case "-J":
@@ -252,31 +252,31 @@ public abstract class TimeUtils {
                 if (prefix.equals(("-J"))) {
                     j *= -1.0;
                 }
-                jd = epochJulian2JD(j);
-                b = JD2epochBessel(jd);
+                jd = convertEpochJulian2JD(j);
+                b = convertJD2epochBessel(jd);
                 break;
             case "JD":
                 jd = Double.valueOf(val[1]);
-                b = JD2epochBessel(jd);
-                j = JD2epochJulian(jd);
+                b = convertJD2epochBessel(jd);
+                j = convertJD2epochJulian(jd);
                 break;
             case "MJD":
                 mjd = Double.valueOf(val[1]);
                 jd = mjd + 2400000.5d;
-                b = JD2epochBessel(jd);
-                j = JD2epochJulian(jd);
+                b = convertJD2epochBessel(jd);
+                j = convertJD2epochJulian(jd);
                 break;
             case "RJD":
                 rjd = Double.valueOf(val[1]);
                 jd = rjd + 2400000d;
-                b = JD2epochBessel(jd);
-                j = JD2epochJulian(jd);
+                b = convertJD2epochBessel(jd);
+                j = convertJD2epochJulian(jd);
                 break;
             case "F":
                 Object[] fd = fitsdate(val[1]);
                 jd = jd((int)fd[0], (int)fd[1], (double)fd[2]);
-                b = JD2epochBessel(jd);
-                j = JD2epochJulian(jd);                
+                b = convertJD2epochBessel(jd);
+                j = convertJD2epochJulian(jd);                
                 break;
             default:
                 throw new JWcsError("Unknown prefix for epoch : " + prefix);

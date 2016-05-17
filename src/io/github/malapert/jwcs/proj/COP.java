@@ -70,9 +70,9 @@ public class COP extends ConicProjection {
     public COP(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
-        this.c = Math.sin(getTheta_a());
+        this.c = Math.sin(getThetaA());
         if (NumericalUtils.equal(this.c, 0)) {
-            throw new BadProjectionParameterException(this, "theta_a: " + getTheta_a() + ". It must be !=0");
+            throw new BadProjectionParameterException(this, "theta_a: " + getThetaA() + ". It must be !=0");
         }
     }
 
@@ -85,10 +85,10 @@ public class COP extends ConicProjection {
         if (NumericalUtils.equal(d, 0)) {
             throw new BadProjectionParameterException(this, "Bad value for eta = " + getEta() + ". eta must be > 0");
         }
-        double y0 = d / Math.tan(getTheta_a());
-        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        double y0 = d / Math.tan(getThetaA());
+        double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
         double phi = computePhi(xr, yr, r_theta, y0, c);
-        double theta = getTheta_a() + Math.atan(1.0 / Math.tan(getTheta_a()) - r_theta / Math.cos(getEta()));
+        double theta = getThetaA() + Math.atan(1.0 / Math.tan(getThetaA()) - r_theta / Math.cos(getEta()));
         double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
         return pos;
@@ -98,8 +98,8 @@ public class COP extends ConicProjection {
     protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
         phi = phiRange(phi);
-        double y0 = Math.cos(getEta()) / Math.tan(getTheta_a());
-        double r_theta = y0 - Math.cos(getEta()) * Math.tan(theta - getTheta_a());
+        double y0 = Math.cos(getEta()) / Math.tan(getThetaA());
+        double r_theta = y0 - Math.cos(getEta()) * Math.tan(theta - getThetaA());
         double x = computeX(phi, r_theta, c);
         double y = computeY(phi, r_theta, c, y0);
         double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
@@ -114,7 +114,7 @@ public class COP extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
     }
 
     @Override

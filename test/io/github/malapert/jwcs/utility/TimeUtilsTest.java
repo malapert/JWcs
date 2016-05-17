@@ -65,53 +65,53 @@ public class TimeUtilsTest {
 
 
     /**
-     * Test of julianDateToISO method, of class TimeUtils.
+     * Test of convertJulianDateToISO method, of class TimeUtils.
      */
     @Test
-    public void testJulianDateToISO() {
+    public void testConvertJulianDateToISO() {
         System.out.println("julianDateToISO");
         double julianDate = 2456915;
         String expResult = "2014-09-14T12:00:00";
-        String result = TimeUtils.julianDateToISO(julianDate);
+        String result = TimeUtils.convertJulianDateToISO(julianDate);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of modifiedJulianDateToISO method, of class TimeUtils.
+     * Test of convertModifiedJulianDateToISO method, of class TimeUtils.
      */
     @Test
-    public void testModifiedJulianDateToISO() {
+    public void testConvertModifiedJulianDateToISO() {
         System.out.println("modifiedJulianDateToISO");
         double modifiedJulianDate = 53005;
         String expResult = "2004-01-01T00:00:00";
-        String result = TimeUtils.modifiedJulianDateToISO(modifiedJulianDate);
+        String result = TimeUtils.convertModifiedJulianDateToISO(modifiedJulianDate);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of ISOToJulianDate method, of class TimeUtils.
+     * Test of convertISOToJulianDate method, of class TimeUtils.
      * @throws java.lang.Exception
      */
     @Test
-    public void testISOToJulianDate() throws Exception {
+    public void testConvertISOToJulianDate() throws Exception {
         System.out.println("ISOToJulianDate");
         String dateObs = "2014-09-14T12:08:18";
         double expResult = 2456915.005763889;
-        double result = TimeUtils.ISOToJulianDate(dateObs);
+        double result = TimeUtils.convertISOToJulianDate(dateObs);
         assertEquals(expResult, result, 1e-9);             
     }
     
     
     /**
-     * Test of ISOToModifiedJulianDate method, of class TimeUtils.
+     * Test of convertISOToModifiedJulianDate method, of class TimeUtils.
      * @throws java.lang.Exception
      */
     @Test
-    public void testISOToModifiedJulianDate() throws Exception {
+    public void testConvertISOToModifiedJulianDate() throws Exception {
         System.out.println("ISOToModifiedJulianDate");
         
         String datObs = "2004-01-01T00:00:00.000";        
-        double result = TimeUtils.ISOToModifiedJulianDate(datObs);
+        double result = TimeUtils.convertISOToModifiedJulianDate(datObs);
         double expResultMJD = 53005.0;
         assertEquals(expResultMJD, result, 1e-6);
     }
@@ -125,55 +125,55 @@ public class TimeUtilsTest {
         System.out.println("Convert and reverse");
         
         String dateObs = "10/03/78";        
-        double result = TimeUtils.ISOToModifiedJulianDate(dateObs);
-        String expResult = TimeUtils.modifiedJulianDateToISO(result);
+        double result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
+        String expResult = TimeUtils.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, "1978-03-10T00:00:00");       
         
         dateObs = "1978-03-10";        
-        result = TimeUtils.ISOToModifiedJulianDate(dateObs);
-        expResult = TimeUtils.modifiedJulianDateToISO(result);
+        result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
+        expResult = TimeUtils.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, "1978-03-10T00:00:00");        
         
         dateObs = "1978-03-10T10:20:02";        
-        result = TimeUtils.ISOToModifiedJulianDate(dateObs);
-        expResult = TimeUtils.modifiedJulianDateToISO(result);
+        result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
+        expResult = TimeUtils.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, dateObs);           
     }
 
     /**
-     * Test of epochJulian2JD method, of class TimeUtils.
+     * Test of convertEpochJulian2JD method, of class TimeUtils.
      */
     @Test
-    public void testEpochJulian2JD() {
+    public void testConvertEpochJulian2JD() {
         System.out.println("epochJulian2JD");
         double jEpoch = 1983.99863107d;
         double expResult = 2445700.5d;
-        double result = TimeUtils.epochJulian2JD(jEpoch);
+        double result = TimeUtils.convertEpochJulian2JD(jEpoch);
         assertEquals(expResult, result, 1e-1);
     }
 
     /**
-     * Test of JD2epochJulian method, of class TimeUtils.
+     * Test of convertJD2epochJulian method, of class TimeUtils.
      */
     @Test
-    public void testJD2epochJulian() {
+    public void testConvertJD2epochJulian() {
         System.out.println("JD2epochJulian");
         double jd = 2445700.5d;
         double expResult = 1983.99863107d;
-        double result = TimeUtils.JD2epochJulian(jd);
+        double result = TimeUtils.convertJD2epochJulian(jd);
         assertEquals(expResult, result, 1e-7);
     }
 
     /**
-     * Test of epochBessel2JD method, of class TimeUtils.
+     * Test of convertEpochBessel2JD method, of class TimeUtils.
      */
     @Test
-    public void testEpochBessel2JD() {
+    public void testConvertEpochBessel2JD() {
         System.out.println("epochBessel2JD");
         double bEpoch = 1983.99956681d;
         double expResult = 1983.99956681d;
-        double jd = TimeUtils.epochBessel2JD(bEpoch);
-        double result = TimeUtils.JD2epochBessel(jd);
+        double jd = TimeUtils.convertEpochBessel2JD(bEpoch);
+        double result = TimeUtils.convertJD2epochBessel(jd);
         assertEquals(expResult, result, 1e-7);
     }
 

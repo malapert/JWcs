@@ -72,8 +72,8 @@ public class COO extends ConicProjection {
             throw new BadProjectionParameterException(this,"(theta1,theta2). c must be != 0");
         }
         double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
-        double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
-        double r_theta = Math.signum(getTheta_a()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
+        double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
         double phi = computePhi(xr, yr, r_theta, y0, c);            
         double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
         double[] pos = {phi, theta};
@@ -89,9 +89,9 @@ public class COO extends ConicProjection {
         double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
         double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         if (NumericalUtils.equal(psi,0)) {
-            throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getTheta_a() + ", " + getEta()+")");
+            throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getThetaA() + ", " + getEta()+")");
         }
-        double y0 = psi * Math.pow(Math.tan((HALF_PI - getTheta_a()) * 0.5), c);
+        double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
         phi = phiRange(phi);
         double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
         double x = computeX(phi, r_theta, c);
@@ -108,7 +108,7 @@ public class COO extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getTheta_a())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
     }
         
     @Override

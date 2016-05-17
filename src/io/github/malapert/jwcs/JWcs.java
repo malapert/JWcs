@@ -366,7 +366,7 @@ public abstract class JWcs implements JWcsKeyProvider {
             mjd = String.valueOf(getValueAsFloat("MJD-OBS"));
         } else if (hasKeyword("DATE-OBS")) {
             try {
-                mjd = String.valueOf(TimeUtils.ISOToModifiedJulianDate(getValueAsString("DATE-OBS")));
+                mjd = String.valueOf(TimeUtils.convertISOToModifiedJulianDate(getValueAsString("DATE-OBS")));
             } catch (ParseException ex) {
                 mjd = null;
             }

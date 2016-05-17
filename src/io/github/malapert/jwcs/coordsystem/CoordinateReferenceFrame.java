@@ -159,7 +159,7 @@ public interface CoordinateReferenceFrame {
          * Returns the list of CoordinateReferenceFrame.
          * @return all names of the CoordinateReferenceFrame
          */
-        public static String[] ReferenceFramesName() {            
+        public static String[] getRefenceFrameNametoArray() {            
             ReferenceFrame[] values = ReferenceFrame.values();
             String[] result = new String[values.length];
             int index = 0;

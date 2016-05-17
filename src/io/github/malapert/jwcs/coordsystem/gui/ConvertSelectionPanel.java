@@ -54,12 +54,12 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         initComponents();
         orginSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
         targetSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
-        originRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.ReferenceFramesName()));
-        targetRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.ReferenceFramesName()));
+        originRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.getRefenceFrameNametoArray()));
+        targetRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.getRefenceFrameNametoArray()));
         setEnableReferenceFrame(CoordinateSystem.values()[0].hasReferenceFrame(), true);
         setEnableReferenceFrame(CoordinateSystem.values()[0].hasReferenceFrame(), false);
-        setEnableReferenceFrameParameter(ReferenceFrame.ReferenceFramesName()[0], true);
-        setEnableReferenceFrameParameter(ReferenceFrame.ReferenceFramesName()[0], false);
+        setEnableReferenceFrameParameter(ReferenceFrame.getRefenceFrameNametoArray()[0], true);
+        setEnableReferenceFrameParameter(ReferenceFrame.getRefenceFrameNametoArray()[0], false);
         this.errorMsg.setText("");
     }
 
