@@ -63,7 +63,7 @@ public class SuperGalactic extends Crs {
             RealMatrix m1 = convertMatrixGal2Sgal().transpose();
             RealMatrix m2 = MatrixEqB19502Gal().transpose();
             RealMatrix m3 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m4 = MatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
+            RealMatrix m4 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));

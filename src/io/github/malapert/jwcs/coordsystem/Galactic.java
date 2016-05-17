@@ -60,7 +60,7 @@ public class Galactic extends Crs {
         } else if (crs instanceof Ecliptic) {
             RealMatrix m1 = MatrixEqB19502Gal().transpose();
             RealMatrix m2 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m3 = MatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
+            RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
             m = m3.multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));

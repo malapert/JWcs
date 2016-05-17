@@ -487,8 +487,7 @@ public class Main {
         LongOpt[] longopts = new LongOpt[11];
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
-        // 
-        StringBuilder sb = new StringBuilder();
+         
         longopts[0] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
         longopts[1] = new LongOpt("gui", LongOpt.REQUIRED_ARGUMENT, null, 'g');
         longopts[2] = new LongOpt("project", LongOpt.REQUIRED_ARGUMENT, null, 'p');

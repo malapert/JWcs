@@ -77,7 +77,7 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
             m = m3.multiply(m2).multiply(m1);
         } else if (crs instanceof Ecliptic) {
             RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m2 = MatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
+            RealMatrix m2 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
             m = m2.multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
