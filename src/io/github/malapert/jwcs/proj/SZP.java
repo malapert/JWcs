@@ -104,7 +104,7 @@ public class SZP extends ZenithalProjection {
      * fiducial point
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    public SZP(double crval1, double crval2) throws BadProjectionParameterException {
+    public SZP(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE_MU, DEFAULT_VALUE_THETAC, DEFAULT_VALUE_PHIC);
     }
 
@@ -121,7 +121,7 @@ public class SZP extends ZenithalProjection {
      * @param thetac \u03D5<sub>c</sub> parameter projection
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    public SZP(double crval1, double crval2, double mu, double phic, double thetac) throws BadProjectionParameterException {
+    public SZP(final double crval1, final double crval2, final double mu, final double phic, final double thetac) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,phic,thetac)=({0},{1},{2},{3},{4})", new Object[]{crval1,crval2,mu,phic,thetac});                                                                                                                                                
         this.mu = mu;
@@ -148,23 +148,23 @@ public class SZP extends ZenithalProjection {
     }
 
     @Override
-    public double[] project(double x, double y) throws PixelBeyondProjectionException {
+    public double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);        
-        double X = xr;
-        double Y = yr;
-        double X1 = (X - xp) / zp;
-        double Y1 = (Y - yp) / zp;
-        double a = X1 * X1 + Y1 * Y1 + 1;
-        double b = X1 * (X - X1) + Y1 * (Y - Y1);
-        double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
-        double sol1 = (-b - Math.sqrt(b * b - a * c)) / a;
-        double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;       
-        double theta1 = NumericalUtils.aasin(sol1);            
-        double theta2 = NumericalUtils.aasin(sol2);            
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);        
+        final double X = xr;
+        final double Y = yr;
+        final double X1 = (X - xp) / zp;
+        final double Y1 = (Y - yp) / zp;
+        final double a = X1 * X1 + Y1 * Y1 + 1;
+        final double b = X1 * (X - X1) + Y1 * (Y - Y1);
+        final double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
+        final double sol1 = (-b - Math.sqrt(b * b - a * c)) / a;
+        final double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;       
+        final double theta1 = NumericalUtils.aasin(sol1);            
+        final double theta2 = NumericalUtils.aasin(sol2);            
 
-        double theta;
+        final double theta;
         if (Double.isNaN(theta1) && Double.isNaN(theta2)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
                     + ", " + y + ")");
@@ -180,23 +180,23 @@ public class SZP extends ZenithalProjection {
                 theta = theta1;
             }
         }
-        double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
-        double[] pos = {phi, theta};
+        final double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                
         return pos;
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
-        phi = phiRange(phi);
-        double denom = zp - (1 - Math.sin(theta));
+        final double phiCorrect = phiRange(phi);
+        final double denom = zp - (1 - Math.sin(theta));
         if (NumericalUtils.equal(denom, 0)) {
             throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
-        double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
-        double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double x = (zp * Math.cos(theta) * Math.sin(phiCorrect) - xp * (1 - Math.sin(theta)))/denom;
+        final double y = -(zp * Math.cos(theta) * Math.cos(phiCorrect) + yp * (1 - Math.sin(theta)))/denom;
+        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                        
         return coord;
     }  
@@ -213,9 +213,9 @@ public class SZP extends ZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        ProjectionParameter p2 = new ProjectionParameter("phic", JWcs.PV22, new double[]{0, 360}, 0);                
-        ProjectionParameter p3 = new ProjectionParameter("thetac", JWcs.PV23, new double[]{0, 90}, 90);
+        final ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("phic", JWcs.PV22, new double[]{0, 360}, 0);                
+        final ProjectionParameter p3 = new ProjectionParameter("thetac", JWcs.PV23, new double[]{0, 90}, 90);
         return new ProjectionParameter[]{p1,p2,p3};    
     }    
 

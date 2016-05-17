@@ -73,7 +73,7 @@ public class MOL extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public MOL(double crval1, double crval2) {
+    public MOL(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                        
         setMaxIter(DEFAULT_MAX_ITER);
@@ -81,14 +81,14 @@ public class MOL extends CylindricalProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) throws PixelBeyondProjectionException {
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                        
         //TODO : check algorithm.
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double tol = 1.0e-12;
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double tol = 1.0e-12;
         double s = 2 - Math.pow(yr, 2);
-        double phi;
+        final double phi;
         if (s < -tol) {
             //erreur
             phi = 0;
@@ -118,20 +118,20 @@ public class MOL extends CylindricalProjection {
             }
             z = (z < 0.0) ? -1.0 : 1.0;
         }
-        double theta = NumericalUtils.aasin(z);
+        final double theta = NumericalUtils.aasin(z);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
         }
 
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                        
-        phi = phiRange(phi);
+        final double phiCorrect = phiRange(phi);
         double u = Math.PI * Math.sin(theta);
         double v0 = -Math.PI;
         double v1 = Math.PI;
@@ -151,7 +151,7 @@ public class MOL extends CylindricalProjection {
             }
         } while (Math.abs(diff) > getTolerance() && nIter < getMaxIter());
         double gamma = v * 0.5;
-        double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phi * Math.cos(gamma));
+        double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phiCorrect * Math.cos(gamma));
         double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
         double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
@@ -173,7 +173,7 @@ public class MOL extends CylindricalProjection {
      *
      * @param tolerance the tolerance to set
      */
-    public final void setTolerance(double tolerance) {
+    public final void setTolerance(final double tolerance) {
         this.tolerance = tolerance;
     }
 
@@ -192,7 +192,7 @@ public class MOL extends CylindricalProjection {
      *
      * @param maxIter the maxIter to set
      */
-    public final void setMaxIter(double maxIter) {
+    public final void setMaxIter(final double maxIter) {
         this.maxIter = maxIter;
     }
 
@@ -205,5 +205,4 @@ public class MOL extends CylindricalProjection {
     public String getDescription() {
         return DESCRIPTION;
     }
-
 }

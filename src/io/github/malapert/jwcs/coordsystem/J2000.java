@@ -90,7 +90,8 @@ public class J2000 implements CoordinateReferenceFrame {
      * No need to specify the epoch of equinox
      */ 
     @Override   
-    public void setEquinox(String equinox) {        
+    public void setEquinox(final String equinox) { 
+        //Do nothing
     }    
     
     /**
@@ -99,6 +100,7 @@ public class J2000 implements CoordinateReferenceFrame {
      */    
     @Override
     public void setEquinox(final double equinox) {
+        //Do nothing
     }      
     
     /**
@@ -106,7 +108,8 @@ public class J2000 implements CoordinateReferenceFrame {
      * No need to specify the epoch of observation
      */    
     @Override
-    public void setEpochObs(final String epochObs) {       
+    public void setEpochObs(final String epochObs) { 
+        //Do nothing
     }
 
     /**
@@ -115,6 +118,7 @@ public class J2000 implements CoordinateReferenceFrame {
      */     
     @Override   
     public void setEpochObs(final double epochObs) {
+        //DO nothing
     }     
 
     @Override

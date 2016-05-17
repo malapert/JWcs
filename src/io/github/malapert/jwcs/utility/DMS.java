@@ -35,6 +35,7 @@ public final class DMS implements Serializable {
 
     // Number formats for seconds
     private static final NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
+    private static final long serialVersionUID = -6119277651753389123L;
 
     static {
         NF.setMinimumIntegerDigits(2);
@@ -88,7 +89,7 @@ public final class DMS implements Serializable {
      * @param min minutes
      * @param sec seconds
      */
-    public DMS(double degrees, int min, double sec) {
+    public DMS(final double degrees, final int min, final double sec) {
         set(degrees, min, sec);
     }
 
@@ -96,7 +97,7 @@ public final class DMS implements Serializable {
      * Initialize from a decimal value and calculate H:M:S.sss.
      * @param val value
      */
-    public DMS(double val) {
+    public DMS(final double val) {
         setVal(val);
     }
 
@@ -104,19 +105,19 @@ public final class DMS implements Serializable {
      * Copy constructor
      * @param hms DMS
      */
-    public DMS(DMS hms) {
+    public DMS(final DMS hms) {
         setVal(hms.val);
     }
 
     /**
      * Initialize from a string value, in format H:M:S.sss, hh, d.ddd, or
      * H M S.
-     * @param s DMS value as string
+     * @param value DMS value as string
      */
-    public DMS(String s) {
-        s = s.replace(",", "."); // Treat ',' like '.', by request
+    public DMS(final String value) {
+        final String valueProcessed = value.replace(",", "."); // Treat ',' like '.', by request
         double[] vals = {0.0, 0.0, 0.0};
-        StringTokenizer tok = new StringTokenizer(s, ": ");
+        final StringTokenizer tok = new StringTokenizer(valueProcessed, ": ");
         int n = 0;
         while (n < 3 && tok.hasMoreTokens()) {
             vals[n++] = Double.valueOf(tok.nextToken());
@@ -127,7 +128,7 @@ public final class DMS implements Serializable {
         } else if (n == 1) {
             setVal(vals[0]);
         } else {
-            throw new RuntimeException("Expected a string of the form hh:mm:ss.sss, but got: '" + s + "'");
+            throw new IllegalArgumentException("Expected a string of the form hh:mm:ss.sss, but got: '" + value + "'");
         }
     }
 
@@ -138,7 +139,7 @@ public final class DMS implements Serializable {
      * @param min minutes
      * @param sec seconds
      */
-    public void set(double degrees, int min, double sec) {
+    public void set(final double degrees, final int min, final double sec) {
         this.degrees = (int) degrees;
         this.min = min;
         this.sec = sec;
@@ -160,7 +161,7 @@ public final class DMS implements Serializable {
      * Set from a decimal value and calculate H:M:S.sss.
      * @param val value to set
      */
-    public void setVal(double val) {
+    public void setVal(final double val) {
         this.val = val;
 
         double v = val; // check also for neg zero
@@ -210,7 +211,7 @@ public final class DMS implements Serializable {
      * @param showSeconds show seconds
      * @return DMS as sexagesimal
      */
-    public String toString(boolean showSeconds) {
+    public String toString(final boolean showSeconds) {
         if (showSeconds) {
             return toString();
         }

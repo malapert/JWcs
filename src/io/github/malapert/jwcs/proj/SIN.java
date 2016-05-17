@@ -71,7 +71,7 @@ public class SIN extends ZenithalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public SIN(double crval1, double crval2) {
+    public SIN(final double crval1, final double crval2) {
         this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
     }
 
@@ -86,7 +86,7 @@ public class SIN extends ZenithalProjection {
      * @param ksi \u03BE dimensionless
      * @param eta \u03B7 dimensionless
      */    
-    public SIN(double crval1, double crval2, double ksi, double eta) {
+    public SIN(final double crval1, final double crval2, final double ksi, final double eta) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,ksi,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,ksi,eta});                                                
         this.ksi = ksi;
@@ -94,11 +94,11 @@ public class SIN extends ZenithalProjection {
     }
 
     @Override
-    public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+    public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double phi, theta;
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double phi, theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE) && NumericalUtils.equal(eta, DEFAULT_VALUE)) {
             double r_theta = computeRadius(xr, yr);
             if(NumericalUtils.equal(r_theta, 1)) {
@@ -107,13 +107,13 @@ public class SIN extends ZenithalProjection {
             phi = computePhi(xr, yr, r_theta);
             theta = NumericalUtils.aacos(r_theta);
         } else {
-            double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
-            double b = ksi * (xr - ksi) + eta * (yr - eta);
-            double c = Math.pow((xr - ksi),2) + Math.pow((yr - eta),2) - 1;
-            double theta1 = NumericalUtils.aasin((-b + Math.sqrt(b * b - a * c)) / a);
-            double theta2 = NumericalUtils.aasin((-b - Math.sqrt(b * b - a * c)) / a);
-            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
-            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+            final double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
+            final double b = ksi * (xr - ksi) + eta * (yr - eta);
+            final double c = Math.pow((xr - ksi),2) + Math.pow((yr - eta),2) - 1;
+            final double theta1 = NumericalUtils.aasin((-b + Math.sqrt(b * b - a * c)) / a);
+            final double theta2 = NumericalUtils.aasin((-b - Math.sqrt(b * b - a * c)) / a);
+            final boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+            final boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
             if (isTheta1Valid && isTheta2Valid) {
                 double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
                 double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
@@ -129,22 +129,22 @@ public class SIN extends ZenithalProjection {
             phi = NumericalUtils.aatan2(xr - ksi * (1 - Math.sin(theta)), -(yr - eta * (1 - Math.sin(theta))));
         }
 
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                
         return pos;
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                        
-        phi = phiRange(phi);
-        double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(phi));
+        final double phiCorrect = phiRange(phi);
+        final double thetax = - Math.atan(ksi*Math.sin(phiCorrect)-eta*Math.cos(phiCorrect));
         if (theta < thetax) {
             throw new PixelBeyondProjectionException(this,"(phi,theta)=("+Math.toDegrees(phi)+","+Math.toDegrees(theta)+")");
         }
-        double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
-        double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
-        double[] coord = {x, y};
+        final double x = Math.toDegrees(Math.cos(theta) * Math.sin(phiCorrect) + ksi * (1 - Math.sin(theta)));
+        final double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phiCorrect) + eta * (1 - Math.sin(theta)));
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         return coord;
     }
@@ -161,8 +161,8 @@ public class SIN extends ZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("ksi", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("ksi", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
 }

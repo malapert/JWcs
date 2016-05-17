@@ -329,7 +329,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws JWcsException When WCS is not valid
      */
     protected void checkWcs() throws JWcsException {
-        
+        // do nothing
     }
 
     /**
@@ -339,7 +339,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return True when the Header is valid otherwise False.
      */
     public static boolean isValidWcs(final Header hdr) {
-        JWcs wcs = new JWcsFits(hdr);
+        final JWcs wcs = new JWcsFits(hdr);
         boolean result;
         try {
             wcs.checkWcs();
@@ -391,10 +391,10 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws JWcsError the coordinate reference frame is not supported
      */
     private CoordinateReferenceFrame getReferenceFrame() {
-        String mjdObs = getMJDObs();
+        final String mjdObs = getMJDObs();
         CoordinateReferenceFrame refSystem;
         if (hasKeyword(RADESYS)) {
-            String radesys = getValueAsString(RADESYS);
+            final String radesys = getValueAsString(RADESYS);
             switch (radesys) {
                 case "ICRS":
                     refSystem = new ICRS();
@@ -456,8 +456,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws JWcsError The coordinate reference system is not supported
      */
     public Crs getCrs() {
-        Crs crs;
-        CoordinateReferenceFrame refSystem = getReferenceFrame();
+        final Crs crs;
+        final CoordinateReferenceFrame refSystem = getReferenceFrame();
         if (hasKeyword("CTYPE1")) {
             String ctype1 = getValueAsString("CTYPE1");
             ctype1 = ctype1.substring(0, ctype1.indexOf('-'));
@@ -573,14 +573,14 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param crota rotation
      * @return the cd matrix as array
      */
-    protected static final double[][] computeCdFromCdelt(double[] cdelt, double crota) {
+    protected static final double[][] computeCdFromCdelt(final double[] cdelt, final double crota) {
         final double cos0 = Math.cos(Math.toRadians(crota));
         final double sin0 = Math.sin(Math.toRadians(crota));
-        double cd11 = cdelt[0] * cos0;
-        double cd12 = Math.abs(cdelt[1]) * Math.signum(cdelt[0]) * sin0;
-        double cd21 = -Math.abs(cdelt[0]) * Math.signum(cdelt[1]) * sin0;
-        double cd22 = cdelt[1] * cos0;
-        double[][] array = {
+        final double cd11 = cdelt[0] * cos0;
+        final double cd12 = Math.abs(cdelt[1]) * Math.signum(cdelt[0]) * sin0;
+        final double cd21 = -Math.abs(cdelt[0]) * Math.signum(cdelt[1]) * sin0;
+        final double cd22 = cdelt[1] * cos0;
+        final double[][] array = {
             {cd11, cd12},
             {cd21, cd22}
         };
@@ -594,8 +594,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param cdelt cdelt array
      * @return the CD matrix
      */
-    protected static double[][] pc2cd(double[][] pc, double[] cdelt) {
-        double[][] cd_conv = {
+    protected static double[][] pc2cd(final double[][] pc, final double[] cdelt) {
+        final double[][] cd_conv = {
             {cdelt[0] * pc[0][0], cdelt[1] * pc[1][0]},
             {cdelt[0] * pc[0][1], cdelt[1] * pc[1][1]}
         };
@@ -612,7 +612,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return the CD matrix
      */
     protected final RealMatrix createCdMatrix() {
-        double[][] arraycd;
+        final double[][] arraycd;
         if (hasCd()) {
             arraycd = new double[2][2];
             arraycd[0][0] = cd(1, 1);
@@ -620,7 +620,7 @@ public abstract class JWcs implements JWcsKeyProvider {
             arraycd[1][0] = cd(2, 1);
             arraycd[1][1] = cd(2, 2);
         } else {
-            double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
+            final double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
             arraycd = computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
         }
         return createRealMatrix(arraycd);
@@ -635,18 +635,18 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public double cd(int i, int j) {
-        double result;
+        final double result;
         if (hasKeyword(CD11)) {
             result = this.getValueAsDouble("CD" + i + "_" + j);
         } else if (hasKeyword(CROTA2)) {
-            double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
-            double[][] cdTmp = JWcs.computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
+            final double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
+            final double[][] cdTmp = JWcs.computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
             result = cdTmp[i - 1][j - 1];
         } else if (hasKeyword(PC11)) {
-            double[][] pc = new double[][]{{getValueAsDouble(PC11), getValueAsDouble(PC12)},
+            final double[][] pc = new double[][]{{getValueAsDouble(PC11), getValueAsDouble(PC12)},
             {getValueAsDouble(PC21), getValueAsDouble(PC22)}};
-            double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
-            double[][] cdTmp = JWcs.pc2cd(pc, cdelt);
+            final double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
+            final double[][] cdTmp = JWcs.pc2cd(pc, cdelt);
             result = cdTmp[i - 1][j - 1];
         } else {
             throw new JWcsError("cd" + i + j + " not found");
@@ -656,7 +656,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public double lonpole() {
-        double result;
+        final double result;
         if (hasKeyword(LONPOLE)) {
             result = getValueAsDouble(LONPOLE);
         } else if (hasKeyword(PV13)) {
@@ -669,7 +669,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public double latpole() {
-        double result;
+        final double result;
         if (hasKeyword(LATPOLE)) {
             result = getValueAsDouble(LATPOLE);
         } else if (hasKeyword(PV14)) {
@@ -690,7 +690,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public int naxis(int j) {
+    public int naxis(final int j) {
         if (hasKeyword("NAXIS" + j)) {
             return getValueAsInt("NAXIS" + j);
         } else {
@@ -699,7 +699,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public double crval(int n) {
+    public double crval(final int n) {
         if (hasKeyword("CRVAL" + n)) {
             return getValueAsDouble("CRVAL" + n);
         } else {
@@ -708,7 +708,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public double crpix(int n) {
+    public double crpix(final int n) {
         if (hasKeyword("CRPIX" + n)) {
             return getValueAsDouble("CRPIX" + n);
         } else {
@@ -717,7 +717,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public String ctype(int n) {
+    public String ctype(final int n) {
         if (hasKeyword("CTYPE" + n)) {
             return getValueAsString("CTYPE" + n);
         } else {
@@ -726,12 +726,12 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public double pv(int i, int m) {
+    public double pv(final int i, final int m) {
         return getValueAsDouble("PV" + i + "_" + m);
     }
 
     @Override
-    public String cunit(int i) {
+    public String cunit(final int i) {
         return getValueAsString("CUNIT" + i);
     }
 
@@ -747,8 +747,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param defaultValue the default value
      * @return the value
      */
-    public double getValueAsDouble(String keyword, double defaultValue) {
-        double result;
+    public double getValueAsDouble(final String keyword, final double defaultValue) {
+        final double result;
         if (hasKeyword(keyword)) {
             result = getValueAsDouble(keyword);
         } else {
@@ -766,9 +766,9 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return the scale factor to apply at CRVAL
      */
     private double convertToDegree(final String cunit) {
-        double cx;
+        final double cx;
         if (hasKeyword(cunit)) {
-            String unit_lc = cunit.toLowerCase();
+            final String unit_lc = cunit.toLowerCase();
             switch (unit_lc) {
                 case "acmin":
                     cx = 1 / 60;
@@ -804,11 +804,11 @@ public abstract class JWcs implements JWcsKeyProvider {
      * when the projection parameter is wrong
      */
     protected final Projection createProjection() throws BadProjectionParameterException {
-        String ctype1 = ctype(1);
-        String codeProjection = ctype1.substring(ctype1.lastIndexOf('-') + 1, ctype1.length());
-        Projection projection;
-        double cx = convertToDegree(cunit(1));
-        double cy = convertToDegree(cunit(2));
+        final String ctype1 = ctype(1);
+        final String codeProjection = ctype1.substring(ctype1.lastIndexOf('-') + 1, ctype1.length());
+        final Projection projection;
+        final double cx = convertToDegree(cunit(1));
+        final double cy = convertToDegree(cunit(2));
 
         switch (codeProjection) {
             case "AIT":
@@ -821,8 +821,8 @@ public abstract class JWcs implements JWcsKeyProvider {
                 break;
             case "AZP":
                 if (hasKeyword(PV21) && hasKeyword(PV22)) {
-                    double mu = getValueAsDouble(PV21);
-                    double gamma = getValueAsDouble(PV22);
+                    final double mu = getValueAsDouble(PV21);
+                    final double gamma = getValueAsDouble(PV22);
                     LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) (mu,gamma)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, mu, gamma});
                     projection = new AZP(crval(1) * cx, crval(2) * cy, mu, gamma);
                 } else {
@@ -918,24 +918,24 @@ public abstract class JWcs implements JWcsKeyProvider {
                 projection = new ZEA(crval(1) * cx, crval(2) * cy);
                 break;
             case "ZPN":
-                Iterator iter = iterator();
-                Map<String, Double> pvMap = new HashMap<>();
+                final Iterator iter = iterator();
+                final Map<String, Double> pvMap = new HashMap<>();
                 while (iter.hasNext()) {
-                    Object keyObj = iter.next();
+                    final Object keyObj = iter.next();
                     if (keyObj instanceof HeaderCard) {
-                        HeaderCard card = (HeaderCard) keyObj;
-                        String key = card.getKey();
+                        final HeaderCard card = (HeaderCard) keyObj;
+                        final String key = card.getKey();
                         if (key.startsWith("PV2")) {
                             pvMap.put(key, getValueAsDouble(key));
                         }
                     } else {
-                        String key = (String) keyObj;
+                        final String key = (String) keyObj;
                         if (key.startsWith("PV2")) {
                             pvMap.put(key, getValueAsDouble(key));
                         }
                     }
                 }
-                double[] pvsPrimitif = new double[pvMap.size()];
+                final double[] pvsPrimitif = new double[pvMap.size()];
                 for (int i = 0; i < pvMap.size(); i++) {
                     pvsPrimitif[i] = pvMap.get("PV2_" + i);
                 }
@@ -975,13 +975,13 @@ public abstract class JWcs implements JWcsKeyProvider {
      * there is a projection error
      */
     @Override
-    public double[] pix2wcs(double x, double y) throws ProjectionException {
-        double[][] arraypj = {
+    public double[] pix2wcs(final double x, final double y) throws ProjectionException {
+        final double[][] arraypj = {
             {x - crpix(1), y - crpix(2)}
         };
-        RealMatrix pj = createRealMatrix(arraypj);
-        RealMatrix pjt = pj.transpose();
-        RealMatrix xi = this.getCd().multiply(pjt);
+        final RealMatrix pj = createRealMatrix(arraypj);
+        final RealMatrix pjt = pj.transpose();
+        final RealMatrix xi = this.getCd().multiply(pjt);
         return this.getProj().projectionPlane2wcs(xi.getEntry(0, 0), xi.getEntry(1, 0));
     }
 
@@ -995,16 +995,16 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws JWcsError the length of pixels must be a multiple of 2
      */
     @Override
-    public double[] pix2wcs(double[] pixels) throws ProjectionException {
-        int pixelsLength = pixels.length;
+    public double[] pix2wcs(final double[] pixels) throws ProjectionException {
+        final int pixelsLength = pixels.length;
         if (pixelsLength % 2 != 0) {
             throw new JWcsError("the length of pixels must be a multiple of 2");
         }
-        double[] skyPositions = new double[pixelsLength];
+        final double[] skyPositions = new double[pixelsLength];
         for (int i = 0; i < pixelsLength; i = i + 2) {
-            double x = pixels[i];
-            double y = pixels[i + 1];
-            double[] result = this.pix2wcs(x, y);
+            final double x = pixels[i];
+            final double y = pixels[i + 1];
+            final double[] result = this.pix2wcs(x, y);
             skyPositions[i] = result[0];
             skyPositions[i + 1] = result[1];
         }
@@ -1028,7 +1028,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param latitude latitude [-90, 90]
      * @throws JWcsError the range is not valid
      */
-    private void checkLongitudeLatitude(double longitude, double latitude) {
+    private void checkLongitudeLatitude(final double longitude, final double latitude) {
         if (longitude > MAX_LONGITUDE || longitude < MIN_LONGITUDE) {
             throw new JWcsError("Longitude must be [0, 360], found " + longitude);
         }
@@ -1045,7 +1045,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return True when the point is visible otherwise False.
      */
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         return this.getProj().inside(Math.toRadians(lon), Math.toRadians(lat));
     }
 
@@ -1056,9 +1056,9 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param pos2 last point of the line
      * @return True when the line is visible otherwise False.
      */
-    public boolean isLineToDraw(double[] pos1, double[] pos2) {
-        boolean result;
-        boolean isFinite = Double.isFinite(pos1[0]) && Double.isFinite(pos1[1]) && Double.isFinite(pos2[0]) && Double.isFinite(pos2[1]);
+    public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
+        final boolean result;
+        final boolean isFinite = Double.isFinite(pos1[0]) && Double.isFinite(pos1[1]) && Double.isFinite(pos2[0]) && Double.isFinite(pos2[1]);
         if (isFinite) {
             result = this.getProj().isLineToDraw(pos1, pos2);
         } else {
@@ -1078,14 +1078,14 @@ public abstract class JWcs implements JWcsKeyProvider {
      * there is a projection error
      */
     @Override
-    public double[] wcs2pix(double longitude, double latitude) throws ProjectionException {
+    public double[] wcs2pix(final double longitude, final double latitude) throws ProjectionException {
         checkLongitudeLatitude(longitude, latitude);
-        double[] coordVal = this.getProj().wcs2projectionPlane(Math.toRadians(longitude), Math.toRadians(latitude));
+        final double[] coordVal = this.getProj().wcs2projectionPlane(Math.toRadians(longitude), Math.toRadians(latitude));
         double[][] coord = {
             {coordVal[0], coordVal[1]}
         };
-        RealMatrix coordM = createRealMatrix(coord);
-        RealMatrix matrix = coordM.multiply(getCdInverse());
+        final RealMatrix coordM = createRealMatrix(coord);
+        final RealMatrix matrix = coordM.multiply(getCdInverse());
         return new double[]{matrix.getEntry(0, 0) + crpix(1), matrix.getEntry(0, 1) + crpix(2)};
     }
 
@@ -1100,16 +1100,16 @@ public abstract class JWcs implements JWcsKeyProvider {
      * multiple of 2
      */
     @Override
-    public double[] wcs2pix(double[] skyPositions) throws ProjectionException {
-        int skyPositionLength = skyPositions.length;
+    public double[] wcs2pix(final double[] skyPositions) throws ProjectionException {
+        final int skyPositionLength = skyPositions.length;
         if (skyPositionLength % 2 != 0) {
             throw new JWcsError("the length of skyPositions must be a multiple of 2");
         }
-        double[] pixelPositions = new double[skyPositionLength];
+        final double[] pixelPositions = new double[skyPositionLength];
         for (int i = 0; i < skyPositionLength; i = i + 2) {
-            double ra = skyPositions[i];
-            double dec = skyPositions[i + 1];
-            double[] result = this.wcs2pix(ra, dec);
+            final double ra = skyPositions[i];
+            final double dec = skyPositions[i + 1];
+            final double[] result = this.wcs2pix(ra, dec);
             pixelPositions[i] = result[0];
             pixelPositions[i + 1] = result[1];
         }
@@ -1121,7 +1121,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @return the projection
      */
-    protected Projection getProj() {
+    protected final Projection getProj() {
         return proj;
     }
 
@@ -1130,7 +1130,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param proj the projection to set
      */
-    protected void setProj(final Projection proj) {
+    protected final void setProj(final Projection proj) {
         this.proj = proj;
     }
 
@@ -1139,7 +1139,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @return the cd
      */
-    protected RealMatrix getCd() {
+    protected final RealMatrix getCd() {
         return cd;
     }
 
@@ -1148,7 +1148,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param cd the cd to set
      */
-    protected void setCd(final RealMatrix cd) {
+    protected final void setCd(final RealMatrix cd) {
         this.cd = cd;
     }
 
@@ -1157,7 +1157,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @return the CD matrix inverse
      */
-    protected RealMatrix getCdInverse() {
+    protected final RealMatrix getCdInverse() {
         return cdInverse;
     }
 
@@ -1166,7 +1166,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param cdInverse the CD matrix inverse to set
      */
-    protected void setCdInverse(final RealMatrix cdInverse) {
+    protected final void setCdInverse(final RealMatrix cdInverse) {
         this.cdInverse = cdInverse;
     }
 }

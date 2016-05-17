@@ -68,7 +68,7 @@ public class PCO extends PolyConicProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public PCO(double crval1, double crval2) {
+    public PCO(final double crval1, final double crval2) {
         super(crval1, crval2, 45);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1,crval2});                                        
         setMaxIter(DEFAULT_MAX_ITER);
@@ -89,7 +89,7 @@ public class PCO extends PolyConicProjection {
      *
      * @param tolerance the tolerance to set
      */
-    public final void setTolerance(double tolerance) {
+    public final void setTolerance(final double tolerance) {
         this.tolerance = tolerance;
     }
 
@@ -107,12 +107,12 @@ public class PCO extends PolyConicProjection {
      *
      * @param maxIter the maxIter to set
      */
-    public final void setMaxIter(int maxIter) {
+    public final void setMaxIter(final int maxIter) {
         this.maxIter = maxIter;
     }
 
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
@@ -188,21 +188,21 @@ public class PCO extends PolyConicProjection {
             }
         }
 
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
-        phi = phiRange(phi);
+        final double phiCorrect = phiRange(phi);
         double costhe = Math.cos(theta);
         double sinthe = Math.sin(theta);
-        double a = phi * sinthe;
+        double a = phiCorrect * sinthe;
         double x, y;
         if (NumericalUtils.equal(sinthe, 0.0)) {
-            x = phi;
+            x = phiCorrect;
             y = 0.0;
         } else {
             double cotthe = costhe / sinthe;

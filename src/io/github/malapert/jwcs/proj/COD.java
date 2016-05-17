@@ -66,7 +66,7 @@ public class COD extends ConicProjection {
      * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    public COD(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
+    public COD(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                        
         if(NumericalUtils.equal(Math.toRadians(eta), 0)) {
@@ -91,26 +91,26 @@ public class COD extends ConicProjection {
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when the projection parameter is wrong
      */
     @Override
-    protected double[] project(double x, double y) throws BadProjectionParameterException {
+    protected double[] project(final double x, final double y) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);     
-        double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        double phi = computePhi(xr, yr, r_theta, y0, c);
-        double theta = getThetaA() + y0 - r_theta;
-        double[] pos = {phi, theta};
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);     
+        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        final double phi = computePhi(xr, yr, r_theta, y0, c);
+        final double theta = getThetaA() + y0 - r_theta;
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
+    protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
-        phi = phiRange(phi);
-        double r_theta = getThetaA() + y0 - theta;       
-        double x = computeX(phi, r_theta, c);
-        double y = computeY(phi, r_theta, c, y0);
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double phiCorrect = phiRange(phi);
+        final double r_theta = getThetaA() + y0 - theta;       
+        final double x = computeX(phiCorrect, r_theta, c);
+        final double y = computeY(phiCorrect, r_theta, c, y0);
+        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;
     }
@@ -133,8 +133,8 @@ public class COD extends ConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
-        ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
+        final ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }
 

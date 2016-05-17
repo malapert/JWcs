@@ -62,22 +62,22 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
    
     @Override
     protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
-        RealMatrix m;
-        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
+        final RealMatrix m;
+        final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {
-            m = MatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), getEpochObs());
+            m = convertMatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), getEpochObs());
         } else if (crs instanceof Galactic) {
-            RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            RealMatrix m2 = MatrixEqB19502Gal();
+            final RealMatrix m1 = convertMatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+            final RealMatrix m2 = convertMatrixEqB19502Gal();
             m = m2.multiply(m1);
         } else if (crs instanceof SuperGalactic) {
-            RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            RealMatrix m2 = MatrixEqB19502Gal();
-            RealMatrix m3 = convertMatrixGal2Sgal();
+            final RealMatrix m1 = convertMatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+            final RealMatrix m2 = convertMatrixEqB19502Gal();
+            final RealMatrix m3 = convertMatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (crs instanceof Ecliptic) {
-            RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m2 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
+            final RealMatrix m1 = convertMatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m2 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
             m = m2.multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
@@ -145,7 +145,5 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
     @Override
     public String toString() {
         return SKY_NAME+"("+coordinateReferenceFrame+")";
-    }
-    
-    
+    }        
 }

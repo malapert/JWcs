@@ -59,7 +59,7 @@ public class BON extends PolyConicProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      * @param theta1 \u03B8<sub>1</sub> latitude in degrees. 
      */
-    public BON(double crval1, double crval2, double theta1) {
+    public BON(final double crval1, final double crval2, final double theta1) {
         super(crval1, crval2, theta1);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta1)=({0},{1},{2})", new Object[]{crval1,crval2,theta1});                
         if (NumericalUtils.equal(theta1,0)) {
@@ -68,25 +68,25 @@ public class BON extends PolyConicProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
-        double[] result;
+        final double[] result;
         if (this.sfl == null) {
-            double xr = Math.toRadians(x);
-            double yr = Math.toRadians(y);
-            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());            
-            double r_theta = Math.signum(getTheta1())* Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-            double aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
+            final double xr = Math.toRadians(x);
+            final double yr = Math.toRadians(y);
+            final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());            
+            final double r_theta = Math.signum(getTheta1())* Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+            final double aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
             
-            double theta = y0 - r_theta;
-            double cos_theta = Math.cos(theta);
-            double phi;
+            final double theta = y0 - r_theta;
+            final double cos_theta = Math.cos(theta);
+            final double phi;
             if (NumericalUtils.equal(cos_theta,0)) {
                 phi = 0;
             } else {
                 phi = aphi * r_theta / cos_theta;
             }
-            double[] pos = {phi, theta};
+            final double[] pos = {phi, theta};
             result = pos;
         } else {
             result = this.sfl.project(x, y);
@@ -96,18 +96,18 @@ public class BON extends PolyConicProjection {
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                        
         double[] result;
         if (sfl == null) {
-            phi = phiRange(phi);
+            final double phiCorrect = phiRange(phi);
             double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
             double r_theta = y0 - theta;
             double aphi;
             if (NumericalUtils.equal(r_theta, 0)) {
                 aphi=0;
             } else {
-                aphi = phi * Math.cos(theta) / r_theta;
+                aphi = phiCorrect * Math.cos(theta) / r_theta;
             }
             double x = r_theta * Math.sin(aphi);
             double y = -r_theta * Math.cos(aphi) + y0;
@@ -132,7 +132,7 @@ public class BON extends PolyConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("theta1", JWcs.PV11, new double[]{-90, 90}, 45);
+        final ProjectionParameter p1 = new ProjectionParameter("theta1", JWcs.PV11, new double[]{-90, 90}, 45);
         return new ProjectionParameter[]{p1};
     }
 

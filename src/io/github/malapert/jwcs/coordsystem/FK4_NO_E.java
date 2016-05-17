@@ -143,7 +143,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     
     @Override
     public String toString() {
-        String result;
+        final String result;
         if (Double.isNaN(this.epochObs)) {
             result = "FK4_NO_E(B"+this.equinox+")";
         } else {

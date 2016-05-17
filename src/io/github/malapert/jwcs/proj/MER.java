@@ -58,13 +58,13 @@ public class MER extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public MER(double crval1, double crval2) {
+    public MER(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                
     }
 
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                
         double xr = Math.toRadians(x);
         double yr = Math.toRadians(y);
@@ -76,10 +76,10 @@ public class MER extends CylindricalProjection {
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException  {
+    protected double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException  {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
-        phi = phiRange(phi);
-        double x = phi;
+        final double phiCorrect = phiRange(phi);
+        double x = phiCorrect;
         if (NumericalUtils.equal(Math.abs(theta), HALF_PI)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));            
         }
@@ -94,7 +94,7 @@ public class MER extends CylindricalProjection {
         double y = Math.log(d);
         x = Math.toDegrees(x);
         y = Math.toDegrees(y);
-        double[] coord = {x, y};
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                        
         return coord;        
     }
@@ -111,8 +111,7 @@ public class MER extends CylindricalProjection {
         
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), HALF_PI);   
     }
-
 }

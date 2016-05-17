@@ -59,7 +59,7 @@ public class SkyPosition {
      * @param latitude latitude in decimal degrees of the position
      * @param crs CRS in which the position is stored
      */
-    public SkyPosition(double longitude, double latitude, final Crs crs) {
+    public SkyPosition(final double longitude, final double latitude, final Crs crs) {
         this.longitude = longitude%360;
         this.latitude = latitude;
         this.crs = crs;
@@ -86,7 +86,7 @@ public class SkyPosition {
      * Sets the longitude in decimal degrees.
      * @param longitude the longitude to set
      */
-    public void setLongitude(double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
@@ -102,7 +102,7 @@ public class SkyPosition {
      * Sets the latitude in decimal degrees.
      * @param latitude the latitude to set
      */
-    public void setLatitude(double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
     

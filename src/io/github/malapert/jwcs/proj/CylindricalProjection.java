@@ -71,7 +71,7 @@ public abstract class CylindricalProjection extends Projection {
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      */
-    protected CylindricalProjection(double crval1, double crval2) {
+    protected CylindricalProjection(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2) = ({0},{1})", new Object[]{crval1, crval2});
         setPhi0(DEFAULT_PHI0);
@@ -87,7 +87,7 @@ public abstract class CylindricalProjection extends Projection {
     }  
 
     @Override
-    public final void setPhi0(double phi0) {
+    public final void setPhi0(final double phi0) {
         this.phi0 = phi0;
     } 
     
@@ -97,7 +97,7 @@ public abstract class CylindricalProjection extends Projection {
     }
     
     @Override
-    public final void setTheta0(double theta0) {
+    public final void setTheta0(final double theta0) {
         this.theta0 = theta0;
     }     
 
@@ -107,12 +107,12 @@ public abstract class CylindricalProjection extends Projection {
     }
     
     @Override
-    public boolean inside(double lon, double lat) {      
+    public boolean inside(final double lon, final double lat) {      
        return true;
     }     
     
     @Override
-    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+    public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
         return Math.abs(pos1[0] - pos2[0]) < 100;
     }    
     

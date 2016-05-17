@@ -48,22 +48,22 @@ public class SuperGalactic extends Crs {
     
     @Override
     protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
-        RealMatrix m;
-        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
+        final RealMatrix m;
+        final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {
-            RealMatrix m1 = convertMatrixGal2Sgal().transpose(); 
-            RealMatrix m2 = MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m1 = convertMatrixGal2Sgal().transpose(); 
+            final RealMatrix m2 = convertMatrixEqB19502Gal().transpose();
+            final RealMatrix m3 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
             m = m3.multiply(m2).multiply(m1);
         } else if (crs instanceof Galactic) {
             m = convertMatrixGal2Sgal().transpose();       
         } else if (crs instanceof SuperGalactic) {
             m = createRealIdentityMatrix(3);
         } else if (crs instanceof Ecliptic) {
-            RealMatrix m1 = convertMatrixGal2Sgal().transpose();
-            RealMatrix m2 = MatrixEqB19502Gal().transpose();
-            RealMatrix m3 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m4 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
+            final RealMatrix m1 = convertMatrixGal2Sgal().transpose();
+            final RealMatrix m2 = convertMatrixEqB19502Gal().transpose();
+            final RealMatrix m3 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m4 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));

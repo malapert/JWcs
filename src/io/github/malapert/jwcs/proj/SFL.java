@@ -52,34 +52,34 @@ public class SFL extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public SFL(double crval1, double crval2) {
+    public SFL(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                        
     }
 
     @Override
-    protected double[] project(double x, double y) {        
+    protected double[] project(final double x, final double y) {        
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                
-        double theta = Math.toRadians(y);
-        double cosTheta = Math.cos(theta);
-        double phi;
+        final double theta = Math.toRadians(y);
+        final double cosTheta = Math.cos(theta);
+        final double phi;
         if(NumericalUtils.equal(cosTheta, 0)) {
             phi = 0;
         } else {
             phi = Math.toRadians(x) / Math.cos(theta);
         }
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                
-        phi = phiRange(phi);
-        double x = Math.toDegrees(phi * Math.cos(theta));
-        double y = Math.toDegrees(theta);
-        double[] coord = {x, y};
+        final double phiCorrect = phiRange(phi);
+        final double x = Math.toDegrees(phiCorrect * Math.cos(theta));
+        final double y = Math.toDegrees(theta);
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                
         return coord;        
     }

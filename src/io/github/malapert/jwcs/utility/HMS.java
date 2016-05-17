@@ -35,6 +35,7 @@ public final class HMS implements Serializable {
 
     // Number formats for seconds
     private static final NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
+    private static final long serialVersionUID = 6425466963081211760L;
 
     static {
         NF.setMinimumIntegerDigits(2);
@@ -88,7 +89,7 @@ public final class HMS implements Serializable {
      * @param min minutes
      * @param sec seconds
      */
-    public HMS(double hours, int min, double sec) {
+    public HMS(final double hours, final int min, final double sec) {
         set(hours, min, sec);
     }
 
@@ -96,7 +97,7 @@ public final class HMS implements Serializable {
      * Initialize from a decimal hours value and calculate H:M:S.sss.
      * @param val the HMS as double
      */
-    public HMS(double val) {
+    public HMS(final double val) {
         setVal(val);
     }
 
@@ -104,20 +105,20 @@ public final class HMS implements Serializable {
      * Copy constructor
      * @param hms HDS as hms
      */
-    public HMS(HMS hms) {
+    public HMS(final HMS hms) {
         setVal(hms.val);
     }
 
     /**
      * Initialize from a string value, in format H:M:S.sss, hh, or H M
      * S.  If the value is not in H:M:S and is not an integer (has a
-     * decimal point), assume the value is in deg convert to hours by
-     * dividing by 15. (Reason: some catalog servers returns RA in h:m:s
-     * while others return it in decimal deg.)
-     * @param s HMS as String
+ decimal point), assume the value is in deg convert to hours by
+ dividing by 15. (Reason: some catalog servers returns RA in h:m:value
+ while others return it in decimal deg.)
+     * @param value HMS as String
      */
-    public HMS(String s) {
-        this(s, false);
+    public HMS(String value) {
+        this(value, false);
     }
 
     /**
@@ -126,14 +127,14 @@ public final class HMS implements Serializable {
      * integer (has a decimal point), and hflag is true,
      * assume the value is in deg and convert to hours by dividing by 15.
      *
-     * @param s the RA string
+     * @param value the RA string
      * @param hflag if true, assume RA is always in hours, otherwise, if it has a decimal point,
      * assume deg
      */
-    public HMS(String s, boolean hflag) {
-        s = s.replace(",", "."); // Treat ',' like '.', by request
+    public HMS(final String value, boolean hflag) {
+        final String valueProcessed = value.replace(",", "."); // Treat ',' like '.', by request
         double[] vals = {0.0, 0.0, 0.0};
-        StringTokenizer tok = new StringTokenizer(s, ": ");
+        final StringTokenizer tok = new StringTokenizer(valueProcessed, ": ");
         int n = 0;
         while (n < 3 && tok.hasMoreTokens()) {
             vals[n++] = Double.valueOf(tok.nextToken());
@@ -142,13 +143,13 @@ public final class HMS implements Serializable {
         if (n >= 2) {
             set(vals[0], (int) vals[1], vals[2]);
         } else if (n == 1) {
-            if (!hflag && s.indexOf('.') != -1) {
+            if (!hflag && value.indexOf('.') != -1) {
                 setVal(vals[0] / 15.);
             } else {
                 setVal(vals[0]);
             }
         } else {
-            throw new RuntimeException("Expected a string of the form hh:mm:ss.sss, but got: '" + s + "'");
+            throw new RuntimeException("Expected a string of the form hh:mm:ss.sss, but got: '" + value + "'");
         }
     }
 
@@ -158,7 +159,7 @@ public final class HMS implements Serializable {
      * @param min minutes
      * @param sec seconds
      */
-    public void set(double hours, int min, double sec) {
+    public void set(final double hours, final int min, final double sec) {
         this.hours = (int) hours;
         this.min = min;
         this.sec = sec;
@@ -180,7 +181,7 @@ public final class HMS implements Serializable {
      * Set from a decimal value (hours) and calculate H:M:S.sss.
      * @param val value
      */
-    public void setVal(double val) {
+    public void setVal(final double val) {
         this.val = val;
 
         double v = val; // check also for neg zero

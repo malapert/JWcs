@@ -68,7 +68,7 @@ public class CEA extends CylindricalProjection {
      * fiducial point
      * @throws BadProjectionParameterException When projection parameters are wrong
      */
-    public CEA(double crval1, double crval2) throws BadProjectionParameterException {
+    public CEA(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE);
     }
 
@@ -85,7 +85,7 @@ public class CEA extends CylindricalProjection {
      * @param lambda \u03BB dimensionless.
      * @throws BadProjectionParameterException lambda not in ]0,1]
      */
-    public CEA(double crval1, double crval2, double lambda) throws BadProjectionParameterException {
+    public CEA(final double crval1, final double crval2, final double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,lambda)=({0},{1},{2})", new Object[]{crval1,crval2,lambda});                        
         if (NumericalUtils.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
@@ -95,28 +95,28 @@ public class CEA extends CylindricalProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) throws ProjectionException {
+    protected double[] project(final double x, final double y) throws ProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double phi = xr;
-        double arg = getLambda() * yr;
-        double theta = NumericalUtils.aasin(arg);
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double phi = xr;
+        final double arg = getLambda() * yr;
+        final double theta = NumericalUtils.aasin(arg);
         if(Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
         }
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) throws ProjectionException {
+    protected double[] projectInverse(final double phi, final double theta) throws ProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
-        phi = phiRange(phi);
-        double x = Math.toDegrees(phi);
-        double y = Math.toDegrees(Math.sin(theta) / getLambda());
-        double[] coord = {x, y};
+        final double phiCorrect = phiRange(phi);
+        final double x = Math.toDegrees(phiCorrect);
+        final double y = Math.toDegrees(Math.sin(theta) / getLambda());
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;
     }
@@ -135,7 +135,7 @@ public class CEA extends CylindricalProjection {
      *
      * @param lambda the lambda to set
      */
-    private void setLambda(double lambda) {
+    private void setLambda(final double lambda) {
         this.lambda = lambda;
     }
 
@@ -151,7 +151,7 @@ public class CEA extends CylindricalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("lambda", JWcs.PV21, new double[]{0, 1}, 1);
+        final ProjectionParameter p1 = new ProjectionParameter("lambda", JWcs.PV21, new double[]{0, 1}, 1);
         return new ProjectionParameter[]{p1};        
     }    
 

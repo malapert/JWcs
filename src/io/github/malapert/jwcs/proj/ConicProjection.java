@@ -100,7 +100,7 @@ public abstract class ConicProjection extends Projection {
      * @param eta abs(theta1 - theta2) / 2 in degrees
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    protected ConicProjection(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
+    protected ConicProjection(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta_a,eta) = ({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
         this.thetaA = Math.toRadians(theta_a);
@@ -122,9 +122,9 @@ public abstract class ConicProjection extends Projection {
      * @param theta2 \u03B8<sub>2</sub> in radians
      * @throws BadProjectionParameterException When (theta1,theta2) not in range [-90,90]
      */
-    private void checkParameters(double theta1, double theta2) throws BadProjectionParameterException {
-        boolean inRangeTheta1 = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
-        boolean inRangeTheta2 = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+    private void checkParameters(final double theta1, final double theta2) throws BadProjectionParameterException {
+        final boolean inRangeTheta1 = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+        final boolean inRangeTheta2 = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
         if(!inRangeTheta1 || !inRangeTheta2) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). Each angle must be -90<=theta1,theta2<=90");
         }
@@ -145,7 +145,7 @@ public abstract class ConicProjection extends Projection {
      * @param c c
      * @return native spherical coordinate (\u03D5) in radians along longitude
      */
-    protected double computePhi(double x, double y, double r_theta, double y0, double c) {
+    protected double computePhi(final double x, final double y, final double r_theta, final double y0, final double c) {
         return NumericalUtils.equal(r_theta, 0) ? 0 : NumericalUtils.aatan2(x/r_theta, (y0-y)/r_theta)/c;
     }
     
@@ -156,7 +156,7 @@ public abstract class ConicProjection extends Projection {
      * @param c c
      * @return the projection plane coordinate along X
      */
-    protected double computeX(double phi, double r_theta, double c) {
+    protected double computeX(final double phi, final double r_theta, final double c) {
         return r_theta * Math.sin(c*phi);
     }
 
@@ -168,7 +168,7 @@ public abstract class ConicProjection extends Projection {
      * @param y0 y0
      * @return the projection plane coordinate along Y
      */
-    protected double computeY(double phi, double r_theta, double c, double y0) {
+    protected double computeY(final double phi, final double r_theta, final double c, final double y0) {
         return -r_theta * Math.cos(c*phi) + y0;
     }    
 
@@ -183,12 +183,12 @@ public abstract class ConicProjection extends Projection {
     }  
     
     @Override
-    public final void setPhi0(double phio) {
+    public final void setPhi0(final double phio) {
         this.phio = phio;
     }
 
     @Override
-    public final void setTheta0(double theta0) {
+    public final void setTheta0(final double theta0) {
         this.theta0 = theta0;
     }    
 
@@ -212,19 +212,19 @@ public abstract class ConicProjection extends Projection {
      * Sets eta in radians.
      * @param eta eta
      */
-    protected void setEta(double eta) {
+    protected void setEta(final double eta) {
         this.eta = eta;
     }      
     
     @Override
-    public boolean inside(double lon, double lat) {     
-       double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+    public boolean inside(final double lon, final double lat) {     
+        final double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
         LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
         return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
     }   
     
     @Override
-    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+    public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
         LOG.log(Level.FINER, "True");
         return true;
     }    
@@ -232,6 +232,5 @@ public abstract class ConicProjection extends Projection {
     @Override
     public final Logger getLogger() {
         return LOG;
-    }
-        
+    }       
 }

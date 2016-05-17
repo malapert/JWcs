@@ -84,7 +84,7 @@ public abstract class ZenithalProjection extends Projection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * (\u03B4<sub>0</sub>)
      */
-    protected ZenithalProjection(double crval1, double crval2) {
+    protected ZenithalProjection(final double crval1, final double crval2) {
         super(crval1, crval2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
@@ -106,17 +106,17 @@ public abstract class ZenithalProjection extends Projection {
     }
 
     @Override
-    public final void setPhi0(double phi0) {
+    public final void setPhi0(final double phi0) {
         this.phi0 = phi0;
     }
 
     @Override
-    public final void setTheta0(double theta0) {
+    public final void setTheta0(final double theta0) {
         this.theta0 = theta0;
     }
 
     @Override
-    protected double[] computeCoordNativePole(double phi_p) {
+    protected double[] computeCoordNativePole(final double phi_p) {
         return new double[]{getCrval1(), getCrval2()};
     }
 
@@ -126,7 +126,7 @@ public abstract class ZenithalProjection extends Projection {
      * @param y the projection plane coordinate along Y
      * @return the radius
      */
-    protected double computeRadius(double x, double y) {
+    protected double computeRadius(final double x, final double y) {
         return Math.hypot(x, y);
     }
 
@@ -136,7 +136,7 @@ public abstract class ZenithalProjection extends Projection {
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @return the projection plane coordinate along X
      */
-    protected double computeX(double radius, double phi) {
+    protected double computeX(final double radius, final double phi) {
         return radius * Math.sin(phi);
     }
 
@@ -146,7 +146,7 @@ public abstract class ZenithalProjection extends Projection {
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @return the projection plane coordinate along Y
      */    
-    protected double computeY(double radius, double phi) {
+    protected double computeY(final double radius, final double phi) {
         return -radius * Math.cos(phi);
     }
 
@@ -157,7 +157,7 @@ public abstract class ZenithalProjection extends Projection {
      * @param radius the radius
      * @return the  native spherical coordinate (\u03D5) in radians along longitude
      */
-    protected double computePhi(double x, double y, double radius) {
+    protected double computePhi(final double x, final double y, final double radius) {
         return NumericalUtils.equal(radius, 0) ? 0 : NumericalUtils.aatan2(x, -y);
     }
 
@@ -167,14 +167,14 @@ public abstract class ZenithalProjection extends Projection {
     }
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
         LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
         return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
     }
 
     @Override
-    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+    public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
         LOG.log(Level.FINER, "true");
         return true;
     }

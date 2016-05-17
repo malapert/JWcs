@@ -54,33 +54,33 @@ public class ARC extends ZenithalProjection {
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */    
-    public ARC(double crval1, double crval2) {
+    public ARC(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
         
     }
  
     @Override
-    protected double[] project(double x, double y) {
+    protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double r_theta = computeRadius(xr, yr);
-        double phi = computePhi(xr, yr, r_theta);
-        double theta = HALF_PI - r_theta;
-        double[] pos = {phi, theta};
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double r_theta = computeRadius(xr, yr);
+        final double phi = computePhi(xr, yr, r_theta);
+        final double theta = HALF_PI - r_theta;
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                        
-        phi = phiRange(phi);
-        double r = Math.toDegrees(HALF_PI - theta);  // theta between [-HALF_PI, HALF_PI] => no need to test
-        double x = computeX(r, phi);
-        double y = computeY(r, phi);
-        double[] pos = {x, y};
+        final double phiCorrect = phiRange(phi);
+        final double r = Math.toDegrees(HALF_PI - theta);  // theta between [-HALF_PI, HALF_PI] => no need to test
+        final double x = computeX(r, phiCorrect);
+        final double y = computeY(r, phiCorrect);
+        final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
         return pos;
     }  

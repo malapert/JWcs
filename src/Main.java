@@ -79,7 +79,7 @@ public class Main {
 
         private String commandLine;
 
-        PROG(String commandLine) {
+        PROG(final String commandLine) {
             this.commandLine = commandLine;
         }
 
@@ -87,7 +87,7 @@ public class Main {
             return this.commandLine;
         }
 
-        public void setCommandLine(String commandLine) {
+        public void setCommandLine(final String commandLine) {
             this.commandLine = commandLine;
         }
 
@@ -104,7 +104,7 @@ public class Main {
 
         private final int code;
 
-        EXIT(int code) {
+        EXIT(final int code) {
             this.code = code;
         }
 
@@ -117,64 +117,62 @@ public class Main {
      * Usage.
      */
     private static void usage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Usage: java -jar JWcs.jar -g PROG [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --file HDR_FILE --project X,Y [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --file HDR_FILE --unproject RA,DEC [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --file HDR_FILE --convert RA,DEC --to SYS_TARGET [OPTIONS]\n");
-        sb.append("    or java -jar JWcs.jar --convert RA,DEC --from SYS_ORGIN --to SYS_TARGET [OPTIONS]\n");
-        sb.append("           where:\n");
-        sb.append("               - PROG: either projection or converter\n");
-        sb.append("               - HDR_FILE: Header FITS or FITS file\n");
-        sb.append("               - X: pixel coordinate along X axis on the camera (starts to 1) \n");
-        sb.append("               - Y: pixel coordinate along Y axis on the camera (starts to 1) \n");
-        sb.append("               - RA: sky coordinate\n");
-        sb.append("               - DEC: sky coordinate\n");
-        sb.append("               - SYS_ORIGIN: sky system of the sky coordinates\n");
-        sb.append("               - SYS_TARGET: convert sky coordinates to the SYS_TARGET\n\n");
-
-        sb.append("           SYS_ORIGIN or SYS_TARGET can be:\n");
-        sb.append("               - GALACTIC\n");
-        sb.append("               - SUPER_GALACTIC\n");
-        sb.append("               - EQUATORIAL\n");
-        sb.append("               - EQUATORIAL(ICRS())\n");
-        sb.append("               - EQUATORIAL(J2000())\n");
-        sb.append("               - EQUATORIAL(FK5())\n");
-        sb.append("               - EQUATORIAL(FK5(<equinox>))\n");
-        sb.append("               - EQUATORIAL(FK4())\n");
-        sb.append("               - EQUATORIAL(FK4(<equinox>))\n");
-        sb.append("               - EQUATORIAL(FK4(<equinox>,<epoch>))\n");
-        sb.append("               - EQUATORIAL(FK4_NO_E())\n");
-        sb.append("               - EQUATORIAL(FK4_NO_E(<equinox>))\n");
-        sb.append("               - EQUATORIAL(FK4_NO_E(<equinox>,<epoch>))\n");
-        sb.append("               - ECLIPTIC\n");
-        sb.append("               - ECLIPTIC(ICRS())\n");
-        sb.append("               - ECLIPTIC(J2000())\n");
-        sb.append("               - ECLIPTIC(FK5())\n");
-        sb.append("               - ECLIPTIC(FK5(<equinox>))\n");
-        sb.append("               - ECLIPTIC(FK4())\n");
-        sb.append("               - ECLIPTIC(FK4(<equinox>))\n");
-        sb.append("               - ECLIPTIC(FK4(<equinox>,<epoch>))\n");
-        sb.append("               - ECLIPTIC(FK4_NO_E())\n");
-        sb.append("               - ECLIPTIC(FK4_NO_E(<equinox>))\n");
-        sb.append("               - ECLIPTIC(FK4_NO_E(<equinox>,<epoch>))\n");
-
-        sb.append("\nProjection and sky conversion library\n");
-        sb.append("\n");
-        sb.append("Mandatory arguments to long options are mandatory for short options too.\n");
-        sb.append("  -p, --project            Project a pixel to the sky\n");
-        sb.append("  -u, --unproject          Unproject a point on the sky to 2D \n");
-        sb.append("  -f, --file               Header file or Fits file starting by a scheme (ex: file://, http://)\n");
-        sb.append("  -s, --from               Origin sky system\n");
-        sb.append("  -t, --to                 Target sky system\n");
-        sb.append("  -c, --convert            Convert a sky coordinate from a sky system to antoher one\n");
-        sb.append("  -g, --gui                Display projection or converter with a GUI\n");
-        sb.append("  -h, --help               Display this help and exit\n");
-        sb.append("\n");
-        sb.append("OPTIONS are the following:\n");
-        sb.append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n");
-        sb.append("  -e, --extension          HDU number starting at 0 when --file argument is used. If not set, 0 is default\n");
-        sb.append("  -r, --precision          Precision such as %.6f. By default, precision is set to %.15f\n");
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Usage: java -jar JWcs.jar -g PROG [OPTIONS]\n")
+                .append("    or java -jar JWcs.jar --file HDR_FILE --project X,Y [OPTIONS]\n")
+                .append("    or java -jar JWcs.jar --file HDR_FILE --unproject RA,DEC [OPTIONS]\n")
+                .append("    or java -jar JWcs.jar --file HDR_FILE --convert RA,DEC --to SYS_TARGET [OPTIONS]\n")
+                .append("    or java -jar JWcs.jar --convert RA,DEC --from SYS_ORGIN --to SYS_TARGET [OPTIONS]\n")
+                .append("           where:\n")
+                .append("               - PROG: either projection or converter\n")
+                .append("               - HDR_FILE: Header FITS or FITS file\n")
+                .append("               - X: pixel coordinate along X axis on the camera (starts to 1) \n")
+                .append("               - Y: pixel coordinate along Y axis on the camera (starts to 1) \n")
+                .append("               - RA: sky coordinate\n")
+                .append("               - DEC: sky coordinate\n")
+                .append("               - SYS_ORIGIN: sky system of the sky coordinates\n")
+                .append("               - SYS_TARGET: convert sky coordinates to the SYS_TARGET\n\n")
+                .append("           SYS_ORIGIN or SYS_TARGET can be:\n")
+                .append("               - GALACTIC\n")
+                .append("               - SUPER_GALACTIC\n")
+                .append("               - EQUATORIAL\n")
+                .append("               - EQUATORIAL(ICRS())\n")
+                .append("               - EQUATORIAL(J2000())\n")
+                .append("               - EQUATORIAL(FK5())\n")
+                .append("               - EQUATORIAL(FK5(<equinox>))\n")
+                .append("               - EQUATORIAL(FK4())\n")
+                .append("               - EQUATORIAL(FK4(<equinox>))\n")
+                .append("               - EQUATORIAL(FK4(<equinox>,<epoch>))\n")
+                .append("               - EQUATORIAL(FK4_NO_E())\n")
+                .append("               - EQUATORIAL(FK4_NO_E(<equinox>))\n")
+                .append("               - EQUATORIAL(FK4_NO_E(<equinox>,<epoch>))\n")
+                .append("               - ECLIPTIC\n")
+                .append("               - ECLIPTIC(ICRS())\n")
+                .append("               - ECLIPTIC(J2000())\n")
+                .append("               - ECLIPTIC(FK5())\n")
+                .append("               - ECLIPTIC(FK5(<equinox>))\n")
+                .append("               - ECLIPTIC(FK4())\n")
+                .append("               - ECLIPTIC(FK4(<equinox>))\n")
+                .append("               - ECLIPTIC(FK4(<equinox>,<epoch>))\n")
+                .append("               - ECLIPTIC(FK4_NO_E())\n")
+                .append("               - ECLIPTIC(FK4_NO_E(<equinox>))\n")
+                .append("               - ECLIPTIC(FK4_NO_E(<equinox>,<epoch>))\n")
+                .append("\nProjection and sky conversion library\n")
+                .append("\n")
+                .append("Mandatory arguments to long options are mandatory for short options too.\n")
+                .append("  -p, --project            Project a pixel to the sky\n")
+                .append("  -u, --unproject          Unproject a point on the sky to 2D \n")
+                .append("  -f, --file               Header file or Fits file starting by a scheme (ex: file://, http://)\n")
+                .append("  -s, --from               Origin sky system\n")
+                .append("  -t, --to                 Target sky system\n")
+                .append("  -c, --convert            Convert a sky coordinate from a sky system to antoher one\n")
+                .append("  -g, --gui                Display projection or converter with a GUI\n")
+                .append("  -h, --help               Display this help and exit\n")
+                .append("\n")
+                .append("OPTIONS are the following:\n")
+                .append("  -d, --debug              Sets the DEBUG level : ALL,CONFIG,FINER,FINEST,INFO,OFF,SEVERE,WARNING\n")
+                .append("  -e, --extension          HDU number starting at 0 when --file argument is used. If not set, 0 is default\n")
+                .append("  -r, --precision          Precision such as %.6f. By default, precision is set to %.15f\n");
 
         System.out.println(sb.toString());
         System.exit(EXIT.OK.getCode());

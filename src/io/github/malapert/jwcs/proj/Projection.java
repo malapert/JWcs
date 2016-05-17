@@ -105,7 +105,7 @@ public abstract class Projection {
      * @param crval1 Celestial longitude (\u03B1<sub>0</sub>) in degrees of the ﬁducial point
      * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point
      */
-    protected Projection(double crval1, double crval2) {
+    protected Projection(final double crval1, final double crval2) {
         this.crval1 = Math.toRadians(crval1);
         this.crval2 = Math.toRadians(crval2);
         LOG.log(Level.FINER, "INPUTS: crval1[deg]={0} crval2[deg]={1}", new Object[]{crval1,crval2});        
@@ -123,7 +123,7 @@ public abstract class Projection {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * an error happens while the projection
      */
-    protected abstract double[] project(double x, double y) throws ProjectionException;
+    protected abstract double[] project(final double x, final double y) throws ProjectionException;
 
     /**
      * Computes the projection plane coordinates (x, y) from the native spherical
@@ -135,7 +135,7 @@ public abstract class Projection {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * an error happens while the projection
      */
-    protected abstract double[] projectInverse(double phi, double theta) throws ProjectionException;
+    protected abstract double[] projectInverse(final double phi, final double theta) throws ProjectionException;
 
     /**
      * Returns the native longitude of the fiducial point (\u03D5<sub>0</sub>) in radians.
@@ -149,7 +149,7 @@ public abstract class Projection {
      *
      * @param phio the native longitude in radians of the ﬁducial point (\u03D5<sub>0</sub>)
      */
-    public abstract void setPhi0(double phio);
+    public abstract void setPhi0(final double phio);
 
     /**
      * Returns the native latitude of the ﬁducial point (\u03B8<sub>0</sub>) in radians.
@@ -163,7 +163,7 @@ public abstract class Projection {
      *
      * @param theta0 the native latitude in radians of the ﬁducial point (\u03B8<sub>0</sub>)
      */
-    public abstract void setTheta0(double theta0);
+    public abstract void setTheta0(final double theta0);
 
     /**
      * Computes the default value for \u03D5<sub>p</sub>. The default value of
@@ -173,7 +173,7 @@ public abstract class Projection {
      * @return \u03D5<sub>p</sub> in radians.
      */
     protected final double computeDefaultValueForPhip() {
-        double phi_p;
+        final double phi_p;
         if (NumericalUtils.equal(getCrval2(), getTheta0())) {
             phi_p = LONPOLE_0;
         } else if (getCrval2() > getTheta0()) {
@@ -244,7 +244,7 @@ public abstract class Projection {
             ra += 360;
         }
         
-        double[] pos = {ra, dec};
+        final double[] pos = {ra, dec};
         LOG.log(Level.FINER, "OUTPUTS[deg] pos=({0},{1})", new Object[]{Math.toDegrees(pos[0]),Math.toDegrees(pos[1])});
         return pos;
     }
@@ -262,14 +262,14 @@ public abstract class Projection {
      * @param dec Celestial latitude in radians
      * @return Returns native longitude and latitude in radians
      */
-    protected double[] computeNativeSpherical(double ra, double dec) {
+    protected double[] computeNativeSpherical(final double ra, final double dec) {
         LOG.log(Level.FINER, "INPUTS[deg]: (ra,dec)=({0},{1})", new Object[]{Math.toDegrees(ra),Math.toDegrees(dec)});        
 
-        double ra_p = getCoordNativePole()[0];
-        double dec_p = getCoordNativePole()[1];
+        final double ra_p = getCoordNativePole()[0];
+        final double dec_p = getCoordNativePole()[1];
         LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(ra_p),Math.toDegrees(dec_p)});                
         
-        double phi, theta;
+        final double phi, theta;
         if (NumericalUtils.equal(dec_p, HALF_PI)) {
             phi = Math.PI + getPhip() + ra - ra_p;
             theta = dec;
@@ -285,7 +285,7 @@ public abstract class Projection {
                      + Math.cos(dec) * Math.cos(dec_p)
                      * Math.cos(ra - ra_p));      
         }                   
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});
         return pos;
     }
@@ -305,7 +305,7 @@ public abstract class Projection {
      * @return Celestial (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>) longitude and
      * latitude in radians of the native pole
      */
-    protected double[] computeCoordNativePole(double phi_p) {
+    protected double[] computeCoordNativePole(final double phi_p) {
 
         if (NumericalUtils.equal(getPhi0(), 0)
                 && NumericalUtils.equal(getTheta0(), HALF_PI)) {
@@ -314,14 +314,14 @@ public abstract class Projection {
         }
 
         // native longitude of the celestial pole in radians
-        double alphap, deltap;
+        final double alphap, deltap;
         if (NumericalUtils.equal(getTheta0(), 0.0d) && NumericalUtils.equal(getCrval2(), 0) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
-            double deltap_arg = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
-            double deltap_acos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
-            double deltap1 = deltap_arg + deltap_acos;
-            double deltap2 = deltap_arg - deltap_acos;
+            final double deltap_arg = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
+            final double deltap_acos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
+            final double deltap1 = deltap_arg + deltap_acos;
+            final double deltap2 = deltap_arg - deltap_acos;
 
             if (NumericalUtils.equal(getTheta0(), 0)
                     && NumericalUtils.equal(getCrval2(), 0)
@@ -329,12 +329,12 @@ public abstract class Projection {
                 deltap = getThetap();
             } else {
 
-                boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI);
-                boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI);
+                final boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI);
+                final boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI);
 
                 if (isDeltap1InInterval && isDeltap2InInterval) {
-                    double diff1 = Math.abs(deltap1 - getThetap());
-                    double diff2 = Math.abs(deltap2 - getThetap());
+                    final double diff1 = Math.abs(deltap1 - getThetap());
+                    final double diff2 = Math.abs(deltap2 - getThetap());
                     deltap = (diff1 < diff2) ? deltap1 : deltap2;
                 } else if (isDeltap1InInterval) {
                     deltap = deltap1;
@@ -353,11 +353,11 @@ public abstract class Projection {
         } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
             alphap = getCrval1() - phi_p + getPhi0();      
         } else {
-            double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
-            double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
+            final double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
+            final double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
             alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
         }
-        double[] pos = {alphap, deltap};        
+        final double[] pos = {alphap, deltap};        
         return pos;
     }
 
@@ -366,7 +366,7 @@ public abstract class Projection {
      *
      * @param phip The native longitude in radians of the celestial pole (\u03D5<sub>p</sub>)
      */
-    public final void setPhip(double phip) {
+    public final void setPhip(final double phip) {
         this.phip = phip;
         this.coordNativePole = computeCoordNativePole(phip);
     }
@@ -385,7 +385,7 @@ public abstract class Projection {
      *
      * @param thetap the native latitude in radians of the celestial pole (\u03B8<sub>p</sub>)
      */
-    public final void setThetap(double thetap) {
+    public final void setThetap(final double thetap) {
         this.thetap = thetap;
     }
 
@@ -404,14 +404,14 @@ public abstract class Projection {
      * @param phi phi in radians
      * @return phi between [-PI, PI]
      */
-    protected final double phiRange(double phi) {
-        phi = phi % (TWO_PI);
-        if (phi > Math.PI) {
-            phi -= TWO_PI;
-        } else if (phi < -Math.PI) {
-            phi += TWO_PI;
+    protected final double phiRange(final double phi) {
+        double phiCorrect = phi % (TWO_PI);
+        if (phiCorrect > Math.PI) {
+            phiCorrect -= TWO_PI;
+        } else if (phiCorrect < -Math.PI) {
+            phiCorrect += TWO_PI;
         }
-        return phi;
+        return phiCorrect;
     }
 
     /**
@@ -424,8 +424,8 @@ public abstract class Projection {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * an error happens while the projection
      */
-    public double[] projectionPlane2wcs(double x, double y) throws ProjectionException {
-        double[] pos = project(x, y);
+    public double[] projectionPlane2wcs(final double x, final double y) throws ProjectionException {
+        final double[] pos = project(x, y);
         return computeCelestialSpherical(pos[0], pos[1]);
     }
 
@@ -439,9 +439,9 @@ public abstract class Projection {
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
      * an error happens while the projection
      */
-    public double[] wcs2projectionPlane(double ra, double dec) throws ProjectionException {
-        ra = NumericalUtils.normalizeLongitude(ra);
-        double[] nativeSpherical = computeNativeSpherical(ra, dec);
+    public double[] wcs2projectionPlane(final double ra, final double dec) throws ProjectionException {
+        final double raCorrect = NumericalUtils.normalizeLongitude(ra);
+        final double[] nativeSpherical = computeNativeSpherical(ra, dec);
         return projectInverse(nativeSpherical[0], nativeSpherical[1]);
     }
 
@@ -470,7 +470,7 @@ public abstract class Projection {
      * @param lat latitude in radians (\u03B4).
      * @return True when the point is visible otherwise False.
      */
-    public abstract boolean inside(double lon, double lat);
+    public abstract boolean inside(final double lon, final double lat);
     
     /**
      * Checks if the line is visible.
@@ -478,7 +478,7 @@ public abstract class Projection {
      * @param pos2 Last point of the line
      * @return Returns True when the line is visible otherwise False
      */
-    public abstract boolean isLineToDraw(double[] pos1, double[] pos2); 
+    public abstract boolean isLineToDraw(final double[] pos1, final double[] pos2); 
 
     /**
      * Returns the projection's name.
@@ -560,7 +560,7 @@ public abstract class Projection {
          * @param validInterval its valid interval
          * @param defaultValue  its default value.
          */
-        public ProjectionParameter(String name, String PVName, double[] validInterval, double defaultValue) {
+        public ProjectionParameter(final String name, final String PVName, final double[] validInterval, final double defaultValue) {
             this.name = name;
             this.PVName = PVName;
             this.validInterval = validInterval;

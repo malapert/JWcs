@@ -60,28 +60,28 @@ public class AIT extends CylindricalProjection {
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */
-    public AIT(double crval1, double crval2) {
+    public AIT(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
 
     }
 
     @Override
-    public double[] project(double x, double y) throws PixelBeyondProjectionException  {
+    public double[] project(final double x, final double y) throws PixelBeyondProjectionException  {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
         double z = 1 - Math.pow(xr / 4, 2) - Math.pow(yr / 2, 2);
         if (z < 0) {
             throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
         }
         z = Math.sqrt(z);      
-        double phi = 2 * NumericalUtils.aatan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
-        double theta = NumericalUtils.aasin(yr * z);         
+        final double phi = 2 * NumericalUtils.aatan2(z * xr / 2, 2 * Math.pow(z, 2) - 1);
+        final double theta = NumericalUtils.aasin(yr * z);         
         if(Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
         }
-        double[] pos = {phi, theta};
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
         return pos;
     }
@@ -96,17 +96,17 @@ public class AIT extends CylindricalProjection {
      * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When (phi,theta) has no solution
      */    
     @Override
-    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {         
+    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {         
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                
-        phi = phiRange(phi);         
-        double d = 1 + Math.cos(theta) * Math.cos(phi * 0.5d);
+        final double phiCorrect = phiRange(phi);         
+        final double d = 1 + Math.cos(theta) * Math.cos(phiCorrect * 0.5d);
         if (NumericalUtils.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + Math.toDegrees(phi) + ", " + Math.toDegrees(theta)+")");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + Math.toDegrees(phiCorrect) + ", " + Math.toDegrees(theta)+")");
         }
-        double gamma = Math.toDegrees(Math.sqrt(2.0d / d));        
-        double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
-        double y = gamma * Math.sin(theta);
-        double[] coord = {x, y};
+        final double gamma = Math.toDegrees(Math.sqrt(2.0d / d));        
+        final double x = 2 * gamma * Math.cos(theta) * Math.sin(phiCorrect * 0.5d);
+        final double y = gamma * Math.sin(theta);
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        
         return coord;
     }
@@ -120,5 +120,4 @@ public class AIT extends CylindricalProjection {
     public String getDescription() {
         return DESCRIPTION;
     }
-
 }

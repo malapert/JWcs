@@ -111,7 +111,7 @@ public final class ZPN extends ZenithalProjection {
      * @return the inflection point the closest from pole
      * @throws BadProjectionParameterException Exception
      */
-    private double[] findTheInflectionPointClosestFromPole(int highestPV, double[] PV) throws BadProjectionParameterException {
+    private double[] findTheInflectionPointClosestFromPole(final int highestPV, final double[] PV) throws BadProjectionParameterException {
         // Find the point of inflection closest to the pole. 
         double d, d1, d2, r, zd, zd1, zd2;
         int i;
@@ -180,7 +180,7 @@ public final class ZPN extends ZenithalProjection {
      * @throws BadProjectionParameterException Exception
      */
     @SuppressWarnings("empty-statement")
-    private int findTheHighestPVNoNull(double[] pv) throws BadProjectionParameterException {
+    private int findTheHighestPVNoNull(final double[] pv) throws BadProjectionParameterException {
         int i;
         for (i = pv.length - 1; i >= 0 && NumericalUtils.equal(pv[i],0.0,getTolerance()); i--);
         if (i < 0) {
@@ -217,7 +217,7 @@ public final class ZPN extends ZenithalProjection {
      *
      * @param tolerance the tolerance to set
      */
-    public final void setTolerance(double tolerance) {
+    public void setTolerance(final double tolerance) {
         this.tolerance = tolerance;
     }
 
@@ -263,10 +263,10 @@ public final class ZPN extends ZenithalProjection {
      * @param pv polynomial order
      * @return the value of the polynomial
      */
-    private double polyEval(double x, double[] pv) {
-        int lastElt = pv.length - 1;
+    private double polyEval(final double x, final double[] pv) {
+        final int lastElt = pv.length - 1;
         double y = 0;
-        double result;
+        final double result;
         for (int i = lastElt; i >= 0; i--) {
             y = y * x + pv[i];
         }
@@ -281,7 +281,7 @@ public final class ZPN extends ZenithalProjection {
      * @param pv projection parameters
      * @return the solution for a linear equation
      */
-    private double linearSolution(double r, double[] pv) {
+    private double linearSolution(final double r, final double[] pv) {
         return (r - pv[0]) / pv[1];
     }
 
@@ -292,18 +292,18 @@ public final class ZPN extends ZenithalProjection {
      * @return the solution for a quadratic equation
      * @throws Exception Exception
      */  
-    private double quadraticSolution(double r, double[] pv) throws Exception {
-        double a = pv[2];
-        double b = pv[1];
-        double c = pv[0] - r;
+    private double quadraticSolution(final double r, final double[] pv) throws Exception {
+        final double a = pv[2];
+        final double b = pv[1];
+        final double c = pv[0] - r;
         double d = b * b - 4.0 * a * c;
         if (d < 0.0) {
             throw new Exception("No solution for quadratic computation");
         }
         d = Math.sqrt(d);
         // Choose solution closest to pole. 
-        double x1 = (-b + d) / (2.0 * a);
-        double x2 = (-b - d) / (2.0 * a);
+        final double x1 = (-b + d) / (2.0 * a);
+        final double x2 = (-b - d) / (2.0 * a);
         double x = (x1 < x2) ? x1 : x2;
         if (x < -getTolerance()) {
             x = (x1 > x2) ? x1 : x2;
@@ -334,7 +334,7 @@ public final class ZPN extends ZenithalProjection {
      * @return the solution for an equation where order &gt; 2
      * @throws Exception Exception When an exception occurs
      */    
-    private double iterativeSolution(double r, double[] pv, double[] coeff) throws Exception {
+    private double iterativeSolution(final double r, final double[] pv, final double[] coeff) throws Exception {
         double zd1 = 0.0;
         double r1 = pv[0];
         double zd2 = coeff[0];
@@ -397,8 +397,8 @@ public final class ZPN extends ZenithalProjection {
      * @return the solution for whatever polynomial equation
      * @throws Exception Exception
      */
-    private double computeSolution(double r, double[] pv) throws Exception {
-        double result;
+    private double computeSolution(final double r, final double[] pv) throws Exception {
+        final double result;
         switch (getN()) {
             case 1:
                 result = linearSolution(r, pv);
@@ -414,15 +414,15 @@ public final class ZPN extends ZenithalProjection {
     }
 
     @Override
-    protected double[] project(double x, double y) throws PixelBeyondProjectionException {
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                        
         try {
-            double xr = Math.toRadians(x);
-            double yr = Math.toRadians(y);
-            double r_theta = computeRadius(xr, yr);
-            double phi = computePhi(xr, yr, r_theta);
-            double theta = HALF_PI - computeSolution(r_theta, PV);
-            double[] pos = {phi, theta};
+            final double xr = Math.toRadians(x);
+            final double yr = Math.toRadians(y);
+            final double r_theta = computeRadius(xr, yr);
+            final double phi = computePhi(xr, yr, r_theta);
+            final double theta = HALF_PI - computeSolution(r_theta, PV);
+            final double[] pos = {phi, theta};
             LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                    
             return pos;
         } catch (Exception ex) {
@@ -431,13 +431,13 @@ public final class ZPN extends ZenithalProjection {
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) {
+    protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                
-        phi = phiRange(phi);
-        double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
-        double x = computeX(r_theta, phi);
-        double y = computeY(r_theta, phi);
-        double[] coord = {x, y};
+        final double phiCorrect = phiRange(phi);
+        final double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
+        final double x = computeX(r_theta, phiCorrect);
+        final double y = computeY(r_theta, phiCorrect);
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                                
         return coord;
     }

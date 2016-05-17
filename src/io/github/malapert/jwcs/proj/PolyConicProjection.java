@@ -77,15 +77,16 @@ public abstract class PolyConicProjection extends Projection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta1 theta1 in degrees
      */
-    protected PolyConicProjection(double crval1, double crval2, double theta1) {
+    protected PolyConicProjection(final double crval1, final double crval2, final double theta1) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta1) = ({0},{1},{2})", new Object[]{crval1, crval2, theta1});
 
         if (NumericalUtils.equal(theta1, 0)) {
-            theta1=45;
+            this.theta1 = Math.toRadians(45);
             LOG.log(Level.WARNING,"theta1=0 not allowed, reseting to 45");
+        } else {
+            this.theta1 = Math.toRadians(theta1);
         }
-        this.theta1 = Math.toRadians(theta1);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
         setPhip(computeDefaultValueForPhip());
@@ -109,12 +110,12 @@ public abstract class PolyConicProjection extends Projection {
     }
 
     @Override
-    public final void setPhi0(double phio) {
+    public final void setPhi0(final double phio) {
         this.phio = phio;
     }
 
     @Override
-    public final void setTheta0(double theta0) {
+    public final void setTheta0(final double theta0) {
         this.theta0 = theta0;
     }
 
@@ -128,13 +129,13 @@ public abstract class PolyConicProjection extends Projection {
     }
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         LOG.log(Level.FINER, "true");
         return true;
     }
 
     @Override
-    public boolean isLineToDraw(double[] pos1, double[] pos2) {
+    public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
         LOG.log(Level.FINER, "(pos1,pos2)=({0},{1}) ({2},{3})", new Object[]{pos1[0],pos1[1],pos2[0],pos2[1]});
         return Math.abs(pos1[0] - pos2[0]) < 50;
     }

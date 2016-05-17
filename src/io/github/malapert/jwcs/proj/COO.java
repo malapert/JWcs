@@ -55,48 +55,48 @@ public class COO extends ConicProjection {
      * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    public COO(double crval1, double crval2, double theta_a, double eta) throws BadProjectionParameterException {
+    public COO(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                                        
     }
 
     @Override
-    protected double[] project(double x, double y) throws BadProjectionParameterException {
+    protected double[] project(final double x, final double y) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
-        double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
+        final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
+        final double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
         if (NumericalUtils.equal(c,0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). c must be != 0");
         }
-        double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
-        double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
-        double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-        double phi = computePhi(xr, yr, r_theta, y0, c);            
-        double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
-        double[] pos = {phi, theta};
+        final double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
+        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        final double phi = computePhi(xr, yr, r_theta, y0, c);            
+        final double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                
         return pos;
     }
 
     @Override
-    protected double[] projectInverse(double phi, double theta) throws BadProjectionParameterException {
+    protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
-        double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
-        double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
-        double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
+        final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
+        final double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        final double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         if (NumericalUtils.equal(psi,0)) {
             throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getThetaA() + ", " + getEta()+")");
         }
-        double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
-        phi = phiRange(phi);
-        double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
-        double x = computeX(phi, r_theta, c);
-        double y = computeY(phi, r_theta, c, y0);
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
+        final  double phiCorrect = phiRange(phi);
+        final double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
+        final double x = computeX(phiCorrect, r_theta, c);
+        final double y = computeY(phiCorrect, r_theta, c, y0);
+        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                
         return coord;
     }
@@ -119,8 +119,8 @@ public class COO extends ConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
-        ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
+        final ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
 }

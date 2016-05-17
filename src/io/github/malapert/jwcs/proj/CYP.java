@@ -77,7 +77,7 @@ public class CYP extends CylindricalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
      */
-    public CYP(double crval1, double crval2) {
+    public CYP(final double crval1, final double crval2) {
         this(crval1, crval2, DEFAULT_MU, DEFAULT_LAMBDA);
     }
     
@@ -94,7 +94,7 @@ public class CYP extends CylindricalProjection {
      * @param lambda \u03BB radius of the cylinder
      * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">Representations of celestial coordinates in FITS, chapter 5.2.1</a>
      */
-    public CYP(double crval1, double crval2, double mu, double lambda) {
+    public CYP(final double crval1, final double crval2, final double mu, final double lambda) {
         super(crval1, crval2);
         this.mu = mu;
         this.lambda = lambda;
@@ -119,29 +119,29 @@ public class CYP extends CylindricalProjection {
     }
 
     @Override
-    public double[] project(double x, double y) {
+    public double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
-        double phi = xr / getLambda();        
-        double eta = yr / (getMu() + getLambda());
-        double theta = NumericalUtils.aatan2(eta, 1) + NumericalUtils.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
-        double[] pos = {phi, theta};
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
+        final double phi = xr / getLambda();        
+        final double eta = yr / (getMu() + getLambda());
+        final double theta = NumericalUtils.aatan2(eta, 1) + NumericalUtils.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
         return pos;
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
-        phi = phiRange(phi);
-        double x = getLambda() * phi;
+        final double phiCorrect = phiRange(phi);
+        final double x = getLambda() * phiCorrect;
         double ctheta = Math.cos(theta);
         if(NumericalUtils.equal(getMu(), -ctheta)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));
         }
-        double y = (getMu()+getLambda())/(getMu() + ctheta) * Math.sin(theta);
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double y = (getMu()+getLambda())/(getMu() + ctheta) * Math.sin(theta);
+        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                
         return coord;
     }
@@ -174,8 +174,8 @@ public class CYP extends CylindricalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        ProjectionParameter p2 = new ProjectionParameter("lambda", JWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
+        final ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("lambda", JWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
         return new ProjectionParameter[]{p1,p2};        
     }        
 

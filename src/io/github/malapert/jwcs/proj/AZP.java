@@ -75,7 +75,7 @@ public class AZP extends ZenithalProjection {
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
      */
-    public AZP(double crval1, double crval2) throws BadProjectionParameterException {
+    public AZP(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE, DEFAULT_VALUE);
     }
 
@@ -92,7 +92,7 @@ public class AZP extends ZenithalProjection {
      * @param mu \u0263 Distance in radii from the center of the sphere to the source of projectionPV<code>nbAxis</code>_1 in radians
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
      */
-    public AZP(double crval1, double crval2, double mu, double gamma) throws BadProjectionParameterException {
+    public AZP(final double crval1, final double crval2, final double mu, final double gamma) throws BadProjectionParameterException {
         super(crval1, crval2);
         this.gamma = Math.toRadians(gamma);
         this.mu = mu;
@@ -105,7 +105,7 @@ public class AZP extends ZenithalProjection {
      * @param gamma value to check
      * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
      */
-    private void checkParameters(double gamma) throws BadProjectionParameterException {
+    private void checkParameters(final double gamma) throws BadProjectionParameterException {
         if(NumericalUtils.equal(Math.abs(gamma), HALF_PI)) {
             throw new BadProjectionParameterException(this, "gamma="+gamma+". Gamma must be != +/-HALF_PI");
         }
@@ -116,7 +116,7 @@ public class AZP extends ZenithalProjection {
      * @param x plane coordinate along X in radians.
      * @return the plane coordinate along X with application of parameter projection
      */
-    private double computeXr(double x) {
+    private double computeXr(final double x) {
         return x;
     }
     
@@ -125,7 +125,7 @@ public class AZP extends ZenithalProjection {
      * @param y plane coordinate along Y in radians.
      * @return the plane coordinate along Y with application of parameter projection
      */    
-    private double computeYr(double y) {
+    private double computeYr(final double y) {
         return y * Math.cos(gamma);
     }            
     
@@ -138,27 +138,27 @@ public class AZP extends ZenithalProjection {
      * @throws BadProjectionParameterException When projection parameters are wrong
      * @throws PixelBeyondProjectionException When (x,y) has no solution
      */
-    private double computeTheta(double x, double y, double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
-        double denom = (mu + 1) + y * Math.tan(gamma);
+    private double computeTheta(final double x, final double y, final double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
+        final double denom = (mu + 1) + y * Math.tan(gamma);
         if (NumericalUtils.equal(denom,0)) {
             throw new BadProjectionParameterException(this,"(mu,gamma) = (" + mu + ", " + gamma+"). (mu + 1) + y * tan(gamma) must be !=0");
         }    
-        double rho = radius / denom;
-        double val = mu*rho/Math.sqrt(Math.pow(rho, 2)+1);
-        double omega = NumericalUtils.aasin(val);
+        final double rho = radius / denom;
+        final double val = mu*rho/Math.sqrt(Math.pow(rho, 2)+1);
+        final double omega = NumericalUtils.aasin(val);
         if (Double.isNaN(omega)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");
         }
-        double psi = NumericalUtils.aatan2(1.0, rho);
+        final double psi = NumericalUtils.aatan2(1.0, rho);
         if(Double.isNaN(psi)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");            
         }
-        double theta1 = NumericalUtils.normalizeLatitude(psi - omega);
-        double theta2 = NumericalUtils.normalizeLatitude(psi + omega + Math.PI);        
-        double theta;        
+        final double theta1 = NumericalUtils.normalizeLatitude(psi - omega);
+        final double theta2 = NumericalUtils.normalizeLatitude(psi + omega + Math.PI);        
+        final double theta;        
         if(Math.abs(mu) < 1) {
-            boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
-            boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+            final boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
+            final boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
             if(isTheta1Valid && isTheta2Valid) {
                 throw new JWcsError("It seems to be a bug");
             } else if (isTheta1Valid) {
@@ -169,8 +169,8 @@ public class AZP extends ZenithalProjection {
                 throw new JWcsError("It seems to be a bug");
             }            
         } else {
-            double diffTheta1With90 = Math.abs(theta1-HALF_PI);
-            double diffTheta2With90 = Math.abs(theta2-HALF_PI);
+            final double diffTheta1With90 = Math.abs(theta1-HALF_PI);
+            final double diffTheta2With90 = Math.abs(theta2-HALF_PI);
             if (diffTheta1With90 > diffTheta2With90) {
                 theta = theta2; 
             } else {
@@ -181,14 +181,14 @@ public class AZP extends ZenithalProjection {
     }
 
     @Override
-    public double[] project(double x, double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+    public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
-        double xr = computeXr(Math.toRadians(x));
-        double yr = computeYr(Math.toRadians(y));
-        double r = computeRadius(xr, yr);
-        double theta = computeTheta(xr, yr, r);
-        double phi = computePhi(xr, yr, r);              
-        double[] pos = {phi, theta};
+        final double xr = computeXr(Math.toRadians(x));
+        final double yr = computeYr(Math.toRadians(y));
+        final double r = computeRadius(xr, yr);
+        final double theta = computeTheta(xr, yr, r);
+        final double phi = computePhi(xr, yr, r);              
+        final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                        
         return pos;
     }

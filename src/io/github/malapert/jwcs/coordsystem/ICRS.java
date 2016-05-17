@@ -66,7 +66,7 @@ public class ICRS implements CoordinateReferenceFrame {
      * Initialization.
      * @param equinox the epoch of equinox
      */
-    private void init(String equinox) {
+    private void init(final String equinox) {
         this.equinox = epochs(equinox)[1];
     }
 
@@ -97,7 +97,8 @@ public class ICRS implements CoordinateReferenceFrame {
      * No need to specify the epoch of equinox
      */ 
     @Override   
-    public void setEquinox(final String equinox) {        
+    public void setEquinox(final String equinox) {
+        //Do nothing
     }    
     
     /**
@@ -113,7 +114,8 @@ public class ICRS implements CoordinateReferenceFrame {
      * No need to specify the epoch of observation in FK5 reference frame
      */    
     @Override
-    public void setEpochObs(final String epochObs) {       
+    public void setEpochObs(final String epochObs) { 
+        //Do noting
     }
 
     /**
@@ -122,6 +124,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */    
     @Override    
     public void setEpochObs(final double epochObs) {
+        //Do nothing
     }     
 
     @Override

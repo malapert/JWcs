@@ -131,7 +131,7 @@ public abstract class Crs {
          */
         public static CoordinateSystem valueOfByName(final String name) {
             CoordinateSystem result = null;
-            CoordinateSystem[] values = CoordinateSystem.values();
+            final CoordinateSystem[] values = CoordinateSystem.values();
             for (CoordinateSystem value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
@@ -150,7 +150,7 @@ public abstract class Crs {
          * @return An array of names of all coordinate system
          */
         public static String[] getCoordinateSystemArray() {            
-            CoordinateSystem[] values = CoordinateSystem.values();
+            final CoordinateSystem[] values = CoordinateSystem.values();
             String[] result = new String[values.length];
             int index = 0;
             for (CoordinateSystem value : values) {
@@ -191,12 +191,12 @@ public abstract class Crs {
      */
     protected final RealMatrix getEtermsIn() {
         RealMatrix eterms = null;
-        CoordinateReferenceFrame.ReferenceFrame refSystem;
+        final CoordinateReferenceFrame.ReferenceFrame refSystem;
         switch (getCoordinateSystem()) {
             case EQUATORIAL:
                 refSystem = this.getCoordinateReferenceFrame().getReferenceFrame();
                 if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    double equinox = ((Equatorial) this).getEquinox();
+                    final double equinox = ((Equatorial) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});
                 }
@@ -204,10 +204,12 @@ public abstract class Crs {
             case ECLIPTIC:
                 refSystem = this.getCoordinateReferenceFrame().getReferenceFrame();
                 if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    double equinox = ((Ecliptic) this).getEquinox();
+                    final double equinox = ((Ecliptic) this).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
+                break;
+            default: //do nothing
                 break;
         }
         return eterms;
@@ -226,7 +228,7 @@ public abstract class Crs {
             case EQUATORIAL:
                 refSystem = ((Equatorial) refFrame).getReferenceFrame();
                 if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    double equinox = ((Equatorial) refFrame).getEquinox();
+                    final double equinox = ((Equatorial) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
                 }
@@ -234,11 +236,13 @@ public abstract class Crs {
             case ECLIPTIC:
                 refSystem = ((Ecliptic) refFrame).getReferenceFrame();
                 if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    double equinox = ((Ecliptic) refFrame).getEquinox();
+                    final double equinox = ((Ecliptic) refFrame).getEquinox();
                     eterms = FK4.getEterms(equinox);
                     LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
                 }
                 break;
+            default: //do nothing
+                break;                
         }
         return eterms;
     }
@@ -254,8 +258,8 @@ public abstract class Crs {
      * @throws JWcsError latitude or longitude is out of range
      */
     private void checkCoordinates(final double longitude, final double latitude) throws JWcsError {
-        boolean isLongInterval = isInInterval(longitude, 0, 360);
-        boolean isLatInterval = isInInterval(latitude, -90, 90);        
+        final boolean isLongInterval = isInInterval(longitude, 0, 360);
+        final boolean isLatInterval = isInInterval(latitude, -90, 90);        
         if(!isLongInterval && !isLatInterval) {
             throw new JWcsError("longitude must be in [0,360] and latitude in [-90,90]");
         } else if (!isLongInterval) {
@@ -278,27 +282,27 @@ public abstract class Crs {
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */
-    public final SkyPosition convertTo(final Crs crs, double longitude, double latitude) {
+    public final SkyPosition convertTo(final Crs crs, final double longitude, final double latitude) {
         checkCoordinates(longitude, latitude);
         RealMatrix xyz = longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
-        RealMatrix rotation = getRotationMatrix(crs);
+        final RealMatrix rotation = getRotationMatrix(crs);
         LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});        
-        RealMatrix etermsIn = getEtermsIn();
+        final RealMatrix etermsIn = getEtermsIn();
         LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});        
-        RealMatrix etermsOut = getEtermsOut(crs);
+        final RealMatrix etermsOut = getEtermsOut(crs);
         LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});        
         if (etermsIn != null) {
             xyz = removeEterms(xyz, etermsIn);
-            LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});            
+            LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", xyz);            
         }      
         xyz = rotation.multiply(xyz);
         if (etermsOut != null) {
             xyz = addEterms(xyz, etermsOut);
-            LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});            
+            LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", xyz);            
         }          
-        LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});                    
-        double[] position = xyz2longlat(xyz);
+        LOG.log(Level.FINER, "Rotate xyz : {0}", xyz);                    
+        final double[] position = xyz2longlat(xyz);
         LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0},{1}", new Object[]{position[0],position[1]});        
         LOG.log(Level.INFO, "convert ({0},{1}) from {2} to {3} --> ({4},{5})", new Object[]{longitude, latitude, this, crs, position[0], position[1]});
         return new SkyPosition(position[0], position[1], crs);
@@ -314,7 +318,7 @@ public abstract class Crs {
      * @return an array of SkyPosition
      * @throws JWcsError coordinates should be an array containing a set of [longitude, latitude]
      */
-    public final SkyPosition[] convertTo(final Crs crs, double[] coordinates) throws JWcsError {
+    public final SkyPosition[] convertTo(final Crs crs, final double[] coordinates) throws JWcsError {
         
         final int numberElts = coordinates.length;
         final int numberOfCoordinatesPerPoint = 3;
@@ -323,30 +327,30 @@ public abstract class Crs {
         }
         final SkyPosition[] skyPositionArray = new SkyPosition[(int) (numberElts * 0.5) * numberOfCoordinatesPerPoint];
 
-        RealMatrix rotation = getRotationMatrix(crs);
+        final RealMatrix rotation = getRotationMatrix(crs);
         LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});
-        RealMatrix etermsIn = getEtermsIn();
-        LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});
-        RealMatrix etermsOut = getEtermsOut(crs);
+        final RealMatrix etermsIn = getEtermsIn();
+        LOG.log(Level.FINER, "EtermsIn : {0}", etermsIn);
+        final RealMatrix etermsOut = getEtermsOut(crs);
         LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});
 
         int indice = 0;
         for (int i = 0; i < numberElts; i = i + 2) {
             checkCoordinates(coordinates[i], coordinates[i + 1]);
             RealMatrix xyz = longlat2xyz(coordinates[i], coordinates[i + 1]);
-            LOG.log(Level.FINER, "xyz : {0}", new Object[]{xyz});
+            LOG.log(Level.FINER, "xyz : {0}", xyz);
             if (etermsIn != null) {
                 xyz = removeEterms(xyz, etermsIn);
-                LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", new Object[]{xyz});
+                LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", xyz);
             }
             xyz = rotation.multiply(xyz);
-            LOG.log(Level.FINER, "Rotate xyz : {0}", new Object[]{xyz});            
+            LOG.log(Level.FINER, "Rotate xyz : {0}", xyz);            
             if (etermsOut != null) {
                 xyz = addEterms(xyz, etermsOut);
-                LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", new Object[]{xyz});
+                LOG.log(Level.FINER, "Add EtermsOut to xyz : {0}", xyz);
             }
-            double[] position = xyz2longlat(xyz);
-            LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0}", new Object[]{position});
+            final double[] position = xyz2longlat(xyz);
+            LOG.log(Level.FINER, "Transforms xyz -> ra,dec : {0}", position);
             skyPositionArray[indice] = new SkyPosition(position[0], position[1], crs);
             indice++;
         }
@@ -362,13 +366,13 @@ public abstract class Crs {
      * @return angular separation in decimal degrees.
      */
     public static final double separation(final SkyPosition pos1, final SkyPosition pos2) {
-        Crs skySystem = pos1.getCrs();
-        SkyPosition pos1InRefFramePos2 = skySystem.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
-        double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
-        double[] pos2XYZ = pos2.getCartesian();
-        double normPos1 = Math.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
-        double normPos2 = Math.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
-        double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
+        final Crs crs = pos1.getCrs();
+        final SkyPosition pos1InRefFramePos2 = crs.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
+        final double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
+        final double[] pos2XYZ = pos2.getCartesian();
+        final double normPos1 = Math.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
+        final double normPos2 = Math.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
+        final double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
         LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, Math.toDegrees(separation)});
         return Math.toDegrees(separation);
     }
@@ -434,77 +438,77 @@ public abstract class Crs {
      * equinox at <code>epoch2</code> in reference system <code>S2</code>.
      * @throws JWcsError Reference frame conversion is not supported
      */
-    protected static RealMatrix MatrixEpoch12Epoch2(double epoch1, double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, double epobs) {
+    protected static RealMatrix convertMatrixEpoch12Epoch2(final double epoch1, final double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, final double epobs) {
         if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            return julianMatrixEpoch12Epoch2(epoch1, epoch2);
+            return convertJulianMatrixEpoch12Epoch2(epoch1, epoch2);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            return besselianMatrixEpoch12Epoch2(epoch1, epoch2);
+            return convertBesselianMatrixEpoch12Epoch2(epoch1, epoch2);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = convertFK42FK5Matrix(epobs);
-            RealMatrix m3 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+            final RealMatrix m2 = convertFK42FK5Matrix(epobs);
+            final RealMatrix m3 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000d);
-            RealMatrix m2 = convertFK52FK4Matrix(epobs);
-            RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
+            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000d);
+            final RealMatrix m2 = convertFK52FK4Matrix(epobs);
+            final RealMatrix m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
             return createRealIdentityMatrix(3);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            RealMatrix m1 = convertICRS2FK5Matrix();
-            RealMatrix m2 = convertFK52FK4Matrix(epobs);
-            RealMatrix m3 = besselianMatrixEpoch12Epoch2(1950.0d, epoch2);
+            final RealMatrix m1 = convertICRS2FK5Matrix();
+            final RealMatrix m2 = convertFK52FK4Matrix(epobs);
+            final RealMatrix m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            RealMatrix m1 = convertICRS2FK5Matrix();
-            RealMatrix m2 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertICRS2FK5Matrix();
+            final RealMatrix m2 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = convertICRS2FK5Matrix().transpose();
+            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
+            final RealMatrix m2 = convertICRS2FK5Matrix().transpose();
             return m2.multiply(m1);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = convertFK42FK5Matrix(epobs);
-            RealMatrix m3 = convertICRS2FK5Matrix().transpose();
+            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+            final RealMatrix m2 = convertFK42FK5Matrix(epobs);
+            final RealMatrix m3 = convertICRS2FK5Matrix().transpose();
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
+            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
             return m1;
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
+            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
-            RealMatrix m3 = convertICRS2FK5Matrix();
-            RealMatrix m4 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
+            final RealMatrix m3 = convertICRS2FK5Matrix();
+            final RealMatrix m4 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = convertICRS2J2000Matrix().transpose();
-            RealMatrix m3 = convertICRS2FK5Matrix();
-            RealMatrix m4 = convertFK52FK4Matrix(epobs);
-            RealMatrix m5 = besselianMatrixEpoch12Epoch2(1950d, epoch2);
+            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
+            final RealMatrix m3 = convertICRS2FK5Matrix();
+            final RealMatrix m4 = convertFK52FK4Matrix(epobs);
+            final RealMatrix m5 = convertBesselianMatrixEpoch12Epoch2(1950d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = convertICRS2J2000Matrix();
-            RealMatrix m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertICRS2J2000Matrix();
+            final RealMatrix m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
-            RealMatrix m2 = convertICRS2FK5Matrix().transpose();
-            RealMatrix m3 = convertICRS2J2000Matrix();
-            RealMatrix m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
+            final RealMatrix m2 = convertICRS2FK5Matrix().transpose();
+            final RealMatrix m3 = convertICRS2J2000Matrix();
+            final RealMatrix m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            RealMatrix m2 = convertFK52FK4Matrix(epobs).transpose();
-            RealMatrix m3 = convertICRS2FK5Matrix().transpose();
-            RealMatrix m4 = convertICRS2J2000Matrix();
-            RealMatrix m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+            final RealMatrix m2 = convertFK52FK4Matrix(epobs).transpose();
+            final RealMatrix m3 = convertICRS2FK5Matrix().transpose();
+            final RealMatrix m4 = convertICRS2J2000Matrix();
+            final RealMatrix m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else {
             throw new JWcsError("Reference frame conversion is not supported");
@@ -520,11 +524,12 @@ public abstract class Crs {
      * omitted (== <code>null</code>), the e-terms for 1950 will be substituted.
      * @return Mean place
      */
-    private static RealMatrix removeEterms(final RealMatrix xyz, RealMatrix eterm) {
+    private static RealMatrix removeEterms(final RealMatrix xyz, final RealMatrix eterm) {
+        RealMatrix etermToRemove = eterm;
         if (eterm == null) {
-            eterm = FK4.getEterms(1950);
+            etermToRemove = FK4.getEterms(1950);
         }
-        return xyz.subtract(eterm.transpose());
+        return xyz.subtract(etermToRemove.transpose());
     }
 
     /**
@@ -536,47 +541,56 @@ public abstract class Crs {
      * omitted (i.e. == <code>null</code>), the e-terms for 1950 will be substituted.
      * @return Apparent place,
      */
-    private static RealMatrix addEterms(final RealMatrix xyz, RealMatrix eterm) {
+    private static RealMatrix addEterms(final RealMatrix xyz, final RealMatrix eterm) {
+        RealMatrix etermToAdd = eterm;
         if (eterm == null) {
-            eterm = FK4.getEterms(1950);
+            etermToAdd = FK4.getEterms(1950);
         }
-        return xyz.add(eterm.transpose());
+        return xyz.add(etermToAdd.transpose());
     }
 
     /**
      * Create matrix to convert equatorial fk4 coordinates (without e-terms) to
      * IAU 1958 lII,bII system of galactic coordinates.
      *
-     * Reference: ---------- 1. Blaauw, A., Gum C.S., Pawsey, J.L., Westerhout,
-     * G.: 1958, 2. Monthly Notices Roy. Astron. Soc. 121, 123, 3. Blaauw, A.,
-     * 2007. Private communications.
-     *
-     * Notes: ------ Original definitions from 1.: * The new north galactic pole
-     * lies in the direction alpha = 12h49m (192.25 deg), delta=27.4 deg
-     * (equinox 1950.0). * The new zero of longitude is the great semicircle
+     * Reference:<br> 
+     * ----------<br> 
+     * 1. Blaauw, A., Gum C.S., Pawsey, J.L., Westerhout,
+     * G.: 1958,<br> 
+     * 2. Monthly Notices Roy. Astron. Soc. 121, 123, 3. Blaauw, A.,
+     * 2007. Private communications.<br>
+     *<p>
+     * Notes:<br> 
+     * ------ <br>
+     * Original definitions from 1.:
+     * <ul>
+     * <li>The new north galactic pole lies in the direction 
+     * alpha = 12h49m (192.25 deg), delta=27.4 deg (equinox 1950.0). </li>
+     * <li>The new zero of longitude is the great semicircle
      * originating at the new north galactic pole at the position angle theta =
-     * 123 deg with respect to the equatorial pole for 1950.0. * Longitude
-     * increases from 0 to 360 deg. The sense is such that, on the galactic
-     * equator increasing galactic longitude corresponds to increasing Right
-     * Ascension. Latitude increases from -90 deg through 0 deg to 90 deg at the
-     * new galactic pole.
-     *
+     * 123 deg with respect to the equatorial pole for 1950.0.</li>
+     * <li>Longitude increases from 0 to 360 deg. The sense is such that,
+     * on the galactic equator increasing galactic longitude corresponds to 
+     * increasing Right Ascension. Latitude increases from -90 deg through 0 deg
+     * to 90 deg at the new galactic pole.</li>
+     * </ul>
+     *<p>
      * Given the RA and Dec of the galactic pole, and using the Euler angles
      * scheme: M = rotZ(a3).rotY(a2).rotZ(a1)
-     *
+     *<p>
      * We first rotate the spin vector of the XY plane about an angle a1 =
      * ra_pole and then rotate the spin vector in the XZ plane (i.e. around the
      * Y axis) with an angle a2=90-dec_pole to point it in the right
      * declination.
-     *
+     *<p>
      * Now think of a circle with the galactic pole as its center. The radius is
      * equal to the distance between this center and the equatorial pole. The
      * zero point now is on the circle and opposite to this pole.
-     *
-     * We need to rotate along this circle (i.e. a rotation around the new
-     * Z-axis) in a way that the angle between the zero point and the equatorial
-     * pole is equal to 123 deg.
-     *
+     *<p>
+ We need to rotate along this circle (i.e. a rotation around the new
+ z-axis) in a way that the angle between the zero point and the equatorial
+ pole is equal to 123 deg.
+<p>
      * So first we need to compensate for the 180 deg of the current zero
      * longitude, opposite to the pole. Then we need to rotate about an angle
      * 123 deg but in a way that increasing galactic longitude corresponds to
@@ -584,20 +598,22 @@ public abstract class Crs {
      * this circle (note that we rotated the original X axis about 192.25 deg).
      * The last rotation angle therefore is a3=+180-123: M =
      * rotZ(180-123.0)*rotY(90-27.4)*rotZ(192.25)
-     *
+     *<p>
      * The composed rotation matrix is the same as in Slalib's 'ge50.f' and the
      * matrix in eq. (32) of Murray (1989).
      *
      * @return 3x3 RealMatrix M as in XYZgal = M * XYZb1950
      */
-    protected final static RealMatrix MatrixEqB19502Gal() {
+    protected final static RealMatrix convertMatrixEqB19502Gal() {
         return rotZ(180d - 123.0d).multiply(rotY(90d - 27.4d)).multiply(rotZ(192.25d));
     }
 
     /**
      * Transforms galactic to supergalactic coordinates.
      *
-     * Reference: ---------- Lahav, O., The supergalactic plane revisited with
+     * Reference: <br> 
+     * ----------<br> 
+     * Lahav, O., The supergalactic plane revisited with
      * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)
      *<p>
      * Notes: ------ The Supergalactic equator is conceptually defined by the
@@ -612,13 +628,13 @@ public abstract class Crs {
      * from 137.37 deg in the official definition.
      *<p>
      * For the rotation matrix we chose the scheme <code>Rz.Ry.Rz</code> Then first we
-     * rotate about 47.37 degrees along the Z-axis allowed by a rotation about
-     * 90-6.32 degrees is needed to set the pole to the right declination. The
-     * new plane intersects the old one at two positions. One of them is
-     * l=137.37, b=0 (in galactic coordinates). If we want this to be sgl=0 we
-     * have to rotate this plane along the new Z-axis about an angle of 90
-     * degrees. So the composed rotation matrix is:: M =
-     * Rotz(90)*Roty(90-6.32)*Rotz(47.37)
+ rotate about 47.37 degrees along the z-axis allowed by a rotation about
+ 90-6.32 degrees is needed to set the pole to the right declination. The
+ new plane intersects the old one at two positions. One of them is
+ l=137.37, b=0 (in galactic coordinates). If we want this to be sgl=0 we
+ have to rotate this plane along the new z-axis about an angle of 90
+ degrees. So the composed rotation matrix is:: M =
+ Rotz(90)*Roty(90-6.32)*Rotz(47.37)
      *
      * @return RealMatrix M as in XYZsgal = M * XYZgal
      */
@@ -630,12 +646,16 @@ public abstract class Crs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU model
      * 2000).
      *
-     * Reference: ---------- Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
+     * Reference:<br> 
+     * ----------<br>
+     * Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
      * IAU Resolutions on Astronomical Reference Systems, TimeUtils Scales, and
      * Earth Rotation Models, United States Naval Observatory circular no. 179,
      * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
      *<p>
-     * Notes: ------ The epoch is entered in Julian date and the time is
+     * Notes:<br>
+     * ------ <br> 
+     * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
      * equator and ecliptic, or, between the ecliptic pole and mean celestial
      * pole of date.
@@ -643,7 +663,7 @@ public abstract class Crs {
      * @param jd Julian date
      * @return Mean obliquity in degrees
      */
-    private static double obliquity2000(double jd) {
+    private static double obliquity2000(final double jd) {
         // T = (Date - 1 jan, 2000, 12h noon)
         double T = (jd - 2451545.0d) / 36525.0d;
         double eps = (84381.406d
@@ -671,7 +691,7 @@ public abstract class Crs {
      * @param jd Julian date
      * @return Mean obliquity in degrees
      */
-    private static double obliquity1980(double jd) {
+    private static double obliquity1980(final double jd) {
         // T = (Date - 1 jan, 2000, 12h noon)
         double T = (jd - 2451545.0d) / 36525.0d;
         double eps = (84381.448d + (-46.8150d + (-0.00059d + 0.001813d * T) * T) * T) / 3600.0d;
@@ -683,9 +703,9 @@ public abstract class Crs {
      * ecliptical coordinates.
      *
      * Reference: ---------- Representations of celestial coordinates in FITS,
-     * Calabretta. M.R., and Greisen, E.W., (2002) Astronomy and Astrophysics,
-     * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
-     *<p>
+ Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
+ 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
+<p>
      * Notes: ------ 1. The origin for ecliptic longitude is the vernal equinox.
      * Therefore the coordinates of a fixed object is subject to shifts due to
      * precession. The rotation matrix uses the obliquity to do the conversion
@@ -732,8 +752,8 @@ public abstract class Crs {
      * or J coordinates
      * @return 3x3 RealMatrix M as in XYZecl = M * XYZeq
      */
-    protected final static RealMatrix convertMatrixEq2Ecl(double epoch, final CoordinateReferenceFrame.ReferenceFrame refSystem) {
-        double jd;
+    protected final static RealMatrix convertMatrixEq2Ecl(final double epoch, final CoordinateReferenceFrame.ReferenceFrame refSystem) {
+        final double jd;
         if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
             jd = convertEpochBessel2JD(epoch);
         } else {
@@ -751,21 +771,22 @@ public abstract class Crs {
     /**
      * Precession from one epoch to another in the fk5 system.
      *
-     * Reference: ---------- Seidelman, P.K., 1992. Explanatory Supplement to
+     * Reference:<br> 
+     * ----------<br> 
+     * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
      *<p>
-     * Notes: ------ The precession matrix is: M =
-     * rotZ(-z).rotY(+theta).rotZ(-zeta)
+     * Notes: ------ The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
      * @param jEpoch1 Julian start epoch
      * @param jEpoch2 Julian epoch to process to
      * @return 3x3 rotation matrix M as in XYZepoch2 = M * XYZepoch1
      */
-    private static RealMatrix julianMatrixEpoch12Epoch2(double jEpoch1, double jEpoch2) {
-        double jd1 = convertEpochJulian2JD(jEpoch1);
-        double jd2 = convertEpochJulian2JD(jEpoch2);
-        double[] precessionAngles = lieskeprecangles(jd1, jd2);
+    private static RealMatrix convertJulianMatrixEpoch12Epoch2(final double jEpoch1, final double jEpoch2) {
+        final double jd1 = convertEpochJulian2JD(jEpoch1);
+        final double jd2 = convertEpochJulian2JD(jEpoch2);
+        final double[] precessionAngles = lieskeprecangles(jd1, jd2);
         return precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
     }
 
@@ -782,17 +803,17 @@ public abstract class Crs {
      * @param jd2 Julian date for end epoch
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) degrees
      */
-    private static double[] lieskeprecangles(double jd1, double jd2) {
+    private static double[] lieskeprecangles(final double jd1, final double jd2) {
         // T = (Current epoch - 1 jan, 2000, 12h noon)
-        double T0 = (jd1 - 2451545.0d) / 36525.0d;
-        double T = (jd2 - jd1) / 36525.0d;
+        final double T0 = (jd1 - 2451545.0d) / 36525.0d;
+        final double T = (jd2 - jd1) / 36525.0d;
 
-        double W = 2306.2181d+(1.39656d-0.000139d*T0)*T0;
-        double ZETA = (W+((0.30188d-0.000344d*T0)+0.017998d*T)*T)*T;
-        double Z = (W+((1.09468d+0.000066d*T0)+0.018203d*T)*T)*T;
-        double THETA = ((2004.3109d+(-0.85330d-0.000217d*T0)*T0)+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
+        final double w = 2306.2181d+(1.39656d-0.000139d*T0)*T0;
+        final double zeta = (w+((0.30188d-0.000344d*T0)+0.017998d*T)*T)*T;
+        final double z = (w+((1.09468d+0.000066d*T0)+0.018203d*T)*T)*T;
+        final double theta = ((2004.3109d+(-0.85330d-0.000217d*T0)*T0)+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
         //Return values in degrees
-        double[] precessionAngles = {ZETA / 3600.0d, Z / 3600.0d, THETA / 3600.0d};
+        final double[] precessionAngles = {zeta / 3600.0d, z / 3600.0d, theta / 3600.0d};
         return precessionAngles;
     }
 
@@ -808,26 +829,29 @@ public abstract class Crs {
      * @param theta theta in decimal degree
      * @return Rotation matrix M as in XYZepoch1 = M * XYZepoch2
      */
-    private static RealMatrix precessionMatrix(double zeta, double z, double theta) {
+    private static RealMatrix precessionMatrix(final double zeta, final double z, final double theta) {
         return rotZ(-z).multiply(rotY(theta)).multiply(rotZ(-zeta));
     }
 
     /**
      * Precession from one epoch to another in the fk4 system.
      *
-     * Reference: ---------- Seidelman, P.K., 1992. Explanatory Supplement to
+     * Reference:<br> 
+     * ----------<br> 
+     * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
      *<p>
-     * Notes: ------ The precession matrix is: M =
-     * rotZ(-z).rotY(+theta).rotZ(-zeta)
+     * Notes:<br>
+     * ------<br>
+     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
      * @param bEpoch1 Besselian start epoch
      * @param bEpoch2 Besselian epoch to precess to.
      * @return 3x3 rotation matrix M as in XYZepoch2 = M * XYZepoch1
      */
-    private static RealMatrix besselianMatrixEpoch12Epoch2(double bEpoch1, double bEpoch2) {
-        double[] precessionAngles = newcombPrecAngles(bEpoch1, bEpoch2);
+    private static RealMatrix convertBesselianMatrixEpoch12Epoch2(final double bEpoch1, final double bEpoch2) {
+        final double[] precessionAngles = newcombPrecAngles(bEpoch1, bEpoch2);
         return precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
     }
 
@@ -835,22 +859,23 @@ public abstract class Crs {
      * Calculates precession angles for a precession in FK4, using Newcomb's
      * method (Woolard and Clemence angles).
      *
-     * Notes: ------ Newcomb's precession angles for old catalogs (FK4), see ES
-     * 3.214 p.106. Input are **Besselian epochs**! Adopted accumulated
+     * Notes:<br> 
+     * ------<br> 
+     * Newcomb's precession angles for old catalogs (FK4), see ES
+     * 3.214 p.106. Input are <b>Besselian epochs</b>! Adopted accumulated
      * precession angles from equator and equinox at B1950 to 1984 January 1d 0h
      * according to ES (table 3.214.1, p 107) are: ``zeta=783.7092, z=783.8009
      * and theta=681.3883``. The Woolard and Clemence angles (derived in this
-     * routine) are: ``zeta=783.70925, z=783.80093 and theta=681.38830`` (see
-     * same ES table as above).
+     * routine) are: ``zeta=783.70925, z=783.80093 and theta=681.38830``
      *
      * @param epoch1 Besselian start epoch
      * @param epoch2 Besselian end epoch
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) degrees
      */
-    private static double[] newcombPrecAngles(double epoch1, double epoch2) {
-        double t1 = (epoch1 - 1850.0d) / 1000.0d;    //1000 tropical years
-        double t2 = (epoch2 - 1850.0d) / 1000.0d;
-        double tau = t2 - t1;
+    private static double[] newcombPrecAngles(final double epoch1, final double epoch2) {
+        final double t1 = (epoch1 - 1850.0d) / 1000.0d;    //1000 tropical years
+        final double t2 = (epoch2 - 1850.0d) / 1000.0d;
+        final double tau = t2 - t1;
 
         double d0 = 23035.545d;
         double d1 = 139.720d;
@@ -872,7 +897,7 @@ public abstract class Crs {
         a0 = d0 + t1 * (d1 + d2 * t1);
         a1 = d3 + d4 * t1;
         a2 = d5;
-        double z_a = tau * (a0 + tau * (a1 + tau * a2));
+        final double z_a = tau * (a0 + tau * (a1 + tau * a2));
 
         d0 = 20051.12d;
         d1 = -85.29d;
@@ -883,9 +908,9 @@ public abstract class Crs {
         a0 = d0 + t1 * (d1 + d2 * t1);
         a1 = d3 + d4 * t1;
         a2 = d5;
-        double theta_a = tau * (a0 + tau * (a1 + tau * a2));
+        final double theta_a = tau * (a0 + tau * (a1 + tau * a2));
         // Return values in degrees
-        double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
+        final double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
         return precessionAngles;
     }
 
@@ -893,15 +918,22 @@ public abstract class Crs {
      * Creates a matrix to precess from B1950 in FK4 to J2000 in FK5 following
      * to Murray's (1989) procedure.
      *
-     * Reference: ---------- * Murray, C.A. The Transformation of coordinates
+     * Reference:<br> 
+     * ----------<br>
+     * <ul>
+     * <li>Murray, C.A. The Transformation of coordinates
      * between the systems B1950.0 and J2000.0, and the principal galactic axis
      * referred to J2000.0, Astronomy and Astrophysics (ISSN 0004-6361), vol.
-     * 218, no. 1-2, July 1989, p. 325-329. * Poppe P.C.R.,, Martin, V.A.F.,
-     * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas
+     * 218, no. 1-2, July 1989, p. 325-329.</li> 
+     * <li>Poppe P.C.R.,, Martin, V.A.F.,
+     * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas</li>
+     * </ul>
      *<p>
-     * Notes: ------ Murray precesses from B1950 to J2000 using a precession
+     * Notes:<br> 
+     * ------<br> 
+     * Murray precesses from B1950 to J2000 using a precession
      * matrix by Lieske. Then applies the equinox correction and ends up with a
-     * transformation matrix *X(0)* as given in this function. In Murray's
+     * transformation matrix <b>X(0)</b> as given in this function. In Murray's
      * article it is proven that using the procedure as described in the
      * article, ``r_fk5 = X(0).r_fk4`` for extra galactic sources where we
      * assumed that the proper motion in FK5 is zero. This procedure is
@@ -920,19 +952,19 @@ public abstract class Crs {
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
     private static RealMatrix convertFK42FK5Matrix(final Double t) {
-        RealMatrix mat = FK42FK5Matrix();
+        RealMatrix mat = convertFK42FK5Matrix();
         if (!Double.isNaN(t)) {
-            double jd = convertEpochBessel2JD(t);
-            double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
-            double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
-            double r01 = mat.getEntry(0, 1) - 1.1539918689d * T / 1000000.0d;
-            double r02 = mat.getEntry(0, 2) + 2.1111346190d * T / 1000000.0d;
-            double r10 = mat.getEntry(1, 0) + 1.1540628161d * T / 1000000.0d;
-            double r11 = mat.getEntry(1, 1) - 0.0129042997d * T / 1000000.0d;
-            double r12 = mat.getEntry(1, 2) + 0.0236021478d * T / 1000000.0d;
-            double r20 = mat.getEntry(2, 0) - 2.1112979048d * T / 1000000.0d;
-            double r21 = mat.getEntry(2, 1) - 0.0056024448d * T / 1000000.0d;
-            double r22 = mat.getEntry(2, 2) + 0.0102587734d * T / 1000000.0d;
+            final double jd = convertEpochBessel2JD(t);
+            final double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
+            final double r00 = mat.getEntry(0, 0) - 0.0026455262d * T / 1000000.0d;
+            final double r01 = mat.getEntry(0, 1) - 1.1539918689d * T / 1000000.0d;
+            final double r02 = mat.getEntry(0, 2) + 2.1111346190d * T / 1000000.0d;
+            final double r10 = mat.getEntry(1, 0) + 1.1540628161d * T / 1000000.0d;
+            final double r11 = mat.getEntry(1, 1) - 0.0129042997d * T / 1000000.0d;
+            final double r12 = mat.getEntry(1, 2) + 0.0236021478d * T / 1000000.0d;
+            final double r20 = mat.getEntry(2, 0) - 2.1112979048d * T / 1000000.0d;
+            final double r21 = mat.getEntry(2, 1) - 0.0056024448d * T / 1000000.0d;
+            final double r22 = mat.getEntry(2, 2) + 0.0102587734d * T / 1000000.0d;
             mat.setEntry(0, 0, r00);
             mat.setEntry(0, 1, r01);
             mat.setEntry(0, 2, r02);
@@ -951,8 +983,8 @@ public abstract class Crs {
      *
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
-    private static RealMatrix FK42FK5Matrix() {
-        double[][] array = {
+    private static RealMatrix convertFK42FK5Matrix() {
+        final double[][] array = {
             {0.9999256794956877d, -0.0111814832204662d, -0.0048590038153592d},
             {0.0111814832391717d, 0.9999374848933135d, -0.0000271625947142d},
             {0.0048590037723143d, -0.0000271702937440d, 0.9999881946023742d}
@@ -961,8 +993,8 @@ public abstract class Crs {
     }
 
     /**
-     * Creates a matrix to convert a position in fk5 to fk4 using the inverse
- matrix convertFK42FK5Matrix.
+     * Creates a matrix to convert a position in fk5 to fk4 using the inverse 
+     * matrix convertFK42FK5Matrix.
      *
      * @param t Epoch of observation for those situations where we allow no-zero
      * proper motion in fk4
@@ -975,7 +1007,9 @@ public abstract class Crs {
     /**
      * Creates a rotation matrix to convert a position from ICRS to fk5, J2000.
      *
-     * Reference: ---------- Kaplan G.H., The IAU Resolutions on Astronomical
+     * Reference:<br> 
+     * ----------<br>
+     * Kaplan G.H., The IAU Resolutions on Astronomical
      * Reference systems, TimeUtils scales, and Earth Rotation Models, US Naval
      * Observatory, Circular No. 179
      *<p>
@@ -988,9 +1022,9 @@ public abstract class Crs {
      * @return 3x3 rotation matrix M as in XYZfk5 = M * XYZicrs
      */
     private static RealMatrix convertICRS2FK5Matrix() {
-        double eta0 = -19.9d / (3600d * 1000d);  //Convert mas to degree
-        double xi0 = 9.1d / (3600d * 1000d);
-        double da0 = -22.9d / (3600d * 1000d);
+        final double eta0 = -19.9d / (3600d * 1000d);  //Convert mas to degree
+        final double xi0 = 9.1d / (3600d * 1000d);
+        final double da0 = -22.9d / (3600d * 1000d);
         return rotX(-eta0).multiply(rotY(xi0)).multiply(rotZ(da0));
     }
 
@@ -999,18 +1033,27 @@ public abstract class Crs {
      * dynamical reference system based on the dynamical mean equator and
      * equinox of J2000.0 (called the dynamical J2000 system).
      *
-     * Reference: ---------- Hilton and Hohenkerk (2004), Astronomy and
+     * Reference:<br>
+     * ----------<br>
+     * Hilton and Hohenkerk (2004), Astronomy and
      * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
      * Astronomical Reference systems, TimeUtils scales, and Earth Rotation
      * Models, US Naval Observatory, Circular No. 179
      *<p>
-     * Notes: ------ Return a matrix that converts a position vector in ICRS to
+     * Notes:<br>
+     * ------<br>
+     * Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices to obtain the
-     * exact. * Reference: ---------- Capitaine N. et al.: IAU 2000 precession A
-     * and A 412, 567-586 (2003)
+     * exact.<br> 
+     * <br>
+     * Reference:<br>
+     * ----------<br>
+     * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
      *<p>
-     * Notes: ------ Note that we apply this precession only to equatorial
+     * Notes:<br>
+     * ------<br>
+     * Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
      * from ICRS coordinates this means applying a frame bias. Therefore the
      * angles differ from the precession Fukushima-Williams angles (IAU 2006).
@@ -1019,9 +1062,9 @@ public abstract class Crs {
      * @return Rotation matrix to transform positions from ICRS to dyn J2000
      */
     private static RealMatrix convertICRS2J2000Matrix() {
-        double eta0 = -6.8192d / (3600d * 1000d); //Convert mas to degree
-        double xi0 = -16.617d / (3600d * 1000d);
-        double da0 = -14.6d / (3600d * 1000d);
+        final double eta0 = -6.8192d / (3600d * 1000d); //Convert mas to degree
+        final double xi0 = -16.617d / (3600d * 1000d);
+        final double da0 = -14.6d / (3600d * 1000d);
         return rotX(-eta0).multiply(rotY(xi0)).multiply(rotZ(da0));
     }
 
@@ -1029,10 +1072,13 @@ public abstract class Crs {
      * Creates a rotation matrix for a precession based on IAU 2000/2006
      * expressions, see `IAU2006precangles`.
      *
-     * Reference: ---------- Capitaine N. et al.: IAU 2000 precession A and A
-     * 412, 567-586 (2003)
+     * Reference:<br>
+     * ----------<br>
+     * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
      *<p>
-     * Notes: ------ Note that we apply this precession only to equatorial
+     * Notes:<br>
+     * ------<br>
+     * Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
      * from ICRS coordinates this means applying a frame bias. Therefore the
      * angles differ from the precession Fukushima-Williams angles (IAU 2006)
@@ -1043,8 +1089,8 @@ public abstract class Crs {
      * @return RealMatrix to transform equatorial coordinates from epoch1 to epoch2
      * as in XYZepoch2 = M * XYZepoch1
      */
-    private static RealMatrix convertIAU2006MatrixEpoch12Epoch2(double epoch1, double epoch2) {
-        RealMatrix result;
+    private static RealMatrix convertIAU2006MatrixEpoch12Epoch2(final double epoch1, final double epoch2) {
+        final RealMatrix result;
         if (equal(epoch1, epoch2)) {
             result = createRealIdentityMatrix(3);
         } else if (epoch1 == 2000.0) {
@@ -1065,22 +1111,25 @@ public abstract class Crs {
      * Calculates IAU 2000 precession angles for precession from input epoch to
      * J2000.
      *
-     * Reference: ---------- Capitaine N. et al., IAU 2000 precession A and A
-     * 412, 567-586 (2003)
-     *<p>
- Notes: ------ Input are Julian epochs! ``T = (jd-2451545.0)/36525.0``
- Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see
- *convertEpochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function
- should be updated as soon as there are IAU2006 adopted angles to replace
- the angles used in this function.
+     * Reference:<br>
+     * ----------<br>
+     * Capitaine N. et al., IAU 2000 precession A and A 412, 567-586 (2003)
+     * <p>
+     * Notes:<br>
+     * ------<br>
+     * Input are Julian epochs! ``T = (jd-2451545.0)/36525.0`` 
+     * Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see 
+     * convertEpochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function 
+     * should be updated as soon as there are IAU2006 adopted angles to replace 
+     * the angles used in this function.
      *
      * @param epoch Julian epoch of observation
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) in degrees to setup a
      * rotation matrix to transform from J2000 to input epoch.
      */
-    private static double[] convertIAU2006PrecAngles(double epoch) {
+    private static double[] convertIAU2006PrecAngles(final double epoch) {
         // T = (Current epoch - 1 jan, 2000, 12h noon)
-        double T = (epoch - 2000.0d) / 100.0d;
+        final double T = (epoch - 2000.0d) / 100.0d;
         double d0 = 2.5976176d;
         double d1 = 2306.0809506d;
         double d2 = 0.3019015d;
@@ -1095,7 +1144,7 @@ public abstract class Crs {
         d3 = 0.0182273d;
         d4 = 0.0000470d;
         d5 = -0.0000003d;
-        double z_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double z_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
 
         d0 = 0.0;
         d1 = 2004.1917476d;
@@ -1103,10 +1152,10 @@ public abstract class Crs {
         d3 = -0.0418251d;
         d4 = -0.0000601d;
         d5 = -0.0000001d;
-        double theta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double theta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
 
         //Return values in degrees
-        double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
+        final double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
         return precessionAngles;
     }    
     
@@ -1126,7 +1175,7 @@ public abstract class Crs {
      * @param latitude latitude in decimal degree
      * @return Corresponding values of x,y,z in same order as input
      */
-    protected static RealMatrix longlat2xyz(double longitude, double latitude) {
+    protected static RealMatrix longlat2xyz(final double longitude, final double latitude) {
         return longlatRad2xyz(Math.toRadians(longitude), Math.toRadians(latitude));
     }
 
@@ -1146,11 +1195,11 @@ public abstract class Crs {
      * @param latitudeRad latitude in radians
      * @return Corresponding values of x,y,z in same order as input
      */
-    protected static RealMatrix longlatRad2xyz(double longitudeRad, double latitudeRad) {
-        double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
-        double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
-        double z = Math.sin(latitudeRad);
-        double[][] array = {
+    protected static RealMatrix longlatRad2xyz(final double longitudeRad, final double latitudeRad) {
+        final double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
+        final double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
+        final double z = Math.sin(latitudeRad);
+        final double[][] array = {
             {x},
             {y},
             {z}
@@ -1173,22 +1222,22 @@ public abstract class Crs {
      * order as the input.
      */
     protected static double[] xyz2longlat(final RealMatrix xyz) {
-        double[] vec = xyz.getColumn(0);
-        double len = Math.sqrt(Math.pow(vec[0], 2)+Math.pow(vec[1], 2)+Math.pow(vec[2], 2));
-        double x = vec[0]/len;
-        double y = vec[1]/len;
-        double z = vec[2]/len;
+        final double[] vec = xyz.getColumn(0);
+        final double len = Math.sqrt(Math.pow(vec[0], 2)+Math.pow(vec[1], 2)+Math.pow(vec[2], 2));
+        final double x = vec[0]/len;
+        final double y = vec[1]/len;
+        final double z = vec[2]/len;
         double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x, 0));
         longitude = (longitude < 0) ? longitude + 360.0d : longitude;
-        double latitude = Math.toDegrees(NumericalUtils.aasin(z));
-        double coord[] = {longitude, latitude};
+        final double latitude = Math.toDegrees(NumericalUtils.aasin(z));
+        final double coord[] = {longitude, latitude};
         return coord;
     }    
 
     @Override
     public String toString() {
-        String result;
-        CoordinateReferenceFrame refSystem = getCoordinateReferenceFrame();
+        final String result;
+        final CoordinateReferenceFrame refSystem = getCoordinateReferenceFrame();
         if (refSystem == null) {
             result = getCoordinateSystem().getName();
         } else {

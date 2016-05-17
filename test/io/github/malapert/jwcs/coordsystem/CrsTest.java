@@ -18,8 +18,8 @@ package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.JWcs;
 import io.github.malapert.jwcs.JWcsFits;
-import static io.github.malapert.jwcs.coordsystem.Crs.MatrixEpoch12Epoch2;
-import static io.github.malapert.jwcs.coordsystem.Crs.MatrixEqB19502Gal;
+import static io.github.malapert.jwcs.coordsystem.Crs.convertMatrixEpoch12Epoch2;
+import static io.github.malapert.jwcs.coordsystem.Crs.convertMatrixEqB19502Gal;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -611,13 +611,13 @@ public class CrsTest {
     } 
     
     /**
-     * Test of MatrixEqB19502Gal method, of class Utility.
+     * Test of convertMatrixEqB19502Gal method, of class Utility.
      */
     @Test
     public void testMatrixEqB19502Gal() {
         System.out.println("MatrixEqB19502Gal");
-        RealMatrix result1 = MatrixEqB19502Gal();
-        RealMatrix result2 = MatrixEqB19502Gal().transpose();
+        RealMatrix result1 = convertMatrixEqB19502Gal();
+        RealMatrix result2 = convertMatrixEqB19502Gal().transpose();
         RealMatrix result = result1.multiply(result2);
         RealMatrix expResult = createRealIdentityMatrix(3);
         assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
@@ -626,7 +626,7 @@ public class CrsTest {
     }
 
     /**
-     * Test of MatrixEpoch12Epoch2 method, of class Utility.
+     * Test of convertMatrixEpoch12Epoch2 method, of class Utility.
      */
     @Test
     public void testMatrixEpoch12Epoch2() {
@@ -636,7 +636,7 @@ public class CrsTest {
         CoordinateReferenceFrame.ReferenceFrame s1 = CoordinateReferenceFrame.ReferenceFrame.FK4;
         CoordinateReferenceFrame.ReferenceFrame s2 = CoordinateReferenceFrame.ReferenceFrame.FK5;
         Double epobs = 1950d;
-        RealMatrix result = MatrixEpoch12Epoch2(epoch1, epoch2, s1, s2, epobs);
+        RealMatrix result = convertMatrixEpoch12Epoch2(epoch1, epoch2, s1, s2, epobs);
         assertArrayEquals(new double[]{9.99988107e-01,  -4.47301372e-03,  -1.94362889e-03}, result.getRow(0), 1e-9);
         assertArrayEquals(new double[]{4.47301372e-03,   9.99989996e-01,  -4.34712255e-06}, result.getRow(1), 1e-9);
         assertArrayEquals(new double[]{1.94362889e-03,  -4.34680782e-06,   9.99998111e-01}, result.getRow(2), 1e-9);

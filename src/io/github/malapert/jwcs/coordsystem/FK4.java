@@ -103,11 +103,11 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param epoch A Besselian epoch
      * @return A tuple containing the e-terms vector (DeltaD,DeltaC,DeltaC.tan(e0))
      */
-    public final static RealMatrix getEterms(double epoch) {
+    public final static RealMatrix getEterms(final double epoch) {
         //Julian centuries since B1950
-        double T = (epoch-1950.0d)*1.00002135903d/100.0d;
+        final double T = (epoch-1950.0d)*1.00002135903d/100.0d;
         //Eccentricity of the Earth's orbit
-        double ec = 0.01673011d-(0.00004193d+0.000000126d*T)*T;
+        final double ec = 0.01673011d-(0.00004193d+0.000000126d*T)*T;
         //Mean obliquity of the ecliptic. Method is different compared to 
         //functions for the obliquity defined earlier. This function depends
         //on time wrt. epoch 1950 not epoch 2000.
@@ -117,10 +117,10 @@ public class FK4 implements CoordinateReferenceFrame {
         double p = (1015489.951d+(6190.67d+(1.65d+0.012d*T)*T)*T);
         p = Math.toRadians(p/3600.0d);
         //Calculate the E-terms vector
-        double ek = ec*Math.toRadians(20.49522d/3600.0d); // 20.49552 is constant of aberration at J2000
-        double cp = Math.cos(p);
+        final double ek = ec*Math.toRadians(20.49522d/3600.0d); // 20.49552 is constant of aberration at J2000
+        final double cp = Math.cos(p);
         //       -DeltaD        DeltaC            DeltaC.tan(e0)
-        double[][] array = {
+        final double[][] array = {
             {ek*Math.sin(p), -ek*cp*Math.cos(ob), -ek*cp*Math.sin(ob)}
         };
         return createRealMatrix(array);       

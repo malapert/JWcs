@@ -141,7 +141,7 @@ public interface CoordinateReferenceFrame {
          */
         public static ReferenceFrame valueOfByName(final String name) {
             ReferenceFrame result = null;
-            ReferenceFrame[] values = ReferenceFrame.values();
+            final ReferenceFrame[] values = ReferenceFrame.values();
             for (ReferenceFrame value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
@@ -160,8 +160,8 @@ public interface CoordinateReferenceFrame {
          * @return all names of the CoordinateReferenceFrame
          */
         public static String[] getRefenceFrameNametoArray() {            
-            ReferenceFrame[] values = ReferenceFrame.values();
-            String[] result = new String[values.length];
+            final ReferenceFrame[] values = ReferenceFrame.values();
+            final String[] result = new String[values.length];
             int index = 0;
             for (ReferenceFrame value : values) {
                 result[index] = value.getName();

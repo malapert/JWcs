@@ -73,7 +73,7 @@ public class Ecliptic extends Crs implements CoordinateReferenceFrame {
      * @param refSystem the coordinate reference system
      * @return the coordinate reference system
      */
-    protected CoordinateReferenceFrame init(CoordinateReferenceFrame refSystem) {
+    protected CoordinateReferenceFrame init(final CoordinateReferenceFrame refSystem) {
         CoordinateReferenceFrame result;
         if (ReferenceFrame.FK4_NO_E.equals(refSystem.getReferenceFrame())) {
             result = new FK4();
@@ -87,27 +87,27 @@ public class Ecliptic extends Crs implements CoordinateReferenceFrame {
 
     @Override
     protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
-        RealMatrix m;
-        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();
+        final RealMatrix m;
+        final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();
         if (crs instanceof Equatorial) {
-            RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            RealMatrix m2 = MatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
             m = m2.multiply(m1);
         } else if (crs instanceof Galactic) {
-            RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            RealMatrix m2 = MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            RealMatrix m3 = MatrixEqB19502Gal();
+            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+            final RealMatrix m3 = convertMatrixEqB19502Gal();
             m = m3.multiply(m2).multiply(m1);
         } else if (crs instanceof SuperGalactic) {
-            RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            RealMatrix m2 = MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            RealMatrix m3 = MatrixEqB19502Gal();
-            RealMatrix m4 = convertMatrixGal2Sgal();
+            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+            final RealMatrix m3 = convertMatrixEqB19502Gal();
+            final RealMatrix m4 = convertMatrixGal2Sgal();
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (crs instanceof Ecliptic) {
-            RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            RealMatrix m2 = MatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m3 = convertMatrixEq2Ecl(this.getEquinox(), targetCrs.getReferenceFrame());
+            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m3 = convertMatrixEq2Ecl(this.getEquinox(), targetCrs.getReferenceFrame());
             m = m3.multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
