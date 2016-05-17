@@ -56,7 +56,7 @@ public class Galactic extends Crs {
         } else if (crs instanceof Galactic) {
             m = createRealIdentityMatrix(3);
         } else if (crs instanceof SuperGalactic) {
-            m = MatrixGal2Sgal();
+            m = convertMatrixGal2Sgal();
         } else if (crs instanceof Ecliptic) {
             RealMatrix m1 = MatrixEqB19502Gal().transpose();
             RealMatrix m2 = MatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);

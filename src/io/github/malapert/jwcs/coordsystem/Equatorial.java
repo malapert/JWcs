@@ -73,7 +73,7 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
         } else if (crs instanceof SuperGalactic) {
             RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m2 = MatrixEqB19502Gal();
-            RealMatrix m3 = MatrixGal2Sgal();
+            RealMatrix m3 = convertMatrixGal2Sgal();
             m = m3.multiply(m2).multiply(m1);
         } else if (crs instanceof Ecliptic) {
             RealMatrix m1 = MatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);

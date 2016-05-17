@@ -102,7 +102,7 @@ public class Ecliptic extends Crs implements CoordinateReferenceFrame {
             RealMatrix m1 = MatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
             RealMatrix m2 = MatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
             RealMatrix m3 = MatrixEqB19502Gal();
-            RealMatrix m4 = MatrixGal2Sgal();
+            RealMatrix m4 = convertMatrixGal2Sgal();
             m = m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (crs instanceof Ecliptic) {
             RealMatrix m1 = MatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();

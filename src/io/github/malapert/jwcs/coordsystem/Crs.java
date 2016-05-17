@@ -470,20 +470,20 @@ public abstract class Crs {
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
             return m3.multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
+            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
             return m1;
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
             RealMatrix m4 = julianMatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            RealMatrix m1 = IAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+            RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = convertICRS2J2000Matrix().transpose();
             RealMatrix m3 = ICRS2FK5Matrix();
             RealMatrix m4 = convertFK52FK4Matrix(epobs);
@@ -491,20 +491,20 @@ public abstract class Crs {
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = convertICRS2J2000Matrix();
-            RealMatrix m2 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            RealMatrix m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m2.multiply(m1);
         } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = julianMatrixEpoch12Epoch2(epoch1, 2000.0d);
             RealMatrix m2 = ICRS2FK5Matrix().transpose();
             RealMatrix m3 = convertICRS2J2000Matrix();
-            RealMatrix m4 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            RealMatrix m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m4.multiply(m3).multiply(m2).multiply(m1);
         } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
             RealMatrix m1 = besselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
             RealMatrix m2 = convertFK52FK4Matrix(epobs).transpose();
             RealMatrix m3 = ICRS2FK5Matrix().transpose();
             RealMatrix m4 = convertICRS2J2000Matrix();
-            RealMatrix m5 = IAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+            RealMatrix m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
             return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
         } else {
             throw new JWcsError("Reference frame conversion is not supported");
@@ -622,7 +622,7 @@ public abstract class Crs {
      *
      * @return RealMatrix M as in XYZsgal = M * XYZgal
      */
-    protected final static RealMatrix MatrixGal2Sgal() {
+    protected final static RealMatrix convertMatrixGal2Sgal() {
         return rotZ(90.0d).multiply(rotY(90d - 6.32d)).multiply(rotZ(47.37d));
     }
 
@@ -1043,7 +1043,7 @@ public abstract class Crs {
      * @return RealMatrix to transform equatorial coordinates from epoch1 to epoch2
      * as in XYZepoch2 = M * XYZepoch1
      */
-    private static RealMatrix IAU2006MatrixEpoch12Epoch2(double epoch1, double epoch2) {
+    private static RealMatrix convertIAU2006MatrixEpoch12Epoch2(double epoch1, double epoch2) {
         RealMatrix result;
         if (equal(epoch1, epoch2)) {
             result = createRealIdentityMatrix(3);
