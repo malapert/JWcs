@@ -50,8 +50,7 @@ public class UngenerateImporter {
         // read lines until we reach the end of the file
         try ( // open the file
                 BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
-            String idStr;
-            while ((idStr = in.readLine()) != null) {
+            while (in.readLine() != null) {
                 MapLine line = readLine(in);
                 if (line != null) {
                     lines.add(line);

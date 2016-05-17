@@ -34,10 +34,6 @@ public class MapComponent extends JComponent {
      */
     private static final double BORDER_PERCENTAGE = 3;
 
-    /** Creates a new instance of Map */
-    public MapComponent() {
-    }
-
     /**
      * Replaces the current lines by the passed lines.
      * @param lines A vector holding MapLine objects.

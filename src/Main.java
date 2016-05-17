@@ -477,7 +477,6 @@ public class Main {
         boolean isGui = false;
         int c;
         int extension = DEFAULT_EXTENSION;
-        String arg;
         String from = null;
         String to = null;
         String file = null;
