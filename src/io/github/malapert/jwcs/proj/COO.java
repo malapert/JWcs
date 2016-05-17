@@ -112,7 +112,7 @@ public class COO extends ConicProjection {
     }
         
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{Math.toDegrees(lon),Math.toDegrees(lat),super.inside(lon, lat) && !NumericalUtils.equal(lat, -HALF_PI)});
         return super.inside(lon, lat) && !NumericalUtils.equal(lat, -HALF_PI);
     }

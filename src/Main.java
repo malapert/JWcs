@@ -295,7 +295,7 @@ public class Main {
      * @return parameters of the reference frame
      */
     private static String[] extractReferenceFrameParameter(final String referenceFrame) {
-        String parameters = referenceFrame.substring(referenceFrame.indexOf('(') + 1, referenceFrame.lastIndexOf(')'));
+        final String parameters = referenceFrame.substring(referenceFrame.indexOf('(') + 1, referenceFrame.lastIndexOf(')'));
         return (parameters.isEmpty()) ? null : parameters.split(",");
     }
 
@@ -373,7 +373,7 @@ public class Main {
             String refFrameStr = extractReferenceFrame(skySystem);
             String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf('('));
             CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
-            String[] parameters = extractReferenceFrameParameter(refFrameStr);
+            final String[] parameters = extractReferenceFrameParameter(refFrameStr);
             CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
             result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
             switch (result.getCoordinateSystem()) {
@@ -421,8 +421,8 @@ public class Main {
                     keyMap.put(card.getKey(), card.getValue());
                 }
             } catch (nom.tam.fits.FitsException | IOException ex) {
-                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
-                List<List<String>> listKeywords = hdr.readKeywords();
+                final HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                final List<List<String>> listKeywords = hdr.readKeywords();
                 listKeywords.stream().forEach((keywordLine) -> {
                     keyMap.put(keywordLine.get(0), keywordLine.get(1));
                 });
@@ -440,7 +440,7 @@ public class Main {
                 .toArray();
         Crs skySystemTo = getSkySystem(skySystemTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
-        SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
+        final SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
         System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());
         LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
     }
@@ -482,7 +482,7 @@ public class Main {
         String progGui = null;
         List<PROG> progChoice = new ArrayList<>();
         LongOpt[] longopts = new LongOpt[11];
-        Logger rootLogger = Logger.getLogger("");
+        final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
          
         longopts[0] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');

@@ -36,7 +36,7 @@ public class WcsNumericalMap extends JWcs {
      * Clones a WcsNumericalMap.
      * @param wcs WcsNumericalMap object
      */
-    public WcsNumericalMap(WcsNumericalMap wcs) {
+    public WcsNumericalMap(final WcsNumericalMap wcs) {
         setKeywords(wcs.keywords);
     }
 
@@ -44,7 +44,7 @@ public class WcsNumericalMap extends JWcs {
      * Creates JWcs based on a map.
      * @param keywords map of keywords
      */
-    public WcsNumericalMap(Map keywords) {
+    public WcsNumericalMap(final Map keywords) {
         this.keywords = keywords;
     }
 
@@ -59,12 +59,12 @@ public class WcsNumericalMap extends JWcs {
     }
 
     @Override
-    public boolean hasKeyword(String keyword) {
+    public boolean hasKeyword(final String keyword) {
         return this.getKeywords().containsKey(keyword);
     }
 
     @Override
-    public int getValueAsInt(String keyword) {
+    public int getValueAsInt(final String keyword) {
         if (hasKeyword(keyword)) {
             return (int) this.keywords.get(keyword);
         } else {
@@ -73,7 +73,7 @@ public class WcsNumericalMap extends JWcs {
     }
 
     @Override
-    public double getValueAsDouble(String keyword) {
+    public double getValueAsDouble(final String keyword) {
         if (hasKeyword(keyword)) {
             return (double) this.keywords.get(keyword);
         } else {
@@ -82,7 +82,7 @@ public class WcsNumericalMap extends JWcs {
     }
 
     @Override
-    public float getValueAsFloat(String keyword) {
+    public float getValueAsFloat(final String keyword) {
         if (hasKeyword(keyword)) {
             return (float) this.keywords.get(keyword);
         } else {
@@ -91,7 +91,7 @@ public class WcsNumericalMap extends JWcs {
     }
 
     @Override
-    public String getValueAsString(String keyword) {
+    public String getValueAsString(final String keyword) {
         return (String) this.getKeywords().getOrDefault(keyword, null);
     }
 

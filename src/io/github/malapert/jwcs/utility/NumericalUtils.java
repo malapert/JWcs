@@ -51,7 +51,7 @@ public abstract class NumericalUtils {
      * @param precision precision for the comparison
      * @return True when <code>val1</code> and <code>val2</code> are equals.
      */
-    public final static boolean equal(double val1, double val2, double precision) {
+    public final static boolean equal(final double val1, final double val2, final double precision) {
         return Math.abs(val2 - val1) <= precision;
     }
 
@@ -61,8 +61,8 @@ public abstract class NumericalUtils {
      * @param pos position in the sky
      * @return the position in the cartesian reference system
      */
-    public final static double[] radec2xyz(double pos[]) {
-        double[] xyz = new double[3];
+    public final static double[] radec2xyz(final double pos[]) {
+        final double[] xyz = new double[3];
         xyz[0] = Math.cos(pos[1]) * Math.cos(pos[0]);
         xyz[1] = Math.cos(pos[1]) * Math.sin(pos[0]);
         xyz[2] = Math.sin(pos[1]);
@@ -75,7 +75,7 @@ public abstract class NumericalUtils {
      * @param pos position in the sky
      * @return the norm of the position.
      */
-    public final static double normVector(double[] pos) {
+    public final static double normVector(final double[] pos) {
         return Math.hypot(pos[0], pos[1]);
     }
 
@@ -86,9 +86,9 @@ public abstract class NumericalUtils {
      * @param pos2 second angle.
      * @return the distance between two angles
      */
-    public final static double distAngle(double[] pos1, double[] pos2) {
-        double[] xyzPos1 = radec2xyz(pos1);
-        double[] xyzPos2 = radec2xyz(pos2);
+    public final static double distAngle(final double[] pos1, final double[] pos2) {
+        final double[] xyzPos1 = radec2xyz(pos1);
+        final double[] xyzPos2 = radec2xyz(pos2);
         double dot = xyzPos1[0] * xyzPos2[0] + xyzPos1[1] * xyzPos2[1] + xyzPos1[2] * xyzPos2[2];
         if (NumericalUtils.equal(dot, 0, 1e-13)) {
             dot = 0;
@@ -104,7 +104,7 @@ public abstract class NumericalUtils {
      * @return the theta component of the point (r, theta) in polar coordinates
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
-    public final static double aatan2(double n, double d) {
+    public final static double aatan2(final double n, final double d) {
         return aatan2(n, d, Double.NaN);
     }
 
@@ -117,7 +117,7 @@ public abstract class NumericalUtils {
      * @return the theta component of the point (r, theta) in polar coordinates
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
-    public final static double aatan2(double n, double d, double defaultValue) {
+    public final static double aatan2(final double n, final double d, final double defaultValue) {
         return ((Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE) ? defaultValue : Math.atan2(n, d));
     }
 
@@ -136,7 +136,7 @@ public abstract class NumericalUtils {
      * @param v the value whose arc sine is returned
      * @return the arc sine of the argument.
      */
-    public final static double aasin(double v) {
+    public final static double aasin(final double v) {
         if (equal(v, 1, DOUBLE_TOLERANCE)) {
             return Math.PI / 2;
         } else if (equal(v, -1, DOUBLE_TOLERANCE)) {
@@ -152,7 +152,7 @@ public abstract class NumericalUtils {
      * @param v the value whose arc cosine is to be returned.
      * @return the value whose arc cosine is to be returned
      */
-    public final static double aacos(double v) {
+    public final static double aacos(final double v) {
         if (Math.abs(v) > 1.) {
             return v < 0.0 ? Math.PI : 0.0;
         }
@@ -165,25 +165,26 @@ public abstract class NumericalUtils {
      * @param angle latitude in radians
      * @return the angle from -half_PI to half_PI
      */
-    public final static double normalizeLatitude(double angle) {
-        if (Double.isInfinite(angle) || Double.isNaN(angle)) {
+    public final static double normalizeLatitude(final double angle) {
+        double resut = angle;
+        if (Double.isInfinite(resut) || Double.isNaN(resut)) {
             throw new JWcsError("Infinite latitude");
         }
-        if (Math.abs(angle - HALF_PI) < DOUBLE_TOLERANCE) {
+        if (Math.abs(resut - HALF_PI) < DOUBLE_TOLERANCE) {
             return HALF_PI;
         }
-        if (Math.abs(angle + HALF_PI) < DOUBLE_TOLERANCE) {
+        if (Math.abs(resut + HALF_PI) < DOUBLE_TOLERANCE) {
             return -HALF_PI;
         }
 
-        if (angle > Math.PI) {
-            angle -= TWO_PI;
+        if (resut > Math.PI) {
+            resut -= TWO_PI;
         }
 
-        if (angle < -Math.PI) {
-            angle += TWO_PI;
+        if (resut < -Math.PI) {
+            resut += TWO_PI;
         }
-        return angle;
+        return resut;
     }
 
     /**
@@ -192,7 +193,8 @@ public abstract class NumericalUtils {
      * @param angle longitude in radians
      * @return the angle from 0 to 2PI
      */
-    public final static double normalizeLongitude(double angle) {
+    public final static double normalizeLongitude(final double angle) {
+        double result = angle;
         if (Double.isInfinite(angle) || Double.isNaN(angle)) {
             throw new JWcsError("Infinite longitude");
         }
@@ -200,20 +202,20 @@ public abstract class NumericalUtils {
         // avoid instable computations with very small numbers: if the
         // angle is very close to the graticule boundary, return +/-PI.
         // Bernhard Jenny, May 25 2010.
-        if (Math.abs(angle - 0) < DOUBLE_TOLERANCE) {
+        if (Math.abs(result - 0) < DOUBLE_TOLERANCE) {
             return 0;
         }
-        if (Math.abs(angle - TWO_PI) < DOUBLE_TOLERANCE) {
+        if (Math.abs(result - TWO_PI) < DOUBLE_TOLERANCE) {
             return TWO_PI;
         }
 
-        while (angle > TWO_PI) {
-            angle -= TWO_PI;
+        while (result > TWO_PI) {
+            result -= TWO_PI;
         }
-        while (angle < 0) {
-            angle += TWO_PI;
+        while (result < 0) {
+            result += TWO_PI;
         }
-        return angle;
+        return result;
     }
 
     /**
@@ -222,8 +224,8 @@ public abstract class NumericalUtils {
      * @param number the number to format
      * @return the formatted number
      */
-    public final static String round(double number) {
-        DecimalFormat df = new DecimalFormat("0.###");
+    public final static String round(final double number) {
+        final DecimalFormat df = new DecimalFormat("0.###");
         return df.format(number);
     }
 
@@ -236,7 +238,7 @@ public abstract class NumericalUtils {
      * @param precision numerical precision
      * @return True when number is included in [min,max] otherwise False.
      */
-    public final static boolean isInInterval(double number, double min, double max, double precision) {
+    public final static boolean isInInterval(final double number, final double min, final double max, final double precision) {
         if (NumericalUtils.equal(number, min, precision)) {
             return true;
         }
@@ -254,7 +256,7 @@ public abstract class NumericalUtils {
      * @param val2 second double
      * @return True when <code>val1</code> and <code>val2</code> are equals.
      */
-    public static boolean equal(double val1, double val2) {
+    public static boolean equal(final double val1, final double val2) {
         return equal(val1, val2, DOUBLE_TOLERANCE);
     }
 
@@ -267,7 +269,7 @@ public abstract class NumericalUtils {
      * @param max maximum value
      * @return True when number is included in [min,max] otherwise False.
      */
-    public static boolean isInInterval(double number, double min, double max) {
+    public static boolean isInInterval(final double number, final double min, final double max) {
         return isInInterval(number, min, max, DOUBLE_TOLERANCE);
     }
 
@@ -287,8 +289,8 @@ public abstract class NumericalUtils {
      * @return A 3x3 matrix representing the rotation about angle around X axis.
      */
     public final static RealMatrix rotX(final double angle) {
-        double angleRadians = Math.toRadians(angle);
-        double[][] array = {
+        final double angleRadians = Math.toRadians(angle);
+        final double[][] array = {
             {1, 0, 0},
             {0, Math.cos(angleRadians), Math.sin(angleRadians)},
             {0, -Math.sin(angleRadians), Math.cos(angleRadians)}
@@ -311,9 +313,9 @@ public abstract class NumericalUtils {
      * @param angle Rotation angle in degrees
      * @return A 3x3 matrix representing the rotation about angle around Y axis.
      */
-    public final static RealMatrix rotY(double angle) {
-        double angleRadians = Math.toRadians(angle);
-        double[][] array = {
+    public final static RealMatrix rotY(final double angle) {
+        final double angleRadians = Math.toRadians(angle);
+        final double[][] array = {
             {Math.cos(angleRadians), 0, -Math.sin(angleRadians)},
             {0, 1, 0},
             {Math.sin(angleRadians), 0, Math.cos(angleRadians)}
@@ -327,9 +329,9 @@ public abstract class NumericalUtils {
      * @param angle Rotation angle in degrees
      * @return A 3x3 matrix representing the rotation about angle around Z axis.
      */
-    public final static RealMatrix rotZ(double angle) {
-        double angleRadians = Math.toRadians(angle);
-        double[][] array = {
+    public final static RealMatrix rotZ(final double angle) {
+        final double angleRadians = Math.toRadians(angle);
+        final double[][] array = {
             {Math.cos(angleRadians), Math.sin(angleRadians), 0},
             {-Math.sin(angleRadians), Math.cos(angleRadians), 0},
             {0, 0, 1}
@@ -343,7 +345,7 @@ public abstract class NumericalUtils {
      * @param dimension matrix dimension
      * @return a matrix of dimension
      */
-    public final static RealMatrix createRealIdentityMatrix(int dimension) {
+    public final static RealMatrix createRealIdentityMatrix(final int dimension) {
         return (RealMatrix) MatrixUtils.createRealIdentityMatrix(3);
     }
 
@@ -353,7 +355,7 @@ public abstract class NumericalUtils {
      * @param data input array
      * @return RealMatrix containing the values of the array
      */
-    public final static RealMatrix createRealMatrix(double[][] data) {
+    public final static RealMatrix createRealMatrix(final double[][] data) {
         return (RealMatrix) MatrixUtils.createRealMatrix(data);
     }
 
@@ -362,7 +364,7 @@ public abstract class NumericalUtils {
      * @param matrix the matrix to inverse
      * @return the inverse matrix
      */
-    public final static RealMatrix inverse(RealMatrix matrix) {
+    public final static RealMatrix inverse(final RealMatrix matrix) {
         return (RealMatrix) MatrixUtils.inverse(matrix);
     }  
 }

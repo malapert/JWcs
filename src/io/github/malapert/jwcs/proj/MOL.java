@@ -150,9 +150,9 @@ public class MOL extends CylindricalProjection {
                 v1 = v;
             }
         } while (Math.abs(diff) > getTolerance() && nIter < getMaxIter());
-        double gamma = v * 0.5;
-        double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phiCorrect * Math.cos(gamma));
-        double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
+        final double gamma = v * 0.5;
+        final double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phiCorrect * Math.cos(gamma));
+        final double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
         double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
         return coord;

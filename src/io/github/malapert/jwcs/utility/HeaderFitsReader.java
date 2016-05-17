@@ -66,7 +66,7 @@ public class HeaderFitsReader {
      * @throws FileNotFoundException File not found
      */
     public HeaderFitsReader(final File file) throws FileNotFoundException {
-        Reader reader = new FileReader(file);        
+        final Reader reader = new FileReader(file);        
         this.source = reader;
     }    
     
@@ -76,7 +76,7 @@ public class HeaderFitsReader {
      * @throws FileNotFoundException  File not found
      */
     public HeaderFitsReader(final URI uri) throws FileNotFoundException {
-        Reader reader = new FileReader(new File(uri));
+        final Reader reader = new FileReader(new File(uri));
         this.source = reader;
     }            
     
@@ -86,7 +86,7 @@ public class HeaderFitsReader {
      * @throws IOException File not found
      */
     public HeaderFitsReader(final URL url) throws IOException  {
-        Reader reader = new InputStreamReader(url.openStream());
+        final Reader reader = new InputStreamReader(url.openStream());
         this.source = reader;
     }      
 
@@ -97,8 +97,8 @@ public class HeaderFitsReader {
      * @throws IOException File not found
      */
     public HeaderFitsReader(final String filename) throws URISyntaxException, IOException  {
-        Path path = Paths.get(new URI(filename));
-        Reader reader = Files.newBufferedReader(path, Charset.forName("UTF-8"));
+        final Path path = Paths.get(new URI(filename));
+        final Reader reader = Files.newBufferedReader(path, Charset.forName("UTF-8"));
         this.source = reader;
     }
 

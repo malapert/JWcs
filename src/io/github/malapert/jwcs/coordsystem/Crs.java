@@ -132,7 +132,7 @@ public abstract class Crs {
         public static CoordinateSystem valueOfByName(final String name) {
             CoordinateSystem result = null;
             final CoordinateSystem[] values = CoordinateSystem.values();
-            for (CoordinateSystem value : values) {
+            for (final CoordinateSystem value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
                     break;

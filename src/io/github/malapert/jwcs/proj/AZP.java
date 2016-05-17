@@ -214,9 +214,9 @@ public class AZP extends ZenithalProjection {
 
         double r = (mu + 1) * Math.cos(theta) / denom;        
         r = Math.toDegrees(r);
-        double x = r * Math.sin(phi);
-        double y = -r * Math.cos(phi) / Math.cos(gamma);
-        double[] pos = {x, y};
+        final double x = r * Math.sin(phi);
+        final double y = -r * Math.cos(phi) / Math.cos(gamma);
+        final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         return pos;
     }

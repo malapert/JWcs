@@ -212,7 +212,7 @@ public abstract class Projection {
      * @return Returns the celestial spherical coordinates (\u03B1, \u03B4) in
      * degrees
      */
-    protected double[] computeCelestialSpherical(double phi, double theta) {
+    protected double[] computeCelestialSpherical(final double phi, final double theta) {
         double ra;
         double dec;
         LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        

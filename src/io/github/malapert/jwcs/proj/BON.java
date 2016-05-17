@@ -101,17 +101,17 @@ public class BON extends PolyConicProjection {
         double[] result;
         if (sfl == null) {
             final double phiCorrect = phiRange(phi);
-            double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
-            double r_theta = y0 - theta;
-            double aphi;
+            final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
+            final double r_theta = y0 - theta;
+            final double aphi;
             if (NumericalUtils.equal(r_theta, 0)) {
                 aphi=0;
             } else {
                 aphi = phiCorrect * Math.cos(theta) / r_theta;
             }
-            double x = r_theta * Math.sin(aphi);
-            double y = -r_theta * Math.cos(aphi) + y0;
-            double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+            final double x = r_theta * Math.sin(aphi);
+            final double y = -r_theta * Math.cos(aphi) + y0;
+            final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
             result = coord;
         } else {
             result = sfl.projectInverse(phi, theta);

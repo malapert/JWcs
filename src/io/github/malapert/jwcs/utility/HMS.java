@@ -117,7 +117,7 @@ public final class HMS implements Serializable {
  while others return it in decimal deg.)
      * @param value HMS as String
      */
-    public HMS(String value) {
+    public HMS(final String value) {
         this(value, false);
     }
 
@@ -231,7 +231,7 @@ public final class HMS implements Serializable {
      * @param showSeconds show seconds
      * @return the value as a String in the form hh:mm[:ss.sss]
      */
-    public String toString(boolean showSeconds) {
+    public String toString(final boolean showSeconds) {
         if (showSeconds) {
             return toString();
         }

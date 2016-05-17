@@ -30,6 +30,7 @@ public class JWcsError extends RuntimeException {
      * Logger.
      */
     private static final Logger LOG = Logger.getLogger(JWcsError.class.getName());
+    private static final long serialVersionUID = 2694328832860861046L;
 
     /**
      * Creates an error.
@@ -44,7 +45,7 @@ public class JWcsError extends RuntimeException {
      *
      * @param message message
      */
-    public JWcsError(String message) {
+    public JWcsError(final String message) {
         super(message);
         LOG.log(Level.SEVERE, message);        
     }
@@ -54,7 +55,7 @@ public class JWcsError extends RuntimeException {
      *
      * @param cause cause
      */
-    public JWcsError(Throwable cause) {
+    public JWcsError(final Throwable cause) {
         super(cause);
         LOG.log(Level.SEVERE, cause.getMessage());        
     }
@@ -65,7 +66,7 @@ public class JWcsError extends RuntimeException {
      * @param message message
      * @param cause cause
      */
-    public JWcsError(String message, Throwable cause) {
+    public JWcsError(final String message, final Throwable cause) {
         super(message, cause);
         LOG.log(Level.SEVERE, message);        
     }

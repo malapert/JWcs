@@ -634,7 +634,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     @Override
-    public double cd(int i, int j) {
+    public double cd(final int i, final int j) {
         final double result;
         if (hasKeyword(CD11)) {
             result = this.getValueAsDouble("CD" + i + "_" + j);

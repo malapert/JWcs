@@ -239,8 +239,8 @@ public class JWcsMap extends JWcs {
     
     @Override
     protected void checkWcs() throws JWcsException {    
-       boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
-       boolean hasCd = hasCd() || hasOldCd;
+       final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
+       final boolean hasCd = hasCd() || hasOldCd;
        if(this.hasKeyword(CTYPE1) && this.hasKeyword(CTYPE2) 
                && this.hasKeyword(CRPIX1) && this.hasKeyword(CRPIX2)
                && this.hasKeyword(CRVAL1) && this.hasKeyword(CRVAL2)

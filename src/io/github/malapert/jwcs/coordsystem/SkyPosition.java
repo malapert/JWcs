@@ -78,7 +78,7 @@ public class SkyPosition {
      * @return the longitude in sexagesimal HH:MM:SS.SS
      */
     public String getLongitudeAsSexagesimal() {
-        HMS hms = new HMS(getLongitude()*TO_HOURS);
+        final HMS hms = new HMS(getLongitude()*TO_HOURS);
         return hms.toString(true);
     }
 
