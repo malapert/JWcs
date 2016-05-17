@@ -425,95 +425,241 @@ public abstract class Crs {
      * &gt; 1984 and the other &lt; 1984, then the transformation involves both
      * sky reference systems FK4 and FK5.
      *
-     * @param epoch1 Epoch belonging to system S1 depending on the reference
-     * system either Besselian or Julian.
-     * @param epoch2 Epoch belonging to system S2 depending on the reference
-     * system either Besselian or Julian.
-     * @param s1 Input reference system
-     * @param s2 Output reference system
+     * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
+     * Besselian or Julian.
+     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either
+     * Besselian or Julian.
+     * @param s1 Input coordinate reference frame
+     * @param s2 Output coordinate reference frame
      * @param epobs Epoch of observation. Only valid for conversions between FK4
      * and FK5.
-     * @return Rotation matrix to transform a position in one of the reference
-     * systems <code>S1</code> with <code>epoch1</code> to an equatorial system with equator and
-     * equinox at <code>epoch2</code> in reference system <code>S2</code>.
-     * @throws JWcsError Reference frame conversion is not supported
+     * @return Rotation matrix to transform a position in one of the coordinate 
+     * reference frame <code>s1</code> with <code>epoch1</code> to an equatorial
+     * system with equator and equinox at <code>epoch2</code> in reference system <code>S2</code>.
+     * @throws JWcsError <code>s1</code> to <code>s2</code> conversion is not supported
      */
     protected static RealMatrix convertMatrixEpoch12Epoch2(final double epoch1, final double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, final double epobs) {
-        if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            return convertJulianMatrixEpoch12Epoch2(epoch1, epoch2);
-        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            return convertBesselianMatrixEpoch12Epoch2(epoch1, epoch2);
-        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            final RealMatrix m2 = convertFK42FK5Matrix(epobs);
-            final RealMatrix m3 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000d);
-            final RealMatrix m2 = convertFK52FK4Matrix(epobs);
-            final RealMatrix m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
-            return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            return createRealIdentityMatrix(3);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            final RealMatrix m1 = convertICRS2FK5Matrix();
-            final RealMatrix m2 = convertFK52FK4Matrix(epobs);
-            final RealMatrix m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
-            return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            final RealMatrix m1 = convertICRS2FK5Matrix();
-            final RealMatrix m2 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m2.multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
-            final RealMatrix m2 = convertICRS2FK5Matrix().transpose();
-            return m2.multiply(m1);
-        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            final RealMatrix m2 = convertFK42FK5Matrix(epobs);
-            final RealMatrix m3 = convertICRS2FK5Matrix().transpose();
-            return m3.multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
-            return m1;
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS)) {
-            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
-            return m2.multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK5)) {
-            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
-            final RealMatrix m3 = convertICRS2FK5Matrix();
-            final RealMatrix m4 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m4.multiply(m3).multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.J2000) && (s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s2.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E))) {
-            final RealMatrix m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
-            final RealMatrix m2 = convertICRS2J2000Matrix().transpose();
-            final RealMatrix m3 = convertICRS2FK5Matrix();
-            final RealMatrix m4 = convertFK52FK4Matrix(epobs);
-            final RealMatrix m5 = convertBesselianMatrixEpoch12Epoch2(1950d, epoch2);
-            return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.ICRS) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            final RealMatrix m1 = convertICRS2J2000Matrix();
-            final RealMatrix m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m2.multiply(m1);
-        } else if (s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK5) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            final RealMatrix m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
-            final RealMatrix m2 = convertICRS2FK5Matrix().transpose();
-            final RealMatrix m3 = convertICRS2J2000Matrix();
-            final RealMatrix m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m4.multiply(m3).multiply(m2).multiply(m1);
-        } else if ((s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4) || s1.equals(CoordinateReferenceFrame.ReferenceFrame.FK4_NO_E)) && s2.equals(CoordinateReferenceFrame.ReferenceFrame.J2000)) {
-            final RealMatrix m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
-            final RealMatrix m2 = convertFK52FK4Matrix(epobs).transpose();
-            final RealMatrix m3 = convertICRS2FK5Matrix().transpose();
-            final RealMatrix m4 = convertICRS2J2000Matrix();
-            final RealMatrix m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
-            return m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);
-        } else {
-            throw new JWcsError("Reference frame conversion is not supported");
+       final RealMatrix result;
+       switch(s1) {
+           case ICRS:
+               result = convertICRSTo(s2, epoch2, epobs);
+               break;
+           case FK5:
+               result = convertFK5To(s2, epoch1, epoch2, epobs);
+               break;
+           case FK4:
+           case FK4_NO_E:
+               result = convertFK4To(s2, epoch1, epoch2, epobs);
+               break;
+           case J2000:
+               result = convertJ2000To(s2, epoch1, epoch2, epobs);
+               break;
+           default:
+                throw new JWcsError(s1.getName()+" conversion to "+s2.getName()+" is not supported");               
+       }
+       return result;
+    }  
+
+    /**
+     * Converts J2000 to another coordinate reference frame.     
+     *
+     * @param s2 Output coordinate reference frame
+     * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
+     * Besselian or Julian.
+     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either 
+     * Besselian or Julian.
+     * @param epobs Epoch of observation. Only valid for conversions between FK4
+     * and FK5.
+     * @return Rotation matrix to transform a position in J2000 with <code>epoch1</code>
+     * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
+     * coordinate reference frame <code>s2</code>.
+     * @throws JWcsError J2000 to <code>s2</code> conversion is not supported
+     */
+    private static RealMatrix convertJ2000To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
+        final RealMatrix result;       
+        final RealMatrix m1;
+        final RealMatrix m2;
+        final RealMatrix m3;        
+        final RealMatrix m4;         
+        final RealMatrix m5;        
+        switch(s2) {
+            case ICRS:
+                m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+                m2 = convertICRS2J2000Matrix().transpose();
+                result = m2.multiply(m1);                              
+                break;
+            case FK5:
+                m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+                m2 = convertICRS2J2000Matrix().transpose();
+                m3 = convertICRS2FK5Matrix();
+                m4 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m4.multiply(m3).multiply(m2).multiply(m1);               
+                break;
+            case FK4:            
+            case FK4_NO_E:
+                m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0d);
+                m2 = convertICRS2J2000Matrix().transpose();
+                m3 = convertICRS2FK5Matrix();
+                m4 = convertFK52FK4Matrix(epobs);
+                m5 = convertBesselianMatrixEpoch12Epoch2(1950d, epoch2);
+                result = m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);                
+                break;
+            case J2000:
+                result = convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2);
+                break;
+            default:
+                throw new JWcsError("J2000 to "+s2.getName()+" conversion is not supported");
         }
-    }   
+        return result;        
+    }    
+
+    /**
+     * Converts FK4 to another coordinate reference frame.     
+     *
+     * @param s2 Output coordinate reference frame
+     * @param epoch1 Epoch belonging to coordinate reference frame s1 : either
+     * Besselian or Julian.
+     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either 
+     * Besselian or Julian.
+     * @param epobs Epoch of observation. Only valid for conversions between FK4
+     * and FK5.
+     * @return Rotation matrix to transform a position in FK4 with <code>epoch1</code>
+     * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
+     *  coordinate reference frame <code>s2</code>.
+     * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
+     */    
+    private static RealMatrix convertFK4To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
+        final RealMatrix result;       
+        final RealMatrix m1;
+        final RealMatrix m2;
+        final RealMatrix m3;        
+        final RealMatrix m4;         
+        final RealMatrix m5;         
+        switch(s2) {
+            case ICRS:
+                m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+                m2 = convertFK42FK5Matrix(epobs);
+                m3 = convertICRS2FK5Matrix().transpose();
+                result = m3.multiply(m2).multiply(m1);                             
+                break;
+            case FK5:
+                m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+                m2 = convertFK42FK5Matrix(epobs);
+                m3 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m3.multiply(m2).multiply(m1);            
+                break;
+            case FK4:            
+            case FK4_NO_E:
+                result = convertBesselianMatrixEpoch12Epoch2(epoch1, epoch2);               
+                break;
+            case J2000:
+                m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0d);
+                m2 = convertFK52FK4Matrix(epobs).transpose();
+                m3 = convertICRS2FK5Matrix().transpose();
+                m4 = convertICRS2J2000Matrix();
+                m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1);              
+                break;
+            default:
+                throw new JWcsError("FK4 to "+s2.getName()+" conversion is not supported");
+        }
+        return result;        
+    }
+    
+    /**
+     * Converts FK5 to another coordinate reference frame.     
+     *
+     * @param s2 Output coordinate reference frame
+     * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
+     * Besselian or Julian.
+     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either 
+     * Besselian or Julian.
+     * @param epobs Epoch of observation. Only valid for conversions between FK4
+     * and FK5.
+     * @return Rotation matrix to transform a position in FK5 with <code>epoch1</code>
+     * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
+     * coordinate reference frame <code>s2</code>.
+     * @throws JWcsError FK5 to <code>s2</code> conversion is not supported
+     */    
+    private static RealMatrix convertFK5To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
+        final RealMatrix result;       
+        final RealMatrix m1;
+        final RealMatrix m2;
+        final RealMatrix m3;        
+        final RealMatrix m4;         
+        switch(s2) {
+            case ICRS:
+                m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
+                m2 = convertICRS2FK5Matrix().transpose();
+                result = m2.multiply(m1);                                
+                break;
+            case FK5:
+                result = convertJulianMatrixEpoch12Epoch2(epoch1, epoch2);              
+                break;
+            case FK4:            
+            case FK4_NO_E:
+                m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000d);
+                m2 = convertFK52FK4Matrix(epobs);
+                m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
+                result = m3.multiply(m2).multiply(m1);                 
+                break;
+            case J2000:
+                m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0d);
+                m2 = convertICRS2FK5Matrix().transpose();
+                m3 = convertICRS2J2000Matrix();
+                m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m4.multiply(m3).multiply(m2).multiply(m1);              
+                break;
+            default:
+                throw new JWcsError("FK5 to "+s2.getName()+" conversion is not supported");
+        }
+        return result;        
+    }
+    
+    /**
+     * Converts ICRS to another coordinate reference frame.     
+     *
+     * @param s2 Output coordinate reference frame
+     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either 
+     * Besselian or Julian.
+     * @param epobs Epoch of observation. Only valid for conversions between FK4
+     * and FK5.
+     * @return Rotation matrix to transform a position in FK4 with <code>epoch1</code>
+     * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
+     *  coordinate reference frame <code>s2</code>.
+     * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
+     */    
+    private static RealMatrix convertICRSTo(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch2, final double epobs) {
+        final RealMatrix result;       
+        final RealMatrix m1;
+        final RealMatrix m2;
+        final RealMatrix m3;        
+        switch(s2) {
+            case ICRS:
+                result = createRealIdentityMatrix(3);
+                break;
+            case FK5:
+                m1 = convertICRS2FK5Matrix();
+                m2 = convertJulianMatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m2.multiply(m1);                
+                break;
+            case FK4:            
+            case FK4_NO_E:
+                m1 = convertICRS2FK5Matrix();
+                m2 = convertFK52FK4Matrix(epobs);
+                m3 = convertBesselianMatrixEpoch12Epoch2(1950.0d, epoch2);
+                result = m3.multiply(m2).multiply(m1);                
+                break;
+            case J2000:
+                m1 = convertICRS2J2000Matrix();
+                m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2);
+                result = m2.multiply(m1);                
+                break;
+            default:
+                throw new JWcsError("ICRS to "+s2.getName()+" conversion is not supported");
+        }
+        return result;
+    }
     
     /**
      * Remove the elliptic component of annual aberration when this is included

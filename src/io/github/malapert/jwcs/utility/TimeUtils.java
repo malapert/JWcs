@@ -107,7 +107,7 @@ public abstract class TimeUtils {
         d = Math.floor(365.25 * c);
         e = Math.floor((b - d) / 30.6001);
         aux = b - d - Math.floor(30.6001 * e) + f;
-        Calendar calendar = new GregorianCalendar();
+        final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, (int) aux);
 
@@ -118,8 +118,8 @@ public abstract class TimeUtils {
         calendar.set(Calendar.MINUTE, (int) ((aux - calendar.get(Calendar.HOUR_OF_DAY)) * 60));
 
         // Calcul secondes
-        final double mnd = (24 * hhd) - calendar.get(Calendar.HOUR_OF_DAY);
-        final double ssd = (60 * mnd) - calendar.get(Calendar.MINUTE);
+        final double mnd = 24 * hhd - calendar.get(Calendar.HOUR_OF_DAY);
+        final double ssd = 60 * mnd - calendar.get(Calendar.MINUTE);
         final int ss = (int) (60 * ssd);
         calendar.set(Calendar.SECOND, ss);
 
@@ -182,8 +182,8 @@ public abstract class TimeUtils {
         final int minute = calendar.get(Calendar.MINUTE);
         final int second = calendar.get(Calendar.SECOND);
 
-        final double extra = (100.0 * year) + month - 190002.5;
-        return (367.0 * year)
+        final double extra = 100.0 * year + month - 190002.5;
+        return 367.0 * year
                 - (Math.floor(7.0 * (year + Math.floor((month + 9.0) / 12.0)) / 4.0))
                 + Math.floor((275.0 * month) / 9.0)
                 + day + ((hour + ((minute + (second / 60.0)) / 60.0)) / 24.0)
@@ -204,43 +204,52 @@ public abstract class TimeUtils {
     }
 
     /**
-     * Flexible epoch parser. The functions in this module have different input
+     * Flexible epoch parser. 
+     * The functions in this module have different input
      * parameters (Julian epoch, Besselian epochs, Julian dates) because the
      * algorithms came from different sources. What we needed was a routine that
      * could convert a string which represents a date in various formats, to
      * values for a Julian epoch, Besselian epochs and a Julian date. This
      * function returns these value for any valid input date.
      *
-     * @param epoch Epoch
-     * @return Returns in order **Besselian epoch**, **Julian epoch** and
-     * **Julian date**.
-     * @throws JWcsError Epochs should start by \"J\", \"B\" or date format    
+     * @param epoch Julian epoch, Besselian epochs, Julian dates
+     * @return Returns in order Besselian epoch, Julian epoch and
+     * Julian date.
+     * @throws JWcsError Epochs should start by J, B or date format    
      * @throws JWcsError No prefix or cannot convert epoch to a number
      * @throws JWcsError Unknown prefix for epoch
      */
     public final static double[] epochs(final String epoch) {
-        double b, j, jd, mjd, rjd;
         String spec = epoch;
         final int i = spec.indexOf('_');
         if (i != -1) {
             spec = spec.substring(0, i);
         }
-        
-        final String[] valTmp1 = spec.split("(\\d.*)");  
-        if (valTmp1.length == 0) {
-            throw new JWcsError("Epochs should start by \"J\", \"B\" or date format");
-        }
-        final String valTmp2 = spec.replace(valTmp1[0],"");
-        final String[] val = new String[]{valTmp1[0], valTmp2};
-        if (val.length != 2) {
-            throw new JWcsError("No prefix or cannot convert epoch to a number");
-        }
-        final String prefix = val[0].toUpperCase();
-        switch (prefix) {
+       
+        final String epochPrefix = extractPrefixFromEpoch(spec);
+        final String epochValue = extractValueFromEpoch(epoch, epochPrefix);
+        final String prefix = epochPrefix.toUpperCase();
+        return computeEpochs(prefix, epochValue);
+    }
+    
+    /**
+     * Computes Besselian epoch, Julian epoch and Julian date from an epoch
+     * @param epochPrefix epochs should start by J, B or date format
+     * @param epochValue epoch value
+     * @return Returns in order Besselian epoch, Julian epoch and
+     * Julian date.
+     */
+    private static double[] computeEpochs(final String epochPrefix, final String epochValue) {
+        double b;
+        double jd;
+        double j;
+        double mjd;
+        double rjd;
+        switch (epochPrefix) {
             case "B":
             case "-B":
-                b = Double.valueOf(val[1]);
-                if (prefix.equals(("-B"))) {
+                b = Double.valueOf(epochValue);
+                if (epochPrefix.equals("-B")) {
                     b *= -1.0;
                 }
                 jd = convertEpochBessel2JD(b);
@@ -248,41 +257,70 @@ public abstract class TimeUtils {
                 break;
             case "J":
             case "-J":
-                j = Double.valueOf(val[1]);
-                if (prefix.equals(("-J"))) {
+                j = Double.valueOf(epochValue);
+                if (epochPrefix.equals("-J")) {
                     j *= -1.0;
                 }
                 jd = convertEpochJulian2JD(j);
                 b = convertJD2epochBessel(jd);
                 break;
             case "JD":
-                jd = Double.valueOf(val[1]);
+                jd = Double.valueOf(epochValue);
                 b = convertJD2epochBessel(jd);
                 j = convertJD2epochJulian(jd);
                 break;
             case "MJD":
-                mjd = Double.valueOf(val[1]);
+                mjd = Double.valueOf(epochValue);
                 jd = mjd + 2400000.5d;
                 b = convertJD2epochBessel(jd);
                 j = convertJD2epochJulian(jd);
                 break;
             case "RJD":
-                rjd = Double.valueOf(val[1]);
+                rjd = Double.valueOf(epochValue);
                 jd = rjd + 2400000d;
                 b = convertJD2epochBessel(jd);
                 j = convertJD2epochJulian(jd);
                 break;
             case "F":
-                final Object[] fd = fitsdate(val[1]);
+                final Object[] fd = fitsdate(epochValue);
                 jd = jd((int)fd[0], (int)fd[1], (double)fd[2]);
                 b = convertJD2epochBessel(jd);
                 j = convertJD2epochJulian(jd);                
                 break;
             default:
-                throw new JWcsError("Unknown prefix for epoch : " + prefix);
-        }
+                throw new JWcsError("Unknown prefix for epoch : " + epochPrefix);
+        }        
         return new double[]{b, j, jd};
     }
+    
+    /**
+     * Extracts prefix from epoch
+     * @param epoch Julian epoch, Besselian epochs, Julian dates
+     * @return J, B or date format
+     * @throws JWcsError Epochs should start by J, B or date format
+     */
+    private static String extractPrefixFromEpoch(final String epoch) {
+        final String[] val = epoch.split("(\\d.*)");  
+        if (val.length == 0) {
+            throw new JWcsError("Epochs should start by J, B or date format");
+        }
+        return val[0];
+    }
+    
+   /**
+     * Extracts Value from epoch
+     * @param epoch Julian epoch, Besselian epochs, Julian dates
+     * @param prefix prefix from epoch
+     * @return the epoch value
+     * @throws JWcsError Cannot convert epoch to a number
+     */
+    private static String extractValueFromEpoch(final String epoch, final String prefix) {
+        final String val = epoch.replace(prefix,"");
+        if(val == null || val.isEmpty()) {
+            throw new JWcsError("Cannot convert epoch to a number");
+        }
+        return val;
+    }    
     
     /**
      * Converts a fits date into a [integer year, integer month, fractional day].
@@ -302,7 +340,7 @@ public abstract class TimeUtils {
         String dateTmp = date;
         String[] parts = date.split("/");
         if (parts.length==3) {
-            final int year = (Integer.parseInt(parts[2])%1900)+1900;
+            final int year = Integer.parseInt(parts[2])%1900+1900;
             final int month = Integer.parseInt(parts[1]);
             final double fractionalDay = Double.parseDouble(parts[0]);
             return new Object[]{year,month,fractionalDay};
@@ -333,7 +371,10 @@ public abstract class TimeUtils {
      * @return the Julian day
      */
     public final static double jd(final int year, final int month, final double dayNumber) {
-        int y = 0,m = 0,A,B;
+        int y = 0;
+        int m = 0;
+        int A;
+        int B;
         double jd;
         if (month > 2){
             y = year;

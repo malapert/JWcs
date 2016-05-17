@@ -312,9 +312,24 @@ public abstract class Projection {
             LOG.log(Level.FINEST,"No need to compute the coordinates of the native pole");
             return new double[]{getCrval1(), getCrval2()};
         }
-
         // native longitude of the celestial pole in radians
-        final double alphap, deltap;
+        final double deltap = computeLongitudeNativePole(phi_p);
+        final double alphap = computeLatitudeNativePole(deltap, phi_p);
+        final double[] pos = {alphap, deltap};        
+        return pos;
+    }
+        
+    /**
+     * Computes the longitude of the celestial coordinates (\u03B1<sub>p</sub>) 
+     * of the native pole (\u03B4<sub>p</sub>=\u03B8<sub>p</sub>).
+     * @param phi_p Native longitude (\u03D5<sub>p</sub>) in radians of the
+     * celestial pole
+     * @return Celestial (\u03B1<sub>p</sub>) longitude in radians of the native
+     * pole
+     * @throws JWcsError No valid solution for thetap
+     */
+    private double computeLongitudeNativePole(final double phi_p) {
+        final double deltap;
         if (NumericalUtils.equal(getTheta0(), 0.0d) && NumericalUtils.equal(getCrval2(), 0) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
@@ -328,10 +343,8 @@ public abstract class Projection {
                     && NumericalUtils.equal(Math.abs(getPhip()-getPhi0()), HALF_PI)) {
                 deltap = getThetap();
             } else {
-
                 final boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI);
                 final boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI);
-
                 if (isDeltap1InInterval && isDeltap2InInterval) {
                     final double diff1 = Math.abs(deltap1 - getThetap());
                     final double diff2 = Math.abs(deltap2 - getThetap());
@@ -345,7 +358,21 @@ public abstract class Projection {
                 }
             }
         }
-
+        return deltap;
+    }
+    
+    /**
+     * Computes the latitude of the celestial coordinates (\u03B4<sub>p</sub>) 
+     * of the native pole (\u03B4<sub>p</sub>=\u03B8<sub>p</sub>).
+     *
+     * @param deltap Celestial latitude (\u03B4<sub>p</sub>) in radians of the native pole
+     * @param phi_p Native longitude (\u03D5<sub>p</sub>) in radians of the
+     * celestial pole
+     * @return Celestial (\u03B1<sub>p</sub>) longitude in radians of the native
+     * pole
+     */    
+    private double computeLatitudeNativePole(final double deltap, final double phi_p) {
+        final double alphap;
         if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI)) {
             alphap = getCrval1();
         } else if (NumericalUtils.equal(deltap, HALF_PI)) {
@@ -356,9 +383,8 @@ public abstract class Projection {
             final double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
             final double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
             alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
-        }
-        final double[] pos = {alphap, deltap};        
-        return pos;
+        }        
+        return alphap;
     }
 
     /**

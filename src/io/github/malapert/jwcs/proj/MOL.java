@@ -75,27 +75,25 @@ public class MOL extends CylindricalProjection {
      */
     public MOL(final double crval1, final double crval2) {
         super(crval1, crval2);
-        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
     }
 
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                        
-        //TODO : check algorithm.
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
         final double tol = 1.0e-12;
         double s = 2 - Math.pow(yr, 2);
         final double phi;
-        if (s < -tol) {
-            //erreur
-            phi = 0;
-        } else if (s <= tol) {
+        if (s <= tol) {
+	    if (s < -tol) throw new PixelBeyondProjectionException(this,
+		    "MOL: Solution not defined for y: " + y);            
             s = 0.0;
             if (Math.abs(xr) > tol) {
-                //erreur
+                throw new PixelBeyondProjectionException(this,"MOL: Solution not defined for x: " + x);
             }
             phi = 0;
         } else {
@@ -105,7 +103,7 @@ public class MOL extends CylindricalProjection {
         double z = yr / Math.sqrt(2);
         if (Math.abs(z) > 1.0) {
             if (Math.abs(z) > 1.0 + tol) {
-                //erreur
+                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + y);
             }
             z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
         } else {
@@ -114,8 +112,9 @@ public class MOL extends CylindricalProjection {
 
         if (Math.abs(z) > 1.0) {
             if (Math.abs(z) > 1.0 + tol) {
-                //erreur
+                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + x + ", " + y);
             }
+
             z = z < 0.0 ? -1.0 : 1.0;
         }
         final double theta = NumericalUtils.aasin(z);
@@ -124,13 +123,13 @@ public class MOL extends CylindricalProjection {
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         final double phiCorrect = phiRange(phi);
         final double u = Math.PI * Math.sin(theta);
         double v0 = -Math.PI;
@@ -154,7 +153,7 @@ public class MOL extends CylindricalProjection {
         final double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phiCorrect * Math.cos(gamma));
         final double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         return coord;
     }
 

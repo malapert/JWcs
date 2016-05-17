@@ -245,9 +245,9 @@ public class JWcsMap extends JWcs {
                && this.hasKeyword(CRPIX1) && this.hasKeyword(CRPIX2)
                && this.hasKeyword(CRVAL1) && this.hasKeyword(CRVAL2)
                && hasCd) {
-           
+               // do nothing
        } else {
-           List<String> check = new ArrayList();
+           final List<String> check = new ArrayList();
            if(!hasCd) {
                check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
            }
