@@ -126,7 +126,7 @@ public class COD extends ConicProjection {
     }    
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         LOG.log(Level.FINER, "True");
         return true;
     }

@@ -74,7 +74,7 @@ public class JWcsMap extends JWcs {
      */     
     @Override
     public int getValueAsInt(final String keyword) {
-        String result = getValueAsString(keyword);
+        final String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
         } else {
@@ -89,7 +89,7 @@ public class JWcsMap extends JWcs {
      */     
     @Override
     public double getValueAsDouble(final String keyword) {
-        String result = getValueAsString(keyword);
+        final String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
         } else {
@@ -104,7 +104,7 @@ public class JWcsMap extends JWcs {
      */     
     @Override
     public float getValueAsFloat(final String keyword) {
-        String result = getValueAsString(keyword);
+        final String result = getValueAsString(keyword);
         if(result == null) {
             throw new JWcsError(keyword+" not found");
         } else {
@@ -149,7 +149,7 @@ public class JWcsMap extends JWcs {
      * @throws JWcsException When a JWcsException happens
      */
     public static JWcs getProjection(final String projectionCode) throws JWcsException {
-    Map wcsKeywords = new HashMap();
+        final Map wcsKeywords = new HashMap();
         wcsKeywords.put(JWcs.NAXIS, "2");
         wcsKeywords.put(JWcs.NAXIS1, "600");
         wcsKeywords.put(JWcs.NAXIS2, "300");
@@ -232,7 +232,7 @@ public class JWcsMap extends JWcs {
         wcsKeywords.put(JWcs.CD22, String.valueOf(90d / 150d));
         wcsKeywords.put(JWcs.CTYPE1, "RA---" + projectionCode);
         wcsKeywords.put(JWcs.CTYPE2, "DEC--" + projectionCode);
-        JWcs wcs = new JWcsMap(wcsKeywords);
+        final JWcs wcs = new JWcsMap(wcsKeywords);
         wcs.doInit();
         return wcs;
     }

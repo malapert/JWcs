@@ -107,7 +107,7 @@ public class MOL extends CylindricalProjection {
             if (Math.abs(z) > 1.0 + tol) {
                 //erreur
             }
-            z = ((z < 0.0) ? -1.0 : 1.0) + s * yr / Math.PI;
+            z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
         } else {
             z = NumericalUtils.aasin(z) / HALF_PI + s * yr / Math.PI;
         }
@@ -116,7 +116,7 @@ public class MOL extends CylindricalProjection {
             if (Math.abs(z) > 1.0 + tol) {
                 //erreur
             }
-            z = (z < 0.0) ? -1.0 : 1.0;
+            z = z < 0.0 ? -1.0 : 1.0;
         }
         final double theta = NumericalUtils.aasin(z);
         if (Double.isNaN(theta)) {
@@ -132,7 +132,7 @@ public class MOL extends CylindricalProjection {
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                        
         final double phiCorrect = phiRange(phi);
-        double u = Math.PI * Math.sin(theta);
+        final double u = Math.PI * Math.sin(theta);
         double v0 = -Math.PI;
         double v1 = Math.PI;
         double v = u;
@@ -153,7 +153,7 @@ public class MOL extends CylindricalProjection {
         final double gamma = v * 0.5;
         final double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phiCorrect * Math.cos(gamma));
         final double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
-        double[] coord = {x, y};
+        final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
         return coord;
     }

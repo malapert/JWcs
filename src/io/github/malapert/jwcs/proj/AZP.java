@@ -139,7 +139,7 @@ public class AZP extends ZenithalProjection {
      * @throws PixelBeyondProjectionException When (x,y) has no solution
      */
     private double computeTheta(final double x, final double y, final double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
-        final double denom = (mu + 1) + y * Math.tan(gamma);
+        final double denom = mu + 1 + y * Math.tan(gamma);
         if (NumericalUtils.equal(denom,0)) {
             throw new BadProjectionParameterException(this,"(mu,gamma) = (" + mu + ", " + gamma+"). (mu + 1) + y * tan(gamma) must be !=0");
         }    
@@ -194,7 +194,7 @@ public class AZP extends ZenithalProjection {
     }
 
     @Override
-    public double[] projectInverse(double phi, double theta) throws PixelBeyondProjectionException {
+    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                
         double thetax;
         if (NumericalUtils.equal(mu, 0)) {
@@ -204,9 +204,9 @@ public class AZP extends ZenithalProjection {
         } else {
             thetax = NumericalUtils.aasin(-mu);
         }
-        phi = phiRange(phi);
+        final double phiCorrect = phiRange(phi);
 
-        double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
+        final double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phiCorrect) * Math.tan(gamma);
 
         if (NumericalUtils.equal(denom, 0) || theta < thetax) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = " + Math.toDegrees(theta));
@@ -214,8 +214,8 @@ public class AZP extends ZenithalProjection {
 
         double r = (mu + 1) * Math.cos(theta) / denom;        
         r = Math.toDegrees(r);
-        final double x = r * Math.sin(phi);
-        final double y = -r * Math.cos(phi) / Math.cos(gamma);
+        final double x = r * Math.sin(phiCorrect);
+        final double y = -r * Math.cos(phiCorrect) / Math.cos(gamma);
         final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         return pos;
@@ -233,8 +233,8 @@ public class AZP extends ZenithalProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        ProjectionParameter p2 = new ProjectionParameter("gamma", JWcs.PV22, new double[]{0, 360}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("gamma", JWcs.PV22, new double[]{0, 360}, 0);
         return new ProjectionParameter[]{p1,p2};        
     }
 }

@@ -139,7 +139,7 @@ public class SZP extends ZenithalProjection {
      * @throws JWcsError Non-standard phi0 or theta0 values
      */
     protected final void check() throws BadProjectionParameterException {
-        if ((!NumericalUtils.equal(getPhi0(), 0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
+        if (!NumericalUtils.equal(getPhi0(), 0) || !NumericalUtils.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard phi0 or theta0 values");
         }
         if (NumericalUtils.equal(this.zp, 0)) {

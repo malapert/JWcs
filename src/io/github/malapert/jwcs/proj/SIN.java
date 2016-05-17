@@ -100,7 +100,7 @@ public class SIN extends ZenithalProjection {
         final double yr = Math.toRadians(y);
         final double phi, theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE) && NumericalUtils.equal(eta, DEFAULT_VALUE)) {
-            double r_theta = computeRadius(xr, yr);
+            final double r_theta = computeRadius(xr, yr);
             if(NumericalUtils.equal(r_theta, 1)) {
                 throw new PixelBeyondProjectionException(this,"(x,y)=("+x+","+y+") : r_theta must be < 1");
             }
@@ -115,9 +115,9 @@ public class SIN extends ZenithalProjection {
             final boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
             final boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
             if (isTheta1Valid && isTheta2Valid) {
-                double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
-                double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
-                theta = (diffTheta1Pole < diffTheta2Pole) ? theta1 : theta2;
+                final double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
+                final double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
+                theta = diffTheta1Pole < diffTheta2Pole ? theta1 : theta2;
             } else if (isTheta1Valid) {
                 theta = theta1;
             } else if (isTheta2Valid) {

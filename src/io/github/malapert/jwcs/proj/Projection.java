@@ -217,8 +217,8 @@ public abstract class Projection {
         double dec;
         LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
         
-        double alphap = getCoordNativePole()[0];
-        double deltap = getCoordNativePole()[1];
+        final double alphap = getCoordNativePole()[0];
+        final double deltap = getCoordNativePole()[1];
         LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(alphap),Math.toDegrees(deltap)});        
         
         if (NumericalUtils.equal(deltap, HALF_PI)) {
@@ -335,7 +335,7 @@ public abstract class Projection {
                 if (isDeltap1InInterval && isDeltap2InInterval) {
                     final double diff1 = Math.abs(deltap1 - getThetap());
                     final double diff2 = Math.abs(deltap2 - getThetap());
-                    deltap = (diff1 < diff2) ? deltap1 : deltap2;
+                    deltap = diff1 < diff2 ? deltap1 : deltap2;
                 } else if (isDeltap1InInterval) {
                     deltap = deltap1;
                 } else if (isDeltap2InInterval) {
@@ -441,7 +441,7 @@ public abstract class Projection {
      */
     public double[] wcs2projectionPlane(final double ra, final double dec) throws ProjectionException {
         final double raCorrect = NumericalUtils.normalizeLongitude(ra);
-        final double[] nativeSpherical = computeNativeSpherical(ra, dec);
+        final double[] nativeSpherical = computeNativeSpherical(raCorrect, dec);
         return projectInverse(nativeSpherical[0], nativeSpherical[1]);
     }
 

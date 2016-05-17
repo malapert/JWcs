@@ -112,9 +112,9 @@ public class HeaderFitsReader {
                     .filter(line -> line.contains("="))
                     .map(line -> Arrays.asList(line.split(SEPARATOR)))
                     .map(line -> {
-                        String keyword = line.get(0);
-                        String[]valComm = line.get(1).split(" /");
-                        String value = valComm[0].replace("'", "");
+                        final String keyword = line.get(0);
+                        final String[]valComm = line.get(1).split(" /");
+                        final String value = valComm[0].replace("'", "");
                         return Arrays.asList(keyword.trim(),value.trim());
                     })
                     .collect(Collectors.toList());

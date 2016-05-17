@@ -114,8 +114,8 @@ public class PCO extends PolyConicProjection {
     @Override
     protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
-        double xr = Math.toRadians(x);
-        double yr = Math.toRadians(y);
+        final double xr = Math.toRadians(x);
+        final double yr = Math.toRadians(y);
 
         double phi, theta = 0;
         if (NumericalUtils.equal(yr, 0)) {
@@ -123,7 +123,7 @@ public class PCO extends PolyConicProjection {
             theta = 0.0;
         } else if (NumericalUtils.equal(yr, HALF_PI)) {
             phi = 0.0;
-            theta = (yr < 0.0) ? -HALF_PI : HALF_PI;
+            theta = yr < 0.0 ? -HALF_PI : HALF_PI;
         } else {
             double thepos;
             // Iterative solution using weighted division of the interval. 
@@ -134,7 +134,7 @@ public class PCO extends PolyConicProjection {
             }
             double theneg = 0.0;
 
-            double xx = xr * xr;
+            final double xx = xr * xr;
             double ymthe = yr - thepos;
             double fpos = xx + ymthe * ymthe;
             double fneg = -999.0;
@@ -159,7 +159,7 @@ public class PCO extends PolyConicProjection {
                 // Compute the residue. 
                 ymthe = yr - theta;
                 tanthe = Math.tan(theta);
-                double f = xx + ymthe * (ymthe - 2 / tanthe);
+                final double f = xx + ymthe * (ymthe - 2 / tanthe);
 
                 // Check for convergence. 
                 if (NumericalUtils.equal(f, 0, getTolerance())) {
@@ -179,8 +179,8 @@ public class PCO extends PolyConicProjection {
                 }
             }
 
-            double xp = 1 - ymthe * tanthe;
-            double yp = xr * tanthe;
+            final double xp = 1 - ymthe * tanthe;
+            final double yp = xr * tanthe;
             if (NumericalUtils.equal(xp, 0) && NumericalUtils.equal(yp, 0)) {
                 phi = 0.0;
             } else {
@@ -197,20 +197,20 @@ public class PCO extends PolyConicProjection {
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
         final double phiCorrect = phiRange(phi);
-        double costhe = Math.cos(theta);
-        double sinthe = Math.sin(theta);
-        double a = phiCorrect * sinthe;
+        final double costhe = Math.cos(theta);
+        final double sinthe = Math.sin(theta);
+        final double a = phiCorrect * sinthe;
         double x, y;
         if (NumericalUtils.equal(sinthe, 0.0)) {
             x = phiCorrect;
             y = 0.0;
         } else {
-            double cotthe = costhe / sinthe;
+            final double cotthe = costhe / sinthe;
             x = cotthe * Math.sin(a);
             y = cotthe * (1.0 - Math.cos(a)) + theta;
         }
-        double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                
+        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);                                                                                                                
         return coord;
     }
 

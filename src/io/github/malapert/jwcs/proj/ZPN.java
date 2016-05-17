@@ -93,7 +93,7 @@ public final class ZPN extends ZenithalProjection {
      * @throws
      * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a parameter projection is wrong
      */
-    public ZPN(double crval1, double crval2, double[] PV) throws BadProjectionParameterException {
+    public ZPN(final double crval1, final double crval2, final double[] PV) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval1,crval2,Arrays.toString(PV)});                                                
         this.PV = PV;
@@ -195,7 +195,7 @@ public final class ZPN extends ZenithalProjection {
      * @throws ArrayIndexOutOfBoundsException Need at least 10 projection parameters
      */
     private void check() {
-        if ((!NumericalUtils.equal(getPhi0(),0)) || (!NumericalUtils.equal(getTheta0(),HALF_PI))) {
+        if (!NumericalUtils.equal(getPhi0(),0) || !NumericalUtils.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard PVi_1 and/or PVi_2 values");
         }
         if (this.PV.length < 8) {
@@ -235,7 +235,7 @@ public final class ZPN extends ZenithalProjection {
      *
      * @param maxIter the maxIter to set
      */
-    public final void setMaxIter(double maxIter) {
+    public void setMaxIter(final double maxIter) {
         this.maxIter = maxIter;
     }
 
@@ -306,7 +306,7 @@ public final class ZPN extends ZenithalProjection {
         final double x2 = (-b - d) / (2.0 * a);
         double x = (x1 < x2) ? x1 : x2;
         if (x < -getTolerance()) {
-            x = (x1 > x2) ? x1 : x2;
+            x = x1 > x2 ? x1 : x2;
         }
         if (x < 0.0) {
             if (x < -getTolerance()) {
@@ -365,7 +365,7 @@ public final class ZPN extends ZenithalProjection {
 
                 double rt = 0.0;
                 for (int i = getN(); i >= 0; i--) {
-                    rt = (rt * zd) + pv[i];
+                    rt = rt * zd + pv[i];
                 }
 
                 if (rt < r) {

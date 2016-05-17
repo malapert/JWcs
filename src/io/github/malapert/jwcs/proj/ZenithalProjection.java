@@ -168,7 +168,7 @@ public abstract class ZenithalProjection extends Projection {
 
     @Override
     public boolean inside(final double lon, final double lat) {
-        double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+        final double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
         LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
         return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
     }

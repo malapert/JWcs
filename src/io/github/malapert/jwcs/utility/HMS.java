@@ -74,13 +74,14 @@ public final class HMS implements Serializable {
     private byte sign = 1;
 
     /* true if value has been initialized */
-    private boolean initialized = false;
+    private boolean initialized;
 
 
     /**
      * Default constructor: initialize to null values
      */
     public HMS() {
+        this.initialized = false;
     }
 
     /**
@@ -130,8 +131,9 @@ public final class HMS implements Serializable {
      * @param value the RA string
      * @param hflag if true, assume RA is always in hours, otherwise, if it has a decimal point,
      * assume deg
+     * @throws IllegalArgumentException Expected a string of the form hh:mm:ss.sss
      */
-    public HMS(final String value, boolean hflag) {
+    public HMS(final String value, final boolean hflag) {
         final String valueProcessed = value.replace(",", "."); // Treat ',' like '.', by request
         double[] vals = {0.0, 0.0, 0.0};
         final StringTokenizer tok = new StringTokenizer(valueProcessed, ": ");
@@ -149,7 +151,7 @@ public final class HMS implements Serializable {
                 setVal(vals[0]);
             }
         } else {
-            throw new RuntimeException("Expected a string of the form hh:mm:ss.sss, but got: '" + value + "'");
+            throw new IllegalArgumentException("Expected a string of the form hh:mm:ss.sss, but got: '" + value + "'");
         }
     }
 
@@ -192,9 +194,9 @@ public final class HMS implements Serializable {
             sign = 1;
         }
 
-        double dd = v + 0.0000000001;
+        final double dd = v + 0.0000000001;
         hours = (int) dd;
-        double md = (dd - hours) * 60.;
+        final double md = (dd - hours) * 60.;
         min = (int) md;
         sec = (md - min) * 60.;
         initialized = true;
@@ -207,10 +209,10 @@ public final class HMS implements Serializable {
      */
     @Override
     public String toString() {
-        String secs = NF_SEC.format(sec);
+        final String secs = NF_SEC.format(sec);
 
         // sign
-        String signStr;
+        final String signStr;
         if (sign == -1) {
             signStr = "-";
         } else {
@@ -237,7 +239,7 @@ public final class HMS implements Serializable {
         }
 
         // sign
-        String signStr;
+        final String signStr;
         if (sign == -1) {
             signStr = "-";
         } else {
@@ -309,7 +311,7 @@ public final class HMS implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof HMS && val == ((HMS) obj).val);
+    public boolean equals(final Object obj) {
+        return obj instanceof HMS && val == ((HMS) obj).val;
     }
 }

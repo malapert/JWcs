@@ -431,7 +431,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                     throw new JWcsError("The coordinate reference frame, " + radesys + " is not supported");
             }
         } else if (hasKeyword(EQUINOX)) {
-            float equinox = getValueAsFloat(EQUINOX);
+            final float equinox = getValueAsFloat(EQUINOX);
             if (equinox < 1984.0) {
                 refSystem = new FK4("B"+equinox);
                 if (mjdObs != null) {
@@ -628,9 +628,9 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     @Override
     public boolean hasCd() {
-        return (hasKeyword(CD11)
+        return hasKeyword(CD11)
                 || (hasKeyword(CDELT1) && hasKeyword(CROTA2))
-                || (hasKeyword(CDELT1) && hasKeyword(PC11)));
+                || (hasKeyword(CDELT1) && hasKeyword(PC11));
     }
 
     @Override
@@ -1081,7 +1081,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     public double[] wcs2pix(final double longitude, final double latitude) throws ProjectionException {
         checkLongitudeLatitude(longitude, latitude);
         final double[] coordVal = this.getProj().wcs2projectionPlane(Math.toRadians(longitude), Math.toRadians(latitude));
-        double[][] coord = {
+        final double[][] coord = {
             {coordVal[0], coordVal[1]}
         };
         final RealMatrix coordM = createRealMatrix(coord);

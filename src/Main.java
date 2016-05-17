@@ -191,35 +191,35 @@ public class Main {
      * @throws URISyntaxException an error when loading the FITS file 
      */
     private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
-        Map<String, String> keyMap = new HashMap();
-        String[] argumentsPos = pos.split(",");
+        final Map<String, String> keyMap = new HashMap();
+        final String[] argumentsPos = pos.split(",");
         if (argumentsPos.length != 2) {
             throw new IllegalArgumentException("The position " + pos + " is not correct");
         }
         if (file == null) {
             throw new IllegalArgumentException("--file argument is required");
         } else {
-            URI uri = new URI(file);
+            final URI uri = new URI(file);
             try {
-                Fits fits = new Fits(uri.toURL());
-                Header hdr = fits.getHDU(extension).getHeader();
-                Cursor c = hdr.iterator();
+                final Fits fits = new Fits(uri.toURL());
+                final Header hdr = fits.getHDU(extension).getHeader();
+                final Cursor c = hdr.iterator();
                 while (c.hasNext()) {
-                    HeaderCard card = (HeaderCard) c.next();
+                    final HeaderCard card = (HeaderCard) c.next();
                     keyMap.put(card.getKey(), card.getValue());
                 }
             } catch (nom.tam.fits.FitsException | IOException ex) {
-                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
-                List<List<String>> listKeywords = hdr.readKeywords();
+                final HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                final List<List<String>> listKeywords = hdr.readKeywords();
                 listKeywords.stream().forEach((keywordLine) -> {
                     keyMap.put(keywordLine.get(0), keywordLine.get(1));
                 });
             }
         }
-        JWcsMap wcs = new JWcsMap(keyMap);
+        final JWcsMap wcs = new JWcsMap(keyMap);
         wcs.doInit();
         LOG.log(Level.INFO, "Executing pix2wcs(%s,%s)", argumentsPos);
-        double[] result = wcs.pix2wcs(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
+        final double[] result = wcs.pix2wcs(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
 
         System.out.printf("(ra,dec)=(" + precision + ", " + precision + ")\n", result[0], result[1]);
         LOG.log(Level.INFO, "(ra,dec) = (%s,%s)", result);
@@ -235,35 +235,35 @@ public class Main {
      * @param precision precision such as %.15f
      */
     private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
-        Map<String, String> keyMap = new HashMap();
-        String[] argumentsPos = pos.split(",");
+        final Map<String, String> keyMap = new HashMap();
+        final String[] argumentsPos = pos.split(",");
         if (argumentsPos.length != 2) {
             throw new IllegalArgumentException("The position " + pos + " is not correct");
         }
         if (file == null) {
             throw new IllegalArgumentException("--file argument is required");
         } else {
-            URI uri = new URI(file);
+            final URI uri = new URI(file);
             try {
-                Fits fits = new Fits(uri.toURL());
-                Header hdr = fits.getHDU(extension).getHeader();
-                Cursor c = hdr.iterator();
+                final Fits fits = new Fits(uri.toURL());
+                final Header hdr = fits.getHDU(extension).getHeader();
+                final Cursor c = hdr.iterator();
                 while (c.hasNext()) {
                     HeaderCard card = (HeaderCard) c.next();
                     keyMap.put(card.getKey(), card.getValue());
                 }
             } catch (nom.tam.fits.FitsException | IOException ex) {
-                HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
-                List<List<String>> listKeywords = hdr.readKeywords();
+                final HeaderFitsReader hdr = new HeaderFitsReader(uri.toURL());
+                final List<List<String>> listKeywords = hdr.readKeywords();
                 listKeywords.stream().forEach((keywordLine) -> {
                     keyMap.put(keywordLine.get(0), keywordLine.get(1));
                 });
             }
         }
-        JWcsMap wcs = new JWcsMap(keyMap);
+        final JWcsMap wcs = new JWcsMap(keyMap);
         wcs.doInit();
         LOG.log(Level.INFO, "Executing wcs2pix(%s,%s)", argumentsPos);
-        double[] result = wcs.wcs2pix(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
+        final double[] result = wcs.wcs2pix(Double.valueOf(argumentsPos[0]), Double.valueOf(argumentsPos[1]));
         System.out.printf("(x,y)=(" + precision + ", " + precision + ")\n", result[0], result[1]);
         LOG.log(Level.INFO, "(x,y) = (%s,%s)", result);
     }
@@ -279,13 +279,13 @@ public class Main {
     }
 
     /**
-     * Extract reference frame name from sky system
+     * Extract reference frame name from coordinate reference system
      *
-     * @param skySystem sky system
+     * @param crs coordinate reference system
      * @return Reference frame name
      */
-    private static String extractReferenceFrame(final String skySystem) {
-        return skySystem.substring(skySystem.indexOf('(') + 1, skySystem.lastIndexOf(')'));
+    private static String extractReferenceFrame(final String crs) {
+        return crs.substring(crs.indexOf('(') + 1, crs.lastIndexOf(')'));
     }
 
     /**
@@ -296,7 +296,7 @@ public class Main {
      */
     private static String[] extractReferenceFrameParameter(final String referenceFrame) {
         final String parameters = referenceFrame.substring(referenceFrame.indexOf('(') + 1, referenceFrame.lastIndexOf(')'));
-        return (parameters.isEmpty()) ? null : parameters.split(",");
+        return parameters.isEmpty() ? null : parameters.split(",");
     }
 
     /**
@@ -307,7 +307,7 @@ public class Main {
      * @return the reference frame
      */
     private static CoordinateReferenceFrame getReferenceFrame(final CoordinateReferenceFrame.ReferenceFrame refFrame, final String[] parameters) {
-        CoordinateReferenceFrame ref;
+        final CoordinateReferenceFrame ref;
         switch (refFrame) {
             case ICRS:
                 ref = new ICRS();
@@ -361,20 +361,20 @@ public class Main {
     }
 
     /**
-     * Gets the sky system.
+     * Gets the coordinate reference system.
      *
-     * @param skySystem the sky system name
+     * @param crs the coordinate reference system name
      * @return the Crs object
      */
-    private static Crs getSkySystem(final String skySystem) {
-        Crs result;
-        if (hasReferenceFrame(skySystem)) {
-            String skySystemName = skySystem.substring(0, skySystem.indexOf('('));
-            String refFrameStr = extractReferenceFrame(skySystem);
-            String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf('('));
-            CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
+    private static Crs getCrs(final String crs) {
+        final Crs result;
+        if (hasReferenceFrame(crs)) {
+            final String skySystemName = crs.substring(0, crs.indexOf('('));
+            final String refFrameStr = extractReferenceFrame(crs);
+            final String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf('('));
+            final CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             final String[] parameters = extractReferenceFrameParameter(refFrameStr);
-            CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
+            final CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
             result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
             switch (result.getCoordinateSystem()) {
                 case EQUATORIAL:
@@ -387,18 +387,18 @@ public class Main {
                     throw new IllegalArgumentException("Unknown sky system");
             }
         } else {
-            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystem));
+            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(crs));
         }
         return result;
     }
 
     /**
-     * Converts a position frome a sky system to another one.
+     * Converts a position frome a coordinate reference system to another one.
      *
      * @param pos Sky position
      * @param file Fits or header file
-     * @param from source sky system
-     * @param to target sky system
+     * @param from source crs
+     * @param to target crs
      * @param precision precision such as %.15f
      * @throws URISyntaxException Cannot retrieve the Header file
      * @throws IOException Header file not found
@@ -406,16 +406,16 @@ public class Main {
      * @throws IllegalArgumentException Either --file argument or --from and --to arguments are required
      */
     private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
-        Map<String, String> keyMap = new HashMap();
-        Crs skySystemFrom;
+        final Map<String, String> keyMap = new HashMap();
+        final Crs crsFrom;
         if (file == null && from == null && to == null) {
             throw new IllegalArgumentException("Either --file argument or --from and --to arguments are required");
         } else if (file != null) {
-            URI uri = new URI(file);
+            final URI uri = new URI(file);
             try {
-                Fits fits = new Fits(uri.toURL());
-                Header hdr = fits.getHDU(extension).getHeader();
-                Cursor c = hdr.iterator();
+                final Fits fits = new Fits(uri.toURL());
+                final Header hdr = fits.getHDU(extension).getHeader();
+                final Cursor c = hdr.iterator();
                 while (c.hasNext()) {
                     HeaderCard card = (HeaderCard) c.next();
                     keyMap.put(card.getKey(), card.getValue());
@@ -427,20 +427,20 @@ public class Main {
                     keyMap.put(keywordLine.get(0), keywordLine.get(1));
                 });
             }
-            JWcsMap wcs = new JWcsMap(keyMap);
+            final JWcsMap wcs = new JWcsMap(keyMap);
             wcs.doInit();
-            skySystemFrom = wcs.getCrs();
+            crsFrom = wcs.getCrs();
 
         } else {
-            skySystemFrom = getSkySystem(from);
+            crsFrom = getCrs(from);
         }
-        String skySystemTarget = to;
-        double[] skyPos = Arrays.stream(pos.split(","))
+        final String crsTarget = to;
+        final double[] skyPos = Arrays.stream(pos.split(","))
                 .mapToDouble(Double::parseDouble)
                 .toArray();
-        Crs skySystemTo = getSkySystem(skySystemTarget);
-        LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{skySystemTo, skyPos[0], skyPos[1]});
-        final SkyPosition skyPosition = skySystemFrom.convertTo(skySystemTo, skyPos[0], skyPos[1]);
+        final Crs crsTo = getCrs(crsTarget);
+        LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{crsTo, skyPos[0], skyPos[1]});
+        final SkyPosition skyPosition = crsFrom.convertTo(crsTo, skyPos[0], skyPos[1]);
         System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());
         LOG.log(Level.INFO, "(longitude,latitude) = (%s,%s)", skyPosition);
     }
@@ -452,8 +452,8 @@ public class Main {
      * @param levelArg the debug level
      */
     private static void setDebug(final Logger rootLogger, final Getopt levelArg) {
-        Level levelInfo = Level.parse(levelArg.getOptarg());
-        Handler[] handlers = rootLogger.getHandlers();
+        final Level levelInfo = Level.parse(levelArg.getOptarg());
+        final Handler[] handlers = rootLogger.getHandlers();
         rootLogger.setLevel(levelInfo);
         for (Handler h : handlers) {
             if (h instanceof FileHandler) {
@@ -470,7 +470,7 @@ public class Main {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         EXIT returnedCode = EXIT.OK;
         boolean isGui = false;
         int c;
@@ -480,7 +480,7 @@ public class Main {
         String file = null;
         String precision = "%.15f";
         String progGui = null;
-        List<PROG> progChoice = new ArrayList<>();
+        final List<PROG> progChoice = new ArrayList<>();
         LongOpt[] longopts = new LongOpt[11];
         final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
@@ -497,7 +497,7 @@ public class Main {
         longopts[9] = new LongOpt("extension", LongOpt.REQUIRED_ARGUMENT, null, 'e');
         longopts[10] = new LongOpt("precision", LongOpt.REQUIRED_ARGUMENT, null, 'r');
         // 
-        Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:r:g:h;", longopts);
+        final Getopt g = new Getopt("JWcs", args, "-::p:u:c:d:f:s:t:e:r:g:h;", longopts);
         g.setOpterr(true);
         //
         while ((c = g.getopt()) != -1) {
@@ -547,27 +547,27 @@ public class Main {
                 case ':':
                     System.err.println("You need an argument for option "
                             + (char) g.getOptopt());
-                    LOG.log(Level.SEVERE, "You need an argument for option %s", new Object[]{g.getOptopt()});
+                    LOG.log(Level.SEVERE, "You need an argument for option %s", g.getOptopt());
                     returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
                 //
                 case '?':
                     System.err.println("The option '" + (char) g.getOptopt()
                             + "' is not valid");
-                    LOG.log(Level.SEVERE, "The option %s is not valid", new Object[]{g.getOptopt()});
+                    LOG.log(Level.SEVERE, "The option %s is not valid", g.getOptopt());
                     returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
                 //
                 default:
                     System.err.println("getopt() returned " + c);
-                    LOG.log(Level.SEVERE, "getopt() returned %s", new Object[]{c});
+                    LOG.log(Level.SEVERE, "getopt() returned %s", c);
                     returnedCode = EXIT.USER_INPUT_ERROR;
                     break;
             }
         }
         for (int i = g.getOptind(); i < args.length; i++) {
             System.err.println("Non option argv element: " + args[i] + "\n");
-            LOG.log(Level.SEVERE, "Non option argv element: %s", new Object[]{args[i]});
+            LOG.log(Level.SEVERE, "Non option argv element: %s", args[i]);
             returnedCode = EXIT.USER_INPUT_ERROR;
         }
         if (EXIT.OK != returnedCode) {
@@ -583,7 +583,7 @@ public class Main {
 
         try {
 
-            PROG prog = progChoice.get(0);
+            final PROG prog = progChoice.get(0);
             switch (prog) {
                 case GUI:
                     if (null != progGui) {

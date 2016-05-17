@@ -153,7 +153,7 @@ public abstract class Crs {
             final CoordinateSystem[] values = CoordinateSystem.values();
             String[] result = new String[values.length];
             int index = 0;
-            for (CoordinateSystem value : values) {
+            for (final CoordinateSystem value : values) {
                 result[index] = value.getName();
                 index++;
             }
@@ -665,8 +665,8 @@ public abstract class Crs {
      */
     private static double obliquity2000(final double jd) {
         // T = (Date - 1 jan, 2000, 12h noon)
-        double T = (jd - 2451545.0d) / 36525.0d;
-        double eps = (84381.406d
+        final double T = (jd - 2451545.0d) / 36525.0d;
+        final double eps = (84381.406d
                 + (-46.836769d
                 + (-0.0001831d
                 + (0.00200340d
@@ -679,11 +679,15 @@ public abstract class Crs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU 1980
      * model).
      *
-     * Reference: ---------- Explanatory Supplement to the Astronomical Almanac,
+     * Reference:<br>
+     * ---------- <br>
+     * Explanatory Supplement to the Astronomical Almanac,
      * P. Kenneth Seidelmann (ed), University Science Books (1992), Expression
      * 3.222-1 (p114).
      *<p>
-     * Notes: ------ The epoch is entered in Julian date and the time is
+     * Notes:<br>
+     * ------<br>
+     * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
      * equator and ecliptic, or, between the ecliptic pole and mean celestial
      * pole of date
@@ -693,8 +697,8 @@ public abstract class Crs {
      */
     private static double obliquity1980(final double jd) {
         // T = (Date - 1 jan, 2000, 12h noon)
-        double T = (jd - 2451545.0d) / 36525.0d;
-        double eps = (84381.448d + (-46.8150d + (-0.00059d + 0.001813d * T) * T) * T) / 3600.0d;
+        final double T = (jd - 2451545.0d) / 36525.0d;
+        final double eps = (84381.448d + (-46.8150d + (-0.00059d + 0.001813d * T) * T) * T) / 3600.0d;
         return eps;
     }
 
@@ -702,18 +706,22 @@ public abstract class Crs {
      * Calculates a rotation matrix to convert equatorial coordinates to
      * ecliptical coordinates.
      *
-     * Reference: ---------- Representations of celestial coordinates in FITS,
- Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
- 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
-<p>
-     * Notes: ------ 1. The origin for ecliptic longitude is the vernal equinox.
+     * Reference:<br>
+     * ----------<br>
+     * Representations of celestial coordinates in FITS, 
+     * Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
+     * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
+     * <p>
+     * Notes:<br>
+     * ------<br>
+     * 1. The origin for ecliptic longitude is the vernal equinox.
      * Therefore the coordinates of a fixed object is subject to shifts due to
      * precession. The rotation matrix uses the obliquity to do the conversion
      * to the wanted ecliptic coordinates. So we always need to enter an epoch.
      * Usually this is J2000, but it can also be the epoch of date. The
      * additional reference system indicates whether we need a Besselian or a
      * Julian epoch.
-     *<p>
+     *<br>
      * 2. In the FITS paper of Calabretta and Greisen (2002), one observes the
      * following relations to FITS: -Keyword RADESYSa sets the catalog system
      * FK4, FK4-NO-E or FK5 This applies to equatorial and ecliptical
@@ -741,7 +749,7 @@ public abstract class Crs {
      * more convenient specification we here introduce the new keyword
      * MJD-OBS'.* So MJD-OBS is the modified Julian Date (JD - 2400000.5) of the
      * start of the observation.
-     *<p>
+     *<br>
      * 3. Equatorial to ecliptic transformations use the time dependent
      * obliquity of the equator (also known as the obliquity of the ecliptic).
      * Again, start with: M = rotZ(0).rotX(eps).rotZ(0) = E.rotX(eps).E =
@@ -759,7 +767,7 @@ public abstract class Crs {
         } else {
             jd = convertEpochJulian2JD(epoch);
         }
-        double eps;
+        final double eps;
         if (CoordinateReferenceFrame.ReferenceFrame.ICRS.equals(refSystem) || CoordinateReferenceFrame.ReferenceFrame.J2000.equals(refSystem)) {
             eps = obliquity2000(jd);
         } else {
@@ -810,8 +818,8 @@ public abstract class Crs {
 
         final double w = 2306.2181d+(1.39656d-0.000139d*T0)*T0;
         final double zeta = (w+((0.30188d-0.000344d*T0)+0.017998d*T)*T)*T;
-        final double z = (w+((1.09468d+0.000066d*T0)+0.018203d*T)*T)*T;
-        final double theta = ((2004.3109d+(-0.85330d-0.000217d*T0)*T0)+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
+        final double z = (w+(1.09468d+0.000066d*T0+0.018203d*T)*T)*T;
+        final double theta = (2004.3109d+(-0.85330d-0.000217d*T0)*T0+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
         //Return values in degrees
         final double[] precessionAngles = {zeta / 3600.0d, z / 3600.0d, theta / 3600.0d};
         return precessionAngles;
@@ -886,7 +894,7 @@ public abstract class Crs {
         double a0 = d0 + t1 * (d1 + d2 * t1);
         double a1 = d3 + d4 * t1;
         double a2 = d5;
-        double zeta_a = tau * (a0 + tau * (a1 + tau * a2));
+        final double zeta_a = tau * (a0 + tau * (a1 + tau * a2));
 
         d0 = 23035.545d;
         d1 = 139.720d;
@@ -952,7 +960,7 @@ public abstract class Crs {
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
     private static RealMatrix convertFK42FK5Matrix(final Double t) {
-        RealMatrix mat = convertFK42FK5Matrix();
+        final RealMatrix mat = convertFK42FK5Matrix();
         if (!Double.isNaN(t)) {
             final double jd = convertEpochBessel2JD(t);
             final double T = (jd - 2433282.423d) / 36525.0d; //t-1950 in Julian centuries = F^-1.t1 from Murray (1989)
@@ -1094,14 +1102,14 @@ public abstract class Crs {
         if (equal(epoch1, epoch2)) {
             result = createRealIdentityMatrix(3);
         } else if (epoch1 == 2000.0) {
-            double[] precessionAngles = convertIAU2006PrecAngles(epoch2);
+            final double[] precessionAngles = convertIAU2006PrecAngles(epoch2);
             result = precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
         } else { // If both epochs are not J2000.0
             double[] precessionAngles = convertIAU2006PrecAngles(epoch1);
             RealMatrix m1 = precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
             m1 = m1.transpose();
             precessionAngles = convertIAU2006PrecAngles(epoch2);
-            RealMatrix m2 = precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
+            final RealMatrix m2 = precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
             result = m1.multiply(m2);
         }
         return result;
@@ -1136,7 +1144,7 @@ public abstract class Crs {
         double d3 = 0.0179663d;
         double d4 = -0.0000327d;
         double d5 = -0.0000002d;
-        double zeta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double zeta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
 
         d0 = -2.5976176d;
         d1 = 2306.0803226d;
@@ -1228,7 +1236,7 @@ public abstract class Crs {
         final double y = vec[1]/len;
         final double z = vec[2]/len;
         double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x, 0));
-        longitude = (longitude < 0) ? longitude + 360.0d : longitude;
+        longitude = longitude < 0 ? longitude + 360.0d : longitude;
         final double latitude = Math.toDegrees(NumericalUtils.aasin(z));
         final double coord[] = {longitude, latitude};
         return coord;

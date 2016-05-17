@@ -136,7 +136,7 @@ public class CYP extends CylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
         final double phiCorrect = phiRange(phi);
         final double x = getLambda() * phiCorrect;
-        double ctheta = Math.cos(theta);
+        final double ctheta = Math.cos(theta);
         if(NumericalUtils.equal(getMu(), -ctheta)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));
         }

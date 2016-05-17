@@ -67,11 +67,11 @@ public class COO extends ConicProjection {
         final double yr = Math.toRadians(y);
         final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
         final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        final double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        final double c = NumericalUtils.equal(theta1,theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
         if (NumericalUtils.equal(c,0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). c must be != 0");
         }
-        final double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double psi = NumericalUtils.equal(tan1,0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
         final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);            

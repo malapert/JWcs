@@ -47,20 +47,20 @@ public class Galactic extends Crs {
      */    
     @Override
     protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
-        RealMatrix m;
-        CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
+        final RealMatrix m;
+        final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {
-            RealMatrix m1 = convertMatrixEqB19502Gal().transpose(); 
-            RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m1 = convertMatrixEqB19502Gal().transpose(); 
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
             m = m2.multiply(m1);
         } else if (crs instanceof Galactic) {
             m = createRealIdentityMatrix(3);
         } else if (crs instanceof SuperGalactic) {
             m = convertMatrixGal2Sgal();
         } else if (crs instanceof Ecliptic) {
-            RealMatrix m1 = convertMatrixEqB19502Gal().transpose();
-            RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
+            final RealMatrix m1 = convertMatrixEqB19502Gal().transpose();
+            final RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+            final RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
             m = m3.multiply(m2).multiply(m1);
         } else {
             throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));

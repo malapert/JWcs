@@ -120,7 +120,7 @@ public class FK5 implements CoordinateReferenceFrame {
      * Do nothing.
      * No need to specify the epoch of observation in FK5 reference frame
      */    
-    public void setEpochObs(double epochObs) {
+    public void setEpochObs(final double epochObs) {
         //Do nothing
     }  
 

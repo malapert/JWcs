@@ -37,14 +37,14 @@ public interface JWcsKeyProvider {
      * 
      * @return the number of axes 
      */
-    public int wcsaxes();
+    int wcsaxes();
     
     /**
      * Number of pixels along j axis. 
      * @param j the axis coordinate
      * @return number of pixels along j axis
      */
-    public int naxis(int j);
+    int naxis(int j);
     
     /**
      * Coordinate value at reference point.

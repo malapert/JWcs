@@ -74,13 +74,14 @@ public final class DMS implements Serializable {
     private byte sign = 1;
 
     /* true if value has been initialized */
-    private boolean initialized = false;
+    private boolean initialized;
 
 
     /**
      * Default constructor: initialize to null values
      */
     public DMS() {
+        this.initialized = false;
     }
 
     /**
@@ -113,6 +114,7 @@ public final class DMS implements Serializable {
      * Initialize from a string value, in format H:M:S.sss, hh, d.ddd, or
      * H M S.
      * @param value DMS value as string
+     * @throws IllegalArgumentException Expected a string of the form dd:mm:ss.sss
      */
     public DMS(final String value) {
         final String valueProcessed = value.replace(",", "."); // Treat ',' like '.', by request
@@ -128,7 +130,7 @@ public final class DMS implements Serializable {
         } else if (n == 1) {
             setVal(vals[0]);
         } else {
-            throw new IllegalArgumentException("Expected a string of the form hh:mm:ss.sss, but got: '" + value + "'");
+            throw new IllegalArgumentException("Expected a string of the form dd:mm:ss.sss, but got: '" + value + "'");
         }
     }
 
@@ -154,7 +156,7 @@ public final class DMS implements Serializable {
             val = this.degrees + val;
             sign = 1;
         }
-        initialized = true;
+        this.initialized = true;
     }
 
     /**
@@ -172,22 +174,22 @@ public final class DMS implements Serializable {
             sign = 1;
         }
 
-        double dd = v + 0.0000000001;
+        final double dd = v + 0.0000000001;
         degrees = (int) dd;
-        double md = (dd - degrees) * 60.;
+        final double md = (dd - degrees) * 60.;
         min = (int) md;
         sec = (md - min) * 60.;
         initialized = true;
     }
 
     /**
-     * Return the value as a String in the form hh:mm:ss.sss.
+     * Return the value as a String in the form dd:mm:ss.sss.
      * Seconds are formatted with leading zero if needed.
-     * The seconds are formatted with 2 digits precission.
+     * The seconds are formatted with 2 digits precision.
      */
     @Override
     public String toString() {
-        String secs = NF_SEC.format(sec);
+        final String secs = NF_SEC.format(sec);
 
         // sign
         String signStr;
@@ -217,7 +219,7 @@ public final class DMS implements Serializable {
         }
 
         // sign
-        String signStr;
+        final String signStr;
         if (sign == -1) {
             signStr = "-";
         } else {
@@ -282,8 +284,8 @@ public final class DMS implements Serializable {
      * Define equality based on the value.
      */
     @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof DMS && val == ((DMS) obj).val);
+    public boolean equals(final Object obj) {
+        return obj instanceof DMS && val == ((DMS) obj).val;
     }
 
     @Override

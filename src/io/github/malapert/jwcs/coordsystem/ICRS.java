@@ -107,6 +107,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */    
     @Override
     public void setEquinox(final double equinox) {
+        //Do nothing
     }      
     
     /**

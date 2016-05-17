@@ -41,7 +41,7 @@ public abstract class TimeUtils {
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
      */
-    public final static double convertEpochJulian2JD(double jEpoch) {
+    public final static double convertEpochJulian2JD(final double jEpoch) {
         return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
     }
 
@@ -51,7 +51,7 @@ public abstract class TimeUtils {
      * @param jd Julian date
      * @return a Julian epoch
      */
-    public static double convertJD2epochJulian(double jd) {
+    public final static double convertJD2epochJulian(final double jd) {
         return 2000.0d + (jd - 2451545.0d) / 365.25d;
     }
 
@@ -61,7 +61,7 @@ public abstract class TimeUtils {
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
      */
-    public final static double convertEpochBessel2JD(double bEpoch) {
+    public final static double convertEpochBessel2JD(final double bEpoch) {
         return (bEpoch - 1900.0d) * 365.242198781d + 2415020.31352d;
     }
     
@@ -71,7 +71,7 @@ public abstract class TimeUtils {
      * @param jd julian date
      * @return a Besselian epoch
      */
-    public final static double convertJD2epochBessel(double jd) {
+    public final static double convertJD2epochBessel(final double jd) {
         return 1900.0d + (jd - 2415020.31352d) / 365.242198781d;
     }
 
@@ -81,7 +81,7 @@ public abstract class TimeUtils {
      * @param julianDate julian date
      * @return ISO date
      */
-    public static String convertJulianDateToISO(final double julianDate) {
+    public final static String convertJulianDateToISO(final double julianDate) {
 
         // Calcul date calendrier Grégorien à partir du jour Julien éphéméride
         // Tous les calculs sont issus du livre de Jean MEEUS "Calcul astronomique"
@@ -90,7 +90,7 @@ public abstract class TimeUtils {
         // Valable pour les années négatives et positives mais pas pour les jours Juliens négatifs
         double jd = julianDate;
         double z, f, a, b, c, d, e, m, aux;
-        Date date = new Date();
+        final Date date = new Date();
         jd += 0.5;
         z = Math.floor(jd);
         f = jd - z;
@@ -111,16 +111,16 @@ public abstract class TimeUtils {
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, (int) aux);
 
-        double hhd = aux - calendar.get(Calendar.DAY_OF_MONTH);
+        final double hhd = aux - calendar.get(Calendar.DAY_OF_MONTH);
         aux = ((aux - calendar.get(Calendar.DAY_OF_MONTH)) * 24);
 
         calendar.set(Calendar.HOUR_OF_DAY, (int) aux);
         calendar.set(Calendar.MINUTE, (int) ((aux - calendar.get(Calendar.HOUR_OF_DAY)) * 60));
 
         // Calcul secondes
-        double mnd = (24 * hhd) - calendar.get(Calendar.HOUR_OF_DAY);
-        double ssd = (60 * mnd) - calendar.get(Calendar.MINUTE);
-        int ss = (int) (60 * ssd);
+        final double mnd = (24 * hhd) - calendar.get(Calendar.HOUR_OF_DAY);
+        final double ssd = (60 * mnd) - calendar.get(Calendar.MINUTE);
+        final int ss = (int) (60 * ssd);
         calendar.set(Calendar.SECOND, ss);
 
         if (e < 13.5) {
@@ -136,7 +136,7 @@ public abstract class TimeUtils {
             calendar.set(Calendar.YEAR, (int) (c - 4715));
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return sdf.format(calendar.getTime());
     }
 
@@ -146,7 +146,7 @@ public abstract class TimeUtils {
      * @param modifiedJulianDate modified julian date
      * @return ISO date
      */
-    public static String convertModifiedJulianDateToISO(final double modifiedJulianDate) {
+    public final static String convertModifiedJulianDateToISO(final double modifiedJulianDate) {
         final double julianDate = modifiedJulianDate + 2400000.5;
         return convertJulianDateToISO(julianDate);
     }
@@ -158,8 +158,8 @@ public abstract class TimeUtils {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public static double convertISOToJulianDate(String dateObs) throws ParseException {
-        SimpleDateFormat sdf;
+    public final static double convertISOToJulianDate(final String dateObs) throws ParseException {
+        final SimpleDateFormat sdf;
         if (dateObs.contains("T") && dateObs.contains(".")) {
             sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
         } else if (dateObs.contains("T")) {
@@ -170,19 +170,19 @@ public abstract class TimeUtils {
             sdf = new SimpleDateFormat("dd/MM/yy");
         }
 
-        Date date = sdf.parse(dateObs);
+        final Date date = sdf.parse(dateObs);
 
-        GregorianCalendar calendar = new GregorianCalendar();
+        final GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
 
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int second = calendar.get(Calendar.SECOND);
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH) + 1;
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        final int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        final int minute = calendar.get(Calendar.MINUTE);
+        final int second = calendar.get(Calendar.SECOND);
 
-        double extra = (100.0 * year) + month - 190002.5;
+        final double extra = (100.0 * year) + month - 190002.5;
         return (367.0 * year)
                 - (Math.floor(7.0 * (year + Math.floor((month + 9.0) / 12.0)) / 4.0))
                 + Math.floor((275.0 * month) / 9.0)
@@ -197,9 +197,9 @@ public abstract class TimeUtils {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public static double convertISOToModifiedJulianDate(String dateObs) throws ParseException {
-        double jd = convertISOToJulianDate(dateObs);
-        double modifiedJulianDate = jd - 2400000.5;
+    public final static double convertISOToModifiedJulianDate(final String dateObs) throws ParseException {
+        final double jd = convertISOToJulianDate(dateObs);
+        final double modifiedJulianDate = jd - 2400000.5;
         return modifiedJulianDate;
     }
 
@@ -218,24 +218,24 @@ public abstract class TimeUtils {
      * @throws JWcsError No prefix or cannot convert epoch to a number
      * @throws JWcsError Unknown prefix for epoch
      */
-    public static double[] epochs(final String epoch) {
+    public final static double[] epochs(final String epoch) {
         double b, j, jd, mjd, rjd;
         String spec = epoch;
-        int i = spec.indexOf('_');
+        final int i = spec.indexOf('_');
         if (i != -1) {
             spec = spec.substring(0, i);
         }
         
-        String[] valTmp1 = spec.split("(\\d.*)");  
+        final String[] valTmp1 = spec.split("(\\d.*)");  
         if (valTmp1.length == 0) {
             throw new JWcsError("Epochs should start by \"J\", \"B\" or date format");
         }
-        String valTmp2 = spec.replace(valTmp1[0],"");
-        String[] val = new String[]{valTmp1[0], valTmp2};
+        final String valTmp2 = spec.replace(valTmp1[0],"");
+        final String[] val = new String[]{valTmp1[0], valTmp2};
         if (val.length != 2) {
             throw new JWcsError("No prefix or cannot convert epoch to a number");
         }
-        String prefix = val[0].toUpperCase();
+        final String prefix = val[0].toUpperCase();
         switch (prefix) {
             case "B":
             case "-B":
@@ -273,7 +273,7 @@ public abstract class TimeUtils {
                 j = convertJD2epochJulian(jd);
                 break;
             case "F":
-                Object[] fd = fitsdate(val[1]);
+                final Object[] fd = fitsdate(val[1]);
                 jd = jd((int)fd[0], (int)fd[1], (double)fd[2]);
                 b = convertJD2epochBessel(jd);
                 j = convertJD2epochJulian(jd);                
@@ -302,9 +302,9 @@ public abstract class TimeUtils {
         String dateTmp = date;
         String[] parts = date.split("/");
         if (parts.length==3) {
-            int year = (Integer.parseInt(parts[2])%1900)+1900;
-            int month = Integer.parseInt(parts[1]);
-            double fractionalDay = Double.parseDouble(parts[0]);
+            final int year = (Integer.parseInt(parts[2])%1900)+1900;
+            final int month = Integer.parseInt(parts[1]);
+            final double fractionalDay = Double.parseDouble(parts[0]);
             return new Object[]{year,month,fractionalDay};
         }
 
@@ -313,7 +313,7 @@ public abstract class TimeUtils {
         if (parts.length == 2) {
            dateTmp = parts[0];
            parts = parts[1].split(":");
-           double[] facts = new double[]{3600.0d, 60.0d, 1.0d};
+           final double[] facts = new double[]{3600.0d, 60.0d, 1.0d};
            time = 0.0d;
            for (int i = 0; i < parts.length; i++) {
                time += Double.parseDouble(parts[i])*facts[i];
@@ -332,7 +332,7 @@ public abstract class TimeUtils {
      * @param dayNumber day number
      * @return the Julian day
      */
-    public final static double jd(int year, int month, double dayNumber) {
+    public final static double jd(final int year, final int month, final double dayNumber) {
         int y = 0,m = 0,A,B;
         double jd;
         if (month > 2){
@@ -342,7 +342,7 @@ public abstract class TimeUtils {
             y = year - 1;
             m = month + 12;
         }
-        double calday = year + month/100.0d + dayNumber / 10000.0d;
+        final double calday = year + month/100.0d + dayNumber / 10000.0d;
         if (calday > 1582.1015){
             A = (int)(y/100.0);
             B = 2 - A + (int)(A/4.0);

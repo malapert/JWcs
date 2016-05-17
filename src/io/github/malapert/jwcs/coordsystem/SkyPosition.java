@@ -111,7 +111,7 @@ public class SkyPosition {
      * @return the latitude
      */
     public String getLatitudeAsSexagesimal() {
-        DMS dms = new DMS(getLatitude());
+        final DMS dms = new DMS(getLatitude());
         return dms.toString(true);
     }   
     
