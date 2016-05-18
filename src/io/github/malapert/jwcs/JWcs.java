@@ -24,29 +24,12 @@ import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.Crs;
-import io.github.malapert.jwcs.proj.AIT;
-import io.github.malapert.jwcs.proj.ARC;
 import io.github.malapert.jwcs.proj.AZP;
-import io.github.malapert.jwcs.proj.BON;
-import io.github.malapert.jwcs.proj.CAR;
-import io.github.malapert.jwcs.proj.CEA;
-import io.github.malapert.jwcs.proj.COD;
-import io.github.malapert.jwcs.proj.COE;
-import io.github.malapert.jwcs.proj.COO;
-import io.github.malapert.jwcs.proj.COP;
 import io.github.malapert.jwcs.proj.CYP;
-import io.github.malapert.jwcs.proj.MER;
-import io.github.malapert.jwcs.proj.MOL;
-import io.github.malapert.jwcs.proj.PAR;
-import io.github.malapert.jwcs.proj.PCO;
 import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
-import io.github.malapert.jwcs.proj.SFL;
 import io.github.malapert.jwcs.proj.SIN;
-import io.github.malapert.jwcs.proj.STG;
 import io.github.malapert.jwcs.proj.SZP;
-import io.github.malapert.jwcs.proj.TAN;
-import io.github.malapert.jwcs.proj.ZEA;
 import io.github.malapert.jwcs.proj.ZPN;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
@@ -63,8 +46,16 @@ import java.util.logging.Logger;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.proj.BON;
+import io.github.malapert.jwcs.proj.CEA;
+import io.github.malapert.jwcs.proj.COD;
+import io.github.malapert.jwcs.proj.COE;
+import io.github.malapert.jwcs.proj.COO;
+import io.github.malapert.jwcs.proj.COP;
 import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtils.inverse;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -405,12 +396,12 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates a FK4 or FK5 coordinate reference frame depending on the equinox.
-     * 
+     *
      * Create a FK4 coordinate reference frame with a Besselian epoch of equinox
-     * and a Modified Julian date as epoch of observation when equinox is smaller
-     * then 1984. Otherwise, a FK5 coordinate refrence frame is created based on
-     * a Julian date as epoch of observation.
-     * 
+     * and a Modified Julian date as epoch of observation when equinox is
+     * smaller then 1984. Otherwise, a FK5 coordinate refrence frame is created
+     * based on a Julian date as epoch of observation.
+     *
      * @param equinox epoch of the equinox
      * @return a FK4 or FK5 coordinate reference
      */
@@ -429,8 +420,9 @@ public abstract class JWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Creates a factory to create the right coordinate reference frame based
-     * on the RADESYS keyword value.
+     * Creates a factory to create the right coordinate reference frame based on
+     * the RADESYS keyword value.
+     *
      * @param radecSys value of the RADESYS keyword
      * @return a coordinate reference frame
      */
@@ -440,19 +432,15 @@ public abstract class JWcs implements JWcsKeyProvider {
             case "ICRS":
                 refSystem = new ICRS();
                 break;
-
             case "FK5":
                 refSystem = createFK5();
                 break;
-
             case "FK4":
                 refSystem = createFK4();
                 break;
-
             case "FK4-NO-E":
                 refSystem = createFK4NOE();
                 break;
-
             default:
                 throw new JWcsError("The coordinate reference frame, " + radecSys + " is not supported");
         }
@@ -461,6 +449,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates a FK5 coordinate reference frame.
+     *
      * @return a FK5 coordinate reference frame
      */
     private CoordinateReferenceFrame createFK5() {
@@ -473,8 +462,9 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates a FK4 coordinate reference frame.
+     *
      * @return a FK4 coordinate reference frame
-     */    
+     */
     private CoordinateReferenceFrame createFK4() {
         final CoordinateReferenceFrame refSystem = new FK4();
         if (hasKeyword(EQUINOX)) {
@@ -489,8 +479,9 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates a FK4 coordinate reference frame without Eterms.
+     *
      * @return a FK4 coordinate reference frame without Eterms
-     */    
+     */
     private CoordinateReferenceFrame createFK4NOE() {
         final CoordinateReferenceFrame refSystem = new FK4_NO_E();
         if (hasKeyword(EQUINOX)) {
@@ -513,50 +504,74 @@ public abstract class JWcs implements JWcsKeyProvider {
      */
     public Crs getCrs() {
         final Crs crs;
-        final CoordinateReferenceFrame refSystem = getReferenceFrame();
         if (hasKeyword("CTYPE1")) {
             String ctype1 = getValueAsString("CTYPE1");
             ctype1 = ctype1.substring(0, ctype1.indexOf('-'));
-            switch (ctype1) {
-                case "RA":
-                    crs = new Equatorial();
-                    if (refSystem != null) {
-                        ((Equatorial) crs).setCoordinateReferenceFrame(refSystem);
-                    }
-                    break;
-                case "DEC":
-                    crs = new Equatorial();
-                    if (refSystem != null) {
-                        ((Equatorial) crs).setCoordinateReferenceFrame(refSystem);
-                    }
-                    break;
-                case "GLON":
-                    crs = new Galactic();
-                    break;
-                case "GLAT":
-                    crs = new Galactic();
-                    break;
-                case "ELON":
-                    crs = new Ecliptic();
-                    if (refSystem != null) {
-                        ((Ecliptic) crs).setCoordinateReferenceFrame(refSystem);
-                    }
-                    break;
-                case "ELAT":
-                    crs = new Ecliptic();
-                    if (refSystem != null) {
-                        ((Ecliptic) crs).setCoordinateReferenceFrame(refSystem);
-                    }
-                    break;
-                default:
-                    throw new JWcsError("The coordinate reference system " + ctype1 + " is not supported");
-            }
+            final CoordinateReferenceFrame refSystem = getReferenceFrame();
+            crs = coordinateReferenceSystemFactory(ctype1, refSystem);
         } else {
-            throw new JWcsError("Cannot find the coordinate reference system.");
+            throw new JWcsError("cannot find the coordinate reference system.");
         }
 
         return crs;
 
+    }
+    
+    /**
+     * Create a coordinate reference system based on the coordinate system and
+     * the coordinate reference frame
+     *
+     * @param ctype keyword value of CTYPE1
+     * @return a coordinate reference system
+     * @throws JWcsError the CRS is not supported
+     */
+    private Crs coordinateReferenceSystemFactory(final String ctype, final CoordinateReferenceFrame refSystem) {
+        final Crs crs;
+        switch (ctype) {
+            case "RA":
+            case "DEC":
+                crs = createEquatorial(refSystem);
+                break;
+            case "GLON":
+            case "GLAT":
+                crs = new Galactic();
+                break;
+            case "ELON":
+            case "ELAT":
+                crs = createEcliptic(refSystem);
+                break;
+            default:
+                throw new JWcsError("The coordinate reference system (" + ctype + "," + refSystem + ") is not supported");
+        }
+        return crs;
+    }
+
+    /**
+     * Create the equatorial coordinate reference system
+     *
+     * @param refSystem the coordinate reference frame
+     * @return the equatorial coordinate reference system
+     */
+    private Crs createEquatorial(final CoordinateReferenceFrame refSystem) {
+        final Crs crs = new Equatorial();
+        if (refSystem != null) {
+            crs.setCoordinateReferenceFrame(refSystem);
+        }
+        return crs;
+    }
+
+    /**
+     * Create the ecliptic coordinate reference system
+     *
+     * @param refSystem the coordinate reference frame
+     * @return the ecliptic coordinate reference system
+     */
+    private Crs createEcliptic(final CoordinateReferenceFrame refSystem) {
+        final Crs crs = new Ecliptic();
+        if (refSystem != null) {
+            crs.setCoordinateReferenceFrame(refSystem);
+        }
+        return crs;
     }
 
     /**
@@ -873,7 +888,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Creates a projection based on its projection code
      *
-     * @param codeProjection projection code
+     * @param projectionCode projection code
      * @param cx scale factor along X
      * @param cy scale factor along Y
      * @return the projection
@@ -881,32 +896,20 @@ public abstract class JWcs implements JWcsKeyProvider {
      * to the projection
      * @throws JWcsError projection code is not supported
      */
-    private Projection createProjectionFactory(final String codeProjection, final double cx, final double cy) throws BadProjectionParameterException {
+    private Projection createProjectionFactory(final String projectionCode, final double cx, final double cy) throws BadProjectionParameterException {
         final Projection projection;
-        switch (codeProjection) {
-            case "AIT":
-                LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new AIT(crval(1) * cx, crval(2) * cy);
-                break;
-            case "ARC":
-                LOG.log(Level.INFO, "Creates a ARC projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new ARC(crval(1) * cx, crval(2) * cy);
-                break;
-            case "AZP":
-                projection = createAZPProjection(cx, cy);
+        switch (projectionCode) {
+            case "ZPN":
+                projection = createZPNProjection(cx, cy);
                 break;
             case "BON":
                 LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) theta1={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});
                 projection = new BON(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0));
                 break;
-            case "CAR":
-                LOG.log(Level.INFO, "Creates a CAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new CAR(crval(1) * cx, crval(2) * cy);
-                break;
             case "CEA":
                 LOG.log(Level.INFO, "Creates a CEA projection with (crval1,crval2)=({0},{1}) lambda={2}", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0)});
                 projection = new CEA(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 1));
-                break;
+                break;                
             case "COD":
                 LOG.log(Level.INFO, "Creates a COD projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COD(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
@@ -922,122 +925,104 @@ public abstract class JWcs implements JWcsKeyProvider {
             case "COP":
                 LOG.log(Level.INFO, "Creates a COP projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
-                break;
-            case "CYP":
-                projection = createCYPProjection(cx, cy);
-                break;
-            case "MER":
-                LOG.log(Level.INFO, "Creates a MER projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new MER(crval(1) * cx, crval(2) * cy);
-                break;
-            case "MOL":
-                LOG.log(Level.INFO, "Creates a MOL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new MOL(crval(1) * cx, crval(2) * cy);
-                break;
-            case "PAR":
-                LOG.log(Level.INFO, "Creates a PAR projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new PAR(crval(1) * cx, crval(2) * cy);
-                break;
-            case "PCO":
-                LOG.log(Level.INFO, "Creates a PCO projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new PCO(crval(1) * cx, crval(2) * cy);
-                break;
-            case "SFL":
-                LOG.log(Level.INFO, "Creates a SFL projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new SFL(crval(1) * cx, crval(2) * cy);
-                break;
-            case "SIN":
-                projection = createSINProjection(cy, cy);
-                break;
-            case "STG":
-                LOG.log(Level.INFO, "Creates a STG projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new STG(crval(1) * cx, crval(2) * cy);
-                break;
+                break;                
             case "SZP":
                 projection = createSZPProjection(cx, cy);
                 break;
-            case "TAN":
-                LOG.log(Level.INFO, "Creates a TAN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new TAN(crval(1) * cx, crval(2) * cy);
-                break;
-            case "ZEA":
-                LOG.log(Level.INFO, "Creates a ZEA projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-                projection = new ZEA(crval(1) * cx, crval(2) * cy);
-                break;
-            case "ZPN":
-                projection = createZPNProjection(cx, cy);
-                break;
             default:
-                throw new JWcsError("code projection : " + codeProjection + " is not supported");
+                projection = createProjection(projectionCode, cx, cy);
+                break;
         }
         return projection;
     }
 
     /**
-     * Creates a AZP projection.
+     * Creates dynamically a projection based on the projection code.
+     * 
+     * No projection parameter is used to instantiate this class.
      *
+     * @param projectionCode projection to instantiate dynamically
      * @param cx scale factor along X
      * @param cy scale factor along Y
-     * @return the AZP projection
-     * @throws BadProjectionParameterException when a bad parameter is provided
-     * to the projection
+     * @return the projection corresponding to the projection code
+     * @throws JWcsError Cannot find the projection or error when instantiate
+     * dynamically the projection
      */
-    private Projection createAZPProjection(final double cx, final double cy) throws BadProjectionParameterException {
+    private Projection createStandardProjection(final String projectionCode, final double cx, final double cy) {
         final Projection projection;
-        if (hasKeyword(PV21) && hasKeyword(PV22)) {
-            final double mu = getValueAsDouble(PV21);
-            final double gamma = getValueAsDouble(PV22);
-            LOG.log(Level.INFO, "Creates a AIT projection with (crval1,crval2)=({0},{1}) (mu,gamma)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, mu, gamma});
-            projection = new AZP(crval(1) * cx, crval(2) * cy, mu, gamma);
-        } else {
-            LOG.log(Level.INFO, "Creates a AZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-            projection = new AZP(crval(1) * cx, crval(2) * cy);
+        try {
+            final Package packageName = this.getClass().getPackage();
+            final String name = packageName.getName()+".proj.";
+            Class<?> clazz = Class.forName(name + projectionCode);
+            Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE);
+            Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy);            
+            projection = (Projection) instance;
+            LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx});
+        } catch (ClassNotFoundException ex) {
+            throw new JWcsError("The projection " + projectionCode + " is not supported.");
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            throw new JWcsError(ex);
         }
         return projection;
     }
 
     /**
-     * Creates a CYP projection.
+     * Creates dynamically a projection based on the projection code.
+     * 
+     * projection parameters are used to instantiate this class.
      *
+     * @param projectionCode projection to instantiate dynamically
      * @param cx scale factor along X
      * @param cy scale factor along Y
-     * @return the CYP projection
-     * @throws BadProjectionParameterException when a bad parameter is provided
-     * to the projection
+     * @return the projection corresponding to the projection code
+     * @throws JWcsError Cannot find the projection or error when instantiate
+     * dynamically the projection
      */
-    private Projection createCYPProjection(final double cx, final double cy) throws BadProjectionParameterException {
+    private Projection createStandardProjectionWithParameters(final String projectionCode, final double cx, final double cy) {
         final Projection projection;
-        if (hasKeyword(PV21) && hasKeyword(PV22)) {
-            LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1}) (mu,lambda)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
-            projection = new CYP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
-        } else {
-            LOG.log(Level.INFO, "Creates a CYP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-            projection = new CYP(crval(1) * cx, crval(2) * cy);
+        final Package packageName = this.getClass().getPackage();
+        final String name = packageName.getName() + ".proj.";
+        final double pv21 = getValueAsDouble(PV21);
+        final double pv22 = getValueAsDouble(PV22);
+        try {
+
+            final Class<?> clazz = Class.forName(name + projectionCode);
+            final Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE, Double.TYPE);
+            final Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy, pv21, pv22);
+            projection = (Projection) instance;
+            LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2}) (pv21,pv22)=({3},{4})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx, pv21, pv22});
+        } catch (ClassNotFoundException ex) {
+            throw new JWcsError("The projection " + projectionCode + " is not supported.");
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            throw new JWcsError(ex);
         }
         return projection;
     }
 
     /**
-     * Creates a SIN projection.
+     * Creates a projection.
      *
+     * Instantiates either projection with projection parameters when they are
+     * available otherwise instantiates only the projection with no projection 
+     * parameter.
+     * 
+     * @param projectionCode projection to instantiate dynamically
      * @param cx scale factor along X
      * @param cy scale factor along Y
-     * @return the SIN projection
-     * @throws BadProjectionParameterException when a bad parameter is provided
-     * to the projection
+     * @return the projection corresponding to the projection code
+     * @throws JWcsError Cannot find the projection or error when instantiate
+     * dynamically the projection
      */
-    private Projection createSINProjection(final double cx, final double cy) throws BadProjectionParameterException {
-        final Projection projection;
-        if (hasKeyword(PV21) && hasKeyword(PV22)) {
-            LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1}) (ksi,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
-            projection = new SIN(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22));
-        } else {
-            LOG.log(Level.INFO, "Creates a SIN projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-            projection = new SIN(crval(1) * cx, crval(2) * cy);
-        }
-        return projection;
+    private Projection createProjection(final String projectionCode, final double cx, final double cy) {
+        final Projection projection;    
+         if (hasKeyword(PV21) && hasKeyword(PV22)) {
+             projection = createStandardProjectionWithParameters(projectionCode, cx, cy);
+         } else {
+             projection = createStandardProjection(projectionCode, cx, cy);
+         }
+         return projection;
     }
-
+    
     /**
      * Creates a SZP projection.
      *
@@ -1053,8 +1038,7 @@ public abstract class JWcs implements JWcsKeyProvider {
             LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1}) (mu,phic,thetac)=({2},{3},{4})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23)});
             projection = new SZP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
         } else {
-            LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1})", new Object[]{crval(1) * cx, crval(2) * cx});
-            projection = new SZP(crval(1) * cx, crval(2) * cy);
+            projection = createStandardProjection("SZP", crval(1) * cx, crval(2) * cy);
         }
         return projection;
     }

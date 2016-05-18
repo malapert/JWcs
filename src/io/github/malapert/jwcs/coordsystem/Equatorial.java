@@ -138,6 +138,7 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
      * Sets the reference system.
      * @param coordinateReferenceFrame the coordinateReferenceFrame to set
      */
+    @Override
     public void setCoordinateReferenceFrame(final CoordinateReferenceFrame coordinateReferenceFrame) {
         this.coordinateReferenceFrame = coordinateReferenceFrame;
     }

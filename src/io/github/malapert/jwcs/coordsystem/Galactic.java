@@ -82,5 +82,9 @@ public class Galactic extends Crs {
     public CoordinateReferenceFrame getCoordinateReferenceFrame() {
         return null;
     }
-       
+
+    @Override
+    public void setCoordinateReferenceFrame(final CoordinateReferenceFrame coordinateReferenceFrame) {
+        //Do nothing
+    }    
 }
