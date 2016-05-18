@@ -188,7 +188,7 @@ public class Main {
      * @throws ProjectionException an error during the projection
      * @throws JWcsException JWcs error
      * @throws IOException an error when loading the FITS file
-     * @throws URISyntaxException an error when loading the FITS file 
+     * @throws URISyntaxException an error when loading the FITS file
      */
     private static void projectToSkyFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
         final Map<String, String> keyMap = new HashMap();
@@ -306,56 +306,89 @@ public class Main {
      * @param parameters parameters of the reference frame
      * @return the reference frame
      */
-    private static CoordinateReferenceFrame getReferenceFrame(final CoordinateReferenceFrame.ReferenceFrame refFrame, final String[] parameters) {
+    private static CoordinateReferenceFrame createReferenceFrameFactory(final CoordinateReferenceFrame.ReferenceFrame refFrame, final String[] parameters) {
         final CoordinateReferenceFrame ref;
         switch (refFrame) {
             case ICRS:
                 ref = new ICRS();
                 break;
             case FK5:
-                if (parameters == null) {
-                    ref = new FK5();
-                } else {
-                    ref = new FK5(parameters[0]);
-                }
+                ref = createFK5Frame(parameters);
                 break;
             case FK4:
-                if (parameters != null) {
-                    switch (parameters.length) {
-                        case 1:
-                            ref = new FK4(parameters[0]);
-                            break;
-                        case 2:
-                            ref = new FK4(parameters[0], parameters[1]);
-                            break;
-                        default:
-                            throw new IllegalArgumentException("");
-                    }
-                } else {
-                    ref = new FK4();
-                }
+                ref = createFK4Frame(parameters);
                 break;
             case FK4_NO_E:
-                if (parameters != null) {
-                    switch (parameters.length) {
-                        case 1:
-                            ref = new FK4_NO_E(parameters[0]);
-                            break;
-                        case 2:
-                            ref = new FK4_NO_E(parameters[0], parameters[1]);
-                            break;
-                        default:
-                            throw new IllegalArgumentException("");
-                    }
-                } else {
-                    ref = new FK4_NO_E();
-                }
+                ref = createFK4NOEFrame(parameters);
                 break;
             case J2000:
                 ref = new J2000();
                 break;
             default:
-                throw new IllegalArgumentException("Reference frame not supported");
+                throw new IllegalArgumentException("Reference frame "+refFrame+" not supported");
+        }
+        return ref;
+    }
+
+    /**
+     * Creates a FK4 No eterms reference frame.
+     * @param parameters parameters of the reference frame
+     * @return FK4 No eterms reference frame
+     */
+    private static CoordinateReferenceFrame createFK4NOEFrame(final String[] parameters) {
+        final CoordinateReferenceFrame ref;
+        if (parameters != null) {
+            switch (parameters.length) {
+                case 1:
+                    ref = new FK4_NO_E(parameters[0]);
+                    break;
+                case 2:
+                    ref = new FK4_NO_E(parameters[0], parameters[1]);
+                    break;
+                default:
+                    throw new IllegalArgumentException("");
+            }
+        } else {
+            ref = new FK4_NO_E();
+        }
+        return ref;
+    }
+
+    /**
+     * Creates a FK4 reference frame.
+     * @param parameters parameters of the reference frame
+     * @return FK4 reference frame
+     */    
+    private static CoordinateReferenceFrame createFK4Frame(final String[] parameters) {
+        final CoordinateReferenceFrame ref;
+        if (parameters != null) {
+            switch (parameters.length) {
+                case 1:
+                    ref = new FK4(parameters[0]);
+                    break;
+                case 2:
+                    ref = new FK4(parameters[0], parameters[1]);
+                    break;
+                default:
+                    throw new IllegalArgumentException("");
+            }
+        } else {
+            ref = new FK4();
+        }
+        return ref;
+    }
+
+    /**
+     * Creates a FK5 reference frame.
+     * @param parameters parameters of the reference frame
+     * @return FK5 reference frame
+     */    
+    private static CoordinateReferenceFrame createFK5Frame(final String[] parameters) {
+        final CoordinateReferenceFrame ref;
+        if (parameters == null) {
+            ref = new FK5();
+        } else {
+            ref = new FK5(parameters[0]);
         }
         return ref;
     }
@@ -374,7 +407,7 @@ public class Main {
             final String refFrameName = refFrameStr.substring(0, refFrameStr.indexOf('('));
             final CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             final String[] parameters = extractReferenceFrameParameter(refFrameStr);
-            final CoordinateReferenceFrame refSystem = getReferenceFrame(refFrame, parameters);
+            final CoordinateReferenceFrame refSystem = createReferenceFrameFactory(refFrame, parameters);
             result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
             switch (result.getCoordinateSystem()) {
                 case EQUATORIAL:
@@ -403,7 +436,8 @@ public class Main {
      * @throws URISyntaxException Cannot retrieve the Header file
      * @throws IOException Header file not found
      * @throws JWcsException JWS Error
-     * @throws IllegalArgumentException Either --file argument or --from and --to arguments are required
+     * @throws IllegalArgumentException Either --file argument or --from and
+     * --to arguments are required
      */
     private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
         final Map<String, String> keyMap = new HashMap();
@@ -484,7 +518,7 @@ public class Main {
         LongOpt[] longopts = new LongOpt[11];
         final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF);
-         
+
         longopts[0] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
         longopts[1] = new LongOpt("gui", LongOpt.REQUIRED_ARGUMENT, null, 'g');
         longopts[2] = new LongOpt("project", LongOpt.REQUIRED_ARGUMENT, null, 'p');
@@ -593,8 +627,8 @@ public class Main {
                                     try {
                                         ProjectionSelectionPanel.createWindow();
                                     } catch (IOException ex) {
-                                        System.err.println("Error : "+ex.getMessage());
-                                        LOG.log(Level.SEVERE, null, ex);                                        
+                                        System.err.println("Error : " + ex.getMessage());
+                                        LOG.log(Level.SEVERE, null, ex);
                                     }
                                 });
                                 break;

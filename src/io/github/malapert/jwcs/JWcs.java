@@ -820,7 +820,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws BadProjectionParameterException When a bad parameter is provided to the projection
      * @throws JWcsError projection code is not supported
      */
-    private Projection createProjectionFactory(final String codeProjection, double cx, double cy) throws BadProjectionParameterException {
+    private Projection createProjectionFactory(final String codeProjection, final double cx, final double cy) throws BadProjectionParameterException {
         final Projection projection;
         switch (codeProjection) {
             case "AIT":
@@ -1038,7 +1038,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLongitudeOfFiducialPoint(Projection projection) {
+    private void setNativeLongitudeOfFiducialPoint(final Projection projection) {
         if (hasKeyword(PV11)) {
             LOG.log(Level.INFO, "Sets phi0 to {0}", getValueAsDouble(PV11));
             projection.setPhi0(getValueAsDouble(PV11));
@@ -1050,7 +1050,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLatitudeOfFiducialPoint(Projection projection) {
+    private void setNativeLatitudeOfFiducialPoint(final Projection projection) {
         if (hasKeyword(PV12)) {
             LOG.log(Level.INFO, "Sets theta0 to {0}", getValueAsDouble(PV12));
             projection.setTheta0(getValueAsDouble(PV12));
@@ -1062,7 +1062,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLongitudeOfCelestialPole(Projection projection) {
+    private void setNativeLongitudeOfCelestialPole(final Projection projection) {
         if (!Double.isNaN(lonpole())) {
             LOG.log(Level.INFO, "Sets phip to {0}", lonpole());
             projection.setPhip(Math.toRadians(lonpole()));
@@ -1074,7 +1074,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLatitudeOfCelestialPole(Projection projection) {
+    private void setNativeLatitudeOfCelestialPole(final Projection projection) {
         if (!Double.isNaN(latpole())) {
             LOG.log(Level.INFO, "Sets thetap to {0}", latpole());
             projection.setThetap(Math.toRadians(latpole()));

@@ -86,61 +86,62 @@ public class MOL extends CylindricalProjection {
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
         final double tol = 1.0e-12;
-        double[] phis = computePhiAndS(xr, yr, tol);
+        final double[] phis = computePhiAndS(xr, yr, tol);
         final double phi = phis[0];
-        final double s = phis[1];        
+        final double s = phis[1];
         final double theta = computeTheta(xr, yr, s, tol);
         final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         return pos;
     }
-    
+
     /**
-     * Computes the native spherical coordinate (\u03B8) in radians along latitude
+     * Computes the native spherical coordinate (\u03B8) in radians along
+     * latitude
+     *
      * @param xr projection plane coordinate along X in radians
      * @param yr projection plane coordinate along Y in radians
      * @param s s
      * @param tol tolerance for comparing double
-     * @return the native spherical coordinate (\u03B8) in radians along latitude
-     * @throws PixelBeyondProjectionException  Solution not defined
+     * @return the native spherical coordinate (\u03B8) in radians along
+     * latitude
+     * @throws PixelBeyondProjectionException Solution not defined
      */
     private double computeTheta(final double xr, final double yr, final double s, final double tol) throws PixelBeyondProjectionException {
-        double z = yr / Math.sqrt(2);        
-        if (Math.abs(z) > 1.0) {
-            if (Math.abs(z) > 1.0 + tol) {
-                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + Math.toDegrees(yr));
-            }
+        double z = yr / Math.sqrt(2);
+        if (NumericalUtils.equal(Math.abs(z), 1)) {
             z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
+        } else if (Math.abs(1) > 1) {
+            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + Math.toDegrees(yr));
         } else {
             z = NumericalUtils.aasin(z) / HALF_PI + s * yr / Math.PI;
         }
-
-        if (Math.abs(z) > 1.0) {
-            if (Math.abs(z) > 1.0 + tol) {
-                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + Math.toDegrees(xr) + ", " + Math.toDegrees(yr));
-            }
-
+        if (NumericalUtils.equal(Math.abs(z), 1)) {
             z = z < 0.0 ? -1.0 : 1.0;
+        } else if (Math.abs(1) > 1) {
+            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + Math.toDegrees(xr) + ", " + Math.toDegrees(yr));
         }
         final double theta = NumericalUtils.aasin(z);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=(" + Math.toDegrees(xr) + "," + Math.toDegrees(yr) + ")");
         }
-        return theta;        
+        return theta;
     }
-    
+
     /**
-     * Computes the native spherical coordinate (\u03D5) in radians along longitude and s.
-     * 
+     * Computes the native spherical coordinate (\u03D5) in radians along
+     * longitude and s.
+     *
      * @param xr projection plane coordinate along X in radians
      * @param yr projection plane coordinate along Y in radians
      * @param tol tolerance to compare a double
-     * @return the native spherical coordinate (\u03D5) in radians along longitude and s
+     * @return the native spherical coordinate (\u03D5) in radians along
+     * longitude and s
      * @throws PixelBeyondProjectionException Solution not defined
      */
     private double[] computePhiAndS(final double xr, final double yr, final double tol) throws PixelBeyondProjectionException {
         double s = 2 - Math.pow(yr, 2);
-        final double phi;        
+        final double phi;
         if (s <= tol) {
             if (s < -tol) {
                 throw new PixelBeyondProjectionException(this,
@@ -154,8 +155,8 @@ public class MOL extends CylindricalProjection {
         } else {
             s = Math.sqrt(s);
             phi = HALF_PI * xr / s;
-        }        
-        return new double[]{phi,s};
+        }
+        return new double[]{phi, s};
     }
 
     @Override
