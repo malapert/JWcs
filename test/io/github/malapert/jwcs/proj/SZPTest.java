@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * SZP unit test.
  * @author Jean-Christophe Malapert
  */
-public class SZPTest extends ProjectionTest{
+public class SZPTest extends AbstractProjectionTest{
     
     /**
      *

@@ -34,7 +34,7 @@ import org.junit.Test;
  * SIN unit test.
  * @author Jean-Christophe Malapert
  */
-public class SINTest extends ProjectionTest {
+public class SINTest extends AbstractProjectionTest {
     
     /**
      *

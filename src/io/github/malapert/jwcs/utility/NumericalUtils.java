@@ -31,17 +31,17 @@ public abstract class NumericalUtils {
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
      */
-    public static final double DOUBLE_TOLERANCE = 1e-12;
+    public final static double DOUBLE_TOLERANCE = 1e-12;
 
     /**
      * Half PI value.
      */
-    public static final double HALF_PI = Math.PI * 0.5d;
+    public final static double HALF_PI = Math.PI * 0.5d;
 
     /**
      * Two Pi value.
      */
-    public static final double TWO_PI = Math.PI * 2.0d;
+    public final static double TWO_PI = Math.PI * 2.0d;
 
     /**
      * Compares two doubles.

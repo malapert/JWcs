@@ -64,7 +64,7 @@ public abstract class AbstractCrs {
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger(AbstractCrs.class.getName());
+    private final static Logger LOG = Logger.getLogger(AbstractCrs.class.getName());
 
     /**
      * List of supported CoordinateSystem. 

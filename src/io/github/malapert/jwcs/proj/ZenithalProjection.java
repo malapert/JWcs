@@ -36,36 +36,36 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class ZenithalProjection extends Projection {
+public abstract class ZenithalProjection extends AbstractProjection {
 
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ZenithalProjection.class.getName());
+    protected final static Logger LOG = Logger.getLogger(ZenithalProjection.class.getName());
 
     /**
-     * Projection name.
+     * AbstractProjection name.
      */
-    public static final String NAME = "Zenithal (azimuthal) projections";
+    public final static String NAME = "Zenithal (azimuthal) projections";
     /**
      * Default Native longitude (\u03D5<SUB>0</SUB>) value in radians for
      * zenithal projection.
      */
-    public static final double DEFAULT_PHI0 = 0;
+    public final static double DEFAULT_PHI0 = 0;
     /**
      * Default Native latitude (\u03B8<SUB>0</SUB>) value in radians for
      * zenithal projection.
      */
-    public static final double DEFAULT_THETA0 = HALF_PI;
+    public final static double DEFAULT_THETA0 = HALF_PI;
 
     /**
      * Native longitude (\u03D5<SUB>0</SUB>) in radians of the ﬁducial point for
-     * the Zenithal Projection.
+ the Zenithal AbstractProjection.
      */
     private double phi0;
     /**
      * Native latitude (\u03B8<SUB>0</SUB>) in radians of the ﬁducial point for
-     * the Zenithal Projection.
+ the Zenithal AbstractProjection.
      */
     private double theta0;
 

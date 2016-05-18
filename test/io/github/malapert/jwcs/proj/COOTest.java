@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * COO unit test.
  * @author Jean-Christophe Malapert
  */
-public class COOTest extends ProjectionTest {
+public class COOTest extends AbstractProjectionTest {
     
     /**
      *

@@ -43,7 +43,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
  */
 public class ConvertSelectionPanel extends javax.swing.JPanel {
     
-    private static final String DEFAULT_PRECISION = "%.10f";
+    private final static String DEFAULT_PRECISION = "%.10f";
     
     private String precision = DEFAULT_PRECISION;
 

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * COD unit test.
  * @author Jean-Christophe Malapert
  */
-public class CODTest extends ProjectionTest {
+public class CODTest extends AbstractProjectionTest {
     
     /**
      *

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * BON unit test.
  * @author Jean-Christophe Malapert
  */
-public class BONTest extends ProjectionTest{
+public class BONTest extends AbstractProjectionTest{
 
     /**
      *

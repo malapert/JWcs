@@ -34,7 +34,7 @@ import org.junit.Test;
  * AZP unit test.
  * @author Jean-Christophe Malapert
  */
-public class AZPTest extends ProjectionTest {    
+public class AZPTest extends AbstractProjectionTest {    
     
     /**
      *

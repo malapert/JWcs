@@ -6,7 +6,7 @@
 package io.github.malapert.jwcs.proj.gui;
 
 import io.github.malapert.jwcs.*;
-import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
+import io.github.malapert.jwcs.proj.AbstractProjection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -35,13 +35,13 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
-    private static final long serialVersionUID = 5367008551020527277L;
+    protected final static Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
+    private final static long serialVersionUID = 5367008551020527277L;
 
     /**
      * Countries border.
      */
-    private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
+    private final static String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
@@ -49,7 +49,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      */
     private List<MapLine> lines = new ArrayList();
     private final List<MapLine> linesFromClient = new ArrayList();
-    private static final int STEP_GRID = 5;
+    private final static int STEP_GRID = 5;
     private String previousNameProjection = "";
 
     /**
@@ -350,7 +350,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * Write basic infromation about the projection to the graphical user
      * interface.
      *
-     * @param wcs The Projection that provides the information.
+     * @param wcs The AbstractProjection that provides the information.
      */
     private void updateProjectionInfo(AbstractJWcs wcs) {
         if (wcs == null) {

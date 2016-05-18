@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * CAR unit test.
  * @author Jean-Christophe Malapert
  */
-public class CARTest extends ProjectionTest {
+public class CARTest extends AbstractProjectionTest {
     
     /**
      *

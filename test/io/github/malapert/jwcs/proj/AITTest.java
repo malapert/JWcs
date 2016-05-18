@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * AIT unit test.
  * @author Jean-Christophe Malapert
  */
-public class AITTest extends ProjectionTest {
+public class AITTest extends AbstractProjectionTest {
 
     /**
      *

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * ZPN unit test.
  * @author Jean-Christophe Malapert
  */
-public class ZPNTest extends ProjectionTest {
+public class ZPNTest extends AbstractProjectionTest {
     
     /**
      *

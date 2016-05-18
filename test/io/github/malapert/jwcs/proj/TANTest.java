@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * TAN unit test.
  * @author Jean-Christophe Malapert
  */
-public class TANTest extends ProjectionTest{
+public class TANTest extends AbstractProjectionTest{
     
     /**
      *

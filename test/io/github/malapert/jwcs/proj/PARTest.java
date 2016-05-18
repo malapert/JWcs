@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * PAR unit test.
  * @author Jean-Christophe Malapert
  */
-public class PARTest extends ProjectionTest{
+public class PARTest extends AbstractProjectionTest{
     
     /**
      *

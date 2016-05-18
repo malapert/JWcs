@@ -36,7 +36,7 @@ public class Galactic extends AbstractCrs {
     /**
      * Name of this coordinate system.
      */
-    private static final CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;       
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;       
     
     /**
      * Computes the rotation matrix from a reference frame to another one.

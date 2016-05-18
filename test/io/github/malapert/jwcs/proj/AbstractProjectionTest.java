@@ -30,7 +30,7 @@ import org.junit.Test;
  * @author Jean-Christophe Malapert
  */
 @Ignore
-public class ProjectionTest {
+public class AbstractProjectionTest {
 
     /**
      *
@@ -59,7 +59,7 @@ public class ProjectionTest {
      * @param wcs
      * @throws JWcsException
      */
-    public ProjectionTest(JWcsFits wcs) throws JWcsException {
+    public AbstractProjectionTest(JWcsFits wcs) throws JWcsException {
         this(wcs, TOLERANCE);
     }
 
@@ -69,7 +69,7 @@ public class ProjectionTest {
      * @param tolerance
      * @throws JWcsException
      */
-    public ProjectionTest(JWcsFits wcs, double tolerance) throws JWcsException {
+    public AbstractProjectionTest(JWcsFits wcs, double tolerance) throws JWcsException {
         this.wcs = wcs;
         this.tolerance = tolerance;
         this.wcs.doInit();

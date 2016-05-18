@@ -37,12 +37,12 @@ public class PAR extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Parabolic";
+    private final static String NAME_PROJECTION = "Parabolic";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "no limits";
+    private final static String DESCRIPTION = "no limits";
 
     /**
      * Constructs a PAR projection based on the celestial longitude and latitude

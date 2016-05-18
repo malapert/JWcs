@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * PCO unit test.
  * @author Jean-Christophe Malapert
  */
-public class PCOTest extends ProjectionTest {
+public class PCOTest extends AbstractProjectionTest {
     
     /**
      *

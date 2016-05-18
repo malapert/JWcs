@@ -16,24 +16,24 @@
  */
 package io.github.malapert.jwcs.proj.exception;
 
-import io.github.malapert.jwcs.proj.Projection;
+import io.github.malapert.jwcs.proj.AbstractProjection;
 import java.util.logging.Level;
 
 /**
- * Pixel Beyond Projection Exception
+ * Pixel Beyond AbstractProjection Exception
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class PixelBeyondProjectionException extends ProjectionException {
-    private static final long serialVersionUID = -3719985099230583709L;
+    private final static long serialVersionUID = -3719985099230583709L;
 
     /**
      * Creates a PixelBeyondProjectionException based on a message.
      *
-     * @param projectionName Projection
+     * @param projectionName AbstractProjection
      * @param message message
      */
-    public PixelBeyondProjectionException(final Projection projectionName, final String message) {
+    public PixelBeyondProjectionException(final AbstractProjection projectionName, final String message) {
         super(projectionName, message);
         getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for {1}", new Object[]{this.getProjection().getClass().getName(), getMessage()});
         

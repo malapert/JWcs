@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * MER unit test.
  * @author Jean-Christophe Malapert
  */
-public class MERTest extends ProjectionTest {
+public class MERTest extends AbstractProjectionTest {
     
     /**
      *

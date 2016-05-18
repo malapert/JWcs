@@ -44,7 +44,7 @@ public class SuperGalactic extends AbstractCrs {
     /**
      * Name of this coordinate system.
      */
-    private static final CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;           
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;           
     
     @Override
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {

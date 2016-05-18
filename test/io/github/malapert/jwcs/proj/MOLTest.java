@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * MOL unit test.
  * @author Jean-Christophe Malapert
  */
-public class MOLTest extends ProjectionTest {
+public class MOLTest extends AbstractProjectionTest {
     
     /**
      *

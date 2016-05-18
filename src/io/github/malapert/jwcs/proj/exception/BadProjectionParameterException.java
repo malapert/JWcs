@@ -17,22 +17,22 @@
 
 package io.github.malapert.jwcs.proj.exception;
 
-import io.github.malapert.jwcs.proj.Projection;
+import io.github.malapert.jwcs.proj.AbstractProjection;
 import java.util.logging.Level;
 
 /**
- * Bad Projection Parameter Exception.
+ * Bad AbstractProjection Parameter Exception.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class BadProjectionParameterException extends ProjectionException{
-    private static final long serialVersionUID = -787228345305370079L;
+    private final static long serialVersionUID = -787228345305370079L;
     
     /**
      * Creates a new Exception when the projection parameter are wrong.
      * @param projectionName projection name
      * @param message message
      */
-    public BadProjectionParameterException(final Projection projectionName, final String message) {
+    public BadProjectionParameterException(final AbstractProjection projectionName, final String message) {
         super(projectionName, message);
         projectionName.getLogger().log(Level.SEVERE, "{0}- Bad projection parameter for {1}", new Object[]{getProjection().getClass().getName(), getMessage()});
     }

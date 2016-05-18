@@ -39,17 +39,17 @@ public class SIN extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Slant orthographic";
+    private final static String NAME_PROJECTION = "Slant orthographic";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u046F=%s \u03B7=%s";
+    private final static String DESCRIPTION = "\u046F=%s \u03B7=%s";
 
     /**
      * Default value.
      */
-    public static final double DEFAULT_VALUE = 0;
+    public final static double DEFAULT_VALUE = 0;
 
     /**
      * \u03BE is deFINERd as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    

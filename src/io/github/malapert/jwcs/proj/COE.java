@@ -41,12 +41,12 @@ public class COE extends ConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Conic equal area";
+    private final static String NAME_PROJECTION = "Conic equal area";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
+    private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
         
     /**
      * Constant in radians based on

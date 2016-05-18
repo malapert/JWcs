@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * COP unit test.
  * @author Jean-Christophe Malapert
  */
-public class COPTest extends ProjectionTest {
+public class COPTest extends AbstractProjectionTest {
     
     /**
      *

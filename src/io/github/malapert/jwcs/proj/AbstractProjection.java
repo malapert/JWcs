@@ -27,11 +27,10 @@ import java.util.logging.Logger;
  * Conversion of intermediate world coordinates (or projection plane
  * coordinates) to celestial coordinates (\u03B1, \u03B4).
  *
- *
- * Projection plane is given and must be computed from pixels coordinates by
- * applying a linear transformation.
- *
- * The conversion is organized by a pipeline doing the following steps:
+ * <p>AbstractProjection plane is given and must be computed from pixels coordinates by
+ applying a linear transformation.
+
+ <p>The conversion is organized by a pipeline doing the following steps:
  * <ul>
  * <li>computes the projection plane coordinates (x,y) to native spherical coordinates
  * (\u03D5, \u03B8) through a spherical projection</li>
@@ -39,42 +38,39 @@ import java.util.logging.Logger;
  * coordinates through a spherical coordinate rotation.</li>
  * </ul>
  *
- *
- * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
+ * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122.
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class Projection {
+public abstract class AbstractProjection {
 
     /**
      * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link NumericalUtils#HALF_PI}.
      */
-    public static final double DEFAULT_THETAP = HALF_PI;
+    public final static double DEFAULT_THETAP = HALF_PI;
 
     /**
      * Default native longitude of the celestial pole (\u03D5<sub>p</sub>) sets to 0.     
      */
-    public static final double DEFAULT_PHIP = 0;
+    public final static double DEFAULT_PHIP = 0;
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger(Projection.class.getName());
+    private final static Logger LOG = Logger.getLogger(AbstractProjection.class.getName());
 
     /**
      * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
      * &lt; \u03B8<sub>0</sub>.
      */
-    protected static final double LONPOLE_PI = Math.PI;
+    protected final static double LONPOLE_PI = Math.PI;
 
     /**
      * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
      * &ge; \u03B8<sub>0</sub>.
      */
-    protected static final double LONPOLE_0 = 0;
+    protected final static double LONPOLE_0 = 0;
 
     /**
      * Celestial longitude \u03B1<sub>0</sub> in radians of the fiducial point.
@@ -85,7 +81,7 @@ public abstract class Projection {
      */
     private final double crval2;
     /**
-     * Initializes the native longitude of the celestial pole (\u03D5<sub>p</sub>) to {@link Projection#DEFAULT_PHIP}. 
+     * Initializes the native longitude of the celestial pole (\u03D5<sub>p</sub>) to {@link AbstractProjection#DEFAULT_PHIP}. 
      */
     private double phip = DEFAULT_PHIP;
     /**
@@ -105,7 +101,7 @@ public abstract class Projection {
      * @param crval1 Celestial longitude (\u03B1<sub>0</sub>) in degrees of the ﬁducial point
      * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point
      */
-    protected Projection(final double crval1, final double crval2) {
+    protected AbstractProjection(final double crval1, final double crval2) {
         this.crval1 = Math.toRadians(crval1);
         this.crval2 = Math.toRadians(crval2);
         LOG.log(Level.FINER, "INPUTS: crval1[deg]={0} crval2[deg]={1}", new Object[]{crval1,crval2});        
@@ -167,8 +163,8 @@ public abstract class Projection {
 
     /**
      * Computes the default value for \u03D5<sub>p</sub>. The default value of
-     * \u03D5<sub>p</sub> will be {@link Projection#LONPOLE_0} for \u03B4<sub>0</sub> &ge;
-     * \u03B8<sub>0</sub> or {@link Projection#LONPOLE_PI} for \u03B4<sub>0</sub> &lt; \u03B8<sub>0</sub>.
+     * \u03D5<sub>p</sub> will be {@link AbstractProjection#LONPOLE_0} for \u03B4<sub>0</sub> &ge;
+     * \u03B8<sub>0</sub> or {@link AbstractProjection#LONPOLE_PI} for \u03B4<sub>0</sub> &lt; \u03B8<sub>0</sub>.
      *
      * @return \u03D5<sub>p</sub> in radians.
      */

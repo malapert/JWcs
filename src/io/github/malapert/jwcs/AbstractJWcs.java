@@ -24,8 +24,8 @@ import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.AbstractCrs;
-import io.github.malapert.jwcs.proj.Projection;
-import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
+import io.github.malapert.jwcs.proj.AbstractProjection;
+import io.github.malapert.jwcs.proj.AbstractProjection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.SZP;
 import io.github.malapert.jwcs.proj.ZPN;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
@@ -72,202 +72,202 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     /**
      * Maximum longitude value in degrees.
      */
-    public static final int MAX_LONGITUDE = 360;
+    public final static int MAX_LONGITUDE = 360;
 
     /**
      * Minimum longitude value in degrees.
      */
-    public static final int MIN_LONGITUDE = 0;
+    public final static int MIN_LONGITUDE = 0;
 
     /**
      * Minimum latitude value in degrees.
      */
-    public static final int MIN_LATITUDE = -90;
+    public final static int MIN_LATITUDE = -90;
 
     /**
      * Maximum latitude value in degrees.
      */
-    public static final int MAX_LATITUDE = 90;
+    public final static int MAX_LATITUDE = 90;
 
     /**
      * Number of axes. 2 for an image
      */
-    public static final String NAXIS = "NAXIS";
+    public final static String NAXIS = "NAXIS";
     /**
      * Number of pixels along X axis.
      */
-    public static final String NAXIS1 = "NAXIS1";
+    public final static String NAXIS1 = "NAXIS1";
     /**
      * Number of pixels along Y axis.
      */
-    public static final String NAXIS2 = "NAXIS2";
+    public final static String NAXIS2 = "NAXIS2";
     /**
      * Reference along X axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public static final String CRPIX1 = "CRPIX1";
+    public final static String CRPIX1 = "CRPIX1";
     /**
      * Reference along Y axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public static final String CRPIX2 = "CRPIX2";
+    public final static String CRPIX2 = "CRPIX2";
     /**
      * Reference along longitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public static final String CRVAL1 = "CRVAL1";
+    public final static String CRVAL1 = "CRVAL1";
     /**
      * Reference along latitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public static final String CRVAL2 = "CRVAL2";
+    public final static String CRVAL2 = "CRVAL2";
     /**
-     * Projection type along X axis. This keyword is required for projection
+     * AbstractProjection type along X axis. This keyword is required for projection
      * computation.
      */
-    public static final String CTYPE1 = "CTYPE1";
+    public final static String CTYPE1 = "CTYPE1";
     /**
-     * Projection type along Y axis. This keyword is required for projection
+     * AbstractProjection type along Y axis. This keyword is required for projection
      * computation.
      */
-    protected static final String CTYPE2 = "CTYPE2";
+    protected final static String CTYPE2 = "CTYPE2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD11 = "CD1_1";
+    public final static String CD11 = "CD1_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD12 = "CD1_2";
+    public final static String CD12 = "CD1_2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD21 = "CD2_1";
+    public final static String CD21 = "CD2_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD22 = "CD2_2";
+    public final static String CD22 = "CD2_2";
     /**
      * Unit along X axis.
      */
-    public static final String CUNIT1 = "CUNIT1";
+    public final static String CUNIT1 = "CUNIT1";
     /**
      * Unit along Y axis.
      */
-    public static final String CUNIT2 = "CUNIT2";
+    public final static String CUNIT2 = "CUNIT2";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CDELT1 = "CDELT1";
+    public final static String CDELT1 = "CDELT1";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CDELT2 = "CDELT2";
+    public final static String CDELT2 = "CDELT2";
     /**
      * For projection computation, information about scale and rotation are
      * needed. Either the CD matrix is provided or the following element
      * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CROTA2 = "CROTA2";
+    public final static String CROTA2 = "CROTA2";
     /**
      * Equinox value.
      */
-    public static final String EQUINOX = "EQUINOX";
+    public final static String EQUINOX = "EQUINOX";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC11 = "PC1_1";
+    public final static String PC11 = "PC1_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC12 = "PC1_2";
+    public final static String PC12 = "PC1_2";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC21 = "PC2_1";
+    public final static String PC21 = "PC2_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC22 = "PC2_2";
+    public final static String PC22 = "PC2_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV11 = "PV1_1";
+    public final static String PV11 = "PV1_1";
     /**
      * Deformation matrix.
      */
-    public static final String PV12 = "PV1_2";
+    public final static String PV12 = "PV1_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV13 = "PV1_3";
+    public final static String PV13 = "PV1_3";
     /**
      * Deformation matrix.
      */
-    public static final String PV14 = "PV1_4";
+    public final static String PV14 = "PV1_4";
     /**
      * Deformation matrix.
      */
-    public static final String PV20 = "PV2_0";
+    public final static String PV20 = "PV2_0";
     /**
      * Deformation matrix.
      */
-    public static final String PV21 = "PV2_1";
+    public final static String PV21 = "PV2_1";
     /**
      * Deformation matrix.
      */
-    public static final String PV22 = "PV2_2";
+    public final static String PV22 = "PV2_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV23 = "PV2_3";
+    public final static String PV23 = "PV2_3";
     /**
      * lontpole.
      */
-    public static final String LONPOLE = "LONPOLE";
+    public final static String LONPOLE = "LONPOLE";
     /**
      * latpole.
      */
-    public static final String LATPOLE = "LATPOLE";
+    public final static String LATPOLE = "LATPOLE";
     /**
      * Reference system.
      */
-    public static final String RADESYS = "RADESYS";
+    public final static String RADESYS = "RADESYS";
 
     /**
-     * Projection object.
+     * AbstractProjection object.
      */
-    private Projection proj;
+    private AbstractProjection proj;
 
     /**
      * CD matrix : scale and rotation.
@@ -282,7 +282,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     /**
      * LOG.
      */
-    protected static final Logger LOG = Logger.getLogger(AbstractJWcs.class.getName());
+    protected final static Logger LOG = Logger.getLogger(AbstractJWcs.class.getName());
 
     /**
      * Initialize the WCS Object.
@@ -511,7 +511,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     
     /**
      * Create a coordinate reference system based on the coordinate system and
-     * the coordinate reference frame
+     * the coordinate reference frame.
      *
      * @param ctype keyword value of CTYPE1
      * @return a coordinate reference system
@@ -861,12 +861,12 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws BadProjectionParameterException when the projection parameter is
      * wrong
      */
-    protected final Projection createProjection() throws BadProjectionParameterException {
+    protected final AbstractProjection createProjection() throws BadProjectionParameterException {
         final String ctype1 = ctype(1);
         final String codeProjection = ctype1.substring(ctype1.lastIndexOf('-') + 1, ctype1.length());
         final double cx = convertToDegree(cunit(1));
         final double cy = convertToDegree(cunit(2));
-        final Projection projection = createProjectionFactory(codeProjection, cx, cy);
+        final AbstractProjection projection = createProjectionFactory(codeProjection, cx, cy);
         setNativeLongitudeOfFiducialPoint(projection);
         setNativeLatitudeOfFiducialPoint(projection);
         setNativeLongitudeOfCelestialPole(projection);
@@ -885,8 +885,8 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * to the projection
      * @throws JWcsError projection code is not supported
      */
-    private Projection createProjectionFactory(final String projectionCode, final double cx, final double cy) throws BadProjectionParameterException {
-        final Projection projection;
+    private AbstractProjection createProjectionFactory(final String projectionCode, final double cx, final double cy) throws BadProjectionParameterException {
+        final AbstractProjection projection;
         switch (projectionCode) {
             case "ZPN":
                 projection = createZPNProjection(cx, cy);
@@ -937,15 +937,15 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws JWcsError Cannot find the projection or error when instantiate
      * dynamically the projection
      */
-    private Projection createStandardProjection(final String projectionCode, final double cx, final double cy) {
-        final Projection projection;
+    private AbstractProjection createStandardProjection(final String projectionCode, final double cx, final double cy) {
+        final AbstractProjection projection;
         try {
             final Package packageName = this.getClass().getPackage();
             final String name = packageName.getName()+".proj.";
             final Class<?> clazz = Class.forName(name + projectionCode);
             final Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE);
             final Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy);            
-            projection = (Projection) instance;
+            projection = (AbstractProjection) instance;
             LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx});
         } catch (ClassNotFoundException ex) {
             throw new JWcsError("The projection " + projectionCode + " is not supported.");
@@ -967,8 +967,8 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws JWcsError Cannot find the projection or error when instantiate
      * dynamically the projection
      */
-    private Projection createStandardProjectionWithParameters(final String projectionCode, final double cx, final double cy) {
-        final Projection projection;
+    private AbstractProjection createStandardProjectionWithParameters(final String projectionCode, final double cx, final double cy) {
+        final AbstractProjection projection;
         final Package packageName = this.getClass().getPackage();
         final String name = packageName.getName() + ".proj.";
         final double pv21 = getValueAsDouble(PV21);
@@ -978,7 +978,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
             final Class<?> clazz = Class.forName(name + projectionCode);
             final Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE, Double.TYPE);
             final Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy, pv21, pv22);
-            projection = (Projection) instance;
+            projection = (AbstractProjection) instance;
             LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2}) (pv21,pv22)=({3},{4})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx, pv21, pv22});
         } catch (ClassNotFoundException ex) {
             throw new JWcsError("The projection " + projectionCode + " is not supported.");
@@ -1002,8 +1002,8 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws JWcsError Cannot find the projection or error when instantiate
      * dynamically the projection
      */
-    private Projection createProjection(final String projectionCode, final double cx, final double cy) {
-        final Projection projection;    
+    private AbstractProjection createProjection(final String projectionCode, final double cx, final double cy) {
+        final AbstractProjection projection;    
          if (hasKeyword(PV21) && hasKeyword(PV22)) {
              projection = createStandardProjectionWithParameters(projectionCode, cx, cy);
          } else {
@@ -1021,8 +1021,8 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws BadProjectionParameterException when a bad parameter is provided
      * to the projection
      */
-    private Projection createSZPProjection(final double cx, final double cy) throws BadProjectionParameterException {
-        final Projection projection;
+    private AbstractProjection createSZPProjection(final double cx, final double cy) throws BadProjectionParameterException {
+        final AbstractProjection projection;
         if (hasKeyword(PV21) && hasKeyword(PV22) && hasKeyword(PV23)) {
             LOG.log(Level.INFO, "Creates a SZP projection with (crval1,crval2)=({0},{1}) (mu,phic,thetac)=({2},{3},{4})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23)});
             projection = new SZP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21), getValueAsDouble(PV22), getValueAsDouble(PV23));
@@ -1041,7 +1041,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @throws BadProjectionParameterException when a bad parameter is provided
      * to the projection
      */
-    private Projection createZPNProjection(final double cx, final double cy) throws BadProjectionParameterException {
+    private AbstractProjection createZPNProjection(final double cx, final double cy) throws BadProjectionParameterException {
         final Iterator iter = iterator();
         final Map<String, Double> pvMap = new HashMap<>();
         while (iter.hasNext()) {
@@ -1072,7 +1072,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLongitudeOfFiducialPoint(final Projection projection) {
+    private void setNativeLongitudeOfFiducialPoint(final AbstractProjection projection) {
         if (hasKeyword(PV11)) {
             LOG.log(Level.INFO, "Sets phi0 to {0}", getValueAsDouble(PV11));
             projection.setPhi0(getValueAsDouble(PV11));
@@ -1084,7 +1084,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLatitudeOfFiducialPoint(final Projection projection) {
+    private void setNativeLatitudeOfFiducialPoint(final AbstractProjection projection) {
         if (hasKeyword(PV12)) {
             LOG.log(Level.INFO, "Sets theta0 to {0}", getValueAsDouble(PV12));
             projection.setTheta0(getValueAsDouble(PV12));
@@ -1096,7 +1096,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLongitudeOfCelestialPole(final Projection projection) {
+    private void setNativeLongitudeOfCelestialPole(final AbstractProjection projection) {
         if (!Double.isNaN(lonpole())) {
             LOG.log(Level.INFO, "Sets phip to {0}", lonpole());
             projection.setPhip(Math.toRadians(lonpole()));
@@ -1108,7 +1108,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param projection the projection
      */
-    private void setNativeLatitudeOfCelestialPole(final Projection projection) {
+    private void setNativeLatitudeOfCelestialPole(final AbstractProjection projection) {
         if (!Double.isNaN(latpole())) {
             LOG.log(Level.INFO, "Sets thetap to {0}", latpole());
             projection.setThetap(Math.toRadians(latpole()));
@@ -1245,7 +1245,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param skyPositions array of sky positions
      * @return the sky position in the pixel grid.
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when
+     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException when 
      * there is a projection error
      * @throws JWcsError When the length of <code>skyPositions</code> is not a
      * multiple of 2
@@ -1272,7 +1272,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @return the projection
      */
-    protected final Projection getProj() {
+    protected final AbstractProjection getProj() {
         return proj;
     }
 
@@ -1281,7 +1281,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @param proj the projection to set
      */
-    protected final void setProj(final Projection proj) {
+    protected final void setProj(final AbstractProjection proj) {
         this.proj = proj;
     }
 

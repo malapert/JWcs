@@ -51,15 +51,15 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class ConicProjection extends Projection {
+public abstract class ConicProjection extends AbstractProjection {
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ConicProjection.class.getName());        
+    protected final static Logger LOG = Logger.getLogger(ConicProjection.class.getName());        
     /**
-     * Projection name.
+     * AbstractProjection name.
      */
-    public static final String NAME = "Conic projections";    
+    public final static String NAME = "Conic projections";    
     /**
      * thetaA = (theta1 + theta2) / 2 in radians.
      */
@@ -71,7 +71,7 @@ public abstract class ConicProjection extends Projection {
     /**
      * Native longitude value in radians for conic projection.
      */
-    protected static final double DEFAULT_PHI0 = 0;        
+    protected final static double DEFAULT_PHI0 = 0;        
     /**
      * Native longitude in radians of the ﬁducial point for the conic
      * projection.

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * ARC unit test.
  * @author Jean-Christophe Malapert
  */
-public class ARCTest extends ProjectionTest {
+public class ARCTest extends AbstractProjectionTest {
     
     /**
      *

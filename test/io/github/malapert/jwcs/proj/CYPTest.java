@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * CYP unit test.
  * @author Jean-Christophe Malapert
  */
-public class CYPTest extends ProjectionTest{
+public class CYPTest extends AbstractProjectionTest{
 
     /**
      *

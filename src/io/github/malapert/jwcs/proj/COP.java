@@ -32,12 +32,12 @@ public class COP extends ConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Conic perspective";
+    private final static String NAME_PROJECTION = "Conic perspective";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";
+    private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s";
 
     /**
      * Constant of the cone in radians.

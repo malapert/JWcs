@@ -42,12 +42,12 @@ public class COD extends ConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Conic equidistant";        
+    private final static String NAME_PROJECTION = "Conic equidistant";        
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
+    private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
 
     private final double c,y0;
 

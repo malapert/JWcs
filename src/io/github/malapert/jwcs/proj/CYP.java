@@ -39,22 +39,22 @@ public class CYP extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Cylindrical perspective";
+    private final static String NAME_PROJECTION = "Cylindrical perspective";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03BC=%s \u03BB=%s";     
+    private final static String DESCRIPTION = "\u03BC=%s \u03BB=%s";     
 
     /**
      * Default value for \u03BC.
      */
-    public static final double DEFAULT_MU = 1;
+    public final static double DEFAULT_MU = 1;
 
     /**
      * Default value for \u03BB.
      */
-    public static final double DEFAULT_LAMBDA = 1;
+    public final static double DEFAULT_LAMBDA = 1;
     
     /**
      * \u03BC: distance in spherical radii from the center of the sphere to the equatorial plane of the native system. 

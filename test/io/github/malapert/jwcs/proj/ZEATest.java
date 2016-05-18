@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * ZEA unit test.
  * @author Jean-Christophe Malapert
  */
-public class ZEATest extends ProjectionTest{
+public class ZEATest extends AbstractProjectionTest{
     
     /**
      *

@@ -36,33 +36,33 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class CylindricalProjection extends Projection {
+public abstract class CylindricalProjection extends AbstractProjection {
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
+    protected final static Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
     
     /**
-     * Projection name.
+     * AbstractProjection name.
      */
-    public static final String NAME = "Cylindrical projections";
+    public final static String NAME = "Cylindrical projections";
     
     /**
      * Native longitude value in radians for cylindrical projection.
      */    
-    public static final double DEFAULT_PHI0 = 0;
+    public final static double DEFAULT_PHI0 = 0;
     /**
      * Native latitude value in radians for cylindrical projection.
      */    
-    public static final double DEFAULT_THETA0 = 0;
+    public final static double DEFAULT_THETA0 = 0;
     /**
      * Native longitude in radians of the ﬁducial point for the Cylindrical
-     * Projection.
+ AbstractProjection.
      */
     private double phi0;
     /**
      * Native latitude in radians of the ﬁducial point for the Cylindrical
-     * Projection.
+ AbstractProjection.
      */
     private double theta0;
 

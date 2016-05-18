@@ -30,7 +30,7 @@ public class SkyPosition {
     /**
      * Factor to convert degrees to hours.
      */
-    public static final double TO_HOURS = 24d/360d;
+    public final static double TO_HOURS = 24d/360d;
     
     /**
      * Longitude in decimal degrees of the position

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * STG unit test.
  * @author Jean-Christophe Malapert
  */
-public class STGTest extends ProjectionTest {
+public class STGTest extends AbstractProjectionTest {
     
     /**
      *

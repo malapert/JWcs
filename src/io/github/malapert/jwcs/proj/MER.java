@@ -42,12 +42,12 @@ public class MER extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Mercator";
+    private final static String NAME_PROJECTION = "Mercator";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "no limits";       
+    private final static String DESCRIPTION = "no limits";       
 
    /**
      * Constructs a MER projection based on the celestial longitude and latitude

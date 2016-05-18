@@ -31,7 +31,7 @@ import org.junit.Test;
  * CEA unit test.
  * @author Jean-Christophe Malapert
  */
-public class CEATest extends ProjectionTest {
+public class CEATest extends AbstractProjectionTest {
 
     /**
      *

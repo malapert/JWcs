@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * SFL unit test.
  * @author malapert
  */
-public class SFLTest extends ProjectionTest {
+public class SFLTest extends AbstractProjectionTest {
     
     /**
      *
