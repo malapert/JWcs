@@ -86,16 +86,15 @@ public class COO extends ConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
         final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
         final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        final double c = (NumericalUtils.equal(theta1,theta2)) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
-        final double psi = (NumericalUtils.equal(tan1,0)) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double c = NumericalUtils.equal(theta1,theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        final double psi = NumericalUtils.equal(tan1,0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
         if (NumericalUtils.equal(psi,0)) {
             throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getThetaA() + ", " + getEta()+")");
         }
         final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
-        final  double phiCorrect = phiRange(phi);
         final double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
-        final double x = computeX(phiCorrect, r_theta, c);
-        final double y = computeY(phiCorrect, r_theta, c, y0);
+        final double x = computeX(phi, r_theta, c);
+        final double y = computeY(phi, r_theta, c, y0);
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                
         return coord;

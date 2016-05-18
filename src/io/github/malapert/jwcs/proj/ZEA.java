@@ -73,10 +73,9 @@ public class ZEA extends ZenithalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                        
-        final double phiCorrect = phiRange(phi);
         final double r = 2 * Math.sin((HALF_PI-theta)*0.5d);
-        final double x = computeX(r, phiCorrect);
-        final double y = computeY(r, phiCorrect);
+        final double x = computeX(r, phi);
+        final double y = computeY(r, phi);
         final double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{pos[0],pos[1]});                                                                                                                                                        
         return pos;

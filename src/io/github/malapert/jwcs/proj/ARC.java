@@ -76,10 +76,9 @@ public class ARC extends ZenithalProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                        
-        final double phiCorrect = phiRange(phi);
         final double r = Math.toDegrees(HALF_PI - theta);  // theta between [-HALF_PI, HALF_PI] => no need to test
-        final double x = computeX(r, phiCorrect);
-        final double y = computeY(r, phiCorrect);
+        final double x = computeX(r, phi);
+        final double y = computeY(r, phi);
         final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
         return pos;

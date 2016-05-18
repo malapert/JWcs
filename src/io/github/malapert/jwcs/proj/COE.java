@@ -115,10 +115,9 @@ public class COE extends ConicProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                
-        final double phiCorrect = phiRange(phi);
         final double r_theta = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin(theta)) / c;      
-        final double x = computeX(phiCorrect, r_theta, c);
-        final double y = computeY(phiCorrect, r_theta, c, y0);
+        final double x = computeX(phi, r_theta, c);
+        final double y = computeY(phi, r_theta, c, y0);
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
         return coord;

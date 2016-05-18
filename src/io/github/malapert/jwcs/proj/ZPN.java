@@ -112,11 +112,13 @@ public final class ZPN extends ZenithalProjection {
      * @throws BadProjectionParameterException Exception
      */
     private double[] findTheInflectionPointClosestFromPole(final int highestPV, final double[] PV) throws BadProjectionParameterException {
-        // Find the point of inflection closest to the pole. 
-        double d, d1, d2, r, zd, zd1, zd2;
+        // Find the point of inflection closest to the pole.         
         int i;
-        zd1 = zd2 = d2 = zd = 0.0;
-        d1 = PV[1];
+        double d2 = 0.0;
+        double zd = 0.0;
+        double zd1 = 0.0;
+        double zd2 = 0.0;       
+        double d1 = PV[1];
         if (d1 <= 0.0) {
             throw new BadProjectionParameterException(this, "p[1] - It must be > 0");
         }
@@ -141,12 +143,12 @@ public final class ZPN extends ZenithalProjection {
             // No negative derivative -> no point of inflection. 
             zd = Math.PI;
         } else {
-
+            
             // Find where the derivative is zero. 
             for (i = 1; i <= 10; i++) {
                 zd = zd1 - d1 * (zd2 - zd1) / (d2 - d1);
 
-                d = 0.0;
+                double d = 0.0;
                 for (int j = highestPV; j > 0; j--) {
                     d = d * zd + j * PV[j];
                 }
@@ -165,7 +167,7 @@ public final class ZPN extends ZenithalProjection {
             }
         }
 
-        r = 0.0;
+        double r = 0.0;
         for (int j = highestPV; j >= 0; j--) {
             r = r * zd + PV[j];
         }
@@ -304,7 +306,7 @@ public final class ZPN extends ZenithalProjection {
         // Choose solution closest to pole. 
         final double x1 = (-b + d) / (2.0 * a);
         final double x2 = (-b - d) / (2.0 * a);
-        double x = (x1 < x2) ? x1 : x2;
+        double x = x1 < x2 ? x1 : x2;
         if (x < -getTolerance()) {
             x = x1 > x2 ? x1 : x2;
         }
@@ -433,10 +435,9 @@ public final class ZPN extends ZenithalProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                
-        final double phiCorrect = phiRange(phi);
         final double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
-        final double x = computeX(r_theta, phiCorrect);
-        final double y = computeY(r_theta, phiCorrect);
+        final double x = computeX(r_theta, phi);
+        final double y = computeY(r_theta, phi);
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                                
         return coord;

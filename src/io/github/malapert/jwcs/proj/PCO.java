@@ -117,7 +117,8 @@ public class PCO extends PolyConicProjection {
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
 
-        double phi, theta = 0;
+        final double phi;
+        double theta = 0;
         if (NumericalUtils.equal(yr, 0)) {
             phi = xr;
             theta = 0.0;
@@ -196,13 +197,13 @@ public class PCO extends PolyConicProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
-        final double phiCorrect = phiRange(phi);
         final double costhe = Math.cos(theta);
         final double sinthe = Math.sin(theta);
-        final double a = phiCorrect * sinthe;
-        double x, y;
+        final double a = phi * sinthe;
+        double x;
+        double y;
         if (NumericalUtils.equal(sinthe, 0.0)) {
-            x = phiCorrect;
+            x = phi;
             y = 0.0;
         } else {
             final double cotthe = costhe / sinthe;

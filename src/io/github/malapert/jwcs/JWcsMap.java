@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package io.github.malapert.jwcs;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
@@ -26,26 +25,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class allowing to compute the WCS by initializing the WCS structure by 
+ * A class allowing to compute the WCS by initializing the WCS structure by
  * reading a map containing the WCS keywords.
- * 
+ *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
- * @version 2.0 
+ * @version 2.0
  */
 public class JWcsMap extends JWcs {
-    
+
     private Map keywords;
-    
+
     /**
      * Clones a JWcsMap.
+     *
      * @param wcs JWcsMap object
      */
     public JWcsMap(final JWcsMap wcs) {
         setKeywords(wcs.keywords);
     }
-    
+
     /**
      * Creates a JWcs bases on a map.
+     *
      * @param keywords map of keywords
      */
     public JWcsMap(final Map keywords) {
@@ -59,7 +60,7 @@ public class JWcsMap extends JWcs {
 
     @Override
     public int wcsaxes() {
-        return this.getValueAsInt("NAXIS");    
+        return this.getValueAsInt("NAXIS");
     }
 
     @Override
@@ -67,55 +68,63 @@ public class JWcsMap extends JWcs {
         return this.getKeywords().containsKey(keyword);
     }
 
-    /** Get the <CODE>int</CODE> value associated with the given key.
-     * @param keyword  The header key.
+    /**
+     * Get the <CODE>int</CODE> value associated with the given key.
+     *
+     * @param keyword The header key.
      * @return The associated value.
      * @throws JWcsError when the keyword is not found
-     */     
+     */
     @Override
     public int getValueAsInt(final String keyword) {
         final String result = getValueAsString(keyword);
-        if(result == null) {
-            throw new JWcsError(keyword+" not found");
+        if (result == null) {
+            throw new JWcsError(keyword + " not found");
         } else {
             return Integer.valueOf(result);
-        }       
+        }
     }
 
-    /** Get the <CODE>double</CODE> value associated with the given key.
-     * @param keyword  The header key.
+    /**
+     * Get the <CODE>double</CODE> value associated with the given key.
+     *
+     * @param keyword The header key.
      * @return The associated value.
      * @throws JWcsError when the keyword is not found
-     */     
+     */
     @Override
     public double getValueAsDouble(final String keyword) {
         final String result = getValueAsString(keyword);
-        if(result == null) {
-            throw new JWcsError(keyword+" not found");
+        if (result == null) {
+            throw new JWcsError(keyword + " not found");
         } else {
             return Double.valueOf(result);
         }
     }
-    
-    /** Get the <CODE>float</CODE> value associated with the given key.
-     * @param keyword  The header key.
+
+    /**
+     * Get the <CODE>float</CODE> value associated with the given key.
+     *
+     * @param keyword The header key.
      * @return The associated value.
      * @throws JWcsError when the keyword is not found
-     */     
+     */
     @Override
     public float getValueAsFloat(final String keyword) {
         final String result = getValueAsString(keyword);
-        if(result == null) {
-            throw new JWcsError(keyword+" not found");
+        if (result == null) {
+            throw new JWcsError(keyword + " not found");
         } else {
             return Float.valueOf(result);
         }
-    }    
+    }
 
-    /** Get the <CODE>String</CODE> value associated with the given key.
-     * @param keyword  The header key.
+    /**
+     * Get the <CODE>String</CODE> value associated with the given key.
+     *
+     * @param keyword The header key.
      * @return The associated value or null when the keyword is not found
-     */     
+     */
     @Override
     public String getValueAsString(final String keyword) {
         return (String) this.getKeywords().getOrDefault(keyword, null);
@@ -128,6 +137,7 @@ public class JWcsMap extends JWcs {
 
     /**
      * Returns all the keywords.
+     *
      * @return the keywords
      */
     public Map getKeywords() {
@@ -136,14 +146,16 @@ public class JWcsMap extends JWcs {
 
     /**
      * Sets the whole map.
+     *
      * @param keywords the keywords to set
      */
     private void setKeywords(final Map keywords) {
         this.keywords = keywords;
-    }  
-    
+    }
+
     /**
      * Gets a projection based on a projection code.
+     *
      * @param projectionCode projection code
      * @return Returns a JWcs projection
      * @throws JWcsException When a JWcsException happens
@@ -166,7 +178,7 @@ public class JWcsMap extends JWcs {
                 case "BON":
                     wcsKeywords.put(JWcs.PV21, "45");
                     wcsKeywords.put(JWcs.CRVAL2, "0");
-                    break;                    
+                    break;
                 case "SZP":
                     wcsKeywords.put(JWcs.CRVAL2, "0");
                     wcsKeywords.put(JWcs.PV21, "2");
@@ -179,7 +191,7 @@ public class JWcsMap extends JWcs {
                 case "CYP":
                     wcsKeywords.put(JWcs.CRVAL2, "0");
                     wcsKeywords.put(JWcs.PV21, "1");
-                    wcsKeywords.put(JWcs.PV22, String.valueOf(Math.sqrt(2)*0.5));
+                    wcsKeywords.put(JWcs.PV22, String.valueOf(Math.sqrt(2) * 0.5));
                     break;
                 case "COP":
                     wcsKeywords.put(JWcs.CRVAL2, "90");
@@ -236,40 +248,49 @@ public class JWcsMap extends JWcs {
         wcs.doInit();
         return wcs;
     }
-    
+
+    /**
+     * Returns True when all required WCS keywords are there otherwise False.
+     *
+     * @return True when all required WCS keywords are there otherwise False
+     */
+    private boolean hasRequiredWcs() {
+        final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
+        final boolean hasCd = hasCd() || hasOldCd;
+        return this.hasKeyword(CTYPE1) && this.hasKeyword(CTYPE2)
+                && this.hasKeyword(CRPIX1) && this.hasKeyword(CRPIX2)
+                && this.hasKeyword(CRVAL1) && this.hasKeyword(CRVAL2)
+                && hasCd;
+    }
+
     @Override
-    protected void checkWcs() throws JWcsException {    
-       final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
-       final boolean hasCd = hasCd() || hasOldCd;
-       if(this.hasKeyword(CTYPE1) && this.hasKeyword(CTYPE2) 
-               && this.hasKeyword(CRPIX1) && this.hasKeyword(CRPIX2)
-               && this.hasKeyword(CRVAL1) && this.hasKeyword(CRVAL2)
-               && hasCd) {
-               // do nothing
-       } else {
-           final List<String> check = new ArrayList();
-           if(!hasCd) {
-               check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
-           }
-           if(!this.hasKeyword(CTYPE1)) {
-               check.add(CTYPE1+" is missing");
-           }
-           if(!this.hasKeyword(CTYPE2)) {
-               check.add(CTYPE2+" is missing");
-           }           
-           if(!this.hasKeyword(CRPIX1)) {
-               check.add(CRPIX1+" is missing");
-           }
-           if(!this.hasKeyword(CRPIX2)) {
-               check.add(CRPIX2+" is missing");
-           }
-           if(!this.hasKeyword(CRVAL1)) {
-               check.add(CRVAL1+" is missing");
-           }
-           if(!this.hasKeyword(CRVAL2)) {
-               check.add(CRVAL2+" is missing");
-           }           
-           throw new JWcsException(check.toString());
-       }
+    protected void checkWcs() throws JWcsException {
+        if(!hasRequiredWcs()) {
+            final List<String> check = new ArrayList();
+            final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
+            final boolean hasCd = hasCd() || hasOldCd;            
+            if (!hasCd) {
+                check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
+            }
+            if (!this.hasKeyword(CTYPE1)) {
+                check.add(CTYPE1 + " is missing");
+            }
+            if (!this.hasKeyword(CTYPE2)) {
+                check.add(CTYPE2 + " is missing");
+            }
+            if (!this.hasKeyword(CRPIX1)) {
+                check.add(CRPIX1 + " is missing");
+            }
+            if (!this.hasKeyword(CRPIX2)) {
+                check.add(CRPIX2 + " is missing");
+            }
+            if (!this.hasKeyword(CRVAL1)) {
+                check.add(CRVAL1 + " is missing");
+            }
+            if (!this.hasKeyword(CRVAL2)) {
+                check.add(CRVAL2 + " is missing");
+            }
+            throw new JWcsException(check.toString());
+        }
     }
 }

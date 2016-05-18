@@ -189,13 +189,12 @@ public class SZP extends ZenithalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
-        final double phiCorrect = phiRange(phi);
         final double denom = zp - (1 - Math.sin(theta));
         if (NumericalUtils.equal(denom, 0)) {
             throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
-        final double x = (zp * Math.cos(theta) * Math.sin(phiCorrect) - xp * (1 - Math.sin(theta)))/denom;
-        final double y = -(zp * Math.cos(theta) * Math.cos(phiCorrect) + yp * (1 - Math.sin(theta)))/denom;
+        final double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
+        final double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                        
         return coord;

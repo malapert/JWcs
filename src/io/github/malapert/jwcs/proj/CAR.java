@@ -68,8 +68,7 @@ public class CAR extends CylindricalProjection{
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
-        final double phiCorrect = phiRange(phi);
-        final double x = Math.toDegrees(phiCorrect);
+        final double x = Math.toDegrees(phi);
         final double y = Math.toDegrees(theta);
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        

@@ -78,8 +78,7 @@ public class MER extends CylindricalProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException  {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
-        final double phiCorrect = phiRange(phi);
-        final double x = phiCorrect;
+        final double x = phi;
         if (NumericalUtils.equal(Math.abs(theta), HALF_PI)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));            
         }

@@ -89,11 +89,12 @@ public abstract class TimeUtils {
         // Tel 01 42 24 13 74
         // Valable pour les années négatives et positives mais pas pour les jours Juliens négatifs
         double jd = julianDate;
-        double z, f, a, b, c, d, e, m, aux;
+        double a;
+        double m;
         final Date date = new Date();
         jd += 0.5;
-        z = Math.floor(jd);
-        f = jd - z;
+        double z = Math.floor(jd);
+        double f = jd - z;
 
         if (z >= 2299161.0) {
             a = Math.floor((z - 1867216.25) / 36524.25);
@@ -102,17 +103,17 @@ public abstract class TimeUtils {
             a = z;
         }
 
-        b = a + 1524;
-        c = Math.floor((b - 122.1) / 365.25);
-        d = Math.floor(365.25 * c);
-        e = Math.floor((b - d) / 30.6001);
-        aux = b - d - Math.floor(30.6001 * e) + f;
+        double b = a + 1524;
+        double c = Math.floor((b - 122.1) / 365.25);
+        double d = Math.floor(365.25 * c);
+        double e = Math.floor((b - d) / 30.6001);
+        double aux = b - d - Math.floor(30.6001 * e) + f;
         final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, (int) aux);
 
         final double hhd = aux - calendar.get(Calendar.DAY_OF_MONTH);
-        aux = ((aux - calendar.get(Calendar.DAY_OF_MONTH)) * 24);
+        aux = (aux - calendar.get(Calendar.DAY_OF_MONTH)) * 24;
 
         calendar.set(Calendar.HOUR_OF_DAY, (int) aux);
         calendar.set(Calendar.MINUTE, (int) ((aux - calendar.get(Calendar.HOUR_OF_DAY)) * 60));
@@ -184,7 +185,7 @@ public abstract class TimeUtils {
 
         final double extra = 100.0 * year + month - 190002.5;
         return 367.0 * year
-                - (Math.floor(7.0 * (year + Math.floor((month + 9.0) / 12.0)) / 4.0))
+                - Math.floor(7.0 * (year + Math.floor((month + 9.0) / 12.0)) / 4.0)
                 + Math.floor((275.0 * month) / 9.0)
                 + day + ((hour + ((minute + (second / 60.0)) / 60.0)) / 24.0)
                 + 1721013.5 - ((0.5 * extra) / Math.abs(extra)) + 0.5;
@@ -247,20 +248,22 @@ public abstract class TimeUtils {
         double rjd;
         switch (epochPrefix) {
             case "B":
-            case "-B":
                 b = Double.valueOf(epochValue);
-                if (epochPrefix.equals("-B")) {
-                    b *= -1.0;
-                }
+                jd = convertEpochBessel2JD(b);
+                j = convertJD2epochJulian(jd);
+                break;                
+            case "-B":
+                b = -Double.valueOf(epochValue);
                 jd = convertEpochBessel2JD(b);
                 j = convertJD2epochJulian(jd);
                 break;
             case "J":
-            case "-J":
                 j = Double.valueOf(epochValue);
-                if (epochPrefix.equals("-J")) {
-                    j *= -1.0;
-                }
+                jd = convertEpochJulian2JD(j);
+                b = convertJD2epochBessel(jd);
+                break;                
+            case "-J":
+                j = -Double.valueOf(epochValue);
                 jd = convertEpochJulian2JD(j);
                 b = convertJD2epochBessel(jd);
                 break;

@@ -204,9 +204,8 @@ public class AZP extends ZenithalProjection {
         } else {
             thetax = NumericalUtils.aasin(-mu);
         }
-        final double phiCorrect = phiRange(phi);
 
-        final double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phiCorrect) * Math.tan(gamma);
+        final double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
 
         if (NumericalUtils.equal(denom, 0) || theta < thetax) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = " + Math.toDegrees(theta));
@@ -214,8 +213,8 @@ public class AZP extends ZenithalProjection {
 
         double r = (mu + 1) * Math.cos(theta) / denom;        
         r = Math.toDegrees(r);
-        final double x = r * Math.sin(phiCorrect);
-        final double y = -r * Math.cos(phiCorrect) / Math.cos(gamma);
+        final double x = r * Math.sin(phi);
+        final double y = -r * Math.cos(phi) / Math.cos(gamma);
         final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         return pos;

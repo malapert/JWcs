@@ -98,7 +98,8 @@ public class SIN extends ZenithalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
-        final double phi, theta;
+        final double phi;
+        final double theta;
         if (NumericalUtils.equal(ksi, DEFAULT_VALUE) && NumericalUtils.equal(eta, DEFAULT_VALUE)) {
             final double r_theta = computeRadius(xr, yr);
             if(NumericalUtils.equal(r_theta, 1)) {
@@ -137,13 +138,12 @@ public class SIN extends ZenithalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                        
-        final double phiCorrect = phiRange(phi);
-        final double thetax = - Math.atan(ksi*Math.sin(phiCorrect)-eta*Math.cos(phiCorrect));
+        final double thetax = - Math.atan(ksi*Math.sin(phi)-eta*Math.cos(phi));
         if (theta < thetax) {
             throw new PixelBeyondProjectionException(this,"(phi,theta)=("+Math.toDegrees(phi)+","+Math.toDegrees(theta)+")");
         }
-        final double x = Math.toDegrees(Math.cos(theta) * Math.sin(phiCorrect) + ksi * (1 - Math.sin(theta)));
-        final double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phiCorrect) + eta * (1 - Math.sin(theta)));
+        final double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
+        final double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         return coord;

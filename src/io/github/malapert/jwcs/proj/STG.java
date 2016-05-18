@@ -78,10 +78,9 @@ public class STG extends ZenithalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                
-        final double phiCorrect = phiRange(phi);        
         final double r = 2 * Math.tan((HALF_PI-theta)*0.5d);
-        final double x = r * Math.sin(phiCorrect);
-        final double y = -r * Math.cos(phiCorrect);
+        final double x = r * Math.sin(phi);
+        final double y = -r * Math.cos(phi);
         final double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{pos[0],pos[1]});                                                                                                                                
         return pos;

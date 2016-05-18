@@ -249,7 +249,7 @@ public class Main {
                 final Header hdr = fits.getHDU(extension).getHeader();
                 final Cursor c = hdr.iterator();
                 while (c.hasNext()) {
-                    HeaderCard card = (HeaderCard) c.next();
+                    final HeaderCard card = (HeaderCard) c.next();
                     keyMap.put(card.getKey(), card.getValue());
                 }
             } catch (nom.tam.fits.FitsException | IOException ex) {
@@ -417,7 +417,7 @@ public class Main {
                 final Header hdr = fits.getHDU(extension).getHeader();
                 final Cursor c = hdr.iterator();
                 while (c.hasNext()) {
-                    HeaderCard card = (HeaderCard) c.next();
+                    final HeaderCard card = (HeaderCard) c.next();
                     keyMap.put(card.getKey(), card.getValue());
                 }
             } catch (nom.tam.fits.FitsException | IOException ex) {
@@ -455,7 +455,7 @@ public class Main {
         final Level levelInfo = Level.parse(levelArg.getOptarg());
         final Handler[] handlers = rootLogger.getHandlers();
         rootLogger.setLevel(levelInfo);
-        for (Handler h : handlers) {
+        for (final Handler h : handlers) {
             if (h instanceof FileHandler) {
                 h.setLevel(levelInfo);
             } else if (h instanceof ConsoleHandler) {

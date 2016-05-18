@@ -78,14 +78,13 @@ public class TAN extends ZenithalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {        
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                
-        final double phiCorrect = phiRange(phi);
         final double s = Math.sin(theta);
         if (NumericalUtils.equal(s, 0)) {
             throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
         final double r_theta = Math.cos(theta) / s;
-        final double x = computeX(r_theta, phiCorrect);
-        final double y = computeY(r_theta, phiCorrect);
+        final double x = computeX(r_theta, phi);
+        final double y = computeY(r_theta, phi);
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                
         return coord;

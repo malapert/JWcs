@@ -98,13 +98,12 @@ public class AIT extends CylindricalProjection {
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {         
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                
-        final double phiCorrect = phiRange(phi);         
-        final double d = 1 + Math.cos(theta) * Math.cos(phiCorrect * 0.5d);
+        final double d = 1 + Math.cos(theta) * Math.cos(phi * 0.5d);
         if (NumericalUtils.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + Math.toDegrees(phiCorrect) + ", " + Math.toDegrees(theta)+")");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + Math.toDegrees(phi) + ", " + Math.toDegrees(theta)+")");
         }
         final double gamma = Math.toDegrees(Math.sqrt(2.0d / d));        
-        final double x = 2 * gamma * Math.cos(theta) * Math.sin(phiCorrect * 0.5d);
+        final double x = 2 * gamma * Math.cos(theta) * Math.sin(phi * 0.5d);
         final double y = gamma * Math.sin(theta);
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        

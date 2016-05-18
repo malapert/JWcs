@@ -269,7 +269,8 @@ public abstract class Projection {
         final double dec_p = getCoordNativePole()[1];
         LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(ra_p),Math.toDegrees(dec_p)});                
         
-        final double phi, theta;
+        final double phi;
+        final double theta;
         if (NumericalUtils.equal(dec_p, HALF_PI)) {
             phi = Math.PI + getPhip() + ra - ra_p;
             theta = dec;
@@ -466,8 +467,9 @@ public abstract class Projection {
      * an error happens while the projection
      */
     public double[] wcs2projectionPlane(final double ra, final double dec) throws ProjectionException {
-        final double raCorrect = NumericalUtils.normalizeLongitude(ra);
-        final double[] nativeSpherical = computeNativeSpherical(raCorrect, dec);
+        final double raFixed = NumericalUtils.normalizeLongitude(ra);
+        double[] nativeSpherical = computeNativeSpherical(raFixed, dec);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
         return projectInverse(nativeSpherical[0], nativeSpherical[1]);
     }
 

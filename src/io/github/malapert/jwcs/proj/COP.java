@@ -97,11 +97,10 @@ public class COP extends ConicProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
-        final double phiCorrect = phiRange(phi);
         final double y0 = Math.cos(getEta()) / Math.tan(getThetaA());
         final double r_theta = y0 - Math.cos(getEta()) * Math.tan(theta - getThetaA());
-        final double x = computeX(phiCorrect, r_theta, c);
-        final double y = computeY(phiCorrect, r_theta, c, y0);
+        final double x = computeX(phi, r_theta, c);
+        final double y = computeY(phi, r_theta, c, y0);
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                        
         return coord;
@@ -118,7 +117,7 @@ public class COP extends ConicProjection {
     }
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{Math.toDegrees(lon),Math.toDegrees(lat),super.inside(lon, lat)});        
         return super.inside(lon, lat);
     }

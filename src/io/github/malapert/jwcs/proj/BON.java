@@ -100,14 +100,13 @@ public class BON extends PolyConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                        
         double[] result;
         if (sfl == null) {
-            final double phiCorrect = phiRange(phi);
             final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
             final double r_theta = y0 - theta;
             final double aphi;
             if (NumericalUtils.equal(r_theta, 0)) {
                 aphi=0;
             } else {
-                aphi = phiCorrect * Math.cos(theta) / r_theta;
+                aphi = phi * Math.cos(theta) / r_theta;
             }
             final double x = r_theta * Math.sin(aphi);
             final double y = -r_theta * Math.cos(aphi) + y0;
