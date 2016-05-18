@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0 
  */
-public class WcsNumericalMap extends JWcs {
+public class WcsNumericalMap extends AbstractJWcs {
 
     private Map keywords;
 
@@ -41,7 +41,7 @@ public class WcsNumericalMap extends JWcs {
     }
 
     /**
-     * Creates JWcs based on a map.
+     * Creates AbstractJWcs based on a map.
      * @param keywords map of keywords
      */
     public WcsNumericalMap(final Map keywords) {

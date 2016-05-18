@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
@@ -39,12 +39,12 @@ public class CEA extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Cylindrical equal area";
+    private final static String NAME_PROJECTION = "Cylindrical equal area";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03BB=%s";
+    private final static String DESCRIPTION = "\u03BB=%s";
 
     /**
      * \u03BB Scaling parameter.
@@ -54,7 +54,7 @@ public class CEA extends CylindricalProjection {
     /**
      * Default value for \u03BB.
      */
-    private static final int DEFAULT_VALUE = 1;
+    private final static int DEFAULT_VALUE = 1;
 
     /**
      * Constructs a CEA based on the celestial longitude and latitude of the
@@ -150,7 +150,7 @@ public class CEA extends CylindricalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("lambda", JWcs.PV21, new double[]{0, 1}, 1);
+        final ProjectionParameter p1 = new ProjectionParameter("lambda", AbstractJWcs.PV21, new double[]{0, 1}, 1);
         return new ProjectionParameter[]{p1};        
     }    
 

@@ -23,7 +23,7 @@ import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
-import io.github.malapert.jwcs.coordsystem.Crs;
+import io.github.malapert.jwcs.coordsystem.AbstractCrs;
 import io.github.malapert.jwcs.proj.Projection;
 import io.github.malapert.jwcs.proj.Projection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.SZP;
@@ -67,202 +67,202 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class JWcs implements JWcsKeyProvider {
+public abstract class AbstractJWcs implements JWcsKeyProvider {
 
     /**
      * Maximum longitude value in degrees.
      */
-    public static final int MAX_LONGITUDE = 360;
+    public final static int MAX_LONGITUDE = 360;
 
     /**
      * Minimum longitude value in degrees.
      */
-    public static final int MIN_LONGITUDE = 0;
+    public final static int MIN_LONGITUDE = 0;
 
     /**
      * Minimum latitude value in degrees.
      */
-    public static final int MIN_LATITUDE = -90;
+    public final static int MIN_LATITUDE = -90;
 
     /**
      * Maximum latitude value in degrees.
      */
-    public static final int MAX_LATITUDE = 90;
+    public final static int MAX_LATITUDE = 90;
 
     /**
      * Number of axes. 2 for an image
      */
-    public static final String NAXIS = "NAXIS";
+    public final static String NAXIS = "NAXIS";
     /**
      * Number of pixels along X axis.
      */
-    public static final String NAXIS1 = "NAXIS1";
+    public final static String NAXIS1 = "NAXIS1";
     /**
      * Number of pixels along Y axis.
      */
-    public static final String NAXIS2 = "NAXIS2";
+    public final static String NAXIS2 = "NAXIS2";
     /**
      * Reference along X axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public static final String CRPIX1 = "CRPIX1";
+    public final static String CRPIX1 = "CRPIX1";
     /**
      * Reference along Y axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public static final String CRPIX2 = "CRPIX2";
+    public final static String CRPIX2 = "CRPIX2";
     /**
      * Reference along longitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public static final String CRVAL1 = "CRVAL1";
+    public final static String CRVAL1 = "CRVAL1";
     /**
      * Reference along latitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public static final String CRVAL2 = "CRVAL2";
+    public final static String CRVAL2 = "CRVAL2";
     /**
      * Projection type along X axis. This keyword is required for projection
      * computation.
      */
-    public static final String CTYPE1 = "CTYPE1";
+    public final static String CTYPE1 = "CTYPE1";
     /**
      * Projection type along Y axis. This keyword is required for projection
      * computation.
      */
-    protected static final String CTYPE2 = "CTYPE2";
+    protected final static String CTYPE2 = "CTYPE2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD11 = "CD1_1";
+    public final static String CD11 = "CD1_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD12 = "CD1_2";
+    public final static String CD12 = "CD1_2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD21 = "CD2_1";
+    public final static String CD21 = "CD2_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public static final String CD22 = "CD2_2";
+    public final static String CD22 = "CD2_2";
     /**
      * Unit along X axis.
      */
-    public static final String CUNIT1 = "CUNIT1";
+    public final static String CUNIT1 = "CUNIT1";
     /**
      * Unit along Y axis.
      */
-    public static final String CUNIT2 = "CUNIT2";
+    public final static String CUNIT2 = "CUNIT2";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CDELT1 = "CDELT1";
+    public final static String CDELT1 = "CDELT1";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CDELT2 = "CDELT2";
+    public final static String CDELT2 = "CDELT2";
     /**
      * For projection computation, information about scale and rotation are
      * needed. Either the CD matrix is provided or the following element
      * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public static final String CROTA2 = "CROTA2";
+    public final static String CROTA2 = "CROTA2";
     /**
      * Equinox value.
      */
-    public static final String EQUINOX = "EQUINOX";
+    public final static String EQUINOX = "EQUINOX";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC11 = "PC1_1";
+    public final static String PC11 = "PC1_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC12 = "PC1_2";
+    public final static String PC12 = "PC1_2";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC21 = "PC2_1";
+    public final static String PC21 = "PC2_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public static final String PC22 = "PC2_2";
+    public final static String PC22 = "PC2_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV11 = "PV1_1";
+    public final static String PV11 = "PV1_1";
     /**
      * Deformation matrix.
      */
-    public static final String PV12 = "PV1_2";
+    public final static String PV12 = "PV1_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV13 = "PV1_3";
+    public final static String PV13 = "PV1_3";
     /**
      * Deformation matrix.
      */
-    public static final String PV14 = "PV1_4";
+    public final static String PV14 = "PV1_4";
     /**
      * Deformation matrix.
      */
-    public static final String PV20 = "PV2_0";
+    public final static String PV20 = "PV2_0";
     /**
      * Deformation matrix.
      */
-    public static final String PV21 = "PV2_1";
+    public final static String PV21 = "PV2_1";
     /**
      * Deformation matrix.
      */
-    public static final String PV22 = "PV2_2";
+    public final static String PV22 = "PV2_2";
     /**
      * Deformation matrix.
      */
-    public static final String PV23 = "PV2_3";
+    public final static String PV23 = "PV2_3";
     /**
      * lontpole.
      */
-    public static final String LONPOLE = "LONPOLE";
+    public final static String LONPOLE = "LONPOLE";
     /**
      * latpole.
      */
-    public static final String LATPOLE = "LATPOLE";
+    public final static String LATPOLE = "LATPOLE";
     /**
      * Reference system.
      */
-    public static final String RADESYS = "RADESYS";
+    public final static String RADESYS = "RADESYS";
 
     /**
      * Projection object.
@@ -282,13 +282,12 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * LOG.
      */
-    protected static final Logger LOG = Logger.getLogger(JWcs.class.getName());
+    protected final static Logger LOG = Logger.getLogger(AbstractJWcs.class.getName());
 
     /**
      * Initialize the WCS Object.
      *
-     * <p>
-     * The WCS object is initialized by doing the following steps:
+     * <p>The WCS object is initialized by doing the following steps:
      * <ul>
      * <li>creates the projection</li>
      * <li>creates the CD matrix</li>
@@ -296,8 +295,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * <li>checks the WCS</li>
      * </ul>
      *
-     * @throws io.github.malapert.jwcs.proj.exception.JWcsException When WCS is
-     * not valid
+     * @throws JWcsException When WCS is not valid
      */
     protected final void init() throws JWcsException {
         checkWcs();
@@ -308,9 +306,6 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Checks WCS keywords.
-     * <p>
-     * Raises an exception when a problem is detected.
-     * </p>
      *
      * @throws JWcsException When WCS is not valid
      */
@@ -325,7 +320,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return True when the Header is valid otherwise False.
      */
     public static boolean isValidWcs(final Header hdr) {
-        final JWcs wcs = new JWcsFits(hdr);
+        final AbstractJWcs wcs = new JWcsFits(hdr);
         boolean result;
         try {
             wcs.checkWcs();
@@ -338,8 +333,8 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Returns the modified Julian date.
-     * <p>
-     * Returns the value of the MJD-OBS keyword when it is present otherwise
+     * 
+     * <p>Returns the value of the MJD-OBS keyword when it is present otherwise
      * returns the value of the DATE-OBS and convert it on the modified Julian
      * date.
      *
@@ -364,8 +359,8 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Returns the reference system.
-     * <p>
-     * To find the reference system, the algorithm proceed as it:
+     * 
+     * <p>To find the reference system, the algorithm proceed as it:
      * <ul>
      * <li>Gets the RADESYS value when the keyword is found
      * <li>Otherwise gets the EQUINOX value when the keyword is found and select
@@ -394,7 +389,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Creates a FK4 or FK5 coordinate reference frame depending on the equinox.
      *
-     * Create a FK4 coordinate reference frame with a Besselian epoch of equinox
+     * <p>Create a FK4 coordinate reference frame with a Besselian epoch of equinox
      * and a Modified Julian date as epoch of observation when equinox is
      * smaller then 1984. Otherwise, a FK5 coordinate refrence frame is created
      * based on a Julian date as epoch of observation.
@@ -493,14 +488,14 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Returns the coordinate reference system.
-     * <p>
-     * The coordinate reference system is found according to the CTYPE1 keyword.
+     * 
+     * <p>The coordinate reference system is found according to the CTYPE1 keyword.
      *
      * @return the coordinate reference system
      * @throws JWcsError The coordinate reference system is not supported
      */
-    public Crs getCrs() {
-        final Crs crs;
+    public AbstractCrs getCrs() {
+        final AbstractCrs crs;
         if (hasKeyword("CTYPE1")) {
             String ctype1 = getValueAsString("CTYPE1");
             ctype1 = ctype1.substring(0, ctype1.indexOf('-'));
@@ -522,8 +517,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @return a coordinate reference system
      * @throws JWcsError the CRS is not supported
      */
-    private Crs coordinateReferenceSystemFactory(final String ctype, final CoordinateReferenceFrame refSystem) {
-        final Crs crs;
+    private AbstractCrs coordinateReferenceSystemFactory(final String ctype, final CoordinateReferenceFrame refSystem) {
+        final AbstractCrs crs;
         switch (ctype) {
             case "RA":
             case "DEC":
@@ -549,8 +544,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param refSystem the coordinate reference frame
      * @return the equatorial coordinate reference system
      */
-    private Crs createEquatorial(final CoordinateReferenceFrame refSystem) {
-        final Crs crs = new Equatorial();
+    private AbstractCrs createEquatorial(final CoordinateReferenceFrame refSystem) {
+        final AbstractCrs crs = new Equatorial();
         if (refSystem != null) {
             crs.setCoordinateReferenceFrame(refSystem);
         }
@@ -563,8 +558,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param refSystem the coordinate reference frame
      * @return the ecliptic coordinate reference system
      */
-    private Crs createEcliptic(final CoordinateReferenceFrame refSystem) {
-        final Crs crs = new Ecliptic();
+    private AbstractCrs createEcliptic(final CoordinateReferenceFrame refSystem) {
+        final AbstractCrs crs = new Ecliptic();
         if (refSystem != null) {
             crs.setCoordinateReferenceFrame(refSystem);
         }
@@ -600,8 +595,8 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Returns the projection family.
-     * <p>
-     * The supported projection families are the following:
+     * 
+     * <p>The supported projection families are the following:
      * <ul>
      * <li>{@link io.github.malapert.jwcs.proj.CylindricalProjection}</li>
      * <li>{@link io.github.malapert.jwcs.proj.ConicProjection}</li>
@@ -627,7 +622,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Computes CD matrix from CDELT[] and CROTA.
      *
-     * The computation is realized as follows:
+     * <p>The computation is realized as follows:
      * <pre>
      *   cos0 = cos(crota)
      *   sin0 = sin(crota)
@@ -641,7 +636,7 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @param crota rotation
      * @return the cd matrix as array
      */
-    protected static final double[][] computeCdFromCdelt(final double[] cdelt, final double crota) {
+    protected final static double[][] computeCdFromCdelt(final double[] cdelt, final double crota) {
         final double cos0 = Math.cos(Math.toRadians(crota));
         final double sin0 = Math.sin(Math.toRadians(crota));
         final double cd11 = cdelt[0] * cos0;
@@ -672,10 +667,9 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates the CD matrix.
-     * <p>
-     * The CD matrix is created by reading CD matrix or by computing the CD
+     * 
+     * <p>The CD matrix is created by reading CD matrix or by computing the CD
      * matrix from the CDELT and CROTA.
-     * </p>
      *
      * @return the CD matrix
      */
@@ -708,13 +702,13 @@ public abstract class JWcs implements JWcsKeyProvider {
             result = this.getValueAsDouble("CD" + i + "_" + j);
         } else if (hasKeyword(CROTA2)) {
             final double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
-            final double[][] cdTmp = JWcs.computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
+            final double[][] cdTmp = AbstractJWcs.computeCdFromCdelt(cdelt, getValueAsDouble(CROTA2));
             result = cdTmp[i - 1][j - 1];
         } else if (hasKeyword(PC11)) {
             final double[][] pc = new double[][]{{getValueAsDouble(PC11), getValueAsDouble(PC12)},
             {getValueAsDouble(PC21), getValueAsDouble(PC22)}};
             final double[] cdelt = new double[]{getValueAsDouble(CDELT1), getValueAsDouble(CDELT2)};
-            final double[][] cdTmp = JWcs.pc2cd(pc, cdelt);
+            final double[][] cdTmp = AbstractJWcs.pc2cd(pc, cdelt);
             result = cdTmp[i - 1][j - 1];
         } else {
             throw new JWcsError("cd" + i + j + " not found");
@@ -862,9 +856,7 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates the projection by reading CTYPE1.
-     * <p>
-     * Raises a JWcsError when no projection code is found.
-     *
+     * 
      * @return the projection
      * @throws BadProjectionParameterException when the projection parameter is
      * wrong
@@ -936,7 +928,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Creates dynamically a projection based on the projection code.
      * 
-     * No projection parameter is used to instantiate this class.
+     * <p>No projection parameter is used to instantiate this class.
      *
      * @param projectionCode projection to instantiate dynamically
      * @param cx scale factor along X
@@ -966,7 +958,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Creates dynamically a projection based on the projection code.
      * 
-     * projection parameters are used to instantiate this class.
+     * <p>projection parameters are used to instantiate this class.
      *
      * @param projectionCode projection to instantiate dynamically
      * @param cx scale factor along X
@@ -999,7 +991,7 @@ public abstract class JWcs implements JWcsKeyProvider {
     /**
      * Creates a projection.
      *
-     * Instantiates either projection with projection parameters when they are
+     * <p>Instantiates either projection with projection parameters when they are
      * available otherwise instantiates only the projection with no projection 
      * parameter.
      * 

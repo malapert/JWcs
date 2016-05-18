@@ -32,7 +32,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class Galactic extends Crs {
+public class Galactic extends AbstractCrs {
     /**
      * Name of this coordinate system.
      */
@@ -46,7 +46,7 @@ public class Galactic extends Crs {
      * @throws JWcsError Unknown output crs
      */    
     @Override
-    protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
+    protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {

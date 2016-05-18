@@ -35,12 +35,12 @@ public class ConverterTest {
     /**
      *
      */
-    protected Crs source;
+    protected AbstractCrs source;
 
     /**
      *
      */
-    protected Crs target;
+    protected AbstractCrs target;
 
     /**
      *
@@ -74,7 +74,7 @@ public class ConverterTest {
      * @param target
      * @throws JWcsException
      */
-    public ConverterTest(Crs source, Crs target) throws JWcsException {
+    public ConverterTest(AbstractCrs source, AbstractCrs target) throws JWcsException {
         this(source, target, TOLERANCE);
     }
 
@@ -85,7 +85,7 @@ public class ConverterTest {
      * @param tolerance
      * @throws JWcsException
      */
-    public ConverterTest(Crs source, Crs target, double tolerance) throws JWcsException {
+    public ConverterTest(AbstractCrs source, AbstractCrs target, double tolerance) throws JWcsException {
         this.source = source;
         this.target = target;
         this.tolerance = tolerance;

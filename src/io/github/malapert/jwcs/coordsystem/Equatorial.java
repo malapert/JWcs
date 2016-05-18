@@ -32,7 +32,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class Equatorial extends Crs implements CoordinateReferenceFrame {
+public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame {
 
     /**
      * This coordinate system name.
@@ -61,7 +61,7 @@ public class Equatorial extends Crs implements CoordinateReferenceFrame {
     }
    
     @Override
-    protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
+    protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {

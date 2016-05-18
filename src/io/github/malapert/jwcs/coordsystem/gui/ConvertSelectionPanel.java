@@ -26,8 +26,8 @@ import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.J2000;
 import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.Crs;
-import io.github.malapert.jwcs.coordsystem.Crs.CoordinateSystem;
+import io.github.malapert.jwcs.coordsystem.AbstractCrs;
+import io.github.malapert.jwcs.coordsystem.AbstractCrs.CoordinateSystem;
 import io.github.malapert.jwcs.coordsystem.SuperGalactic;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
@@ -43,7 +43,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
  */
 public class ConvertSelectionPanel extends javax.swing.JPanel {
     
-    private static final String DEFAULT_PRECISION = "%.10f";
+    private final static String DEFAULT_PRECISION = "%.10f";
     
     private String precision = DEFAULT_PRECISION;
 
@@ -584,7 +584,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
             String epoch = (originEpoch.isEnabled()) ? originEpoch.getText() : null;
             originRefFrame = createReferenceFrame(ReferenceFrame.valueOfByName(refFrameName), equinox, epoch);
         }
-        Crs originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
+        AbstractCrs originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
 
         String targetSkySystemName = targetSkySystem.getSelectedItem().toString();
         CoordinateSystem targetSkySystemC = CoordinateSystem.valueOfByName(targetSkySystemName);
@@ -595,7 +595,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
             String epoch = (targetEpoch.isEnabled()) ? targetEpoch.getText() : null;
             targetRefFrame = createReferenceFrame(ReferenceFrame.valueOfByName(refFrameName), equinox, epoch);
         }
-        Crs tgetSkySystem = createSkySystem(targetSkySystemC, targetRefFrame);
+        AbstractCrs tgetSkySystem = createSkySystem(targetSkySystemC, targetRefFrame);
 
         double longitude = Double.valueOf(originLong.getText());
         double latitude = Double.valueOf(originLat.getText());
@@ -642,8 +642,8 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         return result;
     }
 
-    private Crs createSkySystem(CoordinateSystem name, CoordinateReferenceFrame refFrame) {
-        Crs result;
+    private AbstractCrs createSkySystem(CoordinateSystem name, CoordinateReferenceFrame refFrame) {
+        AbstractCrs result;
         switch (name) {
             case ECLIPTIC:
                 result = new Ecliptic(refFrame);

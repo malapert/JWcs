@@ -35,13 +35,13 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     /**
      * Logger.
      */
-    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
-    private static final long serialVersionUID = 5367008551020527277L;
+    protected final static Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
+    private final static long serialVersionUID = 5367008551020527277L;
 
     /**
      * Countries border.
      */
-    private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
+    private final static String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
@@ -49,7 +49,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      */
     private List<MapLine> lines = new ArrayList();
     private final List<MapLine> linesFromClient = new ArrayList();
-    private static final int STEP_GRID = 5;
+    private final static int STEP_GRID = 5;
     private String previousNameProjection = "";
 
     /**
@@ -73,12 +73,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * @param wcs wcs object
      * @return list of latitude lines
      */
-    protected final List<MapLine> drawLatitudeLines(final JWcs wcs) {
+    protected final List<MapLine> drawLatitudeLines(final AbstractJWcs wcs) {
         List<MapLine> latitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
+        for (int lat = AbstractJWcs.MIN_LATITUDE; lat <= AbstractJWcs.MAX_LATITUDE; lat += STEP_GRID) {
             pos1[0] = Double.NaN;
-            for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
+            for (int lon = AbstractJWcs.MIN_LONGITUDE; lon <= AbstractJWcs.MAX_LONGITUDE; lon += STEP_GRID) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
@@ -109,12 +109,12 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      * @param wcs wcs object
      * @return list of latitude lines
      */
-    protected final List<MapLine> drawLongitudeLines(final JWcs wcs) {
+    protected final List<MapLine> drawLongitudeLines(final AbstractJWcs wcs) {
         List<MapLine> longitudes = new ArrayList<>();
         double[] pos1 = new double[2];
-        for (int lon = JWcs.MIN_LONGITUDE; lon <= JWcs.MAX_LONGITUDE; lon += STEP_GRID) {
+        for (int lon = AbstractJWcs.MIN_LONGITUDE; lon <= AbstractJWcs.MAX_LONGITUDE; lon += STEP_GRID) {
             pos1[0] = Double.NaN;
-            for (int lat = JWcs.MIN_LATITUDE; lat <= JWcs.MAX_LATITUDE; lat += STEP_GRID) {
+            for (int lat = AbstractJWcs.MIN_LATITUDE; lat <= AbstractJWcs.MAX_LATITUDE; lat += STEP_GRID) {
                 double[] pos2;
                 try {
                     if (wcs.inside(lon, lat)) {
@@ -140,7 +140,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         return longitudes;
     }
 
-    private List<MapLine> drawLines(JWcs wcs) {
+    private List<MapLine> drawLines(AbstractJWcs wcs) {
         if (this.linesFromClient.isEmpty()) {
             return new ArrayList<>();
         }
@@ -163,9 +163,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         return projectedLines;
     }
 
-    private JWcs init() throws JWcsException {
+    private AbstractJWcs init() throws JWcsException {
         String projName = (String) projectionComboBox.getSelectedItem();
-        JWcs wcs = JWcsMap.getProjection(projName);
+        AbstractJWcs wcs = JWcsMap.getProjection(projName);
         this.lines.clear();
         PV21_Slider.setVisible(false);
         PV21_label.setVisible(false);
@@ -179,7 +179,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         return wcs;
     }
 
-    private void computeGrid(JWcs wcs) {
+    private void computeGrid(AbstractJWcs wcs) {
         this.lines.addAll(drawLatitudeLines(wcs));
         this.lines.addAll(drawLongitudeLines(wcs));
         ///this.lines.addAll(drawLines(wcs));
@@ -286,16 +286,16 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
             }
             this.previousNameProjection = currentName;
-            jwcsMap.getKeywords().put(JWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
-            jwcsMap.getKeywords().put(JWcs.CRVAL2, String.valueOf(lat0Slider.getValue()));
+            jwcsMap.getKeywords().put(AbstractJWcs.CRVAL1, String.valueOf(lon0Slider.getValue()));
+            jwcsMap.getKeywords().put(AbstractJWcs.CRVAL2, String.valueOf(lat0Slider.getValue()));
             if (PV21_Slider.isVisible()) {
-                jwcsMap.getKeywords().put(JWcs.PV21, String.valueOf(PV21_Slider.getValue()));
+                jwcsMap.getKeywords().put(AbstractJWcs.PV21, String.valueOf(PV21_Slider.getValue()));
             }
             if (PV22_Slider.isVisible()) {
-                jwcsMap.getKeywords().put(JWcs.PV22, String.valueOf(PV22_Slider.getValue()));
+                jwcsMap.getKeywords().put(AbstractJWcs.PV22, String.valueOf(PV22_Slider.getValue()));
             }
             if (PV23_Slider.isVisible()) {
-                jwcsMap.getKeywords().put(JWcs.PV23, String.valueOf(PV23_Slider.getValue()));
+                jwcsMap.getKeywords().put(AbstractJWcs.PV23, String.valueOf(PV23_Slider.getValue()));
             }
             jwcsMap.doInit();
             computeGrid(jwcsMap);
@@ -352,7 +352,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      *
      * @param wcs The Projection that provides the information.
      */
-    private void updateProjectionInfo(JWcs wcs) {
+    private void updateProjectionInfo(AbstractJWcs wcs) {
         if (wcs == null) {
             descriptionLabel.setText("-");
         } else {

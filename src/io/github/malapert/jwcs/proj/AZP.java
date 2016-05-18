@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
@@ -44,12 +44,12 @@ public class AZP extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Zenithal perspective";
+    private final static String NAME_PROJECTION = "Zenithal perspective";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03BC=%s \u0263=%s";
+    private final static String DESCRIPTION = "\u03BC=%s \u0263=%s";
 
     /**
      * \u0263 is the angle between the camera's optical axis and the line to the center of the planet.
@@ -63,7 +63,7 @@ public class AZP extends ZenithalProjection {
     /**
      * Default value for \u0263 and \u03BC.
      */
-    private static final double DEFAULT_VALUE = 0;
+    private final static double DEFAULT_VALUE = 0;
 
     /**
      * Creates a new AZC projection based on the celestial longitude and
@@ -232,8 +232,8 @@ public class AZP extends ZenithalProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("gamma", JWcs.PV22, new double[]{0, 360}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("mu", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("gamma", AbstractJWcs.PV22, new double[]{0, 360}, 0);
         return new ProjectionParameter[]{p1,p2};        
     }
 }

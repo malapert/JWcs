@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class JWcsMap extends JWcs {
+public class JWcsMap extends AbstractJWcs {
 
     private Map keywords;
 
@@ -45,7 +45,7 @@ public class JWcsMap extends JWcs {
     }
 
     /**
-     * Creates a JWcs bases on a map.
+     * Creates a AbstractJWcs bases on a map.
      *
      * @param keywords map of keywords
      */
@@ -157,75 +157,75 @@ public class JWcsMap extends JWcs {
      * Gets a projection based on a projection code.
      *
      * @param projectionCode projection code
-     * @return Returns a JWcs projection
+     * @return Returns a AbstractJWcs projection
      * @throws JWcsException When a JWcsException happens
      */
-    public static JWcs getProjection(final String projectionCode) throws JWcsException {
+    public static AbstractJWcs getProjection(final String projectionCode) throws JWcsException {
         final Map wcsKeywords = new HashMap();
-        wcsKeywords.put(JWcs.NAXIS, "2");
-        wcsKeywords.put(JWcs.NAXIS1, "600");
-        wcsKeywords.put(JWcs.NAXIS2, "300");
-        wcsKeywords.put(JWcs.RADESYS, "ICRS");
-        wcsKeywords.put(JWcs.CRPIX1, "300");
-        wcsKeywords.put(JWcs.CRPIX2, "150");
-        wcsKeywords.put(JWcs.CRVAL1, "0");
+        wcsKeywords.put(AbstractJWcs.NAXIS, "2");
+        wcsKeywords.put(AbstractJWcs.NAXIS1, "600");
+        wcsKeywords.put(AbstractJWcs.NAXIS2, "300");
+        wcsKeywords.put(AbstractJWcs.RADESYS, "ICRS");
+        wcsKeywords.put(AbstractJWcs.CRPIX1, "300");
+        wcsKeywords.put(AbstractJWcs.CRPIX2, "150");
+        wcsKeywords.put(AbstractJWcs.CRVAL1, "0");
         if (null != projectionCode) {
             switch (projectionCode) {
                 case "ZEA":
                 case "TAN":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
                     break;
                 case "BON":
-                    wcsKeywords.put(JWcs.PV21, "45");
-                    wcsKeywords.put(JWcs.CRVAL2, "0");
+                    wcsKeywords.put(AbstractJWcs.PV21, "45");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
                     break;
                 case "SZP":
-                    wcsKeywords.put(JWcs.CRVAL2, "0");
-                    wcsKeywords.put(JWcs.PV21, "2");
-                    wcsKeywords.put(JWcs.PV22, "180");
-                    wcsKeywords.put(JWcs.PV23, "60");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
+                    wcsKeywords.put(AbstractJWcs.PV21, "2");
+                    wcsKeywords.put(AbstractJWcs.PV22, "180");
+                    wcsKeywords.put(AbstractJWcs.PV23, "60");
                     break;
                 case "STG":
-                    wcsKeywords.put(JWcs.CRVAL2, "-90");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "-90");
                     break;
                 case "CYP":
-                    wcsKeywords.put(JWcs.CRVAL2, "0");
-                    wcsKeywords.put(JWcs.PV21, "1");
-                    wcsKeywords.put(JWcs.PV22, String.valueOf(Math.sqrt(2) * 0.5));
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
+                    wcsKeywords.put(AbstractJWcs.PV21, "1");
+                    wcsKeywords.put(AbstractJWcs.PV22, String.valueOf(Math.sqrt(2) * 0.5));
                     break;
                 case "COP":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV21, "45");
-                    wcsKeywords.put(JWcs.PV22, "25");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.PV21, "45");
+                    wcsKeywords.put(AbstractJWcs.PV22, "25");
                     break;
                 case "COO":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV21, "45");
-                    wcsKeywords.put(JWcs.PV22, "25");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.PV21, "45");
+                    wcsKeywords.put(AbstractJWcs.PV22, "25");
                     break;
                 case "COE":
-                    wcsKeywords.put(JWcs.CRVAL2, "-90");
-                    wcsKeywords.put(JWcs.PV21, "-45");
-                    wcsKeywords.put(JWcs.PV22, "25");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "-90");
+                    wcsKeywords.put(AbstractJWcs.PV21, "-45");
+                    wcsKeywords.put(AbstractJWcs.PV22, "25");
                     break;
                 case "COD":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV21, "45");
-                    wcsKeywords.put(JWcs.PV22, "25");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.PV21, "45");
+                    wcsKeywords.put(AbstractJWcs.PV22, "25");
                     break;
                 case "AZP":
-                    wcsKeywords.put(JWcs.CRVAL2, "60");
-                    wcsKeywords.put(JWcs.PV21, "2");
-                    wcsKeywords.put(JWcs.PV22, "30");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "60");
+                    wcsKeywords.put(AbstractJWcs.PV21, "2");
+                    wcsKeywords.put(AbstractJWcs.PV22, "30");
                     break;
                 case "ARC":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
                     break;
                 case "ZPN":
-                    wcsKeywords.put(JWcs.CRVAL2, "90");
-                    wcsKeywords.put(JWcs.PV20, "0.050");
-                    wcsKeywords.put(JWcs.PV21, "0.975");
-                    wcsKeywords.put(JWcs.PV22, "-0.807");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
+                    wcsKeywords.put(AbstractJWcs.PV20, "0.050");
+                    wcsKeywords.put(AbstractJWcs.PV21, "0.975");
+                    wcsKeywords.put(AbstractJWcs.PV22, "-0.807");
                     wcsKeywords.put("PV2_3", "0.337");
                     wcsKeywords.put("PV2_4", "-0.065");
                     wcsKeywords.put("PV2_5", "0.010");
@@ -233,18 +233,18 @@ public class JWcsMap extends JWcs {
                     wcsKeywords.put("PV2_7", "-0.001");
                     break;
                 default:
-                    wcsKeywords.put(JWcs.CRVAL2, "0");
+                    wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
                     break;
             }
         }
 
-        wcsKeywords.put(JWcs.CD11, String.valueOf(180d / 300d));
-        wcsKeywords.put(JWcs.CD12, "0");
-        wcsKeywords.put(JWcs.CD21, "0");
-        wcsKeywords.put(JWcs.CD22, String.valueOf(90d / 150d));
-        wcsKeywords.put(JWcs.CTYPE1, "RA---" + projectionCode);
-        wcsKeywords.put(JWcs.CTYPE2, "DEC--" + projectionCode);
-        final JWcs wcs = new JWcsMap(wcsKeywords);
+        wcsKeywords.put(AbstractJWcs.CD11, String.valueOf(180d / 300d));
+        wcsKeywords.put(AbstractJWcs.CD12, "0");
+        wcsKeywords.put(AbstractJWcs.CD21, "0");
+        wcsKeywords.put(AbstractJWcs.CD22, String.valueOf(90d / 150d));
+        wcsKeywords.put(AbstractJWcs.CTYPE1, "RA---" + projectionCode);
+        wcsKeywords.put(AbstractJWcs.CTYPE2, "DEC--" + projectionCode);
+        final AbstractJWcs wcs = new JWcsMap(wcsKeywords);
         wcs.doInit();
         return wcs;
     }

@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs;
 
 import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.Crs;
+import io.github.malapert.jwcs.coordsystem.AbstractCrs;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.io.IOException;
 import java.net.URL;
@@ -34,10 +34,10 @@ import static org.junit.Assert.*;
  *
  * @author Jean-Christophe Malapert
  */
-public class JWcsTest {
+public class AbstractJWcsTest {
     
-    JWcs wcs;
-    JWcs wcs1;
+    AbstractJWcs wcs;
+    AbstractJWcs wcs1;
     
     /**
      *
@@ -45,7 +45,7 @@ public class JWcsTest {
      * @throws IOException
      * @throws JWcsException
      */
-    public JWcsTest() throws FitsException, IOException, JWcsException {
+    public AbstractJWcsTest() throws FitsException, IOException, JWcsException {
         wcs = new JWcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/WFPC2ASSNu5780205bx.fits")));
         wcs.doInit();
         wcs1 = new JWcsFits(new Fits(new URL("http://fits.gsfc.nasa.gov/samples/FOCx38i0101t_c0f.fits")), 0);
@@ -82,12 +82,12 @@ public class JWcsTest {
 
 
     /**
-     * Test of getCrs method, of class JWcs.
+     * Test of getCrs method, of class AbstractJWcs.
      */
     @Test
     public void testGetCrs() {
         System.out.println("getSkySystem");
-        Crs result = wcs.getCrs();
+        AbstractCrs result = wcs.getCrs();
         double equinox = ((Equatorial)result).getEquinox();
         Double epoch = ((Equatorial)result).getEpochObs();
         String refSystem = ((Equatorial)result).getCoordinateReferenceFrame().getReferenceFrame().name();       
@@ -111,7 +111,7 @@ public class JWcsTest {
     }
 
     /**
-     * Test of pix2wcs method, of class JWcs.
+     * Test of pix2wcs method, of class AbstractJWcs.
      * @throws java.lang.Exception
      */
     @Test
@@ -129,7 +129,7 @@ public class JWcsTest {
     }
 
     /**
-     * Test of getCenter method, of class JWcs.
+     * Test of getCenter method, of class AbstractJWcs.
      * @throws java.lang.Exception
      */
     @Test
@@ -141,7 +141,7 @@ public class JWcsTest {
     }
 
     /**
-     * Test of getFov method, of class JWcs.
+     * Test of getFov method, of class AbstractJWcs.
      * @throws java.lang.Exception
      */
     @Test

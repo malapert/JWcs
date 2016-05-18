@@ -26,7 +26,7 @@ import io.github.malapert.jwcs.proj.Projection;
  * an exception associated with use of a Projection object.
  */
 public class ProjectionException extends JWcsException {
-    private static final long serialVersionUID = 3428780035222139573L;
+    private final static long serialVersionUID = 3428780035222139573L;
     
     private final Projection projectionName;
 

@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
@@ -39,17 +39,17 @@ public class SIN extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Slant orthographic";
+    private final static String NAME_PROJECTION = "Slant orthographic";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u046F=%s \u03B7=%s";
+    private final static String DESCRIPTION = "\u046F=%s \u03B7=%s";
 
     /**
      * Default value.
      */
-    public static final double DEFAULT_VALUE = 0;
+    public final static double DEFAULT_VALUE = 0;
 
     /**
      * \u03BE is deFINERd as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
@@ -161,8 +161,8 @@ public class SIN extends ZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("ksi", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("ksi", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("eta", AbstractJWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
 }

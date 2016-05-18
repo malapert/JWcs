@@ -29,14 +29,14 @@ import nom.tam.fits.Header;
  * 
  * For example :
  * <pre>
- *  JWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
- *  double[] pos = wcs.pix2wcs(1, 1);
- * </pre>
+  AbstractJWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
+  double[] pos = wcs.pix2wcs(1, 1);
+ </pre>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class JWcsFits extends JWcs {
+public class JWcsFits extends AbstractJWcs {
 
     /**
      * The Header FITS that contains the WCS keyword.
@@ -62,7 +62,7 @@ public class JWcsFits extends JWcs {
     }
     
     /**
-     * Creates an instance of JWcs based on a part of the FITS file.
+     * Creates an instance of AbstractJWcs based on a part of the FITS file.
      * @param fits the FITS file
      * @param extension the extension number of the FITS file
      * @throws FitsException When an error happens when the FITS is handling

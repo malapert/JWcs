@@ -28,7 +28,7 @@ import io.github.malapert.jwcs.coordsystem.J2000;
 import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.FK5;
 import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.J2000;
 import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.Crs;
+import io.github.malapert.jwcs.coordsystem.AbstractCrs;
 import io.github.malapert.jwcs.coordsystem.gui.ConvertSelectionPanel;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
@@ -63,12 +63,12 @@ public class Main {
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    private final static Logger LOG = Logger.getLogger(Main.class.getName());
 
-    private static final int DEFAULT_EXTENSION = 0;
+    private final static int DEFAULT_EXTENSION = 0;
 
     /**
-     * List of programs
+     * List of programs.
      */
     private enum PROG {
 
@@ -397,10 +397,10 @@ public class Main {
      * Gets the coordinate reference system.
      *
      * @param crs the coordinate reference system name
-     * @return the Crs object
+     * @return the AbstractCrs object
      */
-    private static Crs getCrs(final String crs) {
-        final Crs result;
+    private static AbstractCrs getCrs(final String crs) {
+        final AbstractCrs result;
         if (hasReferenceFrame(crs)) {
             final String skySystemName = crs.substring(0, crs.indexOf('('));
             final String refFrameStr = extractReferenceFrame(crs);
@@ -408,7 +408,7 @@ public class Main {
             final CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             final String[] parameters = extractReferenceFrameParameter(refFrameStr);
             final CoordinateReferenceFrame refSystem = createReferenceFrameFactory(refFrame, parameters);
-            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(skySystemName));
+            result = AbstractCrs.createCrsFromCoordinateSystem(AbstractCrs.CoordinateSystem.valueOf(skySystemName));
             switch (result.getCoordinateSystem()) {
                 case EQUATORIAL:
                     ((Equatorial) result).setCoordinateReferenceFrame(refSystem);
@@ -420,7 +420,7 @@ public class Main {
                     throw new IllegalArgumentException("Unknown sky system");
             }
         } else {
-            result = Crs.createCrsFromCoordinateSystem(Crs.CoordinateSystem.valueOf(crs));
+            result = AbstractCrs.createCrsFromCoordinateSystem(AbstractCrs.CoordinateSystem.valueOf(crs));
         }
         return result;
     }
@@ -441,7 +441,7 @@ public class Main {
      */
     private static void convertFromCommandLine(final String pos, final String file, final String from, final String to, final int extension, final String precision) throws URISyntaxException, IOException, JWcsException {
         final Map<String, String> keyMap = new HashMap();
-        final Crs crsFrom;
+        final AbstractCrs crsFrom;
         if (file == null && from == null && to == null) {
             throw new IllegalArgumentException("Either --file argument or --from and --to arguments are required");
         } else if (file != null) {
@@ -472,7 +472,7 @@ public class Main {
         final double[] skyPos = Arrays.stream(pos.split(","))
                 .mapToDouble(Double::parseDouble)
                 .toArray();
-        final Crs crsTo = getCrs(crsTarget);
+        final AbstractCrs crsTo = getCrs(crsTarget);
         LOG.log(Level.INFO, "Executing convertTo(%s, %s,%s)", new Object[]{crsTo, skyPos[0], skyPos[1]});
         final SkyPosition skyPosition = crsFrom.convertTo(crsTo, skyPos[0], skyPos[1]);
         System.out.printf(precision + ", " + precision + "\n", skyPosition.getLongitude(), skyPosition.getLatitude());

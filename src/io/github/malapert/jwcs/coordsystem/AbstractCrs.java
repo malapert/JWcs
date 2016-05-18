@@ -33,11 +33,13 @@ import java.util.logging.Logger;
 import static io.github.malapert.jwcs.utility.NumericalUtils.equal;
 import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
 import org.apache.commons.math3.linear.RealMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtils.equal;
+import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
 
 /**
  * A Coordinate Reference System (crs) contains two different elements : 
- * the <b>coordinate reference frame</b> {@link Crs#getCoordinateReferenceFrame()}
- * and the <b>coordinate system</b> {@link Crs#getCoordinateSystem()} .
+ * the <b>coordinate reference frame</b> {@link AbstractCrs#getCoordinateReferenceFrame()}
+ * and the <b>coordinate system</b> {@link AbstractCrs#getCoordinateSystem()} .
  *
  * The coordinate reference frame defines how the CRS is related to the origin
  * (position and the date of the origin - equinox {@link CoordinateReferenceFrame#getEquinox()} , 
@@ -57,12 +59,12 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class Crs {
+public abstract class AbstractCrs {
 
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger(Crs.class.getName());
+    private final static Logger LOG = Logger.getLogger(AbstractCrs.class.getName());
 
     /**
      * List of supported CoordinateSystem. 
@@ -170,7 +172,7 @@ public abstract class Crs {
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */        
-    protected abstract RealMatrix getRotationMatrix(final Crs crs) throws JWcsError;
+    protected abstract RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError;
 
     /**
      * Returns the type of the coordinate system of the CRS.     
@@ -227,7 +229,7 @@ public abstract class Crs {
      * @param refFrame the output reference system
      * @return Eterms matrix
      */
-    protected final RealMatrix getEtermsOut(final Crs refFrame) {
+    protected final RealMatrix getEtermsOut(final AbstractCrs refFrame) {
         RealMatrix eterms = null;
         CoordinateReferenceFrame.ReferenceFrame refSystem;
         switch (refFrame.getCoordinateSystem()) {
@@ -279,7 +281,7 @@ public abstract class Crs {
      * Converts the (longitude, latitude) coordinates into the output coordinate
      * Reference System.
      *
-     * The method has been traduced from Python to JAVA.
+     * <p>The method has been traduced from Python to JAVA.
      *
      * @param crs the output coordinate Reference System
      * @param longitude longitude in decimal degrees
@@ -288,7 +290,7 @@ public abstract class Crs {
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */
-    public final SkyPosition convertTo(final Crs crs, final double longitude, final double latitude) {
+    public final SkyPosition convertTo(final AbstractCrs crs, final double longitude, final double latitude) {
         checkCoordinates(longitude, latitude);
         RealMatrix xyz = longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
@@ -324,7 +326,7 @@ public abstract class Crs {
      * @return an array of SkyPosition
      * @throws JWcsError coordinates should be an array containing a set of [longitude, latitude]
      */
-    public final SkyPosition[] convertTo(final Crs crs, final double[] coordinates) throws JWcsError {
+    public final SkyPosition[] convertTo(final AbstractCrs crs, final double[] coordinates) throws JWcsError {
         
         final int numberElts = coordinates.length;
         final int numberOfCoordinatesPerPoint = 3;
@@ -371,8 +373,8 @@ public abstract class Crs {
      * @param pos2 sky position in a coordinate Reference System
      * @return angular separation in decimal degrees.
      */
-    public static final double separation(final SkyPosition pos1, final SkyPosition pos2) {
-        final Crs crs = pos1.getCrs();
+    public final static double separation(final SkyPosition pos1, final SkyPosition pos2) {
+        final AbstractCrs crs = pos1.getCrs();
         final SkyPosition pos1InRefFramePos2 = crs.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
         final double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
         final double[] pos2XYZ = pos2.getCartesian();
@@ -393,8 +395,8 @@ public abstract class Crs {
      * @return the coordinate Reference System
      * @exception JWcsError coordinate system not supported
      */
-    public static final Crs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
-        Crs skySystem;
+    public final static AbstractCrs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
+        AbstractCrs skySystem;
         LOG.log(Level.INFO, "Get sky system {0}", new Object[]{coordinateSystem.name()});
         switch (coordinateSystem) {
             case ECLIPTIC:

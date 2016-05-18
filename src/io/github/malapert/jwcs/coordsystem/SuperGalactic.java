@@ -40,14 +40,14 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
  */
-public class SuperGalactic extends Crs {
+public class SuperGalactic extends AbstractCrs {
     /**
      * Name of this coordinate system.
      */
-    private static final CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;           
+    private final static CoordinateSystem SKY_NAME = CoordinateSystem.SUPER_GALACTIC;           
     
     @Override
-    protected RealMatrix getRotationMatrix(final Crs crs) throws JWcsError {
+    protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
         if (crs instanceof Equatorial) {

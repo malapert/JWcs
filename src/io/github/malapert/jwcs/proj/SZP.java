@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
@@ -41,12 +41,12 @@ public class SZP extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Slant zenithal perspective";
+    private final static String NAME_PROJECTION = "Slant zenithal perspective";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
+    private final static String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
 
     /**
      * \u03BC : Distance in spherical radii from the center of the sphere to the source of the projection.
@@ -79,17 +79,17 @@ public class SZP extends ZenithalProjection {
     /**
      * Default value for \u03BC.
      */
-    public static final double DEFAULT_VALUE_MU = 0;
+    public final static double DEFAULT_VALUE_MU = 0;
 
     /**
      * Default value for \u03D5<sub>c</sub>.
      */
-    public static final double DEFAULT_VALUE_PHIC = 0;
+    public final static double DEFAULT_VALUE_PHIC = 0;
 
     /**
      * Default value for \u03B8<sub>c</sub>.
      */
-    public static final double DEFAULT_VALUE_THETAC = 90;
+    public final static double DEFAULT_VALUE_THETAC = 90;
 
    /**
      * Constructs a SZP projection based on the celestial longitude and latitude
@@ -212,9 +212,9 @@ public class SZP extends ZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("mu", JWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("phic", JWcs.PV22, new double[]{0, 360}, 0);                
-        final ProjectionParameter p3 = new ProjectionParameter("thetac", JWcs.PV23, new double[]{0, 90}, 90);
+        final ProjectionParameter p1 = new ProjectionParameter("mu", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("phic", AbstractJWcs.PV22, new double[]{0, 360}, 0);                
+        final ProjectionParameter p3 = new ProjectionParameter("thetac", AbstractJWcs.PV23, new double[]{0, 90}, 90);
         return new ProjectionParameter[]{p1,p2,p3};    
     }    
 

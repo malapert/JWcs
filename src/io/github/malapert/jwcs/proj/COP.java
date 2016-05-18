@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
@@ -32,12 +32,12 @@ public class COP extends ConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Conic perspective";
+    private final static String NAME_PROJECTION = "Conic perspective";
 
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "\u03B8a=%s \u03B7=%s";
+    private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s";
 
     /**
      * Constant of the cone in radians.
@@ -124,8 +124,8 @@ public class COP extends ConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("theta_a", JWcs.PV21, new double[]{-90, 90}, -45);
-        final ProjectionParameter p2 = new ProjectionParameter("eta", JWcs.PV22, new double[]{0, 90}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("theta_a", AbstractJWcs.PV21, new double[]{-90, 90}, -45);
+        final ProjectionParameter p2 = new ProjectionParameter("eta", AbstractJWcs.PV22, new double[]{0, 90}, 0);
         return new ProjectionParameter[]{p1, p2};
     }
 

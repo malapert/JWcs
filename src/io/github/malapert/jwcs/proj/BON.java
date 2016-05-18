@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.JWcs;
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.utility.NumericalUtils;
 import java.util.logging.Level;
 
@@ -40,12 +40,12 @@ public class BON extends PolyConicProjection {
     /**
      * Projection's name.
      */
-    private static final String NAME_PROJECTION = "Bonne’s equal area";
+    private final static String NAME_PROJECTION = "Bonne’s equal area";
     
     /**
      * Projection's description.
      */
-    private static final String DESCRIPTION = "no limits";     
+    private final static String DESCRIPTION = "no limits";     
 
     private SFL sfl;
 
@@ -131,7 +131,7 @@ public class BON extends PolyConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("theta1", JWcs.PV11, new double[]{-90, 90}, 45);
+        final ProjectionParameter p1 = new ProjectionParameter("theta1", AbstractJWcs.PV11, new double[]{-90, 90}, 45);
         return new ProjectionParameter[]{p1};
     }
 

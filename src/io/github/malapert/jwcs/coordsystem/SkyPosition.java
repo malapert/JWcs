@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import static io.github.malapert.jwcs.coordsystem.Crs.longlat2xyz;
+import static io.github.malapert.jwcs.coordsystem.AbstractCrs.longlat2xyz;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
 
@@ -30,7 +30,7 @@ public class SkyPosition {
     /**
      * Factor to convert degrees to hours.
      */
-    public static final double TO_HOURS = 24d/360d;
+    public final static double TO_HOURS = 24d/360d;
     
     /**
      * Longitude in decimal degrees of the position
@@ -45,10 +45,10 @@ public class SkyPosition {
      */    
     private double latitude;
     /**
-     * Crs of the position.
+     * AbstractCrs of the position.
      * @see #getCrs() 
      */
-    private Crs crs;
+    private AbstractCrs crs;
 
     /**
      * Creates a position in the sky.
@@ -59,7 +59,7 @@ public class SkyPosition {
      * @param latitude latitude in decimal degrees of the position
      * @param crs CRS in which the position is stored
      */
-    public SkyPosition(final double longitude, final double latitude, final Crs crs) {
+    public SkyPosition(final double longitude, final double latitude, final AbstractCrs crs) {
         this.longitude = longitude%360;
         this.latitude = latitude;
         this.crs = crs;
@@ -127,7 +127,7 @@ public class SkyPosition {
      * Returns the sky system.
      * @return the crs
      */
-    public Crs getCrs() {
+    public AbstractCrs getCrs() {
         return crs;
     }
 
@@ -135,7 +135,7 @@ public class SkyPosition {
      * Sets the sky system.
      * @param crs the crs to set
      */
-    public void setCrs(final Crs crs) {
+    public void setCrs(final AbstractCrs crs) {
         this.crs = crs;
     }
 
