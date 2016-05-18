@@ -38,22 +38,22 @@ public class MOL extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Mollweide’s";
+    private static final String NAME_PROJECTION = "Mollweide’s";
 
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";
+    private static final String DESCRIPTION = "no limits";
 
     /**
      * Default tolerance for the iterative solution.
      */
-    public final static double DEFAULT_TOLERANCE = 1E-15;
+    public static final double DEFAULT_TOLERANCE = 1E-15;
 
     /**
      * Default maximum iteration for the iterative solution.
      */
-    public final static double DEFAULT_MAX_ITER = 100;
+    public static final double DEFAULT_MAX_ITER = 100;
 
     /**
      * Tolerance for the iterative solution.

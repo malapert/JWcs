@@ -32,12 +32,12 @@ public class FK5 implements CoordinateReferenceFrame {
     /**
      * The name of this reference frame.
      */    
-    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK5;
+    private static final CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK5;
     
     /**
      * The default value of the equinox sets to J2000.
      */    
-    private final static String DEFAULT_EPOCH = "J2000";
+    private static final String DEFAULT_EPOCH = "J2000";
     
     /**
      * The epoch of the equinox.

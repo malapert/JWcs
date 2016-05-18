@@ -45,7 +45,7 @@ public class HeaderFitsReader {
     /**
      * Separator between keyword/value.
      */
-    private final static String SEPARATOR = "=";
+    private static final String SEPARATOR = "=";
 
     /**
      * Reader.

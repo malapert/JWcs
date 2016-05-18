@@ -28,14 +28,14 @@ public final class DMS implements Serializable {
      * This case shows up in DMS values with zero degrees and negative values,
      * such as "-00 24 32"
      */
-    private final static Double MINUS_ZERO = -0.0;
+    private static final Double MINUS_ZERO = -0.0;
 
     // Number formats for 2 digit degrees and minutes
-    private final static NumberFormat NF = NumberFormat.getInstance(Locale.US);
+    private static final NumberFormat NF = NumberFormat.getInstance(Locale.US);
 
     // Number formats for seconds
-    private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
-    private final static long serialVersionUID = -6119277651753389123L;
+    private static final NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
+    private static final long serialVersionUID = -6119277651753389123L;
 
     static {
         NF.setMinimumIntegerDigits(2);

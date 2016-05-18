@@ -40,12 +40,12 @@ public class BON extends PolyConicProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Bonne’s equal area";
+    private static final String NAME_PROJECTION = "Bonne’s equal area";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";     
+    private static final String DESCRIPTION = "no limits";     
 
     private SFL sfl;
 

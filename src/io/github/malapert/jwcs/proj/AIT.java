@@ -47,12 +47,12 @@ public class AIT extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Hammer-Aitoff";
+    private static final String NAME_PROJECTION = "Hammer-Aitoff";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";    
+    private static final String DESCRIPTION = "no limits";    
         
     /**
      * Creates a new AIT projection based on the celestial longitude and 

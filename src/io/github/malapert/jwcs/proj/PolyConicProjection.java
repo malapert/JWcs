@@ -42,21 +42,21 @@ public abstract class PolyConicProjection extends Projection {
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());
+    protected static final Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());
 
     /**
      * Projection name.
      */
-    public final static String NAME = "Polyconic and pseudoconic projections";
+    public static final String NAME = "Polyconic and pseudoconic projections";
 
     /**
      * Native longitude value in radians for cylindrical projection.
      */
-    protected final static double DEFAULT_PHI0 = 0;
+    protected static final double DEFAULT_PHI0 = 0;
     /**
      * Native latitude value in radians for cylindrical projection.
      */
-    protected final static double DEFAULT_THETA0 = 0;
+    protected static final double DEFAULT_THETA0 = 0;
 
     private final double theta1;
     /**

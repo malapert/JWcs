@@ -63,9 +63,12 @@ public class Main {
     /**
      * Logger.
      */
-    private final static Logger LOG = Logger.getLogger(Main.class.getName());
+    private static final Logger LOG = Logger.getLogger(Main.class.getName());
 
-    private final static int DEFAULT_EXTENSION = 0;
+    /**
+     * Default extension for FITS file.
+     */
+    private static final int DEFAULT_EXTENSION = 0;
 
     /**
      * List of programs.

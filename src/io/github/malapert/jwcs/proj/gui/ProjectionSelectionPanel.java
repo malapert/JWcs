@@ -35,13 +35,13 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
-    private final static long serialVersionUID = 5367008551020527277L;
+    protected static final Logger LOG = Logger.getLogger(ProjectionSelectionPanel.class.getName());
+    private static final long serialVersionUID = 5367008551020527277L;
 
     /**
      * Countries border.
      */
-    private final static String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
+    private static final String CONTINENTS_PATH = "/io/github/malapert/jwcs/proj/gui/continents.ung";
 
     /**
      * The lines that are displayed. Must be in geographic coordinates
@@ -49,7 +49,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
      */
     private List<MapLine> lines = new ArrayList();
     private final List<MapLine> linesFromClient = new ArrayList();
-    private final static int STEP_GRID = 5;
+    private static final int STEP_GRID = 5;
     private String previousNameProjection = "";
 
     /**

@@ -41,12 +41,12 @@ public class SZP extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Slant zenithal perspective";
+    private static final String NAME_PROJECTION = "Slant zenithal perspective";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
+    private static final String DESCRIPTION = "\u03BC=%s \u03C6c=%s \u03B8c=%s";      
 
     /**
      * \u03BC : Distance in spherical radii from the center of the sphere to the source of the projection.
@@ -79,17 +79,17 @@ public class SZP extends ZenithalProjection {
     /**
      * Default value for \u03BC.
      */
-    public final static double DEFAULT_VALUE_MU = 0;
+    public static final double DEFAULT_VALUE_MU = 0;
 
     /**
      * Default value for \u03D5<sub>c</sub>.
      */
-    public final static double DEFAULT_VALUE_PHIC = 0;
+    public static final double DEFAULT_VALUE_PHIC = 0;
 
     /**
      * Default value for \u03B8<sub>c</sub>.
      */
-    public final static double DEFAULT_VALUE_THETAC = 90;
+    public static final double DEFAULT_VALUE_THETAC = 90;
 
    /**
      * Constructs a SZP projection based on the celestial longitude and latitude

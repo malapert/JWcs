@@ -39,12 +39,12 @@ public class CEA extends CylindricalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Cylindrical equal area";
+    private static final String NAME_PROJECTION = "Cylindrical equal area";
 
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "\u03BB=%s";
+    private static final String DESCRIPTION = "\u03BB=%s";
 
     /**
      * \u03BB Scaling parameter.
@@ -54,7 +54,7 @@ public class CEA extends CylindricalProjection {
     /**
      * Default value for \u03BB.
      */
-    private final static int DEFAULT_VALUE = 1;
+    private static final int DEFAULT_VALUE = 1;
 
     /**
      * Constructs a CEA based on the celestial longitude and latitude of the

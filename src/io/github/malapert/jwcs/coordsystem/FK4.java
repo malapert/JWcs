@@ -35,12 +35,12 @@ public class FK4 implements CoordinateReferenceFrame {
     /**
      * The name of this reference frame.
      */     
-    private final static CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK4;
+    private static final CoordinateReferenceFrame.ReferenceFrame REF_SYSTEM = CoordinateReferenceFrame.ReferenceFrame.FK4;
     
     /**
      * The default value of the epoch set to B1950.
      */      
-    private final static String DEFAULT_EPOCH = "B1950";   
+    private static final String DEFAULT_EPOCH = "B1950";   
     
     /**
      * The epoch of the equinox.

@@ -41,12 +41,12 @@ public class ARC extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Zenithal equidistant";
+    private static final String NAME_PROJECTION = "Zenithal equidistant";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";
+    private static final String DESCRIPTION = "no limits";
 
     /**
      * Creates a new ARC projection based on the celestial longitude and 

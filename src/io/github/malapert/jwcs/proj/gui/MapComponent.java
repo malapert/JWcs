@@ -32,7 +32,7 @@ public class MapComponent extends JComponent {
     /**
      * The percentage of space that is added around the lines when drawing them.
      */
-    private final static double BORDER_PERCENTAGE = 3;
+    private static final double BORDER_PERCENTAGE = 3;
 
     /**
      * Replaces the current lines by the passed lines.

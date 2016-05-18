@@ -25,7 +25,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class PixelBeyondProjectionException extends ProjectionException {
-    private final static long serialVersionUID = -3719985099230583709L;
+    private static final long serialVersionUID = -3719985099230583709L;
 
     /**
      * Creates a PixelBeyondProjectionException based on a message.

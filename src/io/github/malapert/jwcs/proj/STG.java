@@ -41,12 +41,12 @@ public class STG extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Stereographic";
+    private static final String NAME_PROJECTION = "Stereographic";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";    
+    private static final String DESCRIPTION = "no limits";    
 
    /**
      * Constructs a STG projection based on the celestial longitude and latitude

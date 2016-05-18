@@ -39,12 +39,12 @@ public class TAN extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Gnomonic";
+    private static final String NAME_PROJECTION = "Gnomonic";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";     
+    private static final String DESCRIPTION = "no limits";     
     
 
    /**

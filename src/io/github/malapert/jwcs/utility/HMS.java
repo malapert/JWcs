@@ -28,14 +28,14 @@ public final class HMS implements Serializable {
      * This case shows up in HMS values with zero hours and negative values,
      * such as "-00 24 32"
      */
-    private final static Double MINUS_ZERO = -0.0;
+    private static final Double MINUS_ZERO = -0.0;
 
     // Number formats for 2 digit hours and minutes
-    private final static NumberFormat NF = NumberFormat.getInstance(Locale.US);
+    private static final NumberFormat NF = NumberFormat.getInstance(Locale.US);
 
     // Number formats for seconds
-    private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
-    private final static long serialVersionUID = 6425466963081211760L;
+    private static final NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
+    private static final long serialVersionUID = 6425466963081211760L;
 
     static {
         NF.setMinimumIntegerDigits(2);

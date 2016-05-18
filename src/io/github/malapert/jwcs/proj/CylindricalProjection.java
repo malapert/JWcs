@@ -40,21 +40,21 @@ public abstract class CylindricalProjection extends Projection {
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
+    protected static final Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
     
     /**
      * Projection name.
      */
-    public final static String NAME = "Cylindrical projections";
+    public static final String NAME = "Cylindrical projections";
     
     /**
      * Native longitude value in radians for cylindrical projection.
      */    
-    public final static double DEFAULT_PHI0 = 0;
+    public static final double DEFAULT_PHI0 = 0;
     /**
      * Native latitude value in radians for cylindrical projection.
      */    
-    public final static double DEFAULT_THETA0 = 0;
+    public static final double DEFAULT_THETA0 = 0;
     /**
      * Native longitude in radians of the ﬁducial point for the Cylindrical
      * Projection.

@@ -72,197 +72,197 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     /**
      * Maximum longitude value in degrees.
      */
-    public final static int MAX_LONGITUDE = 360;
+    public static final int MAX_LONGITUDE = 360;
 
     /**
      * Minimum longitude value in degrees.
      */
-    public final static int MIN_LONGITUDE = 0;
+    public static final int MIN_LONGITUDE = 0;
 
     /**
      * Minimum latitude value in degrees.
      */
-    public final static int MIN_LATITUDE = -90;
+    public static final int MIN_LATITUDE = -90;
 
     /**
      * Maximum latitude value in degrees.
      */
-    public final static int MAX_LATITUDE = 90;
+    public static final int MAX_LATITUDE = 90;
 
     /**
      * Number of axes. 2 for an image
      */
-    public final static String NAXIS = "NAXIS";
+    public static final String NAXIS = "NAXIS";
     /**
      * Number of pixels along X axis.
      */
-    public final static String NAXIS1 = "NAXIS1";
+    public static final String NAXIS1 = "NAXIS1";
     /**
      * Number of pixels along Y axis.
      */
-    public final static String NAXIS2 = "NAXIS2";
+    public static final String NAXIS2 = "NAXIS2";
     /**
      * Reference along X axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public final static String CRPIX1 = "CRPIX1";
+    public static final String CRPIX1 = "CRPIX1";
     /**
      * Reference along Y axis in pixel frame. This keyword is required for
      * projection computation.
      */
-    public final static String CRPIX2 = "CRPIX2";
+    public static final String CRPIX2 = "CRPIX2";
     /**
      * Reference along longitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public final static String CRVAL1 = "CRVAL1";
+    public static final String CRVAL1 = "CRVAL1";
     /**
      * Reference along latitude in degrees in celestial frame. This keyword is
      * required for projection computation.
      */
-    public final static String CRVAL2 = "CRVAL2";
+    public static final String CRVAL2 = "CRVAL2";
     /**
      * Projection type along X axis. This keyword is required for projection
      * computation.
      */
-    public final static String CTYPE1 = "CTYPE1";
+    public static final String CTYPE1 = "CTYPE1";
     /**
      * Projection type along Y axis. This keyword is required for projection
      * computation.
      */
-    protected final static String CTYPE2 = "CTYPE2";
+    protected static final String CTYPE2 = "CTYPE2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public final static String CD11 = "CD1_1";
+    public static final String CD11 = "CD1_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public final static String CD12 = "CD1_2";
+    public static final String CD12 = "CD1_2";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public final static String CD21 = "CD2_1";
+    public static final String CD21 = "CD2_1";
     /**
      * Scale (degrees / pixel) and rotation matrix. For projection computation,
      * information about scale and rotation are needed. Either the CD matrix is
      * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
      * CDELT1, CDELT2).
      */
-    public final static String CD22 = "CD2_2";
+    public static final String CD22 = "CD2_2";
     /**
      * Unit along X axis.
      */
-    public final static String CUNIT1 = "CUNIT1";
+    public static final String CUNIT1 = "CUNIT1";
     /**
      * Unit along Y axis.
      */
-    public final static String CUNIT2 = "CUNIT2";
+    public static final String CUNIT2 = "CUNIT2";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public final static String CDELT1 = "CDELT1";
+    public static final String CDELT1 = "CDELT1";
     /**
      * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
      * projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public final static String CDELT2 = "CDELT2";
+    public static final String CDELT2 = "CDELT2";
     /**
      * For projection computation, information about scale and rotation are
      * needed. Either the CD matrix is provided or the following element
      * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
-    public final static String CROTA2 = "CROTA2";
+    public static final String CROTA2 = "CROTA2";
     /**
      * Equinox value.
      */
-    public final static String EQUINOX = "EQUINOX";
+    public static final String EQUINOX = "EQUINOX";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public final static String PC11 = "PC1_1";
+    public static final String PC11 = "PC1_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public final static String PC12 = "PC1_2";
+    public static final String PC12 = "PC1_2";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public final static String PC21 = "PC2_1";
+    public static final String PC21 = "PC2_1";
     /**
      * Deformation matrix. For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
-    public final static String PC22 = "PC2_2";
+    public static final String PC22 = "PC2_2";
     /**
      * Deformation matrix.
      */
-    public final static String PV11 = "PV1_1";
+    public static final String PV11 = "PV1_1";
     /**
      * Deformation matrix.
      */
-    public final static String PV12 = "PV1_2";
+    public static final String PV12 = "PV1_2";
     /**
      * Deformation matrix.
      */
-    public final static String PV13 = "PV1_3";
+    public static final String PV13 = "PV1_3";
     /**
      * Deformation matrix.
      */
-    public final static String PV14 = "PV1_4";
+    public static final String PV14 = "PV1_4";
     /**
      * Deformation matrix.
      */
-    public final static String PV20 = "PV2_0";
+    public static final String PV20 = "PV2_0";
     /**
      * Deformation matrix.
      */
-    public final static String PV21 = "PV2_1";
+    public static final String PV21 = "PV2_1";
     /**
      * Deformation matrix.
      */
-    public final static String PV22 = "PV2_2";
+    public static final String PV22 = "PV2_2";
     /**
      * Deformation matrix.
      */
-    public final static String PV23 = "PV2_3";
+    public static final String PV23 = "PV2_3";
     /**
      * lontpole.
      */
-    public final static String LONPOLE = "LONPOLE";
+    public static final String LONPOLE = "LONPOLE";
     /**
      * latpole.
      */
-    public final static String LATPOLE = "LATPOLE";
+    public static final String LATPOLE = "LATPOLE";
     /**
      * Reference system.
      */
-    public final static String RADESYS = "RADESYS";
+    public static final String RADESYS = "RADESYS";
 
     /**
      * Projection object.
@@ -282,7 +282,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     /**
      * LOG.
      */
-    protected final static Logger LOG = Logger.getLogger(AbstractJWcs.class.getName());
+    protected static final Logger LOG = Logger.getLogger(AbstractJWcs.class.getName());
 
     /**
      * Initialize the WCS Object.

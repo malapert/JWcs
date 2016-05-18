@@ -40,21 +40,21 @@ public final class ZPN extends ZenithalProjection {
     /**
      * Projection's name.
      */
-    private final static String NAME_PROJECTION = "Zenithal polynomial";
+    private static final String NAME_PROJECTION = "Zenithal polynomial";
     
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "poly=(%s)";    
+    private static final String DESCRIPTION = "poly=(%s)";    
 
     /**
      * Default numerical tolerance for double comparison or iterative solution .
      */
-    public final static double DEFAULT_TOLERANCE = 1E-15;
+    public static final double DEFAULT_TOLERANCE = 1E-15;
     /**
      * Default maximum iteration for iterative solution.
      */
-    public final static double DEFAULT_MAX_ITER = 1000;
+    public static final double DEFAULT_MAX_ITER = 1000;
     /**
      * Tolerance to apply.
      */
