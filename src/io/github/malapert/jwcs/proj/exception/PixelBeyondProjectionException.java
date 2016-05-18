@@ -35,7 +35,7 @@ public class PixelBeyondProjectionException extends ProjectionException {
      */
     public PixelBeyondProjectionException(final AbstractProjection projectionName, final String message) {
         super(projectionName, message);
-        getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for {1}", new Object[]{this.getProjection().getClass().getName(), getMessage()});
+        getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for {1}", new Object[]{this.getProjection().getClass().getName(), message});
         
     }
 

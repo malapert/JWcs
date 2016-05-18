@@ -22,10 +22,10 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * The International Celestial Reference System, for optical data 
  * realized through the Hipparcos catalog. 
  * 
- * By definition, ICRS is not an equatorial system, but it is 
+ * <p>By definition, ICRS is not an equatorial system, but it is 
  * very close to the FK5 (J2000) system. No Equinox value is required.
- * <p>
- * The International Celestial Reference System (ICRS) is the current standard
+ * 
+ * <p>The International Celestial Reference System (ICRS) is the current standard
  * celestial reference system adopted by the International Astronomical Union
  * (IAU). Its origin is at the barycenter of the solar system, with axes that
  * are intended to be "fixed" with respect to space. ICRS coordinates are

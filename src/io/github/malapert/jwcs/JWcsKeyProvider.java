@@ -30,7 +30,7 @@ public interface JWcsKeyProvider {
     /**
      * Number of axes in WCS description.
      * 
-     * Specify the highest value of the index of any WCS key-word in the header 
+     * <p>Specify the highest value of the index of any WCS key-word in the header 
      * (i.e. CRPIX j, PC i j or CD i j, CDELT i,CTYPE i, CRVAL i, or CUNIT i). 
      * The default value is the larger of NAXIS and the largest index of these 
      * keywords found in the FITS header.

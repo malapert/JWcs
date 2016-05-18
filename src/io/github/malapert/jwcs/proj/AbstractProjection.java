@@ -27,10 +27,10 @@ import java.util.logging.Logger;
  * Conversion of intermediate world coordinates (or projection plane
  * coordinates) to celestial coordinates (\u03B1, \u03B4).
  *
- * <p>AbstractProjection plane is given and must be computed from pixels coordinates by
- applying a linear transformation.
-
- <p>The conversion is organized by a pipeline doing the following steps:
+ * <p>AbstractProjection plane is given and must be computed from pixels 
+ * coordinates by applying a linear transformation.
+ *
+ * <p>The conversion is organized by a pipeline doing the following steps:
  * <ul>
  * <li>computes the projection plane coordinates (x,y) to native spherical coordinates
  * (\u03D5, \u03B8) through a spherical projection</li>
@@ -96,7 +96,7 @@ public abstract class AbstractProjection {
     /**
      * Creates an instance of projection by given sky position coordinates.
      * 
-     * Initializes {@link Projection#crval1} with crval1, {@link Projection#crval2} with crval2 and {@link Projection#thetap} to {@link Projection#DEFAULT_THETAP}
+     * <p>Initializes {@link Projection#crval1} with crval1, {@link Projection#crval2} with crval2 and {@link Projection#thetap} to {@link Projection#DEFAULT_THETAP}
      *
      * @param crval1 Celestial longitude (\u03B1<sub>0</sub>) in degrees of the ﬁducial point
      * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point
@@ -184,16 +184,16 @@ public abstract class AbstractProjection {
      * Computes the celestial spherical coordinates (\u03B1, \u03B4) from the
      * native spherical coordinates (\u03D5, \u03B8). 
      * 
-     * The computation is performed by applying the spherical coordinate rotation.
+     * <p>The computation is performed by applying the spherical coordinate rotation.
      *
-     * general case:<br>
+     * <p>general case:<br>
      * ------------<br>
      * \u03B1 = \u03B1<sub>p</sub> + arg(sin\u03B8cos\u03B4<sub>p</sub> -
      * cos\u03B8sin\u03B4<sub>p</sub>cos(\u03D5-\u03D5<sub>p</sub>),-cos\u03B8sin(\u03D5-\u03D5<sub>p</sub>))<br>
      * \u03B4 = asin(sin\u03B8sin\u03B4<sub>p</sub> +
      * cos\u03B8cos\u03B4<sub>p</sub>cos(\u03D5-\u03D5<sub>p</sub>))<br>
-     * <br>
-     * Special cases:<br>
+     * 
+     * <p>Special cases:<br>
      * -------------<br>
      * if \u03B4<sub>p</sub> = HALF_PI<br>
      * \u03B1 = \u03B1<sub>p</sub> + \u03D5 - \u03D5<sub>p</sub> - PI<br>
@@ -201,8 +201,7 @@ public abstract class AbstractProjection {
      * if \u03B4<sub>p</sub> = -HALF_PI<br>
      * \u03B1 = \u03B1<sub>p</sub> - \u03D5 + \u03D5<sub>p</sub><br>
      * \u03B4 = -\u03B8<br>
-     *
-     *
+     *     
      * @param phi Native longitude (\u03D5) in radians
      * @param theta Native latitude (\u03B8) in radians
      * @return Returns the celestial spherical coordinates (\u03B1, \u03B4) in
@@ -249,7 +248,7 @@ public abstract class AbstractProjection {
      * Computes the native spherical coordinates (\u03D5, \u03B8) from 
      * the celestial spherical coordinates (\u03B1, \u03B4)  .
      * 
-     * The computation is performed by applying the inverse of the spherical 
+     * <p>The computation is performed by applying the inverse of the spherical 
      * coordinate rotation.<br>
      * \u03D5 = \u03D5<sub>p</sub> + arg(sin\u03B4cos\u03B4<sub>p</sub>-cos\u03B4sin\u03B4<sub>p</sub>cos(\u03B1-\u03B1<sub>p</sub>),-cos\u03B4sin(\u03B1-\u03B1<sub>p</sub>))<br>
      * \u03B8 = asin(sin\u03B4sin\u03B4<sub>p</sub>+cos\u03B4cos\u03B4<sub>p</sub>cos(\u03B1-\u03B1<sub>p</sub>))
@@ -292,7 +291,7 @@ public abstract class AbstractProjection {
      * \u03B4<sub>p</sub>) of the native pole
      * (\u03B4<sub>p</sub>=\u03B8<sub>p</sub>).
      *
-     * Projections such as the cylindricals and conics for which
+     * <p>Projections such as the cylindricals and conics for which
      * (\u03D5<sub>0</sub>, \u03B8<sub>0</sub>) = (0, HALF_PI) are handled by
      * providing formulae to compute (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>)
      * from (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
@@ -319,6 +318,7 @@ public abstract class AbstractProjection {
     /**
      * Computes the longitude of the celestial coordinates (\u03B1<sub>p</sub>) 
      * of the native pole (\u03B4<sub>p</sub>=\u03B8<sub>p</sub>).
+     * 
      * @param phi_p Native longitude (\u03D5<sub>p</sub>) in radians of the
      * celestial pole
      * @return Celestial (\u03B1<sub>p</sub>) longitude in radians of the native
@@ -526,7 +526,9 @@ public abstract class AbstractProjection {
     public abstract String getDescription();
 
     /**
-     * Returns the celestial longitude and latitude of the native pole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>).
+     * Returns the celestial longitude and latitude of the native 
+     * pole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>).
+     * 
      * @return the coordNativePole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>)
      */
     protected double[] getCoordNativePole() {
@@ -535,12 +537,14 @@ public abstract class AbstractProjection {
     
     /**
      * Returns the logger of the projection family.
+     * 
      * @return the logger
      */
     public abstract Logger getLogger();
 
     /**
      * Returns the projection parameters for a specific projection.
+     * 
      * @return the projection parameters.
      */
     public abstract ProjectionParameter[] getProjectionParameters();
@@ -548,14 +552,15 @@ public abstract class AbstractProjection {
     /**
      * The ProjectionParameter object deFINERs few metadata about a projection parameter.
      * 
-     * This object is used in the GUI to display the projection parameter. It deFINERs :
+     * <p>This object is used in the GUI to display the projection parameter. It deFINERs :
      * <ul>
      * <li>The name of the parameter.
      * <li>The PV keyword related to the name.
      * <li>The valid interval of the parameter
      * <li>The default value of the parameter to display in the GUI.    
      * </ul>
-     * To deFINER an undeFINERd value, the value is set to Double.POSITIVE_INFINITY 
+     * 
+     * <p>To define an undefined value, the value is set to Double.POSITIVE_INFINITY 
      * for positive number and Double.NEGATIVE_INFINITY for negative number.
      */
     public class ProjectionParameter {
@@ -579,6 +584,7 @@ public abstract class AbstractProjection {
         
         /**
          * Creates a new parameter.
+         * 
          * @param name its name
          * @param PVName its related PV keyword in FITS
          * @param validInterval its valid interval
@@ -593,6 +599,7 @@ public abstract class AbstractProjection {
         
         /**
          * Returns the name of the parameter.
+         * 
          * @return the name of the parameter
          */
         public String getName() {
@@ -601,6 +608,7 @@ public abstract class AbstractProjection {
         
         /**
          * Returns the related keyword to PV.
+         * 
          * @return the related keyword to PV
          */
         public String getPVName() {
@@ -609,6 +617,7 @@ public abstract class AbstractProjection {
         
         /**
          * Returns the valid interval of the parameter.
+         * 
          * @return the valid interval of the parameter
          */
         public double[] getValidInterval() {
@@ -617,6 +626,7 @@ public abstract class AbstractProjection {
         
         /**
          * Returns the default value of the parameter.
+         * 
          * @return the default value
          */
         public double getDefaultValue() {

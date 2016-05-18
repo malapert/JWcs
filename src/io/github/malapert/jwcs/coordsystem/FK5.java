@@ -22,7 +22,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
 /**
  * Mean place post IAU 1976 system. 
  * 
- * Also a barycentric equatorial coordinate system. 
+ * <p>Also a barycentric equatorial coordinate system. 
  * This should be qualified by an Equinox value (only).
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
@@ -77,7 +77,8 @@ public class FK5 implements CoordinateReferenceFrame {
 
     /**
      * Returns Double.NaN.
-     * No need to specify an epoch of observation in FK5 reference frame
+     * 
+     * <p>No need to specify an epoch of observation in FK5 reference frame
      */    
     @Override
     public double getEpochObs() {
@@ -109,7 +110,8 @@ public class FK5 implements CoordinateReferenceFrame {
     @Override
     /**
      * Do nothing.
-     * No need to specify the epoch of observation in FK5 reference frame
+     * 
+     * <p>No need to specify the epoch of observation in FK5 reference frame
      */
     public void setEpochObs(final String epochObs) { 
         //Do nothing
@@ -118,7 +120,8 @@ public class FK5 implements CoordinateReferenceFrame {
     @Override
     /**
      * Do nothing.
-     * No need to specify the epoch of observation in FK5 reference frame
+     * 
+     * <p>No need to specify the epoch of observation in FK5 reference frame
      */    
     public void setEpochObs(final double epochObs) {
         //Do nothing

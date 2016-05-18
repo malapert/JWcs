@@ -27,11 +27,9 @@ import java.util.logging.Level;
 /**
  * Slant zenithal perspective.
  *
- * <p>
- * While the generalization of the AZP projection to tilted planes of projection
+ * <p>While the generalization of the AZP projection to tilted planes of projection
  * is useful for certain applications it does have a number of drawbacks, in
- * particular, unequal scaling at the reference point.
- * </p>
+ * particular, unequal scaling at the reference point. 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -95,7 +93,7 @@ public class SZP extends ZenithalProjection {
      * Constructs a SZP projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 
-     * \u03D5<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_PHIC}.
+     * <p>\u03D5<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_PHIC}.
      * \u03B8<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_THETAC}.
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
@@ -135,6 +133,7 @@ public class SZP extends ZenithalProjection {
 
     /**
      * Check.
+     * 
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      * @throws JWcsError Non-standard phi0 or theta0 values
      */

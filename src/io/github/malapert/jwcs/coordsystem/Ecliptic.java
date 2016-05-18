@@ -24,7 +24,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * The ecliptic is the apparent path of the Sun on the celestial sphere, and is
  * the basis for the ecliptic coordinate system.
  *
- * It also refers to the plane of this path, which is coplanar with both the
+ * <p>It also refers to the plane of this path, which is coplanar with both the
  * orbit of the Earth around the Sun and the apparent orbit of the Sun around
  * the Earth. The path of the Sun is not normally noticeable from the Earth's
  * surface because the Earth rotates, carrying the observer through the cycle of
@@ -64,7 +64,8 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
 
     /**
      * Transforms the coordinate reference frame if necessary. 
-     * In 'Representations of celestial coordinates in FITS' (Calabretta and
+     * 
+     * <p>In 'Representations of celestial coordinates in FITS' (Calabretta and
      * Greisen) we read that all reference systems are allowed for both
      * equatorial- and ecliptic coordinates, except FK4-NO-E, which is only
      * allowed for equatorial coordinates. If FK4-NO-E is given in combination

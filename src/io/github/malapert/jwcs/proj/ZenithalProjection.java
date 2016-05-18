@@ -24,14 +24,11 @@ import java.util.logging.Logger;
 /**
  * Zenithal or azimuthal projections all map the sphere directly onto a plane.
  *
- * <p>
- * The native coordinate system is chosen to have the polar axis orthogonal to
+ * <p>The native coordinate system is chosen to have the polar axis orthogonal to
  * the plane of projection at the refer.
- * </p>
- * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
+ * 
+ * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p9
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -59,19 +56,21 @@ public abstract class ZenithalProjection extends AbstractProjection {
     public final static double DEFAULT_THETA0 = HALF_PI;
 
     /**
-     * Native longitude (\u03D5<SUB>0</SUB>) in radians of the ﬁducial point for
- the Zenithal AbstractProjection.
+     * Native longitude (\u03D5<SUB>0</SUB>) in radians of the ﬁducial point for 
+     * the Zenithal projection.
      */
     private double phi0;
     /**
-     * Native latitude (\u03B8<SUB>0</SUB>) in radians of the ﬁducial point for
- the Zenithal AbstractProjection.
+     * Native latitude (\u03B8<SUB>0</SUB>) in radians of the ﬁducial point for 
+     * the Zenithal projection.
      */
     private double theta0;
 
     /**
      * Creates a zenithal projection based on the celestial longitude and
-     * latitude of the ﬁducial point. Creates a zenithal projection by setting :
+     * latitude of the ﬁducial point. 
+     * 
+     * <p>Creates a zenithal projection by setting :
      * <ul>
      * <li>(\u03D5<SUB>0</SUB>, \u03B8<SUB>0</SUB>) = (0, HALF_PI)</li>
      * <li>by computing \u03D5<SUB>p</SUB></li>

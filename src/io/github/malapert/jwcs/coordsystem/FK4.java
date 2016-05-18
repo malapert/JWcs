@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 /**
  * Mean place pre-IAU 1976 system.
  * 
- * FK4 is the old barycentric (i.e. w.r.t. the common center of mass) equatorial
+ * <p>FK4 is the old barycentric (i.e. w.r.t. the common center of mass) equatorial
  * coordinate system, which should be qualified by an Equinox value.
  * For accurate work FK4 coordinate systems should also be qualified
  * by an Epoch value. This is the <b>epoch of observation</b>.
@@ -89,12 +89,12 @@ public class FK4 implements CoordinateReferenceFrame {
     /**
      * Compute the E-terms (elliptic terms of aberration) for a given epoch.
      * 
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Seidelman, P.K.,  1992.  Explanatory Supplement to the Astronomical
      * Almanac.  University Science Books, Mill Valley
-     *<p>
-     * Notes:<br>     
+     *
+     * <p>Notes:<br>     
      * -------<br>
      * The method is described on page 170/171 of the ES.
      * One needs to process the e-terms for the appropriate

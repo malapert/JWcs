@@ -26,10 +26,8 @@ import java.util.logging.Level;
 /**
  * The cylindrical equal area projection.
  * 
- * <p>
- * Reference: "Representations of celestial coordinates in FITS", 
+ * <p>Reference: "Representations of celestial coordinates in FITS", 
  * M. R. Calabretta and E. W. Greisen
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

@@ -29,7 +29,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * the Great Attractor and the Pisces-Perseus supercluster) towards a 
  * (two-dimensional) plane. 
  * 
- * The supergalactic plane was recognized by Gérard de Vaucouleurs in 1953 
+ * <p>The supergalactic plane was recognized by Gérard de Vaucouleurs in 1953 
  * from the Shapley-Ames Catalog, although a flattened distribution of nebulae
  * had been noted by William Herschel over 200 years earlier.
  * By convention, supergalactic latitude and supergalactic longitude are usually

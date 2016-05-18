@@ -24,12 +24,10 @@ import java.util.logging.Level;
 /**
  * Cylindrical perspective.
  * 
- * <p>
- * The sphere is projected onto a cylinder of radius <code>\u03BB</code> 
+ * <p>The sphere is projected onto a cylinder of radius <code>\u03BB</code> 
  * spherical radii from points in the equatorial plane of the native system at a
  * distance <code>\u03BC</code> spherical radii measured from the center of the 
  * sphere in the direction opposite the projected surface.
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -69,7 +67,7 @@ public class CYP extends CylindricalProjection {
      * Constructs a CYP projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *
-     * \u03BC is set to {@link CYP#DEFAULT_MU}.
+     * <p>\u03BC is set to {@link CYP#DEFAULT_MU}.
      * \u03BB is set to {@link CYP#DEFAULT_LAMBDA}.
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
@@ -84,8 +82,7 @@ public class CYP extends CylindricalProjection {
     /**
      * Constructs a CYP projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BC and \u03BB. 
-     *
-     * 
+     *     
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
@@ -105,7 +102,7 @@ public class CYP extends CylindricalProjection {
     /**
      * Checks projection parameters.
      * 
-     * Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
+     * <p>Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
      */
     protected final void check() {
         if (getLambda() < 0 || NumericalUtils.equal(getLambda(), 0)) {
@@ -147,6 +144,7 @@ public class CYP extends CylindricalProjection {
 
     /**
      * Returns \u03BC.
+     * 
      * @return the mu
      */
     protected double getMu() {
@@ -155,6 +153,7 @@ public class CYP extends CylindricalProjection {
 
     /**
      * Returns \u03BB.
+     * 
      * @return the lambda
      */
     protected double getLambda() {

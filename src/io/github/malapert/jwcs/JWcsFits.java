@@ -27,11 +27,11 @@ import nom.tam.fits.Header;
  * A class allowing to compute the WCS by initializing the WCS structure by 
  * reading the FITS file.
  * 
- * For example :
+ * <p>For example :
  * <pre>
-  AbstractJWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
-  double[] pos = wcs.pix2wcs(1, 1);
- </pre>
+ * AbstractJWcs wcs = new WcsFits(new Fits("/tmp/WFPC2ASSNu5780205bx.fits"));
+ * double[] pos = wcs.pix2wcs(1, 1);
+ * </pre>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

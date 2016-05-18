@@ -23,11 +23,9 @@ import java.util.logging.Level;
 /**
  * Parabolic.
  *
- * <p>
- * The meridians are projected as parabolic arcs which intersect the poles and
+ * <p>The meridians are projected as parabolic arcs which intersect the poles and
  * correctly divide the equator, and the parallels of latitude are spaced so as
- * to make it an equal area projection.
- * </p>
+ * to make it an equal area projection. 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

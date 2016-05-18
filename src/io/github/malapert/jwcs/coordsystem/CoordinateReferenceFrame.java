@@ -38,7 +38,7 @@ public interface CoordinateReferenceFrame {
     /**
      * The supported reference frames.
      * 
-     * The coordinate reference frame or reference frame defines how the CRS 
+     * <p>The coordinate reference frame or reference frame defines how the CRS 
      * is related to the origin (position and the date of the origin - equinox, 
      * date of observation).
      */
@@ -46,19 +46,22 @@ public interface CoordinateReferenceFrame {
         /**
          * The International Celestial Reference System, for optical data 
          * realized through the Hipparcos catalog. 
-         * By definition, ICRS is not an equatorial system, but it is 
+         * 
+         * <p>By definition, ICRS is not an equatorial system, but it is 
          * very close to the FK5 (J2000) system. No Equinox value is required.
          */
         ICRS("ICRS", false, false),
         /**
          * Mean place post IAU 1976 system. 
-         * Also a barycentric equatorial coordinate system. 
+         * 
+         * <p>Also a barycentric equatorial coordinate system. 
          * This should be qualified by an Equinox value (only).
          */
         FK5("FK5", true, false), 
         /**
          * Mean place pre-IAU 1976 system. 
-         * FK4 is the old barycentric (i.e. w.r.t. the common 
+         * 
+         * <p>FK4 is the old barycentric (i.e. w.r.t. the common 
          * center of mass) equatorial coordinate 
          * system, which should be qualified by an Equinox value.
          * For accurate work FK4 coordinate systems should also be qualified
@@ -68,14 +71,16 @@ public interface CoordinateReferenceFrame {
         /**
          * The old FK4 (barycentric) equatorial system
          * but without the *E-terms of aberration*.
-         * This coordinate system should also be 
+         * 
+         * <p>This coordinate system should also be 
          * qualified by both an Equinox and an Epoch value.
          */
         FK4_NO_E("FK4 NO E-terms", true, true), 
         /**
          * This is an equatorial coordinate system based on 
          * the mean dynamical equator and equinox at epoch J2000.
-         * The dynamical equator and equinox differ slightly 
+         * 
+         * <p>The dynamical equator and equinox differ slightly 
          * compared to the equator and equinox of FK5 at J2000 and 
          * the ICRS system. This system need not be qualified 
          * by an Equinox value.

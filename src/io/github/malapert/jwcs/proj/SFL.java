@@ -22,11 +22,9 @@ import java.util.logging.Level;
 /**
  * Sanson-Flamsteed.
  * 
- * <p>
- * Bonne's projection reduces to the pseudocylindrical Sanson-Flamsteed16 
+ * <p>Bonne's projection reduces to the pseudocylindrical Sanson-Flamsteed16 
  * projection when theta1 = 0. Parallels are equispaced and projected at 
  * their true length which makes it an equal area projection.
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

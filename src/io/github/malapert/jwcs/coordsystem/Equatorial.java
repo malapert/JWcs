@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * The equatorial coordinate system is a widely used celestial coordinate system
  * used to specify the positions of celestial objects. 
  * 
- * It may be implemented in spherical or rectangular coordinates, both defined
+ * <p>It may be implemented in spherical or rectangular coordinates, both defined
  * by an origin at the center of the Earth, a fundamental plane consisting of
  * the projection of the Earth's equator onto the celestial sphere
  * (forming the celestial equator), a primary direction towards the vernal

@@ -24,15 +24,13 @@ import java.util.logging.Level;
 /**
  * Conic Equidistant.
  *
- * <p>
- * In the conic equidistant projection the standard parallels are projected at
+ * <p>In the conic equidistant projection the standard parallels are projected at
  * their true length and at their true separation. The other parallels are then
  * drawn as concentric arcs spaced at their true distance from the standard
  * parallels.
  *
- * Reference: "Representations of celestial coordinates in FITS", M. R.
+ * <p>Reference: "Representations of celestial coordinates in FITS", M. R.
  * Calabretta and E. W. Greisen - page 20
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

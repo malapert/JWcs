@@ -26,10 +26,8 @@ import java.util.logging.Level;
 /**
  * Slant orthographic.
  *
- * <p>
- * It represents the visual appearance of a sphere, e.g. a planet, when seen
- * from a great distance.
- * </p>
+ * <p>It represents the visual appearance of a sphere, e.g. a planet, when seen
+ * from a great distance. 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -64,7 +62,7 @@ public class SIN extends ZenithalProjection {
      * Constructs a SIN projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) with default \u03BE,\u03B7 
      * 
-     * \u03BE,\u03B7 parameters are set to {@link SIN#DEFAULT_VALUE}.
+     * <p>\u03BE,\u03B7 parameters are set to {@link SIN#DEFAULT_VALUE}.
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point

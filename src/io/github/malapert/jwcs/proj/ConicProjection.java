@@ -26,14 +26,12 @@ import java.util.logging.Logger;
  * In conic projections the sphere is thought to be projected onto
  * the surface of a cone which is then opened out. 
  * 
- * <p>
- * The native coordinate system is chosen so that the poles are coincident with
+ * <p>The native coordinate system is chosen so that the poles are coincident with
  * the axis of the cone. Native meridians are then projected as uniformly spaced
  * rays that intersect at a point (either directly or by extrapolation), and 
  * parallels are projected as equiangular arcs of concentric circles.
- * </p>
- * <p>
- * Two-standard conic projections are characterized by two
+ * 
+ * <p>Two-standard conic projections are characterized by two
  * latitudes, theta1 and theta2, whose parallels are projected at their true
  * length. In the conic perspective projection these are the latitudes at which 
  * the cone intersects the sphere. One-standard conic projections have 
@@ -42,11 +40,9 @@ import java.util.logging.Logger;
  * two standard parallels they are constructed so that the point on the prime 
  * meridian mid-way between the two standard parallels maps to the reference 
  * point
- * </p>
- * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
+ * 
+ * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p11
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -94,6 +90,7 @@ public abstract class ConicProjection extends AbstractProjection {
     
     /**
      * Creates a new conic projection.
+     * 
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta_a (theta1 + theta2) / 2 in degrees
@@ -118,6 +115,7 @@ public abstract class ConicProjection extends AbstractProjection {
     
     /**
      * Checks \u03B8<sub>1</sub>,\u03B8<sub>2</sub> parameters.
+     * 
      * @param theta1 \u03B8<sub>1</sub> in radians
      * @param theta2 \u03B8<sub>2</sub> in radians
      * @throws BadProjectionParameterException When (theta1,theta2) not in range [-90,90]
@@ -138,6 +136,7 @@ public abstract class ConicProjection extends AbstractProjection {
     
     /**
      * Computes the native spherical coordinate (\u03D5) in radians along longitude.
+     * 
      * @param x projection plane coordinate along X
      * @param y projection plane coordinate along Y
      * @param r_theta radius
@@ -151,6 +150,7 @@ public abstract class ConicProjection extends AbstractProjection {
     
     /**
      * Computes the projection plane coordinate along X.
+     * 
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @param r_theta radius
      * @param c c
@@ -162,6 +162,7 @@ public abstract class ConicProjection extends AbstractProjection {
 
     /**
      * Computes the projection plane coordinate along Y.
+     * 
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @param r_theta radius
      * @param c c
@@ -202,6 +203,7 @@ public abstract class ConicProjection extends AbstractProjection {
 
     /**
      * Returns eta in radians.
+     * 
      * @return the eta
      */
     protected final double getEta() {
@@ -210,6 +212,7 @@ public abstract class ConicProjection extends AbstractProjection {
     
     /**
      * Sets eta in radians.
+     * 
      * @param eta eta
      */
     protected void setEta(final double eta) {

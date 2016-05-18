@@ -23,16 +23,13 @@ import java.util.logging.Logger;
 /**
  * Polyconic projection.
  *
- * <p>
- * Polyconics are generalizations of the standard conic projections; the
+ * <p>Polyconics are generalizations of the standard conic projections; the
  * parallels of latitude are projected as circular arcs which may or may not be
  * concentric, and meridians are curved rather than straight as in the standard
  * conics.
- * </p>
- * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
+ * 
+ * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p21
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -60,13 +57,11 @@ public abstract class PolyConicProjection extends AbstractProjection {
 
     private final double theta1;
     /**
-     * Native longitude in radians of the ﬁducial point for the polyconic
- AbstractProjection.
+     * Native longitude in radians of the ﬁducial point for the polyconic projection.
      */
     private double phio;
     /**
-     * Native latitude in radians of the ﬁducial point for the polyconic
- AbstractProjection.
+     * Native latitude in radians of the ﬁducial point for the polyconic projection.
      */
     private double theta0;
 

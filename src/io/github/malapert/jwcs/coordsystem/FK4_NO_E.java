@@ -22,7 +22,7 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
  * The old FK4 (barycentric) equatorial system
  * but without the *E-terms of aberration*.
  * 
- * This coordinate system should also be 
+ * <p>This coordinate system should also be 
  * qualified by both an Equinox and an Epoch value.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)

@@ -26,7 +26,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * aligned with the approximate center of the Milky Way galaxy, 
  * and the fundamental plane approximately in the galactic plane. 
  * 
- * It uses the right-handed convention, meaning that coordinates are positive 
+ * <p>It uses the right-handed convention, meaning that coordinates are positive 
  * toward the north and toward the east in the fundamental plane.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)

@@ -44,7 +44,7 @@ public class COO extends ConicProjection {
      * Constructs a COO projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 03B8<sub>a</sub> and \u03B7.
      *
-     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * <p>\u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
      * \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees.
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the

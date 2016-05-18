@@ -24,11 +24,9 @@ import java.util.logging.Level;
 /**
  * Mollweide's.
  *
- * <p>
- * In Mollweide's pseudocylindrical projection17, the meridians are projected as
+ * <p>In Mollweide's pseudocylindrical projection17, the meridians are projected as
  * ellipses that correctly divide the equator and the parallels are spaced so as
  * to make the projection equal area
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -169,8 +167,9 @@ public class MOL extends CylindricalProjection {
     }
 
     /**
-     * Computes gamma by an iterative solution. Solves v - PI*sin(theta) +
-     * sin(v) = 0 with v = 2*gamma
+     * Computes gamma by an iterative solution. 
+     * 
+     * <p>Solves v - PI*sin(theta) + sin(v) = 0 with v = 2*gamma
      *
      * @param theta the native spherical coordinate (\u03B8) in radians along
      * latitude

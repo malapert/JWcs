@@ -23,14 +23,12 @@ import java.util.logging.Level;
 /**
  * Bonnes's equal area.
  *
- * <p>
- * In Bonne's pseudoconic projection19 all parallels are projected as concentric
+ * <p>In Bonne's pseudoconic projection19 all parallels are projected as concentric
  * equidistant arcs of circles of true length and true spacing. This is sucient
  * to guarantee that it is an equal area projection.
  *
- * Reference: "Representations of celestial coordinates in FITS", M. R.
+ * <p>Reference: "Representations of celestial coordinates in FITS", M. R.
  * Calabretta and E. W. Greisen - page 21
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -53,7 +51,7 @@ public class BON extends PolyConicProjection {
      * Constructs a BON projection by providing celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03B8<sub>1</sub>.
      *
-     * \u03B8<sub>1</sub> can be set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
+     * <p>\u03B8<sub>1</sub> can be set by the FITS keyword PV<code>nbAxis</code>_1 in degrees.
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point

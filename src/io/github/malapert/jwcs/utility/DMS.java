@@ -49,22 +49,22 @@ public final class DMS implements Serializable {
     }
 
     /**
-     * number of degrees
+     * number of degrees.
      */
     private int degrees;
 
     /**
-     * number of minutes
+     * number of minutes.
      */
     private int min;
 
     /**
-     * number of seconds
+     * number of seconds.
      */
     private double sec;
 
     /**
-     * value converted to decimal
+     * value converted to decimal.
      */
     private double val;
 
@@ -78,7 +78,7 @@ public final class DMS implements Serializable {
 
 
     /**
-     * Default constructor: initialize to null values
+     * Default constructor: initialize to null values.
      */
     public DMS() {
         this.initialized = false;
@@ -103,7 +103,7 @@ public final class DMS implements Serializable {
     }
 
     /**
-     * Copy constructor
+     * Copy constructor.
      * @param hms DMS
      */
     public DMS(final DMS hms) {

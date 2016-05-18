@@ -23,13 +23,11 @@ import java.util.logging.Level;
 /**
  * Gnomonic.
  *
- * <p>
- * The zenithal perspective projection with mu = 0, the gnomonic projection, is
+ * <p>The zenithal perspective projection with mu = 0, the gnomonic projection, is
  * widely used in optical astronomy and was given its own code within the AIPS
  * convention, namely TAN.
  *
- * Ref : http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf page 12
- * </p>
+ * <p>Ref : http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf page 12
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

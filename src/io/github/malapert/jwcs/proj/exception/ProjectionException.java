@@ -22,9 +22,6 @@ import io.github.malapert.jwcs.proj.AbstractProjection;
  * Projection Exception.
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
-/**
- * an exception associated with use of a AbstractProjection object.
- */
 public class ProjectionException extends JWcsException {
     private final static long serialVersionUID = 3428780035222139573L;
     
@@ -33,10 +30,10 @@ public class ProjectionException extends JWcsException {
     /**
      * Creates a ProjectionException based on the projection class and a message.
      * @param projectionName projection class
-     * @param s message
+     * @param message message
      */
-    public ProjectionException(final AbstractProjection projectionName, final String s) {
-        super(s);
+    public ProjectionException(final AbstractProjection projectionName, final String message) {
+        super(message);
         this.projectionName = projectionName;        
     }
     

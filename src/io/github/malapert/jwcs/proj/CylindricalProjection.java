@@ -23,15 +23,12 @@ import java.util.logging.Logger;
  * Cylindrical projections are so named because the surface of
  * projection is a cylinder. 
  * 
- * <p>
- * The native coordinate system is chosen to have its polar axis coincident 
+ * <p>The native coordinate system is chosen to have its polar axis coincident 
  * with the axis of the cylinder. Meridians and parallels are mapped onto a 
  * rectangular graticule.
- * </p>
- * <p>
- * Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
+ * 
+ * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p15
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -57,17 +54,18 @@ public abstract class CylindricalProjection extends AbstractProjection {
     public final static double DEFAULT_THETA0 = 0;
     /**
      * Native longitude in radians of the ﬁducial point for the Cylindrical
- AbstractProjection.
+     * projection.
      */
     private double phi0;
     /**
-     * Native latitude in radians of the ﬁducial point for the Cylindrical
- AbstractProjection.
+     * Native latitude in radians of the ﬁducial point for the Cylindrical 
+     * projection.
      */
     private double theta0;
 
     /**
      * Creates a new cylindrical projection.
+     * 
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      */

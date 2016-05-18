@@ -51,7 +51,7 @@ public class COP extends ConicProjection {
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and
      * 03B8<sub>a</sub> and \u03B7.
      *
-     * \u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in
+     * <p>\u03B8<sub>a</sub> is set by the FITS keyword PV<code>nbAxis</code>_1 in
      * degrees. \u03B7 is set by the FITS keyword PV<code>nbAxis</code>_2 in
      * degrees.
      *

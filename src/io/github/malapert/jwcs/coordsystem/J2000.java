@@ -21,7 +21,8 @@ import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
 /**
  * This is an equatorial coordinate system based on 
  * the mean dynamical equator and equinox at epoch J2000.
- * The dynamical equator and equinox differ slightly 
+ * 
+ * <p>The dynamical equator and equinox differ slightly 
  * compared to the equator and equinox of FK5 at J2000 and 
  * the ICRS system. This system need not be qualified 
  * by an Equinox value.
@@ -87,7 +88,8 @@ public class J2000 implements CoordinateReferenceFrame {
     
     /**
      * Do nothing.
-     * No need to specify the epoch of equinox
+     * 
+     * <p>No need to specify the epoch of equinox
      */ 
     @Override   
     public void setEquinox(final String equinox) { 
@@ -96,7 +98,8 @@ public class J2000 implements CoordinateReferenceFrame {
     
     /**
      * Do nothing.
-     * No need to specify the epoch of equinox
+     * 
+     * <p>No need to specify the epoch of equinox
      */    
     @Override
     public void setEquinox(final double equinox) {
@@ -105,7 +108,8 @@ public class J2000 implements CoordinateReferenceFrame {
     
     /**
      * Do nothing.
-     * No need to specify the epoch of observation
+     * 
+     * <p>No need to specify the epoch of observation
      */    
     @Override
     public void setEpochObs(final String epochObs) { 
@@ -114,7 +118,8 @@ public class J2000 implements CoordinateReferenceFrame {
 
     /**
      * Do nothing.
-     * No need to specify the epoch of observation
+     * 
+     * <p>No need to specify the epoch of observation
      */     
     @Override   
     public void setEpochObs(final double epochObs) {

@@ -52,9 +52,9 @@ public class SkyPosition {
 
     /**
      * Creates a position in the sky.
-     * <p>
-     * The position can be created in different kind of CRS.
-     * </p>
+     * 
+     * <p>The position can be created in different kind of CRS.
+     * 
      * @param longitude longitude in decimal degrees of the position
      * @param latitude latitude in decimal degrees of the position
      * @param crs CRS in which the position is stored

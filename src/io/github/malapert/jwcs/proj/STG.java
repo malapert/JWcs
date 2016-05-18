@@ -22,16 +22,14 @@ import java.util.logging.Level;
 /**
  * Stereographic.
  * 
- * <p>
- * The stereographic projection has the amazing property
+ * <p>The stereographic projection has the amazing property
  * that it maps all circles on the sphere to circles in the plane of
  * projection, although concentric circles on the sphere are not
  * necessarily concentric in the plane of projection. 
  * This property made it the projection of choice for Arab astronomers in
  * constructing astrolabes. In more recent times it has been used
  * by the Astrogeology Center for maps of the Moon, Mars, and
- * Mercury containing craters, basins, and other circular features.
- * </p>
+ * Mercury containing craters, basins, and other circular features. 
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

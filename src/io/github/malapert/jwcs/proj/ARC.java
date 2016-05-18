@@ -22,8 +22,7 @@ import java.util.logging.Level;
 /**
  * Zenithal equidistant.
  *
- * <p>
- * The zenithal equidistant projection ﬁrst appeared in Greisen (1983) as ARC.
+ * <p>The zenithal equidistant projection ﬁrst appeared in Greisen (1983) as ARC.
  * It is widely used as the approximate projection of Schmidt telescopes.
  * The native meridians are uniformly divided to give equispaced parallels.
  *  This projection was also known in antiquity.
@@ -31,7 +30,6 @@ import java.util.logging.Level;
  * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
  * "Representations of celestial coordinates in FITS"</a>, 
  * M. R. Calabretta and E. W. Greisen - page 14
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -51,6 +49,7 @@ public class ARC extends ZenithalProjection {
     /**
      * Creates a new ARC projection based on the celestial longitude and 
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */    

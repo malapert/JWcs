@@ -30,8 +30,6 @@ import static io.github.malapert.jwcs.utility.TimeUtils.convertEpochJulian2JD;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static io.github.malapert.jwcs.utility.NumericalUtils.equal;
-import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
 import org.apache.commons.math3.linear.RealMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtils.equal;
 import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
@@ -41,17 +39,17 @@ import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
  * the <b>coordinate reference frame</b> {@link AbstractCrs#getCoordinateReferenceFrame()}
  * and the <b>coordinate system</b> {@link AbstractCrs#getCoordinateSystem()} .
  *
- * The coordinate reference frame defines how the CRS is related to the origin
+ * <p>The coordinate reference frame defines how the CRS is related to the origin
  * (position and the date of the origin - equinox {@link CoordinateReferenceFrame#getEquinox()} , 
  * date of observation {@link CoordinateReferenceFrame#getEpochObs()} ) and 
  * the coordinate system describes how the coordinates expressed in the 
  * coordinate reference frame (e.g. as cartesian coordinates, spherical 
  * coordinates or coordinates of a map projection).
- * <p>
- * An equinox is an astronomical event in which the plane of Earth's equator 
+ * 
+ * <p>An equinox is an astronomical event in which the plane of Earth's equator 
  * passes through the center of the Sun.
- * <p>
- * An epoch of observation is the moment in time when the coordinates are known 
+ * 
+ * <p>An epoch of observation is the moment in time when the coordinates are known 
  * to be correct. Often, this will be the date of observation, and is important 
  * in cases where coordinates systems move with respect to each other over the 
  * course of time
@@ -71,20 +69,20 @@ public abstract class AbstractCrs {
      */
     public enum CoordinateSystem {
         /**
-         * Galactic coordinates (lII, bII)
+         * Galactic coordinates (lII, bII).
          */
         GALACTIC("Galactic", false),
         /**
-         * Equatorial coordinates (\u03B1, \u03B4),
+         * Equatorial coordinates (\u03B1, \u03B4).
          */
         EQUATORIAL("Equatorial", true),
         /**
-         * De Vaucouleurs Supergalactic coordinates (sgl, sgb)
+         * De Vaucouleurs Supergalactic coordinates (sgl, sgb).
          */
         SUPER_GALACTIC("Super Galactic", false),
         /**
          * Ecliptic coordinates (\u03BB, \u03B2) referred to the ecliptic and
-         * mean equinox
+         * mean equinox.
          */
         ECLIPTIC("Ecliptic", true);
         
@@ -258,7 +256,7 @@ public abstract class AbstractCrs {
     /**
      * Checks the coordinates.
      * 
-     * The longitude must be included in [0,360] while the latitude must be 
+     * <p>The longitude must be included in [0,360] while the latitude must be 
      * included in [-90,90].
      * 
      * @param longitude longitude in decimal degrees
@@ -388,7 +386,7 @@ public abstract class AbstractCrs {
     /**
      * Creates a CRS based on the coordinate system.
      * 
-     * The CRS is built based on ICRS reference frame when the coordinate system
+     * <p>The CRS is built based on ICRS reference frame when the coordinate system
      * is equatorial or ecliptic
      *
      * @param coordinateSystem the coordinate system
@@ -707,14 +705,14 @@ public abstract class AbstractCrs {
      * Create matrix to convert equatorial fk4 coordinates (without e-terms) to
      * IAU 1958 lII,bII system of galactic coordinates.
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br> 
      * 1. Blaauw, A., Gum C.S., Pawsey, J.L., Westerhout,
      * G.: 1958,<br> 
      * 2. Monthly Notices Roy. Astron. Soc. 121, 123, 3. Blaauw, A.,
      * 2007. Private communications.<br>
-     *<p>
-     * Notes:<br> 
+     *
+     * <p>Notes:<br> 
      * ------ <br>
      * Original definitions from 1.:
      * <ul>
@@ -728,32 +726,32 @@ public abstract class AbstractCrs {
      * increasing Right Ascension. Latitude increases from -90 deg through 0 deg
      * to 90 deg at the new galactic pole.</li>
      * </ul>
-     *<p>
-     * Given the RA and Dec of the galactic pole, and using the Euler angles
+     *
+     * <p>Given the RA and Dec of the galactic pole, and using the Euler angles
      * scheme: M = rotZ(a3).rotY(a2).rotZ(a1)
-     *<p>
-     * We first rotate the spin vector of the XY plane about an angle a1 =
+     *
+     * <p>We first rotate the spin vector of the XY plane about an angle a1 =
      * ra_pole and then rotate the spin vector in the XZ plane (i.e. around the
      * Y axis) with an angle a2=90-dec_pole to point it in the right
      * declination.
-     *<p>
-     * Now think of a circle with the galactic pole as its center. The radius is
+     *
+     * <p>Now think of a circle with the galactic pole as its center. The radius is
      * equal to the distance between this center and the equatorial pole. The
      * zero point now is on the circle and opposite to this pole.
-     *<p>
- We need to rotate along this circle (i.e. a rotation around the new
- z-axis) in a way that the angle between the zero point and the equatorial
- pole is equal to 123 deg.
-<p>
-     * So first we need to compensate for the 180 deg of the current zero
+     *
+     * <p>We need to rotate along this circle (i.e. a rotation around the new
+     * z-axis) in a way that the angle between the zero point and the equatorial
+     * pole is equal to 123 deg.
+     * 
+     * <p>So first we need to compensate for the 180 deg of the current zero
      * longitude, opposite to the pole. Then we need to rotate about an angle
      * 123 deg but in a way that increasing galactic longitude corresponds to
      * increasing Right Ascension which is opposite to the standard rotation of
      * this circle (note that we rotated the original X axis about 192.25 deg).
      * The last rotation angle therefore is a3=+180-123: M =
      * rotZ(180-123.0)*rotY(90-27.4)*rotZ(192.25)
-     *<p>
-     * The composed rotation matrix is the same as in Slalib's 'ge50.f' and the
+     *
+     * <p>The composed rotation matrix is the same as in Slalib's 'ge50.f' and the
      * matrix in eq. (32) of Murray (1989).
      *
      * @return 3x3 RealMatrix M as in XYZgal = M * XYZb1950
@@ -765,30 +763,32 @@ public abstract class AbstractCrs {
     /**
      * Transforms galactic to supergalactic coordinates.
      *
-     * Reference: <br> 
+     * <p>Reference: <br> 
      * ----------<br> 
      * Lahav, O., The supergalactic plane revisited with
      * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)
-     *<p>
-     * Notes: ------ The Supergalactic equator is conceptually defined by the
+     *
+     * <p>Notes:<br>
+     * ------<br>
+     * The Supergalactic equator is conceptually defined by the
      * plane of the local (Virgo-Hydra-Centaurus) supercluster, and the origin
      * of supergalactic longitude is at the intersection of the supergalactic
      * and galactic planes. (de Vaucouleurs)
-     *<p>
-     * North SG pole at l=47.37 deg, b=6.32 deg. Node at l=137.37, sgl=0
+     *
+     * <p>North SG pole at l=47.37 deg, b=6.32 deg. Node at l=137.37, sgl=0
      * (inclination 83.68 deg).
-     *<p>
-     * Older references give for he position of the SG node 137.29 which differs
+     *
+     * <p>Older references give for he position of the SG node 137.29 which differs
      * from 137.37 deg in the official definition.
-     *<p>
-     * For the rotation matrix we chose the scheme <code>Rz.Ry.Rz</code> Then first we
- rotate about 47.37 degrees along the z-axis allowed by a rotation about
- 90-6.32 degrees is needed to set the pole to the right declination. The
- new plane intersects the old one at two positions. One of them is
- l=137.37, b=0 (in galactic coordinates). If we want this to be sgl=0 we
- have to rotate this plane along the new z-axis about an angle of 90
- degrees. So the composed rotation matrix is:: M =
- Rotz(90)*Roty(90-6.32)*Rotz(47.37)
+     *
+     * <p>For the rotation matrix we chose the scheme <code>Rz.Ry.Rz</code> 
+     * Then first we rotate about 47.37 degrees along the z-axis allowed by a 
+     * rotation about 90-6.32 degrees is needed to set the pole to the right 
+     * declination. The new plane intersects the old one at two positions. 
+     * One of them is l=137.37, b=0 (in galactic coordinates). If we want this 
+     * to be sgl=0 we have to rotate this plane along the new z-axis about an 
+     * angle of 90 degrees. So the composed rotation matrix is: 
+     * M = Rotz(90)*Roty(90-6.32)*Rotz(47.37) 
      *
      * @return RealMatrix M as in XYZsgal = M * XYZgal
      */
@@ -800,14 +800,14 @@ public abstract class AbstractCrs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU model
      * 2000).
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br>
      * Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
      * IAU Resolutions on Astronomical Reference Systems, TimeUtils Scales, and
      * Earth Rotation Models, United States Naval Observatory circular no. 179,
      * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
-     *<p>
-     * Notes:<br>
+     *
+     * <p>Notes:<br>
      * ------ <br> 
      * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
@@ -833,13 +833,13 @@ public abstract class AbstractCrs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU 1980
      * model).
      *
-     * Reference:<br>
+     * <p>Reference:<br>
      * ---------- <br>
      * Explanatory Supplement to the Astronomical Almanac,
      * P. Kenneth Seidelmann (ed), University Science Books (1992), Expression
      * 3.222-1 (p114).
-     *<p>
-     * Notes:<br>
+     *
+     * <p>Notes:<br>
      * ------<br>
      * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
@@ -860,13 +860,13 @@ public abstract class AbstractCrs {
      * Calculates a rotation matrix to convert equatorial coordinates to
      * ecliptical coordinates.
      *
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Representations of celestial coordinates in FITS, 
      * Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
      * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
-     * <p>
-     * Notes:<br>
+     * 
+     * <p>Notes:<br>
      * ------<br>
      * 1. The origin for ecliptic longitude is the vernal equinox.
      * Therefore the coordinates of a fixed object is subject to shifts due to
@@ -933,13 +933,15 @@ public abstract class AbstractCrs {
     /**
      * Precession from one epoch to another in the fk5 system.
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br> 
      * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
-     *<p>
-     * Notes: ------ The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
+     *
+     * <p>Notes:<br>
+     * ------<br>
+     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
      * @param jEpoch1 Julian start epoch
      * @param jEpoch2 Julian epoch to process to
@@ -956,10 +958,10 @@ public abstract class AbstractCrs {
      * Calculates IAU 1976 precession angles for a precession of epoch
      * corresponding to Julian date jd1 to epoch corresponds to Julian date jd2.
      *
-     * References:<br>
-     *  Lieske,J.H., 1979. Astron.Astrophys.,73,282.<br>
-     *  equations (6) and (7), p283.<br>
-     *  Kaplan,G.H., 1981. USNO circular no. 163, pA2.
+     * <p>References:<br>
+     * Lieske,J.H., 1979. Astron.Astrophys.,73,282.<br>
+     * equations (6) and (7), p283.<br>
+     * Kaplan,G.H., 1981. USNO circular no. 163, pA2.
      *
      * @param jd1 Julian date for start epoch
      * @param jd2 Julian date for end epoch
@@ -982,7 +984,7 @@ public abstract class AbstractCrs {
     /**
      * Given three precession angles, creates the corresponding rotation matrix.
      *
-     * Return the precession matrix for the three precession angles zeta, z and
+     * <p>Return the precession matrix for the three precession angles zeta, z and
      * theta. Rotation matrix: R = rotZ(-z).rotY(th).rotZ(-zeta) (ES 3.21-7, p
      * 103). Also allowed is the expression: rotZ(-90-z)*rotX(th)*rotZ(90-zeta)
      *
@@ -998,13 +1000,13 @@ public abstract class AbstractCrs {
     /**
      * Precession from one epoch to another in the fk4 system.
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br> 
      * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
-     *<p>
-     * Notes:<br>
+     *
+     * <p>Notes:<br>
      * ------<br>
      * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
      *
@@ -1021,7 +1023,7 @@ public abstract class AbstractCrs {
      * Calculates precession angles for a precession in FK4, using Newcomb's
      * method (Woolard and Clemence angles).
      *
-     * Notes:<br> 
+     * <p>Notes:<br> 
      * ------<br> 
      * Newcomb's precession angles for old catalogs (FK4), see ES
      * 3.214 p.106. Input are <b>Besselian epochs</b>! Adopted accumulated
@@ -1080,7 +1082,7 @@ public abstract class AbstractCrs {
      * Creates a matrix to precess from B1950 in FK4 to J2000 in FK5 following
      * to Murray's (1989) procedure.
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br>
      * <ul>
      * <li>Murray, C.A. The Transformation of coordinates
@@ -1090,8 +1092,8 @@ public abstract class AbstractCrs {
      * <li>Poppe P.C.R.,, Martin, V.A.F.,
      * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas</li>
      * </ul>
-     *<p>
-     * Notes:<br> 
+     *
+     * <p>Notes:<br> 
      * ------<br> 
      * Murray precesses from B1950 to J2000 using a precession
      * matrix by Lieske. Then applies the equinox correction and ends up with a
@@ -1169,13 +1171,15 @@ public abstract class AbstractCrs {
     /**
      * Creates a rotation matrix to convert a position from ICRS to fk5, J2000.
      *
-     * Reference:<br> 
+     * <p>Reference:<br> 
      * ----------<br>
      * Kaplan G.H., The IAU Resolutions on Astronomical
      * Reference systems, TimeUtils scales, and Earth Rotation Models, US Naval
      * Observatory, Circular No. 179
-     *<p>
-     * Notes: ------ Return a matrix that converts a position vector in ICRS to
+     *
+     * <p>Notes:<br>
+     * ------<br>
+     * Return a matrix that converts a position vector in ICRS to
      * FK5, J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices from the same paper
      * to obtain the exact result M = rotX(-eta0)*rotY(xi0)*rotZ(da0) eta0 =
@@ -1195,14 +1199,14 @@ public abstract class AbstractCrs {
      * dynamical reference system based on the dynamical mean equator and
      * equinox of J2000.0 (called the dynamical J2000 system).
      *
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Hilton and Hohenkerk (2004), Astronomy and
      * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
      * Astronomical Reference systems, TimeUtils scales, and Earth Rotation
      * Models, US Naval Observatory, Circular No. 179
-     *<p>
-     * Notes:<br>
+     *
+     * <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given
@@ -1212,7 +1216,8 @@ public abstract class AbstractCrs {
      * Reference:<br>
      * ----------<br>
      * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
-     *<p>
+     *
+     * <p>
      * Notes:<br>
      * ------<br>
      * Note that we apply this precession only to equatorial
@@ -1234,11 +1239,11 @@ public abstract class AbstractCrs {
      * Creates a rotation matrix for a precession based on IAU 2000/2006
      * expressions, see `IAU2006precangles`.
      *
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
-     *<p>
-     * Notes:<br>
+     *
+     * <p>Notes:<br>
      * ------<br>
      * Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
@@ -1273,11 +1278,11 @@ public abstract class AbstractCrs {
      * Calculates IAU 2000 precession angles for precession from input epoch to
      * J2000.
      *
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Capitaine N. et al., IAU 2000 precession A and A 412, 567-586 (2003)
-     * <p>
-     * Notes:<br>
+     * 
+     * <p>Notes:<br>
      * ------<br>
      * Input are Julian epochs! ``T = (jd-2451545.0)/36525.0`` 
      * Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see 
@@ -1298,7 +1303,7 @@ public abstract class AbstractCrs {
         double d3 = 0.0179663d;
         double d4 = -0.0000327d;
         double d5 = -0.0000002d;
-        final double zeta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double zeta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * d5)))) + d0;
 
         d0 = -2.5976176d;
         d1 = 2306.0803226d;
@@ -1306,7 +1311,7 @@ public abstract class AbstractCrs {
         d3 = 0.0182273d;
         d4 = 0.0000470d;
         d5 = -0.0000003d;
-        final double z_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double z_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * d5)))) + d0;
 
         d0 = 0.0;
         d1 = 2004.1917476d;
@@ -1314,7 +1319,7 @@ public abstract class AbstractCrs {
         d3 = -0.0418251d;
         d4 = -0.0000601d;
         d5 = -0.0000001d;
-        final double theta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * (d5))))) + d0;
+        final double theta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * d5)))) + d0;
 
         //Return values in degrees
         final double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
@@ -1325,7 +1330,7 @@ public abstract class AbstractCrs {
      * Given two angles in longitude and latitude returns corresponding
      * Cartesian coordinates x,y,z.
      *
-     * Notes: <br>
+     * <p>Notes: <br>
      * ------ <br>
      * The three coordinate axes x, y and z, the set of
      * right-handed Cartesian axes that correspond to the usual celestial
@@ -1345,7 +1350,7 @@ public abstract class AbstractCrs {
      * Given two angles in longitude and latitude returns corresponding
      * Cartesian coordinates x,y,z.
      *
-     * Notes: <br>
+     * <p>Notes: <br>
      * ------ <br>
      * The three coordinate axes x, y and z, the set of
      * right-handed Cartesian axes that correspond to the usual celestial
@@ -1373,7 +1378,7 @@ public abstract class AbstractCrs {
      * Given Cartesian x,y,z return corresponding longitude and latitude in
      * degrees.
      *
-     * Notes: <br>
+     * <p>Notes: <br>
      * ------ <br>
      * Note that one can expect strange behavior for the values of
      * the longitudes very close to the pole. In fact, at the poles itself, the

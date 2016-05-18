@@ -90,7 +90,9 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     public final static int MAX_LATITUDE = 90;
 
     /**
-     * Number of axes. 2 for an image
+     * Number of axes. 
+     * 
+     * <p>2 for an image
      */
     public final static String NAXIS = "NAXIS";
     /**
@@ -102,61 +104,71 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      */
     public final static String NAXIS2 = "NAXIS2";
     /**
-     * Reference along X axis in pixel frame. This keyword is required for
-     * projection computation.
+     * Reference along X axis in pixel frame. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     public final static String CRPIX1 = "CRPIX1";
     /**
-     * Reference along Y axis in pixel frame. This keyword is required for
-     * projection computation.
+     * Reference along Y axis in pixel frame. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     public final static String CRPIX2 = "CRPIX2";
     /**
-     * Reference along longitude in degrees in celestial frame. This keyword is
-     * required for projection computation.
+     * Reference along longitude in degrees in celestial frame. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     public final static String CRVAL1 = "CRVAL1";
     /**
-     * Reference along latitude in degrees in celestial frame. This keyword is
-     * required for projection computation.
+     * Reference along latitude in degrees in celestial frame. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     public final static String CRVAL2 = "CRVAL2";
     /**
-     * AbstractProjection type along X axis. This keyword is required for projection
-     * computation.
+     * AbstractProjection type along X axis. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     public final static String CTYPE1 = "CTYPE1";
     /**
-     * AbstractProjection type along Y axis. This keyword is required for projection
-     * computation.
+     * AbstractProjection type along Y axis. 
+     * 
+     * <p>This keyword is required for projection computation.
      */
     protected final static String CTYPE2 = "CTYPE2";
     /**
-     * Scale (degrees / pixel) and rotation matrix. For projection computation,
-     * information about scale and rotation are needed. Either the CD matrix is
-     * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
-     * CDELT1, CDELT2).
+     * Scale (degrees / pixel) and rotation matrix. 
+     * 
+     * <p>For projection computation, information about scale and rotation are 
+     * needed. Either the CD matrix is provided or the following element 
+     * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CD11 = "CD1_1";
     /**
-     * Scale (degrees / pixel) and rotation matrix. For projection computation,
-     * information about scale and rotation are needed. Either the CD matrix is
-     * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
-     * CDELT1, CDELT2).
+     * Scale (degrees / pixel) and rotation matrix. 
+     * 
+     * <p>For projection computation, information about scale and rotation are
+     * needed. Either the CD matrix is provided or the following element 
+     * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CD12 = "CD1_2";
     /**
-     * Scale (degrees / pixel) and rotation matrix. For projection computation,
-     * information about scale and rotation are needed. Either the CD matrix is
-     * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
-     * CDELT1, CDELT2).
+     * Scale (degrees / pixel) and rotation matrix. 
+     * 
+     * <p>For projection computation, information about scale and rotation are 
+     * needed. Either the CD matrix is provided or the following element 
+     * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CD21 = "CD2_1";
     /**
-     * Scale (degrees / pixel) and rotation matrix. For projection computation,
-     * information about scale and rotation are needed. Either the CD matrix is
-     * provided or the following element (CDELT1, CDELT2, CROTA2) or (PC matrix,
-     * CDELT1, CDELT2).
+     * Scale (degrees / pixel) and rotation matrix. 
+     * 
+     * <p>For projection computation, information about scale and rotation are
+     * needed. Either the CD matrix is provided or the following element 
+     * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CD22 = "CD2_2";
     /**
@@ -168,22 +180,26 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      */
     public final static String CUNIT2 = "CUNIT2";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
-     * projection computation, information about scale and rotation are needed.
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined. 
+     * 
+     * <p>For projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CDELT1 = "CDELT1";
     /**
-     * Scale (degrees / pixel) along X axis when CD matrix is not defined. For
-     * projection computation, information about scale and rotation are needed.
+     * Scale (degrees / pixel) along X axis when CD matrix is not defined. 
+     * 
+     * <p>For projection computation, information about scale and rotation are needed.
      * Either the CD matrix is provided or the following element (CDELT1,
      * CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CDELT2 = "CDELT2";
     /**
      * For projection computation, information about scale and rotation are
-     * needed. Either the CD matrix is provided or the following element
+     * needed. 
+     * 
+     * <p>Either the CD matrix is provided or the following element
      * (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1, CDELT2).
      */
     public final static String CROTA2 = "CROTA2";
@@ -192,28 +208,36 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      */
     public final static String EQUINOX = "EQUINOX";
     /**
-     * Deformation matrix. For projection computation, information about scale
+     * Deformation matrix. 
+     * 
+     * <p>For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
     public final static String PC11 = "PC1_1";
     /**
-     * Deformation matrix. For projection computation, information about scale
+     * Deformation matrix. 
+     * 
+     * <p>For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
     public final static String PC12 = "PC1_2";
     /**
-     * Deformation matrix. For projection computation, information about scale
+     * Deformation matrix. 
+     * 
+     * <p>For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
      */
     public final static String PC21 = "PC2_1";
     /**
-     * Deformation matrix. For projection computation, information about scale
+     * Deformation matrix. 
+     * 
+     * <p>For projection computation, information about scale
      * and rotation are needed. Either the CD matrix is provided or the
      * following element (CDELT1, CDELT2, CROTA2) or (PC matrix, CDELT1,
      * CDELT2).
@@ -821,7 +845,9 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Scale factor. This is used to convert the CRVAL into degree.
+     * Scale factor. 
+     * 
+     * <p>This is used to convert the CRVAL into degree.
      *
      * @param cunit The cunit axis
      * @return the scale factor to apply at CRVAL

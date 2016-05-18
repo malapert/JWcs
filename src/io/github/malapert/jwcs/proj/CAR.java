@@ -21,13 +21,11 @@ import java.util.logging.Level;
 /**
  * The plate carrée projection.
  * 
- * <p>
- * The equator and all meridians are correctly scaled in the plate
+ * <p>The equator and all meridians are correctly scaled in the plate
  * carrée projection.
  * 
- * Reference: "Representations of celestial coordinates in FITS", 
+ * <p>Reference: "Representations of celestial coordinates in FITS", 
  * M. R. Calabretta and E. W. Greisen - page 16
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -47,6 +45,7 @@ public class CAR extends CylindricalProjection{
     /**
      * Constructs a CAR based on the celestial longitude and 
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */

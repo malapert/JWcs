@@ -27,14 +27,12 @@ import java.util.logging.Level;
 /**
  * Zenithal perspective.
  *
- * <p>
- * Zenithal (azimuthal) perspective projections are generated from a point and
+ * <p>Zenithal (azimuthal) perspective projections are generated from a point and
  * carried through the sphere to the plane of projection.
  *
  * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
  * "Representations of celestial coordinates in FITS"</a>, M. R. Calabretta and
  * E. W. Greisen - page 10
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -102,6 +100,7 @@ public class AZP extends ZenithalProjection {
     
     /**
      * Checks gamma parameter.
+     * 
      * @param gamma value to check
      * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
      */
@@ -113,6 +112,7 @@ public class AZP extends ZenithalProjection {
     
     /**
      * Computes the plane coordinate along X based on parameter projection.
+     * 
      * @param x plane coordinate along X in radians.
      * @return the plane coordinate along X with application of parameter projection
      */
@@ -122,6 +122,7 @@ public class AZP extends ZenithalProjection {
     
     /**
      * Computes the plane coordinate along Y based on parameter projection.
+     * 
      * @param y plane coordinate along Y in radians.
      * @return the plane coordinate along Y with application of parameter projection
      */    
@@ -131,6 +132,7 @@ public class AZP extends ZenithalProjection {
     
     /**
      * Computes theta in radians.
+     * 
      * @param x plane coordinate in radians along X
      * @param y plane coordinate in radians along Y
      * @param radius Radius in radians

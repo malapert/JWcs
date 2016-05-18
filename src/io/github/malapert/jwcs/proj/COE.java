@@ -25,13 +25,11 @@ import java.util.logging.Level;
 /**
  * Conic equal area.
  *
- * <p>
- * The standard parallels in Alber's conic equal area projection are projected
+ * <p>The standard parallels in Alber's conic equal area projection are projected
  * as concentric arcs at their true length and separated so that the area
  * between them is the same as the corresponding area on the sphere. The other
  * parallels are then drawn as concentric arcs spaced so as to preserve the
  * area.
- * </p>
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

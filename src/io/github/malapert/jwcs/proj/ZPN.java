@@ -27,10 +27,8 @@ import java.util.logging.Level;
 /**
  * Zenithal polynomial.
  *
- * <p>
- * The zenithal polynomial projection, ZPN, generalizes the ARC projection by
- * adding polynomial terms up to a large degree in the zenith distance
- * </p>
+ * <p>The zenithal polynomial projection, ZPN, generalizes the ARC projection by
+ * adding polynomial terms up to a large degree in the zenith distance 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -76,7 +74,7 @@ public final class ZPN extends ZenithalProjection {
     /**
      * The point of inflection closest to the pole.
      *
-     * coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
+     * <p>coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
      * Radius of the first point of inflection (N &gt; 2)
      */
     private final transient double[] coeff;
@@ -106,6 +104,7 @@ public final class ZPN extends ZenithalProjection {
 
     /**
      * Finds the inflection point the closest from pole.
+     * 
      * @param highestPV highest PV order
      * @param PV projection parameters
      * @return the inflection point the closest from pole
@@ -193,6 +192,7 @@ public final class ZPN extends ZenithalProjection {
 
     /**
      * Checks validity of parameters.
+     * 
      * @throws JWcsError Non-standard PVi_1 and/or PVi_2 values
      * @throws ArrayIndexOutOfBoundsException Need at least 10 projection parameters
      */
@@ -326,10 +326,10 @@ public final class ZPN extends ZenithalProjection {
 
     /**
      * Computes an iterative solution for an equation where order &gt; 2.
-     * <p>
-     * The end of the iterative solution is given by the expected numerical precision
+     * 
+     * <p>The end of the iterative solution is given by the expected numerical precision
      * or the maximal number of iterations.
-     * </p>
+     * 
      * @param r radius
      * @param pv projection parameters
      * @param coeff coefficient

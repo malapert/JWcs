@@ -23,13 +23,12 @@ import java.util.logging.Level;
 /**
  * The Hammer-Aitoff projection.
  * 
- * <p>
- * This projection is developed from the equatorial case of the zenithal equal
+ * <p>This projection is developed from the equatorial case of the zenithal equal
  * area projection by doubling the equatorial scale and longitude coverage.
  * The whole sphere is mapped thereby while preserving the equal. The whole 
  * sphere is mapped thereby while preserving the equal.
  * 
- * This projection reduces distortion in the polar regions compared to 
+ * <p>This projection reduces distortion in the polar regions compared to 
  * pseudo cylindrical by making the meridians and parallels more nearly 
  * orthogonal. Together with its equal area property this makes it one of 
  * most commonly used all-sky projections.
@@ -37,7 +36,6 @@ import java.util.logging.Level;
  * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
  * "Representations of celestial coordinates in FITS"</a>, 
  * M. R. Calabretta and E. W. Greisen - page 18
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -57,6 +55,7 @@ public class AIT extends CylindricalProjection {
     /**
      * Creates a new AIT projection based on the celestial longitude and 
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point
      */

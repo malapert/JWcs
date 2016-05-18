@@ -24,15 +24,13 @@ import java.util.logging.Level;
 /**
  * Mercator.
  * 
- * <p>
- * Since the meridians and parallels of all cylindrical projections
+ * <p>Since the meridians and parallels of all cylindrical projections
  * intersect at right angles the requirement for conformality.
  * This projection has been widely used in navigation since it has the 
  * property that lines of constant bearing (known asrhumb lines orloxodromes)
  * are projected as straight lines. 
  * This is a direct result of its conformality and the fact that its meridians 
  * do not converge.
- * </p>
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
@@ -106,7 +104,6 @@ public class MER extends CylindricalProjection {
         return DESCRIPTION;
     }    
         
-
     @Override
     public boolean inside(final double lon, final double lat) {
         return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), HALF_PI);   
