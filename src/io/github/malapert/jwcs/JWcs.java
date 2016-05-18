@@ -935,6 +935,7 @@ public abstract class JWcs implements JWcsKeyProvider {
                 break;
             default:
                 projection = createProjection(projectionCode, cx, cy);
+                break;
         }
         return projection;
     }
