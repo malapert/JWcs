@@ -950,9 +950,9 @@ public abstract class JWcs implements JWcsKeyProvider {
         try {
             final Package packageName = this.getClass().getPackage();
             final String name = packageName.getName()+".proj.";
-            Class<?> clazz = Class.forName(name + projectionCode);
-            Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE);
-            Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy);            
+            final Class<?> clazz = Class.forName(name + projectionCode);
+            final Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE);
+            final Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy);            
             projection = (Projection) instance;
             LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx});
         } catch (ClassNotFoundException ex) {
