@@ -185,6 +185,12 @@ public abstract class Crs {
     public abstract CoordinateReferenceFrame getCoordinateReferenceFrame();    
 
     /**
+     * Sets the coordinate reference frame of the CRS.
+     * @param refFrame the coordinate reference frame
+     */
+    public abstract void setCoordinateReferenceFrame(CoordinateReferenceFrame refFrame);      
+    
+    /**
      * Returns Eterms matrix for the input coordinate Reference System.
      *
      * @return Eterms matrix

@@ -170,6 +170,7 @@ public class Ecliptic extends Crs implements CoordinateReferenceFrame {
      *
      * @param coordinateReferenceFrame the coordinateReferenceFrame to set
      */
+    @Override
     public void setCoordinateReferenceFrame(final CoordinateReferenceFrame coordinateReferenceFrame) {
         this.coordinateReferenceFrame = coordinateReferenceFrame;
     }
