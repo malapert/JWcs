@@ -389,58 +389,116 @@ public abstract class JWcs implements JWcsKeyProvider {
      * @throws JWcsError the coordinate reference frame is not supported
      */
     private CoordinateReferenceFrame getReferenceFrame() {
-        final String mjdObs = getMJDObs();
         CoordinateReferenceFrame refSystem;
         if (hasKeyword(RADESYS)) {
-            final String radesys = getValueAsString(RADESYS);
-            switch (radesys) {
-                case "ICRS":
-                    refSystem = new ICRS();
-                    break;
-
-                case "FK5":
-                    refSystem = new FK5();
-                    if (hasKeyword(EQUINOX)) {
-                        ((FK5) refSystem).setEquinox("J" + getValueAsFloat(EQUINOX));
-                    }
-                    break;
-
-                case "FK4":
-                    refSystem = new FK4();
-                    if (hasKeyword(EQUINOX)) {
-                        ((FK4) refSystem).setEquinox("B" + getValueAsFloat(EQUINOX));
-                    }
-                    if (mjdObs != null) {
-                        ((FK4) refSystem).setEpochObs("MJD" + Float.valueOf(mjdObs));
-                    }
-                    break;
-
-                case "FK4-NO-E":
-                    refSystem = new FK4_NO_E();
-                    if (hasKeyword(EQUINOX)) {
-                        ((FK4_NO_E) refSystem).setEquinox("B" + getValueAsFloat(EQUINOX));
-                    }
-                    if (mjdObs != null) {
-                        ((FK4_NO_E) refSystem).setEpochObs("MJD" + Float.valueOf(mjdObs));
-                    }
-                    break;
-
-                default:
-                    throw new JWcsError("The coordinate reference frame, " + radesys + " is not supported");
-            }
+            final String radecsys = getValueAsString(RADESYS);
+            refSystem = coordinateReferenceFrameFactory(radecsys);
         } else if (hasKeyword(EQUINOX)) {
             final float equinox = getValueAsFloat(EQUINOX);
-            if (equinox < 1984.0) {
-                refSystem = new FK4("B" + equinox);
-                if (mjdObs != null) {
-                    ((FK4) refSystem).setEpochObs("MJD" + Float.valueOf(mjdObs));
-                }
-            } else {
-                refSystem = new FK5("J" + equinox);
+            refSystem = coordinateFK4orFK5(equinox);
+        } else {
+            // RADESYSa defaults to ICRS if both RADESYS and EQUINOX are absents.
+            refSystem = new ICRS();
+        }
+        return refSystem;
+    }
+
+    /**
+     * Creates a FK4 or FK5 coordinate reference frame depending on the equinox.
+     * 
+     * Create a FK4 coordinate reference frame with a Besselian epoch of equinox
+     * and a Modified Julian date as epoch of observation when equinox is smaller
+     * then 1984. Otherwise, a FK5 coordinate refrence frame is created based on
+     * a Julian date as epoch of observation.
+     * 
+     * @param equinox epoch of the equinox
+     * @return a FK4 or FK5 coordinate reference
+     */
+    private CoordinateReferenceFrame coordinateFK4orFK5(final float equinox) {
+        final CoordinateReferenceFrame refSystem;
+        if (equinox < 1984.0) {
+            refSystem = new FK4("B" + equinox);
+            final String mjdObs = getMJDObs();
+            if (mjdObs != null && !mjdObs.isEmpty()) {
+                refSystem.setEpochObs("MJD" + Float.valueOf(mjdObs));
             }
         } else {
-            // RADESYSa defaults to ICRS if both it and EQUINOX a are absent.
-            refSystem = new ICRS();
+            refSystem = new FK5("J" + equinox);
+        }
+        return refSystem;
+    }
+
+    /**
+     * Creates a factory to create the right coordinate reference frame based
+     * on the RADESYS keyword value.
+     * @param radecSys value of the RADESYS keyword
+     * @return a coordinate reference frame
+     */
+    private CoordinateReferenceFrame coordinateReferenceFrameFactory(final String radecSys) {
+        final CoordinateReferenceFrame refSystem;
+        switch (radecSys) {
+            case "ICRS":
+                refSystem = new ICRS();
+                break;
+
+            case "FK5":
+                refSystem = createFK5();
+                break;
+
+            case "FK4":
+                refSystem = createFK4();
+                break;
+
+            case "FK4-NO-E":
+                refSystem = createFK4NOE();
+                break;
+
+            default:
+                throw new JWcsError("The coordinate reference frame, " + radecSys + " is not supported");
+        }
+        return refSystem;
+    }
+
+    /**
+     * Creates a FK5 coordinate reference frame.
+     * @return a FK5 coordinate reference frame
+     */
+    private CoordinateReferenceFrame createFK5() {
+        final CoordinateReferenceFrame refSystem = new FK5();
+        if (hasKeyword(EQUINOX)) {
+            refSystem.setEquinox("J" + getValueAsFloat(EQUINOX));
+        }
+        return refSystem;
+    }
+
+    /**
+     * Creates a FK4 coordinate reference frame.
+     * @return a FK4 coordinate reference frame
+     */    
+    private CoordinateReferenceFrame createFK4() {
+        final CoordinateReferenceFrame refSystem = new FK4();
+        if (hasKeyword(EQUINOX)) {
+            refSystem.setEquinox("B" + getValueAsFloat(EQUINOX));
+        }
+        final String mjdObs = getMJDObs();
+        if (mjdObs != null && !mjdObs.isEmpty()) {
+            refSystem.setEpochObs("MJD" + Float.valueOf(mjdObs));
+        }
+        return refSystem;
+    }
+
+    /**
+     * Creates a FK4 coordinate reference frame without Eterms.
+     * @return a FK4 coordinate reference frame without Eterms
+     */    
+    private CoordinateReferenceFrame createFK4NOE() {
+        final CoordinateReferenceFrame refSystem = new FK4_NO_E();
+        if (hasKeyword(EQUINOX)) {
+            refSystem.setEquinox("B" + getValueAsFloat(EQUINOX));
+        }
+        final String mjdObs = getMJDObs();
+        if (mjdObs != null && !mjdObs.isEmpty()) {
+            refSystem.setEpochObs("MJD" + Float.valueOf(mjdObs));
         }
         return refSystem;
     }
@@ -796,7 +854,8 @@ public abstract class JWcs implements JWcsKeyProvider {
      * Raises a JWcsError when no projection code is found.
      *
      * @return the projection
-     * @throws BadProjectionParameterException when the projection parameter is wrong
+     * @throws BadProjectionParameterException when the projection parameter is
+     * wrong
      */
     protected final Projection createProjection() throws BadProjectionParameterException {
         final String ctype1 = ctype(1);
@@ -813,11 +872,13 @@ public abstract class JWcs implements JWcsKeyProvider {
 
     /**
      * Creates a projection based on its projection code
+     *
      * @param codeProjection projection code
      * @param cx scale factor along X
      * @param cy scale factor along Y
      * @return the projection
-     * @throws BadProjectionParameterException When a bad parameter is provided to the projection
+     * @throws BadProjectionParameterException When a bad parameter is provided
+     * to the projection
      * @throws JWcsError projection code is not supported
      */
     private Projection createProjectionFactory(final String codeProjection, final double cx, final double cy) throws BadProjectionParameterException {
