@@ -84,12 +84,11 @@ public class MOL extends CylindricalProjection {
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
-        final double tol = 1.0e-12;
-        final double[] phis = computePhiAndS(xr, yr, tol);
+        final double yr = Math.toRadians(y);        
+        final double[] phis = computePhiAndS(xr, yr);
         final double phi = phis[0];
         final double s = phis[1];
-        final double theta = computeTheta(xr, yr, s, tol);
+        final double theta = computeTheta(xr, yr, s);
         final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         return pos;
@@ -102,12 +101,11 @@ public class MOL extends CylindricalProjection {
      * @param xr projection plane coordinate along X in radians
      * @param yr projection plane coordinate along Y in radians
      * @param s s
-     * @param tol tolerance for comparing double
      * @return the native spherical coordinate (\u03B8) in radians along
      * latitude
      * @throws PixelBeyondProjectionException Solution not defined
      */
-    private double computeTheta(final double xr, final double yr, final double s, final double tol) throws PixelBeyondProjectionException {
+    private double computeTheta(final double xr, final double yr, final double s) throws PixelBeyondProjectionException {
         double z = yr / Math.sqrt(2);
         if (NumericalUtils.equal(Math.abs(z), 1)) {
             z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
@@ -133,13 +131,13 @@ public class MOL extends CylindricalProjection {
      * longitude and s.
      *
      * @param xr projection plane coordinate along X in radians
-     * @param yr projection plane coordinate along Y in radians
-     * @param tol tolerance to compare a double
+     * @param yr projection plane coordinate along Y in radians     
      * @return the native spherical coordinate (\u03D5) in radians along
      * longitude and s
      * @throws PixelBeyondProjectionException Solution not defined
      */
-    private double[] computePhiAndS(final double xr, final double yr, final double tol) throws PixelBeyondProjectionException {
+    private double[] computePhiAndS(final double xr, final double yr) throws PixelBeyondProjectionException {
+        final double tol = 1.0e-12;        
         double s = 2 - Math.pow(yr, 2);
         final double phi;
         if (s <= tol) {

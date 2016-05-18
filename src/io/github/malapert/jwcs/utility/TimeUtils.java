@@ -93,8 +93,8 @@ public abstract class TimeUtils {
         double m;
         final Date date = new Date();
         jd += 0.5;
-        double z = Math.floor(jd);
-        double f = jd - z;
+        final double z = Math.floor(jd);
+        final double f = jd - z;
 
         if (z >= 2299161.0) {
             a = Math.floor((z - 1867216.25) / 36524.25);
@@ -103,10 +103,10 @@ public abstract class TimeUtils {
             a = z;
         }
 
-        double b = a + 1524;
-        double c = Math.floor((b - 122.1) / 365.25);
-        double d = Math.floor(365.25 * c);
-        double e = Math.floor((b - d) / 30.6001);
+        final double b = a + 1524;
+        final double c = Math.floor((b - 122.1) / 365.25);
+        final double d = Math.floor(365.25 * c);
+        final double e = Math.floor((b - d) / 30.6001);
         double aux = b - d - Math.floor(30.6001 * e) + f;
         final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
