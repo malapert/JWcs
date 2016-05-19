@@ -8,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR a PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * TimeUtility class for handling time.
@@ -36,19 +37,12 @@ import java.util.GregorianCalendar;
 public final class TimeUtility {
 
     /**
-     * Private constructor.
-     */
-    private TimeUtility() {
-        //not called
-    }
-
-    /**
      * Convert a Julian epoch to a Julian date
      *
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
      */
-    public final static double convertEpochJulian2JD(final double jEpoch) {
+    public static double convertEpochJulian2JD(final double jEpoch) {
         return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
     }
 
@@ -58,7 +52,7 @@ public final class TimeUtility {
      * @param jd Julian date
      * @return a Julian epoch
      */
-    public final static double convertJD2epochJulian(final double jd) {
+    public static double convertJD2epochJulian(final double jd) {
         return 2000.0d + (jd - 2451545.0d) / 365.25d;
     }
 
@@ -68,7 +62,7 @@ public final class TimeUtility {
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
      */
-    public final static double convertEpochBessel2JD(final double bEpoch) {
+    public static double convertEpochBessel2JD(final double bEpoch) {
         return (bEpoch - 1900.0d) * 365.242198781d + 2415020.31352d;
     }
 
@@ -78,7 +72,7 @@ public final class TimeUtility {
      * @param jd julian date
      * @return a Besselian epoch
      */
-    public final static double convertJD2epochBessel(final double jd) {
+    public static double convertJD2epochBessel(final double jd) {
         return 1900.0d + (jd - 2415020.31352d) / 365.242198781d;
     }
 
@@ -88,7 +82,7 @@ public final class TimeUtility {
      * @param julianDate julian date
      * @return ISO date
      */
-    public final static String convertJulianDateToISO(final double julianDate) {
+    public static String convertJulianDateToISO(final double julianDate) {
 
         // Calcul date calendrier Grégorien à partir du jour Julien éphéméride
         // Tous les calculs sont issus du livre de Jean MEEUS "Calcul astronomique"
@@ -154,7 +148,7 @@ public final class TimeUtility {
      * @param modifiedJulianDate modified julian date
      * @return ISO date
      */
-    public final static String convertModifiedJulianDateToISO(final double modifiedJulianDate) {
+    public static String convertModifiedJulianDateToISO(final double modifiedJulianDate) {
         final double julianDate = modifiedJulianDate + 2400000.5;
         return convertJulianDateToISO(julianDate);
     }
@@ -166,7 +160,7 @@ public final class TimeUtility {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public final static double convertISOToJulianDate(final String dateObs) throws ParseException {
+    public static double convertISOToJulianDate(final String dateObs) throws ParseException {
         final SimpleDateFormat sdf;
         if (dateObs.contains("T") && dateObs.contains(".")) {
             sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -205,10 +199,9 @@ public final class TimeUtility {
      * @return a Julian date
      * @throws ParseException When the dateObs format is wrong
      */
-    public final static double convertISOToModifiedJulianDate(final String dateObs) throws ParseException {
+    public static double convertISOToModifiedJulianDate(final String dateObs) throws ParseException {
         final double jd = convertISOToJulianDate(dateObs);
-        final double modifiedJulianDate = jd - 2400000.5;
-        return modifiedJulianDate;
+        return jd - 2400000.5;
     }
 
     /**
@@ -221,11 +214,11 @@ public final class TimeUtility {
      *
      * @param epoch Julian epoch, Besselian epochs, Julian dates
      * @return Returns in order Besselian epoch, Julian epoch and Julian date.
-     * @throws JWcsError Epochs should start by J, B or date format
+     * @throws JWcsError Epochs should start by J, b or date format
      * @throws JWcsError No prefix or cannot convert epoch to a number
      * @throws JWcsError Unknown prefix for epoch
      */
-    public final static double[] epochs(final String epoch) {
+    public static double[] epochs(final String epoch) {
         String spec = epoch;
         final int i = spec.indexOf('_');
         if (i != -1) {
@@ -234,14 +227,14 @@ public final class TimeUtility {
 
         final String epochPrefix = extractPrefixFromEpoch(spec);
         final String epochValue = extractValueFromEpoch(epoch, epochPrefix);
-        final String prefix = epochPrefix.toUpperCase();
+        final String prefix = epochPrefix.toUpperCase(Locale.ENGLISH);
         return computeEpochs(prefix, epochValue);
     }
 
     /**
      * Computes Besselian epoch, Julian epoch and Julian date from an epoch
      *
-     * @param epochPrefix epochs should start by J, B or date format
+     * @param epochPrefix epochs should start by J, b or date format
      * @param epochValue epoch value
      * @return Returns in order Besselian epoch, Julian epoch and Julian date.
      */
@@ -305,8 +298,8 @@ public final class TimeUtility {
      * Extracts prefix from epoch
      *
      * @param epoch Julian epoch, Besselian epochs, Julian dates
-     * @return J, B or date format
-     * @throws JWcsError Epochs should start by J, B or date format
+     * @return J, b or date format
+     * @throws JWcsError Epochs should start by J, b or date format
      */
     private static String extractPrefixFromEpoch(final String epoch) {
         final String[] val = epoch.split("(\\d.*)");
@@ -343,10 +336,10 @@ public final class TimeUtility {
      * <li>YYYY-MM-DDTHH:MM:SS
      * </ul>
      *
-     * @param date A string, representing a date in FITS format
+     * @param date a string, representing a date in FITS format
      * @return Integer year, integer month, fractional day.
      */
-    public final static Object[] fitsdate(final String date) {
+    public static Object[] fitsdate(final String date) {
         String dateTmp = date;
         String[] parts = date.split("/");
         if (parts.length == 3) {
@@ -381,11 +374,11 @@ public final class TimeUtility {
      * @param dayNumber day number
      * @return the Julian day
      */
-    public final static double jd(final int year, final int month, final double dayNumber) {
+    public static double jd(final int year, final int month, final double dayNumber) {
         int y = 0;
         int m = 0;
-        int A;
-        int B;
+        int a;
+        int b;
         double jd;
         if (month > 2) {
             y = year;
@@ -396,17 +389,23 @@ public final class TimeUtility {
         }
         final double calday = year + month / 100.0d + dayNumber / 10000.0d;
         if (calday > 1582.1015) {
-            A = (int) (y / 100.0);
-            B = 2 - A + (int) (A / 4.0);
+            a = (int) (y / 100.0);
+            b = 2 - a + (int) (a / 4.0);
         } else {
-            B = 0;
+            b = 0;
         }
         if (calday > 0.0229) {  // Dates after 29 February year 0
-            jd = (int) (365.25 * y) + (int) (30.6001 * (m + 1)) + dayNumber + 1720994.50d + B;
+            jd = (int) (365.25 * y) + (int) (30.6001 * (m + 1)) + dayNumber + 1720994.50d + b;
         } else {
-            jd = (int) (365.25 * y - 0.75) + (int) (30.6001 * (m + 1)) + dayNumber + 1720994.50d + B;
+            jd = (int) (365.25 * y - 0.75) + (int) (30.6001 * (m + 1)) + dayNumber + 1720994.50d + b;
         }
         return jd;
     }
 
+    /**
+     * Private constructor.
+     */
+    private TimeUtility() {
+        //not called
+    }    
 }

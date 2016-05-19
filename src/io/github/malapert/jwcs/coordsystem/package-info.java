@@ -36,8 +36,8 @@
  * want to convert sky coordinates from an equatorial system in ICRS to a 
  * super-galactic system. Then use the converTo method from a SkySystem object:
  * <pre>
- *    Crs sys1 = new Equatorial(new ICRS());
- *    Crs sys2 = new SuperGalactic();
+ *    AbstractCrs sys1 = new Equatorial(new ICRS());
+ *    AbstractCrs sys2 = new SuperGalactic();
  *    SkyPosition position = sys1.convertTo(sys2, 182.63867, 39.401167);
  * </pre>
  * 

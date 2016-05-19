@@ -46,32 +46,24 @@ public class SZPTest extends AbstractProjectionTest{
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SZP.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class SZPTest extends AbstractProjectionTest{
     @Test
     public void testProjectSZP() throws ProjectionException {
         System.out.println("project SZP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 272.377815121013612,  -73.416899696439657},
             { 267.604039928729435,  -60.766236150823211},
             { 290.736212026293799,  -58.784523128225764},
@@ -107,14 +99,14 @@ public class SZPTest extends AbstractProjectionTest{
     @Test
     public void testProjectInverseSZP() throws ProjectionException {
         System.out.println("projectInverse SZP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

@@ -57,6 +57,7 @@ public class AbstractJWcsTest {
      */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
     /**
@@ -64,6 +65,7 @@ public class AbstractJWcsTest {
      */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
     /**
@@ -71,6 +73,7 @@ public class AbstractJWcsTest {
      */
     @Before
     public void setUp() {
+        //do nothing
     }
     
     /**
@@ -78,6 +81,7 @@ public class AbstractJWcsTest {
      */
     @After
     public void tearDown() {
+        //do nothing
     }
 
 
@@ -115,7 +119,7 @@ public class AbstractJWcsTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testPix2wcs_doubleArr() throws Exception {
+    public void testPix2wcsDoubleArr() throws Exception {
         System.out.println("pix2wcs");
         double[] pixels = new double[]{1,1,1,100,100,100,100,1};
         double[] expResult = new double[]{182.632805,39.406235,182.632538,39.403504,182.636069,39.403298,182.636336,39.406029};
@@ -135,8 +139,8 @@ public class AbstractJWcsTest {
     @Test
     public void testGetCenter() throws Exception {
         System.out.println("getCenter");
-        double[] expResult = new double[]{182.63442,39.404782};
-        double[] result = wcs.getCenter();
+        final double[] expResult = new double[]{182.63442,39.404782};
+        final double[] result = wcs.getCenter();
         assertArrayEquals(expResult, result, 1e-5);
     }
 
@@ -147,9 +151,9 @@ public class AbstractJWcsTest {
     @Test
     public void testGetFov() throws Exception {
         System.out.println("getFov");
-        double[] pixels = new double[]{0.5,0.5,100+0.5,0.5,100+0.5,100+0.5,0.5,100+0.5};
-        double[] expResult = wcs.pix2wcs(pixels);
-        double[] result = wcs.getFov();
+        final double[] pixels = new double[]{0.5,0.5,100+0.5,0.5,100+0.5,100+0.5,0.5,100+0.5};
+        final double[] expResult = wcs.pix2wcs(pixels);
+        final double[] result = wcs.getFov();
         assertArrayEquals(expResult, result, 1e-5);
     }
 

@@ -30,10 +30,10 @@ public class EquatorialFK5ToEquatorialFK4_NO_ETest extends ConverterTest {
      */
     public EquatorialFK5ToEquatorialFK4_NO_ETest() throws JWcsException {
         super();
-        CoordinateReferenceFrame fk5 = new FK5();
-        CoordinateReferenceFrame fk4_no_e = new FK4_NO_E();
+        final CoordinateReferenceFrame fk5 = new FK5();
+        final CoordinateReferenceFrame fk4NoEterms = new FK4_NO_E();
         this.source = new Equatorial(fk5);
-        this.target = new Equatorial(fk4_no_e);        
+        this.target = new Equatorial(fk4NoEterms);        
         
     }
 }

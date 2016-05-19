@@ -69,9 +69,9 @@ public class J2000 implements CoordinateReferenceFrame {
     }
 
     /**
-     * Returns Double.NaN.
+     * Returns NaN.
      * 
-     * No need to specify an epoch of observation in J2000 reference frame
+     * <p>No need to specify an epoch of observation in J2000 reference frame
      */    
     @Override
     public double getEpochObs() {

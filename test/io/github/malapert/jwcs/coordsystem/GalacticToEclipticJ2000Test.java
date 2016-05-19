@@ -30,7 +30,7 @@ public class GalacticToEclipticJ2000Test extends ConverterTest {
      */
     public GalacticToEclipticJ2000Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame j2000 = new J2000();
+        final CoordinateReferenceFrame j2000 = new J2000();
         this.source = new Galactic();
         this.target = new Ecliptic(j2000);        
         

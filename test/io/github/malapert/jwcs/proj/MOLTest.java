@@ -46,32 +46,24 @@ public class MOLTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_MOL.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class MOLTest extends AbstractProjectionTest {
     @Test
     public void testProjectMOL() throws ProjectionException {
         System.out.println("project MOL");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 270.728461808021393,  -74.169800730500654},
             { 270.397749810579967,  -60.027188739395015},
             { 292.267963862224065,  -57.664949584387834},
@@ -107,14 +99,14 @@ public class MOLTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseMOL() throws ProjectionException {
         System.out.println("projectInverse MOL");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

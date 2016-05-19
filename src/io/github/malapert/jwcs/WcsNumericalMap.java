@@ -117,4 +117,9 @@ public class WcsNumericalMap extends AbstractJWcs {
     private void setKeywords(final Map keywords) {
         this.keywords = keywords;
     }
+
+    @Override
+    protected void checkWcs() throws JWcsException {
+        //do nothing
+    }
 }

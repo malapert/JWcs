@@ -30,7 +30,7 @@ public class GalacticToEquatorialFK5Test extends ConverterTest {
      */
     public GalacticToEquatorialFK5Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame fk5 = new FK5();
+        final CoordinateReferenceFrame fk5 = new FK5();
         this.source = new Galactic();
         this.target = new Equatorial(fk5);        
         

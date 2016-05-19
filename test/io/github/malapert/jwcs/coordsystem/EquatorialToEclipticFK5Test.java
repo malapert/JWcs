@@ -30,7 +30,7 @@ public class EquatorialToEclipticFK5Test extends ConverterTest {
      */
     public EquatorialToEclipticFK5Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame fk5 = new FK5();
+        final CoordinateReferenceFrame fk5 = new FK5();
         this.source = new Equatorial();
         this.target = new Ecliptic(fk5);        
         

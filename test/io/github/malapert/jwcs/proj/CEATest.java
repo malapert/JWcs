@@ -50,7 +50,7 @@ public class CEATest extends AbstractProjectionTest {
     @Test
     public void testProjectCEA() throws ProjectionException {
         System.out.println("project CEA");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 268.440852654621153,  -73.379693805485672},
             { 269.090243859417001,  -60.649088748117173},
             { 294.131910549115673,  -58.362095662786679},
@@ -76,14 +76,14 @@ public class CEATest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseCEA() throws ProjectionException {
         System.out.println("projectInverse CEA");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

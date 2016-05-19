@@ -46,32 +46,24 @@ public class COETest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_COE.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class COETest extends AbstractProjectionTest {
     @Test
     public void testProjectCOE() throws ProjectionException {
         System.out.println("project COE");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 271.441283018566764,  -73.707516970513367},
             { 268.765747911368521,  -60.131677869285078},
             { 292.588283774027445,  -58.330669761448092},
@@ -107,14 +99,14 @@ public class COETest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseCOE() throws ProjectionException {
         System.out.println("projectInverse COE");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

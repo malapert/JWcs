@@ -50,6 +50,7 @@ public class AITTest extends AbstractProjectionTest {
      */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
 
     /**
@@ -57,7 +58,7 @@ public class AITTest extends AbstractProjectionTest {
      */
     @Before
     public void setUp() {
-
+        //do nothing
     }
 
     /**
@@ -65,6 +66,7 @@ public class AITTest extends AbstractProjectionTest {
      */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -74,7 +76,7 @@ public class AITTest extends AbstractProjectionTest {
     @Test
     public void testProjectAIT() throws ProjectionException { 
         System.out.println("project AIT for particular points");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {268.56813922635888, -73.498459842570668},
             {269.173590441019542,  -60.701745163311294},
             {293.585024918963427,  -57.985930606481887},
@@ -100,14 +102,14 @@ public class AITTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseAIT() throws ProjectionException {
         System.out.println("projectInverse AIT for particular points");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

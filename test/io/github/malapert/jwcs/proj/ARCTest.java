@@ -51,6 +51,7 @@ public class ARCTest extends AbstractProjectionTest {
      */
     @BeforeClass
     public static void setUpClass() {
+                //do nothing
     }
     
     /**
@@ -58,6 +59,7 @@ public class ARCTest extends AbstractProjectionTest {
      */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing        
     }
     
     /**
@@ -65,6 +67,7 @@ public class ARCTest extends AbstractProjectionTest {
      */
     @Before
     public void setUp() {
+        //do nothing        
     }
     
     /**
@@ -72,7 +75,8 @@ public class ARCTest extends AbstractProjectionTest {
      */
     @After
     public void tearDown() {
-    }
+            //do nothing
+}
 
     /**
      * Test of project method, of class ARC.
@@ -81,7 +85,7 @@ public class ARCTest extends AbstractProjectionTest {
     @Test
     public void testProjectARC() throws ProjectionException {
         System.out.println("project ARC for particular points");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {269.056730777738039,  -73.468299585347012},
             {269.467149632953806,  -60.735941026372636},
             {293.066101937638564,  -58.194463838114913},
@@ -107,14 +111,14 @@ public class ARCTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseARC() throws ProjectionException {
         System.out.println("projectInverse ARC");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

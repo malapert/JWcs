@@ -46,32 +46,25 @@ public class BONTest extends AbstractProjectionTest{
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_BON.fits"))));
     }
 
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
 
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
-
-    /**
-     *
-     */
+   
     @Before
     public void setUp() {
+        //do nothing
     }
 
-    /**
-     *
-     */
+    
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -82,7 +75,7 @@ public class BONTest extends AbstractProjectionTest{
     @Test
     public void testProjectBON() throws ProjectionException {
         System.out.println("project BON");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 273.393413003838305,  -73.624666333473925},
             {266.237211427240538,  -60.534492822654933},
             {289.996444429144617,  -58.437400650158317},
@@ -108,14 +101,14 @@ public class BONTest extends AbstractProjectionTest{
     @Test
     public void testProjectInverseBON() throws ProjectionException {
         System.out.println("projectInverse BON");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

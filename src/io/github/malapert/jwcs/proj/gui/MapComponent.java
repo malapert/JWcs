@@ -38,7 +38,7 @@ public class MapComponent extends JComponent {
      * Replaces the current lines by the passed lines.
      * @param lines A vector holding MapLine objects.
      */
-    public void setLines(List<MapLine> lines) {
+    public void setLines(final List<MapLine> lines) {
         if (lines == null) {
             this.lines.clear();
         } else {
@@ -63,11 +63,11 @@ public class MapComponent extends JComponent {
         Rectangle2D totalExt = null;
 
         // loop over all lines
-        int nbrLines = lines.size();
+        final int nbrLines = lines.size();
         for (int i = 0; i < nbrLines; i++) {
-            MapLine line = (MapLine) lines.get(i);
+            final MapLine line = (MapLine) lines.get(i);
             // ask the line for its bounding box
-            Rectangle2D lineExt = line.getExtension();
+            final Rectangle2D lineExt = line.getExtension();
             // if we have not yet found a valid bounding box, use the 
             // bounding box of the current line.
             if (totalExt == null) {
@@ -88,11 +88,11 @@ public class MapComponent extends JComponent {
      * @return The scale to apply to the lines to make them all visible.
      */
     private double getScaleToShowAll() {
-        Rectangle2D ext = getMapExtension();
-        Dimension dim = getSize();
-        double horScale = dim.getWidth() / ext.getWidth();
-        double verScale = dim.getHeight() / ext.getHeight();
-        double borderScale = 1 / (1 + BORDER_PERCENTAGE * 2 / 100);
+        final Rectangle2D ext = getMapExtension();
+        final Dimension dim = getSize();
+        final double horScale = dim.getWidth() / ext.getWidth();
+        final double verScale = dim.getHeight() / ext.getHeight();
+        final double borderScale = 1 / (1 + BORDER_PERCENTAGE * 2 / 100);
         return Math.min(horScale, verScale) * borderScale;
     }
 
@@ -101,9 +101,9 @@ public class MapComponent extends JComponent {
      * @param g The Graphics canvas to draw to.
      */
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
 
-        Graphics2D g2d = (Graphics2D) g.create();
+        final Graphics2D g2d = (Graphics2D) g.create();
 
         // erase everything previously drawn
         g2d.setBackground(Color.white);
@@ -117,7 +117,7 @@ public class MapComponent extends JComponent {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
 
-        Rectangle2D ext = getMapExtension();
+        final Rectangle2D ext = getMapExtension();
         if (ext == null) {
             return;
         }
@@ -127,23 +127,23 @@ public class MapComponent extends JComponent {
          * x_ = (x-west)*scale;
          * y_ = (north-y)*scale = (y-north)*(-scale);
          */
-        double scale = getScaleToShowAll();
+        final double scale = getScaleToShowAll();
         g2d.scale(scale, -scale);
 
         // add a border so that the drawing is centered.
-        double border_x = (this.getWidth() / scale - ext.getWidth()) / 2;
-        double border_y = (this.getHeight() / scale - ext.getHeight()) / 2;
-        g2d.translate(-ext.getMinX() + border_x, -ext.getMaxY() - border_y);
+        final double borderX = (this.getWidth() / scale - ext.getWidth()) / 2;
+        final double borderY = (this.getHeight() / scale - ext.getHeight()) / 2;
+        g2d.translate(-ext.getMinX() + borderX, -ext.getMaxY() - borderY);
 
         // draw lines with a thin black stroke
         g2d.setStroke(new BasicStroke((float) (1 / scale)));
         g2d.setColor(Color.black);
 
         // draw each line
-        int nbrLines = lines.size();
+        final int nbrLines = lines.size();
         for (int lineID = 0; lineID < nbrLines; lineID++) {
-            MapLine line = (MapLine) lines.get(lineID);
-            GeneralPath path = line.getPath();
+            final MapLine line = (MapLine) lines.get(lineID);
+            final GeneralPath path = line.getPath();
             g2d.draw(path);
         }
         g2d.dispose();

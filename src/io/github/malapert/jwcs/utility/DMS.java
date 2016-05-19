@@ -73,7 +73,9 @@ public final class DMS implements Serializable {
      */
     private byte sign = 1;
 
-    /* true if value has been initialized */
+    /**
+     * true if value has been initialized.
+     */
     private boolean initialized;
 
 

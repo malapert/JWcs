@@ -30,7 +30,7 @@ public class SuperGalacticToEquatorialFK4Test extends ConverterTest {
      */
     public SuperGalacticToEquatorialFK4Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame fk4 = new FK4();
+        final CoordinateReferenceFrame fk4 = new FK4();
         this.source = new SuperGalactic();
         this.target = new Equatorial(fk4);        
         

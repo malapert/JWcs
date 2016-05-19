@@ -46,32 +46,24 @@ public class CARTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CAR.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class CARTest extends AbstractProjectionTest {
     @Test
     public void testProjectCAR() throws ProjectionException {
         System.out.println("project CAR");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 268.478505878880298,  -73.379971307720851},
             { 269.112221261139268,  -60.649236049064662},
             { 293.979623623082773,  -58.392446908567678},
@@ -107,14 +99,14 @@ public class CARTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseCAR() throws ProjectionException {
         System.out.println("projectInverse CAR");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

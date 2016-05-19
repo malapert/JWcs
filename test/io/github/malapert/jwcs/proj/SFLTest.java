@@ -45,33 +45,25 @@ public class SFLTest extends AbstractProjectionTest {
     public SFLTest() throws FitsException, IOException, JWcsException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SFL.fits"))));
     }
-    
-    /**
-     *
-     */
+        
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
-    
-    /**
-     *
-     */
+   
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
-    
-    /**
-     *
-     */
+   
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class SFLTest extends AbstractProjectionTest {
     @Test
     public void testProjectSFL() throws ProjectionException {
         System.out.println("project SFL");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 268.467379871114304,  -73.504056521463767},
             { 269.108796034278896,  -60.772983212159005},
             { 293.614959948683349,  -57.878452615484491},
@@ -107,14 +99,14 @@ public class SFLTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseSFL() throws ProjectionException {
         System.out.println("projectInverse SFL");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

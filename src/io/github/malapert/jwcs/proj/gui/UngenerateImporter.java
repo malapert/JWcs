@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
  * An importer for the ESRI Ungenerate file format.
  * @author Bernhard Jenny, Institute of Cartography, ETH Zurich.
  */
-public class UngenerateImporter {
+public final class UngenerateImporter {
 
     private UngenerateImporter() {
     }
@@ -33,7 +33,7 @@ public class UngenerateImporter {
      * @return A Vector containing all read MapLines.
      * @throws java.io.IOException Exception
      */
-    public static List<MapLine> importData(String filePath) throws IOException {
+    public static List<MapLine> importData(final String filePath) throws IOException {
         return importData (new FileInputStream(filePath));
     }
     
@@ -43,15 +43,15 @@ public class UngenerateImporter {
      * @return a list of lines
      * @throws IOException File not found
      */
-    public static List<MapLine> importData(InputStream inputStream) throws IOException {
+    public static List<MapLine> importData(final InputStream inputStream) throws IOException {
         // store the read lines in this vector.
-        List<MapLine> lines = new ArrayList<>();
+        final List<MapLine> lines = new ArrayList<>();
         
         // read lines until we reach the end of the file
         try ( // open the file
                 BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
             while (in.readLine() != null) {
-                MapLine line = readLine(in);
+                final MapLine line = readLine(in);
                 if (line != null) {
                     lines.add(line);
                 }
@@ -68,9 +68,9 @@ public class UngenerateImporter {
      * @return MapLine The read line.
      * @exception java.io.IOException Exception
      */
-    private static MapLine readLine(BufferedReader in) throws java.io.IOException {
+    private static MapLine readLine(final BufferedReader in) throws java.io.IOException {
         String str;
-        MapLine line = new MapLine();
+        final MapLine line = new MapLine();
         
         while (true) {
             str = in.readLine();
@@ -82,9 +82,9 @@ public class UngenerateImporter {
                 break;
             }
             try {
-                StringTokenizer tokenizer = new StringTokenizer(str, " \t,");
+                final StringTokenizer tokenizer = new StringTokenizer(str, " \t,");
                 double x = Double.parseDouble((String)tokenizer.nextToken());
-                double y = Double.parseDouble((String)tokenizer.nextToken());
+                final double y = Double.parseDouble((String)tokenizer.nextToken());
                 if (x < 0) {
                     x = 360+x;
                 }

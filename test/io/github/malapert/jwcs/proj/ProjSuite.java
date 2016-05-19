@@ -65,42 +65,30 @@ import org.junit.runners.Suite;
     io.github.malapert.jwcs.proj.MERTest.class,
     io.github.malapert.jwcs.proj.MOLTest.class,
     io.github.malapert.jwcs.proj.PARTest.class,    
-    io.github.malapert.jwcs.proj.ZEATest.class//, 
-    //io.github.malapert.jwcs.proj.ZPNTest.class
+    io.github.malapert.jwcs.proj.ZEATest.class,
+    io.github.malapert.jwcs.proj.ZPNTest.class
 })
 
 public class ProjSuite {
 
-    /**
-     *
-     * @throws Exception
-     */
     @BeforeClass
     public static void setUpClass() throws Exception {
+        //do nothing
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @AfterClass
     public static void tearDownClass() throws Exception {
+        //do nothing
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception {
+        //do nothing
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @After
     public void tearDown() throws Exception {
+        //do nothing
     }
     
 }

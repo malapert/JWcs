@@ -51,6 +51,8 @@ public class AZPTest extends AbstractProjectionTest {
      */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
+        
     }
     
     /**
@@ -58,6 +60,8 @@ public class AZPTest extends AbstractProjectionTest {
      */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
+        
     }
     
     /**
@@ -65,6 +69,7 @@ public class AZPTest extends AbstractProjectionTest {
      */
     @Before
     public void setUp() {
+        //do nothing
     }
     
     /**
@@ -72,6 +77,7 @@ public class AZPTest extends AbstractProjectionTest {
      */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +87,7 @@ public class AZPTest extends AbstractProjectionTest {
     @Test
     public void testProjectAZP() throws ProjectionException {
         System.out.println("project AZP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 272.400602550826875,  -73.017655181494987},
             {271.373336310560376,  -60.309577934844938},
             {291.542057560473268,  -59.224202902792641},
@@ -107,14 +113,14 @@ public class AZPTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseAZP() throws ProjectionException {
         System.out.println("projectInverse AZP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

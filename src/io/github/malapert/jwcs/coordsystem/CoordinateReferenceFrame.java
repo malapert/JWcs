@@ -21,7 +21,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
 /**
  * Specifies the origin of the equatorial and the ecliptic coordinate system. 
  * 
- * In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
+ * <p>In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
  * we read that all reference systems are allowed for both equatorial and 
  * ecliptic coordinates, except FK4-NO-E, which is only allowed for equatorial 
  * coordinates. If FK4-NO-E is given in combination with an ecliptic 

@@ -95,7 +95,7 @@ public class FK5 implements CoordinateReferenceFrame {
      * @param equinox the equinox to set
      */
     @Override
-    public void setEquinox(final String equinox) {
+    public final void setEquinox(final String equinox) {
         this.equinox = epochs(equinox)[1];
     }
     

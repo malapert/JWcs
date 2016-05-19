@@ -148,4 +148,9 @@ public class JWcsFits extends AbstractJWcs {
         this.hdr = hdr;
     }   
 
+    @Override
+    protected void checkWcs() throws JWcsException {
+        // do nothing
+    }
+
 }

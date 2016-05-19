@@ -31,7 +31,7 @@
  * </ul>
  * <pre>
  *    <code>
- *    JWcs wcs = new WcsFits(new Fits("/tmp/1904-66_AIT.fits"));
+ *    AbstractJWcs wcs = new WcsFits(new Fits("/tmp/1904-66_AIT.fits"));
  *    wcs.doInit();
  *    double[] skyPosition = wcs.pix2wcs(1, 1);
  *    </code>

@@ -74,7 +74,7 @@ public class ConverterTest {
      * @param target
      * @throws JWcsException
      */
-    public ConverterTest(AbstractCrs source, AbstractCrs target) throws JWcsException {
+    public ConverterTest(final AbstractCrs source, final AbstractCrs target) throws JWcsException {
         this(source, target, TOLERANCE);
     }
 
@@ -85,7 +85,7 @@ public class ConverterTest {
      * @param tolerance
      * @throws JWcsException
      */
-    public ConverterTest(AbstractCrs source, AbstractCrs target, double tolerance) throws JWcsException {
+    public ConverterTest(final AbstractCrs source, final AbstractCrs target, final double tolerance) throws JWcsException {
         this.source = source;
         this.target = target;
         this.tolerance = tolerance;
@@ -111,8 +111,8 @@ public class ConverterTest {
 
         for (int latitude = -90; latitude <= 90; latitude++) {
             for (int longitude = 0; longitude < 360; longitude++) {
-                SkyPosition position = source.convertTo(target, longitude, latitude);
-                SkyPosition sourcePosition = target.convertTo(source, position.getLongitude(), position.getLatitude());
+                final SkyPosition position = source.convertTo(target, longitude, latitude);
+                final SkyPosition sourcePosition = target.convertTo(source, position.getLongitude(), position.getLatitude());
 
                 double deltaLongitude = Math.abs(longitude - sourcePosition.getLongitude());
                 if (deltaLongitude > 180) {
@@ -123,7 +123,7 @@ public class ConverterTest {
                     deltaLongitudeMax = deltaLongitude;
                 }
 
-                double deltaLatitude = Math.abs(latitude - sourcePosition.getLatitude());
+                final double deltaLatitude = Math.abs(latitude - sourcePosition.getLatitude());
                 if (deltaLatitude > deltaLatitudeMax) {
                     deltaLatitudeMax = deltaLatitude;
                 }
@@ -133,14 +133,11 @@ public class ConverterTest {
                     System.out.printf("convert: longitude = %20.15f lat = %20.15f\n", position.getLongitude(), position.getLatitude());
                     System.out.printf("Unconvert : longitude = %20.15f latitude = %20.15f\n", sourcePosition.getLongitude(), sourcePosition.getLatitude());
                     System.out.println();
-                } else if (Math.abs(latitude) != 90) {
-                    if (deltaLongitude > tolerance) {
-                        System.out.printf("longitude = %d lat = %d\n", longitude, latitude);
-                        System.out.printf("convert: longitude = %20.15f lat = %20.15f\n", position.getLongitude(), position.getLatitude());
-                        System.out.printf("Unconvert : longitude = %20.15f latitude = %20.15f\n", sourcePosition.getLongitude(), sourcePosition.getLatitude());
-                        System.out.println();
-                    }
-
+                } else if (Math.abs(latitude) != 90 && deltaLongitude > tolerance) {
+                    System.out.printf("longitude = %d lat = %d\n", longitude, latitude);
+                    System.out.printf("convert: longitude = %20.15f lat = %20.15f\n", position.getLongitude(), position.getLatitude());
+                    System.out.printf("Unconvert : longitude = %20.15f latitude = %20.15f\n", sourcePosition.getLongitude(), sourcePosition.getLatitude());
+                    System.out.println();
                 }
             }
         }

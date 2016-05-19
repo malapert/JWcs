@@ -852,8 +852,7 @@ public abstract class AbstractCrs {
     private static double obliquity1980(final double jd) {
         // T = (Date - 1 jan, 2000, 12h noon)
         final double T = (jd - 2451545.0d) / 36525.0d;
-        final double eps = (84381.448d + (-46.8150d + (-0.00059d + 0.001813d * T) * T) * T) / 3600.0d;
-        return eps;
+        return (84381.448d + (-46.8150d + (-0.00059d + 0.001813d * T) * T) * T) / 3600.0d;
     }
 
     /**
@@ -977,8 +976,7 @@ public abstract class AbstractCrs {
         final double z = (w+(1.09468d+0.000066d*T0+0.018203d*T)*T)*T;
         final double theta = (2004.3109d+(-0.85330d-0.000217d*T0)*T0+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
         //Return values in degrees
-        final double[] precessionAngles = {zeta / 3600.0d, z / 3600.0d, theta / 3600.0d};
-        return precessionAngles;
+        return new double[]{zeta / 3600.0d, z / 3600.0d, theta / 3600.0d};
     }
 
     /**
@@ -1074,8 +1072,7 @@ public abstract class AbstractCrs {
         a2 = d5;
         final double theta_a = tau * (a0 + tau * (a1 + tau * a2));
         // Return values in degrees
-        final double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
-        return precessionAngles;
+        return new double[]{zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
     }
 
     /**
@@ -1143,7 +1140,7 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * See convertFK42FK5Matrix
+     * See convertFK42FK5Matrix.
      *
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
@@ -1322,8 +1319,7 @@ public abstract class AbstractCrs {
         final double theta_a = T * (d1 + T * (d2 + T * (d3 + T * (d4 + T * d5)))) + d0;
 
         //Return values in degrees
-        final double[] precessionAngles = {zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
-        return precessionAngles;
+        return new double[]{zeta_a / 3600.0d, z_a / 3600.0d, theta_a / 3600.0d};
     }    
     
     /**
@@ -1397,8 +1393,7 @@ public abstract class AbstractCrs {
         double longitude = Math.toDegrees(aatan2(y, x, 0));
         longitude = longitude < 0 ? longitude + 360.0d : longitude;
         final double latitude = Math.toDegrees(aasin(z));
-        final double coord[] = {longitude, latitude};
-        return coord;
+        return new double[]{longitude, latitude};
     }    
 
     @Override

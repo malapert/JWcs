@@ -81,12 +81,12 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     /**
      * thetaA - eta.
      */
-    protected double theta1;
+    private double theta1;
     
     /**
      * thetaA + eta.
      */
-    protected double theta2;
+    private double theta2;
     
     /**
      * Creates a new conic projection.
@@ -236,4 +236,34 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     public final Logger getLogger() {
         return LOG;
     }       
+
+    /**
+     * @return the theta1
+     */
+    protected final double getTheta1() {
+        return theta1;
+    }
+
+    /**
+     * Get theta1.
+     * @param theta1 the theta1 to set
+     */
+    protected final void setTheta1(final double theta1) {
+        this.theta1 = theta1;
+    }
+
+    /**
+     * Get theta2.
+     * @return the theta2
+     */
+    protected final double getTheta2() {
+        return theta2;
+    }
+
+    /**
+     * @param theta2 the theta2 to set
+     */
+    protected final void setTheta2(final double theta2) {
+        this.theta2 = theta2;
+    }
 }

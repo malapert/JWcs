@@ -9,7 +9,6 @@ import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.proj.AbstractProjection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 
 /**

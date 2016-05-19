@@ -27,15 +27,16 @@ public class MapLine {
     /**
      * The bounding box of this line.
      */
-    private Rectangle2D extension = null;
+    private Rectangle2D extension;
     
     /**
      * The path that can be used to draw this line.
      */
-    private GeneralPath path = null;
+    private GeneralPath path;
 
     /** Creates a new instance of MapLine */
     public MapLine() {
+        //do nothing
     }
     
     /**
@@ -51,7 +52,7 @@ public class MapLine {
      * @param pointID The index of the point to return (zero-based).
      * @return A reference to the point at position pointID.
      */
-    public MapPoint getPoint (int pointID) {
+    public MapPoint getPoint (final int pointID) {
         return points.get(pointID);
     }
 
@@ -67,7 +68,7 @@ public class MapLine {
      * Add a point at the end of the line.
      * @param mapPoint The point to add.
      */
-    public void addPoint(MapPoint mapPoint) {
+    public void addPoint(final MapPoint mapPoint) {
         if (Double.isNaN(mapPoint.x) || Double.isNaN(mapPoint.y)) {
             return;
         }
@@ -80,7 +81,7 @@ public class MapLine {
      * @param x The horizontal coordinate of the point.
      * @param y The vertical coordinate of the point.
      */
-    public void addPoint(double x, double y) {
+    public void addPoint(final double x, final double y) {
         addPoint(new MapPoint(x, y));
     }
     
@@ -88,7 +89,7 @@ public class MapLine {
      * Remove a point from the line.
      * @param mapPoint The point to remove.
      */
-    public void removePoint(MapPoint mapPoint) {
+    public void removePoint(final MapPoint mapPoint) {
         points.remove(mapPoint);
         pointChanged();
     }
@@ -97,7 +98,7 @@ public class MapLine {
      * Remove a point from the line.
      * @param pointID The index of the point to remove (zero-based).
      */
-    public void removePoint(int pointID) {
+    public void removePoint(final int pointID) {
         points.remove(pointID);
         pointChanged();
     }
@@ -124,7 +125,7 @@ public class MapLine {
         double yMin = Double.MAX_VALUE;
         double yMax = -Double.MAX_VALUE;
         
-        for (MapPoint p : points) {
+        for (final MapPoint p : points) {
             if (p.x < xMin) {
                 xMin = p.x;
             }
@@ -158,7 +159,7 @@ public class MapLine {
         }
         
         path = new GeneralPath();
-        int nbrPoints = size();
+        final int nbrPoints = size();
         
         // a line must have at least 2 points
         if (nbrPoints < 2) {
@@ -170,7 +171,7 @@ public class MapLine {
         
         // add all following points
         for (int pointID = 1; pointID < nbrPoints; pointID++) {
-            MapPoint p = points.get(pointID);
+            final MapPoint p = points.get(pointID);
             path.lineTo((float)p.x, (float)p.y);
         }
         

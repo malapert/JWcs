@@ -65,13 +65,13 @@ public class COO extends AbstractConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
-        final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
-        final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        final double c = NumericalUtility.equal(theta1,theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
+        final double tan1 = Math.tan((HALF_PI - this.getTheta1()) * 0.5);
+        final double tan2 = Math.tan((HALF_PI - this.getTheta2()) * 0.5);
+        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? Math.sin(getTheta1()) : Math.log(Math.cos(getTheta2()) / Math.cos(getTheta1())) / Math.log(tan2 / tan1);
         if (NumericalUtility.equal(c,0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). c must be != 0");
         }
-        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(getTheta2()) / (c * Math.pow(tan2, c)) : Math.cos(getTheta1()) / (c * Math.pow(tan1, c));
         final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
         final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);            
@@ -84,10 +84,10 @@ public class COO extends AbstractConicProjection {
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
-        final double tan1 = Math.tan((HALF_PI - this.theta1) * 0.5);
-        final double tan2 = Math.tan((HALF_PI - this.theta2) * 0.5);
-        final double c = NumericalUtility.equal(theta1,theta2) ? Math.sin(theta1) : Math.log(Math.cos(theta2) / Math.cos(theta1)) / Math.log(tan2 / tan1);
-        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(theta2) / (c * Math.pow(tan2, c)) : Math.cos(theta1) / (c * Math.pow(tan1, c));
+        final double tan1 = Math.tan((HALF_PI - this.getTheta1()) * 0.5);
+        final double tan2 = Math.tan((HALF_PI - this.getTheta2()) * 0.5);
+        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? Math.sin(getTheta1()) : Math.log(Math.cos(getTheta2()) / Math.cos(getTheta1())) / Math.log(tan2 / tan1);
+        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(getTheta2()) / (c * Math.pow(tan2, c)) : Math.cos(getTheta1()) / (c * Math.pow(tan1, c));
         if (NumericalUtility.equal(psi,0)) {
             throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getThetaA() + ", " + getEta()+")");
         }

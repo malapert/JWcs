@@ -46,32 +46,24 @@ public class CODTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_COD.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nohting
     }
-    
-    /**
-     *
-     */
+   
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class CODTest extends AbstractProjectionTest {
     @Test
     public void testProjectCOD() throws ProjectionException {
         System.out.println("project COD");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 267.309578535993637,  -74.137108175375658},
             { 269.351969696756669,  -60.380228694474155},
             { 294.132127989407252,  -57.419282231058872},
@@ -107,14 +99,14 @@ public class CODTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseCOD() throws ProjectionException {
         System.out.println("projectInverse COD");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

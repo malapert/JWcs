@@ -53,7 +53,7 @@ public class FK4 implements CoordinateReferenceFrame {
     private double epochObs;       
     
     /**
-     * Creates a FK4 reference frame with default value of epoch {@link FK4#DEFAULT_EPOCH}
+     * Creates a FK4 reference frame with default value of epoch {@link FK4#DEFAULT_EPOCH}.
      */
     public FK4() {
         init(DEFAULT_EPOCH, null);
@@ -152,7 +152,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param equinox the equinox to set
      */
     @Override
-    public void setEquinox(final String equinox) {
+    public final void setEquinox(final String equinox) {
         this.equinox = epochs(equinox)[0];
     }
     
@@ -161,7 +161,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param equinox the equinox to set
      */
     @Override
-    public void setEquinox(final double equinox) {
+    public final void setEquinox(final double equinox) {
         this.equinox = equinox;
     }    
 
@@ -170,7 +170,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param epochObs the epochObs to set
      */
     @Override
-    public void setEpochObs(final String epochObs) {
+    public final void setEpochObs(final String epochObs) {
         this.epochObs = (epochObs == null)? Double.NaN : epochs(epochObs)[0];
     }
     
@@ -180,7 +180,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param epochObs the epochObs to set
      */
     @Override
-    public void setEpochObs(final double epochObs) {
+    public final void setEpochObs(final double epochObs) {
         this.epochObs = epochObs;
     }    
 

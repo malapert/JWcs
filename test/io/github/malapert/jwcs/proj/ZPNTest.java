@@ -46,32 +46,25 @@ public class ZPNTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_ZPN.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        // do nothing        
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        // do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        // do nothing
+        
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        // do nothing
     }
 
     /**
@@ -81,7 +74,7 @@ public class ZPNTest extends AbstractProjectionTest {
     @Test
     public void testProjectZPN() throws ProjectionException {
         System.out.println("project ZPN");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 263.471000708007352,  -78.497682328997385},
             { 266.783268968517177,  -50.24524022078576 },
             { 294.357836271455028,  -39.77023899472649 },
@@ -107,14 +100,14 @@ public class ZPNTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseZPN() throws ProjectionException {
         System.out.println("projectInverse ZPN");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

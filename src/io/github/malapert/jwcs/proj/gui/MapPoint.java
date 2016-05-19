@@ -10,9 +10,20 @@ package io.github.malapert.jwcs.proj.gui;
 public final class MapPoint {
 
     /**
+     * X coordinate along X axis.
+     */
+    public double x;
+    
+    /**
+     * Y coordinate along Y axis.
+     */
+    public double y;
+    
+    /**
      * Constructor.
      */
     public MapPoint() {
+        //do nothing
     }
 
     /**
@@ -20,15 +31,15 @@ public final class MapPoint {
      * @param x coordinate along X axis
      * @param y coordinate along Y axis
      */
-    public MapPoint (double x, double y) {
+    public MapPoint (final double x, final double y) {
         this.x = x;
         this.y = y;
     }
 
     
     @Override
-    public boolean equals(Object obj) {
-        MapPoint p = (MapPoint)obj;
+    public boolean equals(final Object obj) {
+        final MapPoint p = (MapPoint)obj;
         return x == p.x && y == p.y;
     }
 
@@ -39,14 +50,4 @@ public final class MapPoint {
         hash = 89 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
         return hash;
     }
-
-    /**
-     * X coordinate along X axis.
-     */
-    public double x;
-    
-    /**
-     * Y coordinate along Y axis.
-     */
-    public double y;
 }

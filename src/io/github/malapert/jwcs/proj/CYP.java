@@ -147,7 +147,7 @@ public class CYP extends AbstractCylindricalProjection {
      * 
      * @return the mu
      */
-    protected double getMu() {
+    protected final double getMu() {
         return mu;
     }
 
@@ -156,7 +156,7 @@ public class CYP extends AbstractCylindricalProjection {
      * 
      * @return the lambda
      */
-    protected double getLambda() {
+    protected final double getLambda() {
         return lambda;
     }
 

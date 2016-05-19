@@ -46,32 +46,24 @@ public class SINTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_SIN.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
-    
-    /**
-     *
-     */
+   
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
     
     /**
@@ -81,7 +73,7 @@ public class SINTest extends AbstractProjectionTest {
     @Test
     public void testProjectSIN() throws ProjectionException {
         System.out.println("project SIN");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 268.391506992151392,  -73.903535526238215},
             { 269.107163996240899,  -60.0366887090875  },
             { 293.240651133251504,  -57.078770599663933},
@@ -107,14 +99,14 @@ public class SINTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseSIN() throws ProjectionException {
         System.out.println("projectInverse SIN");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

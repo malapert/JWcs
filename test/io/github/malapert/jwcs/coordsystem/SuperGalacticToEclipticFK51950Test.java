@@ -30,7 +30,7 @@ public class SuperGalacticToEclipticFK51950Test extends ConverterTest {
      */
     public SuperGalacticToEclipticFK51950Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame fk5 = new FK5("J1950");
+        final CoordinateReferenceFrame fk5 = new FK5("J1950");
         this.source = new SuperGalactic();
         this.target = new Ecliptic(fk5);        
         

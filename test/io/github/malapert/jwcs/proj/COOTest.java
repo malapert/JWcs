@@ -45,33 +45,25 @@ public class COOTest extends AbstractProjectionTest {
     public COOTest() throws FitsException, IOException, JWcsException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_COO.fits"))));
     }
-    
-    /**
-     *
-     */
+       
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do noting
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class COOTest extends AbstractProjectionTest {
     @Test
     public void testProjectCOO() throws ProjectionException {
         System.out.println("project COO");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 266.447094172421544,  -74.171522746884904},
             {267.398028706357877,  -60.210883825456492},
             {294.059186487816874,  -57.31359008331124},
@@ -107,14 +99,14 @@ public class COOTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseCOO() throws ProjectionException {
         System.out.println("projectInverse COO");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

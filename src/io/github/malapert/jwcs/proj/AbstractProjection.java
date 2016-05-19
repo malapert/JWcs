@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import static io.github.malapert.jwcs.utility.NumericalUtility.TWO_PI;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -311,8 +312,7 @@ public abstract class AbstractProjection {
         // native longitude of the celestial pole in radians
         final double deltap = computeLongitudeNativePole(phi_p);
         final double alphap = computeLatitudeNativePole(deltap, phi_p);
-        final double[] pos = {alphap, deltap};        
-        return pos;
+        return new double[]{alphap, deltap};               
     }
         
     /**
@@ -470,7 +470,7 @@ public abstract class AbstractProjection {
     }
 
     /**
-     * Returns the celestial longitude in radians of the ﬁducial point (\u03B1<sub>0</sub>)
+     * Returns the celestial longitude in radians of the ﬁducial point (\u03B1<sub>0</sub>).
      *
      * @return \u03B1<sub>0</sub> in radians
      */
@@ -532,7 +532,7 @@ public abstract class AbstractProjection {
      * @return the coordNativePole (\u03B1<sub>p</sub>, \u03B4<sub>p</sub>)
      */
     protected double[] getCoordNativePole() {
-        return coordNativePole;
+        return coordNativePole.clone();
     }
     
     /**
@@ -568,15 +568,15 @@ public abstract class AbstractProjection {
         /**
          * Name of the parameter.
          */
-        private final String name ;
+        private final String name;
         /**
          * PV keyword related to the name of the parameter.
          */
-        private final String PVName;
+        private final String pvName;
         /**
          * valid interval of the parameter.
          */
-        private final double[] validInterval;
+        private double[] validInterval;
         /**
          * Default value of the parameter.
          */
@@ -586,14 +586,14 @@ public abstract class AbstractProjection {
          * Creates a new parameter.
          * 
          * @param name its name
-         * @param PVName its related PV keyword in FITS
+         * @param pvName its related PV keyword in FITS
          * @param validInterval its valid interval
          * @param defaultValue  its default value.
          */
-        public ProjectionParameter(final String name, final String PVName, final double[] validInterval, final double defaultValue) {
+        public ProjectionParameter(final String name, final String pvName, final double[] validInterval, final double defaultValue) {
             this.name = name;
-            this.PVName = PVName;
-            this.validInterval = validInterval;
+            this.pvName = pvName;
+            setValidInterval(validInterval);
             this.defaultValue = defaultValue;
         }
         
@@ -611,8 +611,8 @@ public abstract class AbstractProjection {
          * 
          * @return the related keyword to PV
          */
-        public String getPVName() {
-            return this.PVName;
+        public String getPvName() {
+            return this.pvName;
         }
         
         /**
@@ -621,7 +621,7 @@ public abstract class AbstractProjection {
          * @return the valid interval of the parameter
          */
         public double[] getValidInterval() {
-            return this.validInterval;
+            return this.validInterval.clone();
         }
         
         /**
@@ -632,6 +632,17 @@ public abstract class AbstractProjection {
         public double getDefaultValue() {
             return this.defaultValue;
         } 
+
+        /**
+         * @param validInterval the validInterval to set
+         */
+        protected final void setValidInterval(final double[] validInterval) {
+            if (validInterval == null) {
+                this.validInterval = new double[0];
+            } else {
+                this.validInterval = Arrays.copyOf(validInterval, validInterval.length);
+            }
+        }
         
     }    
 }

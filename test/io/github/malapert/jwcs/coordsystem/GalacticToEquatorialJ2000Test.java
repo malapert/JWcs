@@ -30,7 +30,7 @@ public class GalacticToEquatorialJ2000Test extends ConverterTest {
      */
     public GalacticToEquatorialJ2000Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame j2000 = new J2000();
+        final CoordinateReferenceFrame j2000 = new J2000();
         this.source = new Galactic();
         this.target = new Equatorial(j2000);        
         

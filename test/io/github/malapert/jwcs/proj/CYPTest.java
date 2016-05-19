@@ -46,32 +46,28 @@ public class CYPTest extends AbstractProjectionTest{
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_CYP.fits"))));
     }
 
-    /**
-     *
-     */
+
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
 
-    /**
-     *
-     */
+
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
 
-    /**
-     *
-     */
+ 
     @Before
     public void setUp() {
+        //do nothing
     }
 
-    /**
-     *
-     */
+ 
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +77,7 @@ public class CYPTest extends AbstractProjectionTest{
     @Test
     public void testProjectCYP() throws ProjectionException {
         System.out.println("project CYP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 263.6930064078756  ,  -75.954802625117921},
             { 267.116502808782911,  -57.996207756988362},
             { 294.107678006870742,  -55.635186503469285},
@@ -107,14 +103,14 @@ public class CYPTest extends AbstractProjectionTest{
     @Test
     public void testProjectInverseCYP() throws ProjectionException {
         System.out.println("projectInverse CYP");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

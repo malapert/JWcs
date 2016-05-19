@@ -110,7 +110,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
      * @param equinox the equinox to set
      */
     @Override
-    public void setEquinox(final String equinox) {
+    public final void setEquinox(final String equinox) {
         this.equinox = epochs(equinox)[0];
     }        
 
@@ -119,7 +119,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
      * @param epochObs the epochObs to set
      */
     @Override
-    public void setEpochObs(final String epochObs) {
+    public final void setEpochObs(final String epochObs) {
         this.epochObs = (epochObs == null) ? Double.NaN : epochs(epochObs)[0];
     }
     

@@ -27,23 +27,24 @@ import java.util.logging.Level;
 /**
  * Zenithal polynomial.
  *
- * <p>The zenithal polynomial projection, ZPN, generalizes the ARC projection by
- * adding polynomial terms up to a large degree in the zenith distance 
+ * <p>
+ * The zenithal polynomial projection, ZPN, generalizes the ARC projection by
+ * adding polynomial terms up to a large degree in the zenith distance
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
 public final class ZPN extends AbstractZenithalProjection {
-    
+
     /**
      * Projection's name.
      */
     private final static String NAME_PROJECTION = "Zenithal polynomial";
-    
+
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "poly=(%s)";    
+    private final static String DESCRIPTION = "poly=(%s)";
 
     /**
      * Default numerical tolerance for double comparison or iterative solution .
@@ -64,17 +65,18 @@ public final class ZPN extends AbstractZenithalProjection {
     /**
      * Projection parameters.
      */
-    private final double[] PV;
+    private double[] pv;
 
     /**
-     * The highest PV coefficient not equal to 0.
+     * The highest pv coefficient not equal to 0.
      */
     private transient final int n;
 
     /**
      * The point of inflection closest to the pole.
      *
-     * <p>coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
+     * <p>
+     * coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
      * Radius of the first point of inflection (N &gt; 2)
      */
     private final transient double[] coeff;
@@ -87,25 +89,26 @@ public final class ZPN extends AbstractZenithalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @param PV projection parameters
+     * @param pv projection parameters
      * @throws
-     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when a parameter projection is wrong
+     * io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * when a parameter projection is wrong
      */
-    public ZPN(final double crval1, final double crval2, final double[] PV) throws BadProjectionParameterException {
+    public ZPN(final double crval1, final double crval2, final double[] pv) throws BadProjectionParameterException {
         super(crval1, crval2);
-        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval1,crval2,Arrays.toString(PV)});                                                
-        this.PV = PV;
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval1, crval2, Arrays.toString(pv)});
+        setPv(pv);
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
         check();
-        n = findTheHighestPVNoNull(PV);
-        coeff = findTheInflectionPointClosestFromPole(n, PV);
+        n = findTheHighestPVNoNull(pv);
+        coeff = findTheInflectionPointClosestFromPole(n, pv);
     }
 
     /**
      * Finds the inflection point the closest from pole.
-     * 
-     * @param highestPV highest PV order
+     *
+     * @param highestPV highest pv order
      * @param PV projection parameters
      * @return the inflection point the closest from pole
      * @throws BadProjectionParameterException Exception
@@ -116,7 +119,7 @@ public final class ZPN extends AbstractZenithalProjection {
         double d2 = 0.0;
         double zd = 0.0;
         double zd1 = 0.0;
-        double zd2 = 0.0;       
+        double zd2 = 0.0;
         double d1 = PV[1];
         if (d1 <= 0.0) {
             throw new BadProjectionParameterException(this, "p[1] - It must be > 0");
@@ -142,7 +145,7 @@ public final class ZPN extends AbstractZenithalProjection {
             // No negative derivative -> no point of inflection. 
             zd = Math.PI;
         } else {
-            
+
             // Find where the derivative is zero. 
             for (i = 1; i <= 10; i++) {
                 zd = zd1 - d1 * (zd2 - zd1) / (d2 - d1);
@@ -174,16 +177,17 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
-     * Searches the highest PV index <code>i</code> where <code>PV[i]</code> != 0.
+     * Searches the highest pv index <code>i</code> where <code>pv[i]</code> !=
+     * 0.
      *
      * @param pv parameters
-     * @return the highest PV index
+     * @return the highest pv index
      * @throws BadProjectionParameterException Exception
      */
     @SuppressWarnings("empty-statement")
     private int findTheHighestPVNoNull(final double[] pv) throws BadProjectionParameterException {
         int i;
-        for (i = pv.length - 1; i >= 0 && NumericalUtility.equal(pv[i],0.0,getTolerance()); i--);
+        for (i = pv.length - 1; i >= 0 && NumericalUtility.equal(pv[i], 0.0, getTolerance()); i--);
         if (i < 0) {
             throw new BadProjectionParameterException(this, "pv parameters : All coefficients = 0");
         }
@@ -192,21 +196,23 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * Checks validity of parameters.
-     * 
+     *
      * @throws JWcsError Non-standard PVi_1 and/or PVi_2 values
-     * @throws ArrayIndexOutOfBoundsException Need at least 10 projection parameters
+     * @throws ArrayIndexOutOfBoundsException Need at least 10 projection
+     * parameters
      */
     private void check() {
-        if (!NumericalUtility.equal(getPhi0(),0) || !NumericalUtility.equal(getTheta0(),HALF_PI)) {
+        if (!NumericalUtility.equal(getPhi0(), 0) || !NumericalUtility.equal(getTheta0(), HALF_PI)) {
             throw new JWcsError("Non-standard PVi_1 and/or PVi_2 values");
         }
-        if (this.PV.length < 8) {
+        if (this.getPv().length < 8) {
             throw new ArrayIndexOutOfBoundsException("Need at least 10 projection parameters");
         }
     }
 
     /**
-     * Gets the tolerance of the numerical resolution of the double and iterative solution.
+     * Gets the tolerance of the numerical resolution of the double and
+     * iterative solution.
      *
      * @return the tolerance
      */
@@ -215,7 +221,8 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
-     * Sets the tolerance of the numerical resolution of the double and iterative solution.
+     * Sets the tolerance of the numerical resolution of the double and
+     * iterative solution.
      *
      * @param tolerance the tolerance to set
      */
@@ -241,9 +248,9 @@ public final class ZPN extends AbstractZenithalProjection {
         this.maxIter = maxIter;
     }
 
-
     /**
-     * The highest PV coefficient not equal to 0
+     * The highest pv coefficient not equal to 0
+     *
      * @return the n
      */
     public int getN() {
@@ -252,12 +259,13 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * The point of inflection closest to the pole
+     *
      * @return the coeff
      */
     public double[] getCoeff() {
-        return coeff;
+        return coeff.clone();
     }
-    
+
     /**
      * Computes a polynomial where orders are given by pv.
      *
@@ -279,6 +287,7 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * Computes the solution for a linear equation.
+     *
      * @param r radius
      * @param pv projection parameters
      * @return the solution for a linear equation
@@ -289,11 +298,12 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * Computes the solution for a quadratic equation.
+     *
      * @param r radius
      * @param pv projection parameters
      * @return the solution for a quadratic equation
      * @throws Exception Exception
-     */  
+     */
     private double quadraticSolution(final double r, final double[] pv) throws Exception {
         final double a = pv[2];
         final double b = pv[1];
@@ -326,16 +336,17 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * Computes an iterative solution for an equation where order &gt; 2.
-     * 
-     * <p>The end of the iterative solution is given by the expected numerical precision
-     * or the maximal number of iterations.
-     * 
+     *
+     * <p>
+     * The end of the iterative solution is given by the expected numerical
+     * precision or the maximal number of iterations.
+     *
      * @param r radius
      * @param pv projection parameters
      * @param coeff coefficient
      * @return the solution for an equation where order &gt; 2
      * @throws Exception Exception When an exception occurs
-     */    
+     */
     private double iterativeSolution(final double r, final double[] pv, final double[] coeff) throws Exception {
         double zd1 = 0.0;
         double r1 = pv[0];
@@ -391,9 +402,10 @@ public final class ZPN extends AbstractZenithalProjection {
         }
         return zd;
     }
-    
+
     /**
      * Compute the solution for whatever polynomial equation.
+     *
      * @param r radius
      * @param pv projection parameters
      * @return the solution for whatever polynomial equation
@@ -417,29 +429,29 @@ public final class ZPN extends AbstractZenithalProjection {
 
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         try {
             final double xr = Math.toRadians(x);
             final double yr = Math.toRadians(y);
             final double r_theta = computeRadius(xr, yr);
             final double phi = computePhi(xr, yr, r_theta);
-            final double theta = HALF_PI - computeSolution(r_theta, PV);
+            final double theta = HALF_PI - computeSolution(r_theta, getPv());
             final double[] pos = {phi, theta};
-            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                    
+            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
             return pos;
         } catch (Exception ex) {
-            throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
+            throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
         }
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                                
-        final double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, PV));
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
+        final double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, getPv()));
         final double x = computeX(r_theta, phi);
         final double y = computeY(r_theta, phi);
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0], coord[1]});
         return coord;
     }
 
@@ -447,15 +459,34 @@ public final class ZPN extends AbstractZenithalProjection {
     public String getName() {
         return NAME_PROJECTION;
     }
-    
+
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, Arrays.toString(this.PV));
+        return String.format(DESCRIPTION, Arrays.toString(this.getPv()));
     }
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
         return new ProjectionParameter[]{};
+    }
+
+    /**
+     * @return the pv
+     */
+    protected double[] getPv() {
+        return pv;
+    }
+
+    /**
+     * Sets pv.
+     * @param pv the pv to set
+     */
+    protected void setPv(double[] pv) {
+        if (pv == null) {
+            this.pv = new double[0];
+        } else {
+            this.pv = Arrays.copyOf(pv, pv.length);
+        }
     }
 
 }

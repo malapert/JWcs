@@ -30,7 +30,7 @@ public class EquatorialToEclipticJ2000Test extends ConverterTest {
      */
     public EquatorialToEclipticJ2000Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame j2000 = new J2000();
+        final CoordinateReferenceFrame j2000 = new J2000();
         this.source = new Equatorial();
         this.target = new Ecliptic(j2000);        
         

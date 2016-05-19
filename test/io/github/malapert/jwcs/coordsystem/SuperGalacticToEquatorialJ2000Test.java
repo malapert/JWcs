@@ -30,7 +30,7 @@ public class SuperGalacticToEquatorialJ2000Test extends ConverterTest {
      */
     public SuperGalacticToEquatorialJ2000Test() throws JWcsException {
         super();
-        CoordinateReferenceFrame j2000 = new J2000();
+        final CoordinateReferenceFrame j2000 = new J2000();
         this.source = new SuperGalactic();
         this.target = new Equatorial(j2000);        
         

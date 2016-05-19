@@ -46,32 +46,24 @@ public class MERTest extends AbstractProjectionTest {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_MER.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class MERTest extends AbstractProjectionTest {
     @Test
     public void testProjectMER() throws ProjectionException {
         System.out.println("project MER");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 268.516280900495417,  -73.380242883952121},
             { 269.134269245011296,  -60.649380202768285},
             { 293.83175889042559 ,  -58.42169429876801 },
@@ -107,14 +99,14 @@ public class MERTest extends AbstractProjectionTest {
     @Test
     public void testProjectInverseMER() throws ProjectionException {
         System.out.println("projectInverse MER");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);

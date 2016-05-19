@@ -59,7 +59,7 @@ public class AbstractProjectionTest {
      * @param wcs
      * @throws JWcsException
      */
-    public AbstractProjectionTest(JWcsFits wcs) throws JWcsException {
+    public AbstractProjectionTest(final JWcsFits wcs) throws JWcsException {
         this(wcs, TOLERANCE);
     }
 
@@ -69,15 +69,12 @@ public class AbstractProjectionTest {
      * @param tolerance
      * @throws JWcsException
      */
-    public AbstractProjectionTest(JWcsFits wcs, double tolerance) throws JWcsException {
+    public AbstractProjectionTest(final JWcsFits wcs, final double tolerance) throws JWcsException {
         this.wcs = wcs;
         this.tolerance = tolerance;
         this.wcs.doInit();
     }
 
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
         System.out.println();
@@ -97,8 +94,8 @@ public class AbstractProjectionTest {
             for (int longitude = 0; longitude < 360; longitude++) {
                 try {
                     if (wcs.inside(longitude, latitude)) {
-                        double[] pixels = wcs.wcs2pix(longitude, latitude);
-                        double[] skyPos = wcs.pix2wcs(pixels);
+                        final double[] pixels = wcs.wcs2pix(longitude, latitude);
+                        final double[] skyPos = wcs.pix2wcs(pixels);
                         double deltaLongitude = Math.abs(skyPos[0] - longitude);
                         if (deltaLongitude > 180) {
                             deltaLongitude = 360 - deltaLongitude;
@@ -106,7 +103,7 @@ public class AbstractProjectionTest {
                         if (Math.abs(latitude) != 90 && deltaLongitude > deltaLongitudeMax) {
                             deltaLongitudeMax = deltaLongitude;
                         }
-                        double deltaLatitude = Math.abs(skyPos[1] - latitude);
+                        final double deltaLatitude = Math.abs(skyPos[1] - latitude);
                         if (deltaLatitude > deltaLatitudeMax) {
                             deltaLatitudeMax = deltaLatitude;
                         }
@@ -116,13 +113,11 @@ public class AbstractProjectionTest {
                             System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
                             System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
                             System.out.println();
-                        } else if (Math.abs(latitude) != 90) {
-                            if (deltaLongitude > tolerance) {
-                                System.out.printf("longitue = %d lat = %d\n", longitude, latitude);
-                                System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
-                                System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
-                                System.out.println();
-                            }
+                        } else if (Math.abs(latitude) != 90 && deltaLongitude > tolerance) {
+                            System.out.printf("longitue = %d lat = %d\n", longitude, latitude);
+                            System.out.printf("poject: x = %20.15f y = %20.15f\n", pixels[0], pixels[1]);
+                            System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
+                            System.out.println();
                         }
                     }
                 } catch (ProjectionException err) {

@@ -53,6 +53,7 @@ import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtility.inverse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -333,9 +334,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      *
      * @throws JWcsException When WCS is not valid
      */
-    protected void checkWcs() throws JWcsException {
-        // do nothing
-    }
+    protected abstract void checkWcs() throws JWcsException;
 
     /**
      * Checks if the WCS header is valid.
@@ -855,7 +854,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     private double convertToDegree(final String cunit) {
         final double cx;
         if (hasKeyword(cunit)) {
-            final String unit_lc = cunit.toLowerCase();
+            final String unit_lc = cunit.toLowerCase(Locale.ENGLISH);
             switch (unit_lc) {
                 case "acmin":
                     cx = 1 / 60;

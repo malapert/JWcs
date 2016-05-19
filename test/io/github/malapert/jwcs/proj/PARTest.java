@@ -46,32 +46,24 @@ public class PARTest extends AbstractProjectionTest{
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_PAR.fits"))));
     }
     
-    /**
-     *
-     */
     @BeforeClass
     public static void setUpClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @AfterClass
     public static void tearDownClass() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @Before
     public void setUp() {
+        //do nothing
     }
     
-    /**
-     *
-     */
     @After
     public void tearDown() {
+        //do nothing
     }
 
     /**
@@ -81,7 +73,7 @@ public class PARTest extends AbstractProjectionTest{
     @Test
     public void testProjectPAR() throws ProjectionException {
         System.out.println("project PAR");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             { 269.47944138195686 ,  -73.495630388730987},
             { 269.697227084075848,  -60.762562515201395},
             { 293.182123437789812,  -58.056487135969519},
@@ -107,14 +99,14 @@ public class PARTest extends AbstractProjectionTest{
     @Test
     public void testProjectInversePAR() throws ProjectionException {
         System.out.println("projectInverse PAR");
-        double expectedResults[][] = {
+        final double expectedResults[][] = {
             {1.0d, 1.0d},
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
         };   
         double[] result;
-        for (double[] expectedResult : expectedResults) {
+        for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
              assertArrayEquals(expectedResult, result, 1e-12);
