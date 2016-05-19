@@ -1108,7 +1108,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Sets the Native latitude of the celestial pole to the projection
+     * Sets the Native latitude of the celestial pole to the projection.
      *
      * @param projection the projection
      */
@@ -1120,7 +1120,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Sets the Native longitude of the celestial pole to the projection
+     * Sets the Native longitude of the celestial pole to the projection.
      *
      * @param projection the projection
      */
@@ -1132,7 +1132,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Sets the Native latitude of the celestial pole to the projection
+     * Sets the Native latitude of the celestial pole to the projection.
      *
      * @param projection the projection
      */
@@ -1341,7 +1341,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Sets the CD matrix inverse
+     * Sets the CD matrix inverse.
      *
      * @param cdInverse the CD matrix inverse to set
      */
