@@ -20,8 +20,8 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -37,7 +37,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class AZP extends ZenithalProjection {
+public class AZP extends AbstractZenithalProjection {
 
     /**
      * Projection's name.
@@ -105,7 +105,7 @@ public class AZP extends ZenithalProjection {
      * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
      */
     private void checkParameters(final double gamma) throws BadProjectionParameterException {
-        if(NumericalUtils.equal(Math.abs(gamma), HALF_PI)) {
+        if(NumericalUtility.equal(Math.abs(gamma), HALF_PI)) {
             throw new BadProjectionParameterException(this, "gamma="+gamma+". Gamma must be != +/-HALF_PI");
         }
     }
@@ -142,25 +142,25 @@ public class AZP extends ZenithalProjection {
      */
     private double computeTheta(final double x, final double y, final double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
         final double denom = mu + 1 + y * Math.tan(gamma);
-        if (NumericalUtils.equal(denom,0)) {
+        if (NumericalUtility.equal(denom,0)) {
             throw new BadProjectionParameterException(this,"(mu,gamma) = (" + mu + ", " + gamma+"). (mu + 1) + y * tan(gamma) must be !=0");
         }    
         final double rho = radius / denom;
         final double val = mu*rho/Math.sqrt(Math.pow(rho, 2)+1);
-        final double omega = NumericalUtils.aasin(val);
+        final double omega = NumericalUtility.aasin(val);
         if (Double.isNaN(omega)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");
         }
-        final double psi = NumericalUtils.aatan2(1.0, rho);
+        final double psi = NumericalUtility.aatan2(1.0, rho);
         if(Double.isNaN(psi)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");            
         }
-        final double theta1 = NumericalUtils.normalizeLatitude(psi - omega);
-        final double theta2 = NumericalUtils.normalizeLatitude(psi + omega + Math.PI);        
+        final double theta1 = NumericalUtility.normalizeLatitude(psi - omega);
+        final double theta2 = NumericalUtility.normalizeLatitude(psi + omega + Math.PI);        
         final double theta;        
         if(Math.abs(mu) < 1) {
-            final boolean isTheta1Valid = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
-            final boolean isTheta2Valid = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+            final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
+            final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
             if(isTheta1Valid && isTheta2Valid) {
                 throw new JWcsError("It seems to be a bug");
             } else if (isTheta1Valid) {
@@ -199,17 +199,17 @@ public class AZP extends ZenithalProjection {
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                
         double thetax;
-        if (NumericalUtils.equal(mu, 0)) {
+        if (NumericalUtility.equal(mu, 0)) {
             thetax = 0;
         } else if (Math.abs(mu) > 1) {
-            thetax = NumericalUtils.aasin(-1 / mu);
+            thetax = NumericalUtility.aasin(-1 / mu);
         } else {
-            thetax = NumericalUtils.aasin(-mu);
+            thetax = NumericalUtility.aasin(-mu);
         }
 
         final double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
 
-        if (NumericalUtils.equal(denom, 0) || theta < thetax) {
+        if (NumericalUtility.equal(denom, 0) || theta < thetax) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = " + Math.toDegrees(theta));
         }
 
@@ -229,7 +229,7 @@ public class AZP extends ZenithalProjection {
     
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.mu, NumericalUtils.round(Math.toDegrees(this.gamma)));
+        return String.format(DESCRIPTION, this.mu, NumericalUtility.round(Math.toDegrees(this.gamma)));
     }
 
     @Override

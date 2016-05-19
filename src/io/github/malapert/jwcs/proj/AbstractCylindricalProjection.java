@@ -33,11 +33,11 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class CylindricalProjection extends AbstractProjection {
+public abstract class AbstractCylindricalProjection extends AbstractProjection {
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(CylindricalProjection.class.getName());     
+    protected final static Logger LOG = Logger.getLogger(AbstractCylindricalProjection.class.getName());     
     
     /**
      * AbstractProjection name.
@@ -69,7 +69,7 @@ public abstract class CylindricalProjection extends AbstractProjection {
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      */
-    protected CylindricalProjection(final double crval1, final double crval2) {
+    protected AbstractCylindricalProjection(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2) = ({0},{1})", new Object[]{crval1, crval2});
         setPhi0(DEFAULT_PHI0);

@@ -17,8 +17,8 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class MER extends CylindricalProjection {
+public class MER extends AbstractCylindricalProjection {
     
     /**
      * Projection's name.
@@ -77,15 +77,15 @@ public class MER extends CylindricalProjection {
     protected double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException  {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
         final double x = phi;
-        if (NumericalUtils.equal(Math.abs(theta), HALF_PI)) {
+        if (NumericalUtility.equal(Math.abs(theta), HALF_PI)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));            
         }
         final double angle = (HALF_PI + theta) * 0.5d;
-        if(NumericalUtils.equal(Math.abs(angle), HALF_PI)) {
+        if(NumericalUtility.equal(Math.abs(angle), HALF_PI)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));        
         }
         final double d = Math.tan(angle);
-        if (d<0 || NumericalUtils.equal(d, 0)) {
+        if (d<0 || NumericalUtility.equal(d, 0)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));       
         }
         final double y = Math.log(d);
@@ -106,6 +106,6 @@ public class MER extends CylindricalProjection {
         
     @Override
     public boolean inside(final double lon, final double lat) {
-        return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), HALF_PI);   
+        return super.inside(lon, lat) && !NumericalUtility.equal(Math.abs(lat), HALF_PI);   
     }
 }

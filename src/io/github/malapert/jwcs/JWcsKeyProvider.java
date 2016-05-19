@@ -84,7 +84,7 @@ public interface JWcsKeyProvider {
     double pv(int i, int m);   
     
     /**
-     * The units of CRVAL_i and CDELT_i
+     * The units of CRVAL_i and CDELT_i.
      * @param i the axis
      * @return the unit
      */

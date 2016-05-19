@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,12 +33,12 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class ZenithalProjection extends AbstractProjection {
+public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(ZenithalProjection.class.getName());
+    protected final static Logger LOG = Logger.getLogger(AbstractZenithalProjection.class.getName());
 
     /**
      * AbstractProjection name.
@@ -83,7 +83,7 @@ public abstract class ZenithalProjection extends AbstractProjection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * (\u03B4<sub>0</sub>)
      */
-    protected ZenithalProjection(final double crval1, final double crval2) {
+    protected AbstractZenithalProjection(final double crval1, final double crval2) {
         super(crval1, crval2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
@@ -157,7 +157,7 @@ public abstract class ZenithalProjection extends AbstractProjection {
      * @return the  native spherical coordinate (\u03D5) in radians along longitude
      */
     protected double computePhi(final double x, final double y, final double radius) {
-        return NumericalUtils.equal(radius, 0) ? 0 : NumericalUtils.aatan2(x, -y);
+        return NumericalUtility.equal(radius, 0) ? 0 : NumericalUtility.aatan2(x, -y);
     }
 
     @Override
@@ -167,9 +167,9 @@ public abstract class ZenithalProjection extends AbstractProjection {
 
     @Override
     public boolean inside(final double lon, final double lat) {
-        final double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+        final double angle = NumericalUtility.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
         LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
-        return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
+        return NumericalUtility.equal(angle, HALF_PI) || angle <= HALF_PI;
     }
 
     @Override

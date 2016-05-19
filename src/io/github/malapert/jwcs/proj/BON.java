@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +33,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class BON extends PolyConicProjection {
+public class BON extends AbstractPolyConicProjection {
     
     /**
      * Projection's name.
@@ -60,7 +60,7 @@ public class BON extends PolyConicProjection {
     public BON(final double crval1, final double crval2, final double theta1) {
         super(crval1, crval2, theta1);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta1)=({0},{1},{2})", new Object[]{crval1,crval2,theta1});                
-        if (NumericalUtils.equal(theta1,0)) {
+        if (NumericalUtility.equal(theta1,0)) {
             this.sfl = new SFL(crval1, crval2);
         }
     }
@@ -74,12 +74,12 @@ public class BON extends PolyConicProjection {
             final double yr = Math.toRadians(y);
             final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());            
             final double r_theta = Math.signum(getTheta1())* Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
-            final double aphi = NumericalUtils.aatan2(xr / r_theta, (y0 - yr) / r_theta);
+            final double aphi = NumericalUtility.aatan2(xr / r_theta, (y0 - yr) / r_theta);
             
             final double theta = y0 - r_theta;
             final double cos_theta = Math.cos(theta);
             final double phi;
-            if (NumericalUtils.equal(cos_theta,0)) {
+            if (NumericalUtility.equal(cos_theta,0)) {
                 phi = 0;
             } else {
                 phi = aphi * r_theta / cos_theta;
@@ -101,7 +101,7 @@ public class BON extends PolyConicProjection {
             final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
             final double r_theta = y0 - theta;
             final double aphi;
-            if (NumericalUtils.equal(r_theta, 0)) {
+            if (NumericalUtility.equal(r_theta, 0)) {
                 aphi=0;
             } else {
                 aphi = phi * Math.cos(theta) / r_theta;

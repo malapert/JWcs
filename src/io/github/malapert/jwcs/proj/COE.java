@@ -19,7 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -34,7 +34,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class COE extends ConicProjection {
+public class COE extends AbstractConicProjection {
 
     /**
      * Projection's name.
@@ -47,7 +47,7 @@ public class COE extends ConicProjection {
     private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
         
     /**
-     * Constant in radians based on
+     * Constant in radians.
      *
      * This constant is equal to sin\u03B8<sub>a</sub>*     
      */
@@ -87,7 +87,7 @@ public class COE extends ConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                                
         gamma = Math.sin(this.theta1) + Math.sin(this.theta2);
         c = gamma * 0.5;
-        if (NumericalUtils.equal(c, 0)) {
+        if (NumericalUtility.equal(c, 0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). sin(theta1) + sin(theta2) must be != 0");
         }         
         y0 = Math.sqrt(1.0d + Math.sin(theta1) * Math.sin(theta2) - gamma * Math.sin((theta1+theta2)*0.5)) / c;
@@ -101,7 +101,7 @@ public class COE extends ConicProjection {
         final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);                   
         final double w = 1.0d / gamma + Math.sin(theta1) * Math.sin(theta2) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
-        final double theta = NumericalUtils.aasin(w);
+        final double theta = NumericalUtility.aasin(w);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = ("+x+","+y+")");
         }        
@@ -128,7 +128,7 @@ public class COE extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
     }   
     
     @Override

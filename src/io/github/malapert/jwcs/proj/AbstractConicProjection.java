@@ -17,8 +17,8 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,11 +47,11 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class ConicProjection extends AbstractProjection {
+public abstract class AbstractConicProjection extends AbstractProjection {
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(ConicProjection.class.getName());        
+    protected final static Logger LOG = Logger.getLogger(AbstractConicProjection.class.getName());        
     /**
      * AbstractProjection name.
      */
@@ -97,7 +97,7 @@ public abstract class ConicProjection extends AbstractProjection {
      * @param eta abs(theta1 - theta2) / 2 in degrees
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      */
-    protected ConicProjection(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
+    protected AbstractConicProjection(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta_a,eta) = ({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
         this.thetaA = Math.toRadians(theta_a);
@@ -121,8 +121,8 @@ public abstract class ConicProjection extends AbstractProjection {
      * @throws BadProjectionParameterException When (theta1,theta2) not in range [-90,90]
      */
     private void checkParameters(final double theta1, final double theta2) throws BadProjectionParameterException {
-        final boolean inRangeTheta1 = NumericalUtils.isInInterval(theta1, -HALF_PI, HALF_PI);
-        final boolean inRangeTheta2 = NumericalUtils.isInInterval(theta2, -HALF_PI, HALF_PI);
+        final boolean inRangeTheta1 = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
+        final boolean inRangeTheta2 = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
         if(!inRangeTheta1 || !inRangeTheta2) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). Each angle must be -90<=theta1,theta2<=90");
         }
@@ -145,7 +145,7 @@ public abstract class ConicProjection extends AbstractProjection {
      * @return native spherical coordinate (\u03D5) in radians along longitude
      */
     protected double computePhi(final double x, final double y, final double r_theta, final double y0, final double c) {
-        return NumericalUtils.equal(r_theta, 0) ? 0 : NumericalUtils.aatan2(x/r_theta, (y0-y)/r_theta)/c;
+        return NumericalUtility.equal(r_theta, 0) ? 0 : NumericalUtility.aatan2(x/r_theta, (y0-y)/r_theta)/c;
     }
     
     /**
@@ -221,9 +221,9 @@ public abstract class ConicProjection extends AbstractProjection {
     
     @Override
     public boolean inside(final double lon, final double lat) {     
-        final double angle = NumericalUtils.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
+        final double angle = NumericalUtility.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
         LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
-        return NumericalUtils.equal(angle, HALF_PI) || angle <= HALF_PI;
+        return NumericalUtility.equal(angle, HALF_PI) || angle <= HALF_PI;
     }   
     
     @Override

@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 /**
  * The old FK4 (barycentric) equatorial system

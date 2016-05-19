@@ -22,8 +22,8 @@ import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEpoch
 import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEqB19502Gal;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -620,9 +620,9 @@ public class AbstractCrsTest {
         RealMatrix result2 = convertMatrixEqB19502Gal().transpose();
         RealMatrix result = result1.multiply(result2);
         RealMatrix expResult = createRealIdentityMatrix(3);
-        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtils.DOUBLE_TOLERANCE);
-        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtils.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(0), result.getRow(0), NumericalUtility.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(1), result.getRow(1), NumericalUtility.DOUBLE_TOLERANCE);
+        assertArrayEquals(expResult.getRow(2), result.getRow(2), NumericalUtility.DOUBLE_TOLERANCE);
     }
 
     /**

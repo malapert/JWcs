@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -34,7 +34,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class ARC extends ZenithalProjection {
+public class ARC extends AbstractZenithalProjection {
     
     /**
      * Projection's name.
@@ -48,7 +48,7 @@ public class ARC extends ZenithalProjection {
 
     /**
      * Creates a new ARC projection based on the celestial longitude and 
-     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point

@@ -18,7 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +32,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class CYP extends CylindricalProjection {
+public class CYP extends AbstractCylindricalProjection {
     
     /**
      * Projection's name.
@@ -105,11 +105,11 @@ public class CYP extends CylindricalProjection {
      * <p>Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
      */
     protected final void check() {
-        if (getLambda() < 0 || NumericalUtils.equal(getLambda(), 0)) {
+        if (getLambda() < 0 || NumericalUtility.equal(getLambda(), 0)) {
             LOG.log(Level.WARNING, "CYP: Lambda must be > 0 -- resetting to 1");
             this.lambda = 1;
         }
-        if (NumericalUtils.equal(getMu(),-getLambda())) {
+        if (NumericalUtility.equal(getMu(),-getLambda())) {
             LOG.log(Level.WARNING, "CYP: Mu must not be -lambda -- resetting to 1");
             this.mu = 1;
         }              
@@ -122,7 +122,7 @@ public class CYP extends CylindricalProjection {
         final double yr = Math.toRadians(y);
         final double phi = xr / getLambda();        
         final double eta = yr / (getMu() + getLambda());
-        final double theta = NumericalUtils.aatan2(eta, 1) + NumericalUtils.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
+        final double theta = NumericalUtility.aatan2(eta, 1) + NumericalUtility.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
         final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
         return pos;
@@ -133,7 +133,7 @@ public class CYP extends CylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
         final double x = getLambda() * phi;
         final double ctheta = Math.cos(theta);
-        if(NumericalUtils.equal(getMu(), -ctheta)) {
+        if(NumericalUtility.equal(getMu(), -ctheta)) {
             throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));
         }
         final double y = (getMu()+getLambda())/(getMu() + ctheta) * Math.sin(theta);
@@ -167,7 +167,7 @@ public class CYP extends CylindricalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(this.lambda));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(this.lambda));
     }
     
     @Override

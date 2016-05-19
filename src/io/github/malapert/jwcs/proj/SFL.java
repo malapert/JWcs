@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -29,7 +29,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class SFL extends CylindricalProjection {
+public class SFL extends AbstractCylindricalProjection {
     
     /**
      * Projection's name.
@@ -61,7 +61,7 @@ public class SFL extends CylindricalProjection {
         final double theta = Math.toRadians(y);
         final double cosTheta = Math.cos(theta);
         final double phi;
-        if(NumericalUtils.equal(cosTheta, 0)) {
+        if(NumericalUtility.equal(cosTheta, 0)) {
             phi = 0;
         } else {
             phi = Math.toRadians(x) / Math.cos(theta);

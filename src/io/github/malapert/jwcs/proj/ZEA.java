@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -26,7 +26,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class ZEA extends ZenithalProjection {
+public class ZEA extends AbstractZenithalProjection {
 
     /**
      * Projection's name.
@@ -60,10 +60,10 @@ public class ZEA extends ZenithalProjection {
         final double r_theta = computeRadius(xr, yr);
         final double phi = computePhi(xr, yr, r_theta);        
         final double theta;
-	if (NumericalUtils.equal(r_theta, 2)) {
+	if (NumericalUtility.equal(r_theta, 2)) {
 	    theta = -HALF_PI;
 	} else {
-	    theta = HALF_PI - 2*NumericalUtils.aasin(r_theta * 0.5);
+	    theta = HALF_PI - 2*NumericalUtility.aasin(r_theta * 0.5);
 	}        
         final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                

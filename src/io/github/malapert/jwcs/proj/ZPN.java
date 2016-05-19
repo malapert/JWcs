@@ -19,8 +19,8 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -33,7 +33,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public final class ZPN extends ZenithalProjection {
+public final class ZPN extends AbstractZenithalProjection {
     
     /**
      * Projection's name.
@@ -183,7 +183,7 @@ public final class ZPN extends ZenithalProjection {
     @SuppressWarnings("empty-statement")
     private int findTheHighestPVNoNull(final double[] pv) throws BadProjectionParameterException {
         int i;
-        for (i = pv.length - 1; i >= 0 && NumericalUtils.equal(pv[i],0.0,getTolerance()); i--);
+        for (i = pv.length - 1; i >= 0 && NumericalUtility.equal(pv[i],0.0,getTolerance()); i--);
         if (i < 0) {
             throw new BadProjectionParameterException(this, "pv parameters : All coefficients = 0");
         }
@@ -197,7 +197,7 @@ public final class ZPN extends ZenithalProjection {
      * @throws ArrayIndexOutOfBoundsException Need at least 10 projection parameters
      */
     private void check() {
-        if (!NumericalUtils.equal(getPhi0(),0) || !NumericalUtils.equal(getTheta0(),HALF_PI)) {
+        if (!NumericalUtility.equal(getPhi0(),0) || !NumericalUtility.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard PVi_1 and/or PVi_2 values");
         }
         if (this.PV.length < 8) {

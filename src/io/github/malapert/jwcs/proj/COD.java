@@ -18,7 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class COD extends ConicProjection {
+public class COD extends AbstractConicProjection {
     
     /**
      * Projection's name.
@@ -67,14 +67,14 @@ public class COD extends ConicProjection {
     public COD(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                        
-        if(NumericalUtils.equal(Math.toRadians(eta), 0)) {
+        if(NumericalUtility.equal(Math.toRadians(eta), 0)) {
             this.c = Math.sin(Math.toRadians(theta_a));
             this.y0 = 1.0/Math.tan(Math.toRadians(theta_a));           
         } else {
             this.c = Math.sin(getThetaA()) * Math.sin(Math.toRadians(eta)) / Math.toRadians(eta);   
             this.y0 = Math.toRadians(eta) / (Math.tan(Math.toRadians(eta)) * Math.tan(Math.toRadians(theta_a)));
         }  
-        if (NumericalUtils.equal(this.c, 0)) {
+        if (NumericalUtility.equal(this.c, 0)) {
             throw new BadProjectionParameterException(this,"c must be != 0");
         } 
     }
@@ -119,7 +119,7 @@ public class COD extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
     }    
 
     @Override

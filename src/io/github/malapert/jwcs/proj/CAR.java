@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class CAR extends CylindricalProjection{
+public class CAR extends AbstractCylindricalProjection{
     
     /**
      * Projection's name.

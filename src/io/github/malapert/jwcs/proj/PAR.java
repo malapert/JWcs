@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class PAR extends CylindricalProjection {
+public class PAR extends AbstractCylindricalProjection {
 
     /**
      * Projection's name.
@@ -61,7 +61,7 @@ public class PAR extends CylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
-        final double theta = 3 * NumericalUtils.aasin(yr / Math.PI);
+        final double theta = 3 * NumericalUtility.aasin(yr / Math.PI);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
         }

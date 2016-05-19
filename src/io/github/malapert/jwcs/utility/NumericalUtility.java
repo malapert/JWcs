@@ -22,11 +22,18 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * NumericalUtils class.
+ * NumericalUtility class.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
-public abstract class NumericalUtils {
+public final class NumericalUtility {
+    
+    /**
+     * Private constructor
+     */
+    private NumericalUtility() {
+        //not called
+    }
 
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
@@ -90,10 +97,10 @@ public abstract class NumericalUtils {
         final double[] xyzPos1 = radec2xyz(pos1);
         final double[] xyzPos2 = radec2xyz(pos2);
         double dot = xyzPos1[0] * xyzPos2[0] + xyzPos1[1] * xyzPos2[1] + xyzPos1[2] * xyzPos2[2];
-        if (NumericalUtils.equal(dot, 0, 1e-13)) {
+        if (NumericalUtility.equal(dot, 0, 1e-13)) {
             dot = 0;
         }
-        return NumericalUtils.aacos(dot / (normVector(xyzPos1) * normVector(xyzPos2)));
+        return NumericalUtility.aacos(dot / (normVector(xyzPos1) * normVector(xyzPos2)));
     }
 
     /**
@@ -239,10 +246,10 @@ public abstract class NumericalUtils {
      * @return True when number is included in [min,max] otherwise False.
      */
     public final static boolean isInInterval(final double number, final double min, final double max, final double precision) {
-        if (NumericalUtils.equal(number, min, precision)) {
+        if (NumericalUtility.equal(number, min, precision)) {
             return true;
         }
-        if (NumericalUtils.equal(number, max, precision)) {
+        if (NumericalUtility.equal(number, max, precision)) {
             return true;
         }
         return min < number && number < max;
@@ -250,7 +257,7 @@ public abstract class NumericalUtils {
 
     /**
      * Compares two doubles with a numerical precision of
-     * {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     * {@link NumericalUtility#DOUBLE_TOLERANCE}.
      *
      * @param val1 first double
      * @param val2 second double
@@ -262,7 +269,7 @@ public abstract class NumericalUtils {
 
     /**
      * Checks if the number is included in [min,max] with a numerical precision
-     * of {@link NumericalUtils#DOUBLE_TOLERANCE}.
+     * of {@link NumericalUtility#DOUBLE_TOLERANCE}.
      *
      * @param number number to test
      * @param min minimum value

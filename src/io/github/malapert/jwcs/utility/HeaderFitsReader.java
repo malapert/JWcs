@@ -103,7 +103,7 @@ public class HeaderFitsReader {
     }
 
     /**
-     * Reads keywords from a reader
+     * Reads keywords from a reader.
      * @return the list of (keyword,value)
      */
     public List<List<String>> readKeywords() {

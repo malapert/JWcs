@@ -32,7 +32,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import io.github.malapert.jwcs.utility.TimeUtils;
+import io.github.malapert.jwcs.utility.TimeUtility;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,8 +49,8 @@ import io.github.malapert.jwcs.proj.COD;
 import io.github.malapert.jwcs.proj.COE;
 import io.github.malapert.jwcs.proj.COO;
 import io.github.malapert.jwcs.proj.COP;
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
-import static io.github.malapert.jwcs.utility.NumericalUtils.inverse;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtility.inverse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -371,7 +371,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
             mjd = String.valueOf(getValueAsFloat("MJD-OBS"));
         } else if (hasKeyword("DATE-OBS")) {
             try {
-                mjd = String.valueOf(TimeUtils.convertISOToModifiedJulianDate(getValueAsString("DATE-OBS")));
+                mjd = String.valueOf(TimeUtility.convertISOToModifiedJulianDate(getValueAsString("DATE-OBS")));
             } catch (ParseException ex) {
                 mjd = null;
             }

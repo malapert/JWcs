@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +32,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class TAN extends ZenithalProjection {
+public class TAN extends AbstractZenithalProjection {
 
     /**
      * Projection's name.
@@ -67,7 +67,7 @@ public class TAN extends ZenithalProjection {
         final double yr = Math.toRadians(y);
         final double r_theta = computeRadius(xr, yr);        
         final double phi = computePhi(x, y, r_theta);       
-        final double theta = NumericalUtils.aatan2(1, r_theta);        
+        final double theta = NumericalUtility.aatan2(1, r_theta);        
         final double[] pos = {phi, theta};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
         return pos;
@@ -77,7 +77,7 @@ public class TAN extends ZenithalProjection {
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {        
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                
         final double s = Math.sin(theta);
-        if (NumericalUtils.equal(s, 0)) {
+        if (NumericalUtility.equal(s, 0)) {
             throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
         final double r_theta = Math.cos(theta) / s;
@@ -100,7 +100,7 @@ public class TAN extends ZenithalProjection {
     
     @Override
     public boolean inside(final double lon, final double lat) {  
-       return super.inside(lon, lat) && !NumericalUtils.equal(Math.abs(lat), 0);
+       return super.inside(lon, lat) && !NumericalUtility.equal(Math.abs(lat), 0);
     }     
 
     @Override

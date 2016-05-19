@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -26,7 +26,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class PCO extends PolyConicProjection {
+public class PCO extends AbstractPolyConicProjection {
 
     /**
      * Projection's name.
@@ -119,10 +119,10 @@ public class PCO extends PolyConicProjection {
 
         final double phi;
         double theta = 0;
-        if (NumericalUtils.equal(yr, 0)) {
+        if (NumericalUtility.equal(yr, 0)) {
             phi = xr;
             theta = 0.0;
-        } else if (NumericalUtils.equal(yr, HALF_PI)) {
+        } else if (NumericalUtility.equal(yr, HALF_PI)) {
             phi = 0.0;
             theta = yr < 0.0 ? -HALF_PI : HALF_PI;
         } else {
@@ -163,10 +163,10 @@ public class PCO extends PolyConicProjection {
                 final double f = xx + ymthe * (ymthe - 2 / tanthe);
 
                 // Check for convergence. 
-                if (NumericalUtils.equal(f, 0, getTolerance())) {
+                if (NumericalUtility.equal(f, 0, getTolerance())) {
                     break;
                 }
-                if (NumericalUtils.equal(thepos, theneg, getTolerance())) {
+                if (NumericalUtility.equal(thepos, theneg, getTolerance())) {
                     break;
                 }
 
@@ -182,10 +182,10 @@ public class PCO extends PolyConicProjection {
 
             final double xp = 1 - ymthe * tanthe;
             final double yp = xr * tanthe;
-            if (NumericalUtils.equal(xp, 0) && NumericalUtils.equal(yp, 0)) {
+            if (NumericalUtility.equal(xp, 0) && NumericalUtility.equal(yp, 0)) {
                 phi = 0.0;
             } else {
-                phi = NumericalUtils.aatan2(yp, xp) / Math.sin(theta);
+                phi = NumericalUtility.aatan2(yp, xp) / Math.sin(theta);
             }
         }
 
@@ -202,7 +202,7 @@ public class PCO extends PolyConicProjection {
         final double a = phi * sinthe;
         double x;
         double y;
-        if (NumericalUtils.equal(sinthe, 0.0)) {
+        if (NumericalUtility.equal(sinthe, 0.0)) {
             x = phi;
             y = 0.0;
         } else {

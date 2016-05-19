@@ -20,7 +20,7 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -32,7 +32,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class CEA extends CylindricalProjection {
+public class CEA extends AbstractCylindricalProjection {
 
     /**
      * Projection's name.
@@ -86,7 +86,7 @@ public class CEA extends CylindricalProjection {
     public CEA(final double crval1, final double crval2, final double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,lambda)=({0},{1},{2})", new Object[]{crval1,crval2,lambda});                        
-        if (NumericalUtils.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
+        if (NumericalUtility.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
             throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside of range (0,1]");
         }
         setLambda(lambda);
@@ -99,7 +99,7 @@ public class CEA extends CylindricalProjection {
         final double yr = Math.toRadians(y);
         final double phi = xr;
         final double arg = getLambda() * yr;
-        final double theta = NumericalUtils.aasin(arg);
+        final double theta = NumericalUtility.aasin(arg);
         if(Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
         }
@@ -143,7 +143,7 @@ public class CEA extends CylindricalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(this.lambda));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.lambda));
     }
     
     @Override

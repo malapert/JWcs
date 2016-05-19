@@ -17,8 +17,8 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -31,7 +31,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class MOL extends CylindricalProjection {
+public class MOL extends AbstractCylindricalProjection {
 
     /**
      * Projection's name.
@@ -94,7 +94,7 @@ public class MOL extends CylindricalProjection {
 
     /**
      * Computes the native spherical coordinate (\u03B8) in radians along
-     * latitude
+     * latitude.
      *
      * @param xr projection plane coordinate along X in radians
      * @param yr projection plane coordinate along Y in radians
@@ -105,19 +105,19 @@ public class MOL extends CylindricalProjection {
      */
     private double computeTheta(final double xr, final double yr, final double s) throws PixelBeyondProjectionException {
         double z = yr / Math.sqrt(2);
-        if (NumericalUtils.equal(Math.abs(z), 1)) {
+        if (NumericalUtility.equal(Math.abs(z), 1)) {
             z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
         } else if (Math.abs(1) > 1) {
             throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + Math.toDegrees(yr));
         } else {
-            z = NumericalUtils.aasin(z) / HALF_PI + s * yr / Math.PI;
+            z = NumericalUtility.aasin(z) / HALF_PI + s * yr / Math.PI;
         }
-        if (NumericalUtils.equal(Math.abs(z), 1)) {
+        if (NumericalUtility.equal(Math.abs(z), 1)) {
             z = z < 0.0 ? -1.0 : 1.0;
         } else if (Math.abs(1) > 1) {
             throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + Math.toDegrees(xr) + ", " + Math.toDegrees(yr));
         }
-        final double theta = NumericalUtils.aasin(z);
+        final double theta = NumericalUtility.aasin(z);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, "(x,y)=(" + Math.toDegrees(xr) + "," + Math.toDegrees(yr) + ")");
         }

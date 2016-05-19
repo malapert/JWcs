@@ -27,12 +27,12 @@ import static org.junit.Assert.*;
  * Tests of Utility package.
  * @author Jean-Christophe Malapert
  */
-public class TimeUtilsTest {
+public class TimeUtilityTest {
     
     /**
      *
      */
-    public TimeUtilsTest() {
+    public TimeUtilityTest() {
     }
     
     /**
@@ -65,31 +65,31 @@ public class TimeUtilsTest {
 
 
     /**
-     * Test of convertJulianDateToISO method, of class TimeUtils.
+     * Test of convertJulianDateToISO method, of class TimeUtility.
      */
     @Test
     public void testConvertJulianDateToISO() {
         System.out.println("julianDateToISO");
         double julianDate = 2456915;
         String expResult = "2014-09-14T12:00:00";
-        String result = TimeUtils.convertJulianDateToISO(julianDate);
+        String result = TimeUtility.convertJulianDateToISO(julianDate);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of convertModifiedJulianDateToISO method, of class TimeUtils.
+     * Test of convertModifiedJulianDateToISO method, of class TimeUtility.
      */
     @Test
     public void testConvertModifiedJulianDateToISO() {
         System.out.println("modifiedJulianDateToISO");
         double modifiedJulianDate = 53005;
         String expResult = "2004-01-01T00:00:00";
-        String result = TimeUtils.convertModifiedJulianDateToISO(modifiedJulianDate);
+        String result = TimeUtility.convertModifiedJulianDateToISO(modifiedJulianDate);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of convertISOToJulianDate method, of class TimeUtils.
+     * Test of convertISOToJulianDate method, of class TimeUtility.
      * @throws java.lang.Exception
      */
     @Test
@@ -97,13 +97,13 @@ public class TimeUtilsTest {
         System.out.println("ISOToJulianDate");
         String dateObs = "2014-09-14T12:08:18";
         double expResult = 2456915.005763889;
-        double result = TimeUtils.convertISOToJulianDate(dateObs);
+        double result = TimeUtility.convertISOToJulianDate(dateObs);
         assertEquals(expResult, result, 1e-9);             
     }
     
     
     /**
-     * Test of convertISOToModifiedJulianDate method, of class TimeUtils.
+     * Test of convertISOToModifiedJulianDate method, of class TimeUtility.
      * @throws java.lang.Exception
      */
     @Test
@@ -111,7 +111,7 @@ public class TimeUtilsTest {
         System.out.println("ISOToModifiedJulianDate");
         
         String datObs = "2004-01-01T00:00:00.000";        
-        double result = TimeUtils.convertISOToModifiedJulianDate(datObs);
+        double result = TimeUtility.convertISOToModifiedJulianDate(datObs);
         double expResultMJD = 53005.0;
         assertEquals(expResultMJD, result, 1e-6);
     }
@@ -125,109 +125,109 @@ public class TimeUtilsTest {
         System.out.println("Convert and reverse");
         
         String dateObs = "10/03/78";        
-        double result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
-        String expResult = TimeUtils.convertModifiedJulianDateToISO(result);
+        double result = TimeUtility.convertISOToModifiedJulianDate(dateObs);
+        String expResult = TimeUtility.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, "1978-03-10T00:00:00");       
         
         dateObs = "1978-03-10";        
-        result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
-        expResult = TimeUtils.convertModifiedJulianDateToISO(result);
+        result = TimeUtility.convertISOToModifiedJulianDate(dateObs);
+        expResult = TimeUtility.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, "1978-03-10T00:00:00");        
         
         dateObs = "1978-03-10T10:20:02";        
-        result = TimeUtils.convertISOToModifiedJulianDate(dateObs);
-        expResult = TimeUtils.convertModifiedJulianDateToISO(result);
+        result = TimeUtility.convertISOToModifiedJulianDate(dateObs);
+        expResult = TimeUtility.convertModifiedJulianDateToISO(result);
         assertEquals(expResult, dateObs);           
     }
 
     /**
-     * Test of convertEpochJulian2JD method, of class TimeUtils.
+     * Test of convertEpochJulian2JD method, of class TimeUtility.
      */
     @Test
     public void testConvertEpochJulian2JD() {
         System.out.println("epochJulian2JD");
         double jEpoch = 1983.99863107d;
         double expResult = 2445700.5d;
-        double result = TimeUtils.convertEpochJulian2JD(jEpoch);
+        double result = TimeUtility.convertEpochJulian2JD(jEpoch);
         assertEquals(expResult, result, 1e-1);
     }
 
     /**
-     * Test of convertJD2epochJulian method, of class TimeUtils.
+     * Test of convertJD2epochJulian method, of class TimeUtility.
      */
     @Test
     public void testConvertJD2epochJulian() {
         System.out.println("JD2epochJulian");
         double jd = 2445700.5d;
         double expResult = 1983.99863107d;
-        double result = TimeUtils.convertJD2epochJulian(jd);
+        double result = TimeUtility.convertJD2epochJulian(jd);
         assertEquals(expResult, result, 1e-7);
     }
 
     /**
-     * Test of convertEpochBessel2JD method, of class TimeUtils.
+     * Test of convertEpochBessel2JD method, of class TimeUtility.
      */
     @Test
     public void testConvertEpochBessel2JD() {
         System.out.println("epochBessel2JD");
         double bEpoch = 1983.99956681d;
         double expResult = 1983.99956681d;
-        double jd = TimeUtils.convertEpochBessel2JD(bEpoch);
-        double result = TimeUtils.convertJD2epochBessel(jd);
+        double jd = TimeUtility.convertEpochBessel2JD(bEpoch);
+        double result = TimeUtility.convertJD2epochBessel(jd);
         assertEquals(expResult, result, 1e-7);
     }
 
     /**
-     * Test of epochs method, of class TimeUtils.
+     * Test of epochs method, of class TimeUtility.
      */
     @Test
     public void testEpochs() {
         System.out.println("epochs");
         String epoch = "F2008-03-31T8:09";
         double[] expResult = new double[]{2008.2474210134737, 2008.2459673739454, 2454556.8395833336};
-        double[] result = TimeUtils.epochs(epoch);
+        double[] result = TimeUtility.epochs(epoch);
         assertArrayEquals(expResult, result, 1e-12);
     }
 
     /**
-     * Test of epochs method, of class TimeUtils.
+     * Test of epochs method, of class TimeUtility.
      */
     @Test
     public void testEpochs1() {
         System.out.println("epochs");
         String epoch = "F2007-01-14T13:18:59.9";
         double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
-        double[] result = TimeUtils.epochs(epoch);
+        double[] result = TimeUtility.epochs(epoch);
         assertArrayEquals(expResult, result, 1e-12);
     }
 
     /**
-     * Test of epochs method, of class TimeUtils.
+     * Test of epochs method, of class TimeUtility.
      */
     @Test
     public void testEpochs2() {
         System.out.println("epochs");
         String epoch = "j2007.0364267212976";
         double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
-        double[] result = TimeUtils.epochs(epoch);
+        double[] result = TimeUtility.epochs(epoch);
         assertArrayEquals(expResult, result, 1e-12);
     }
 
     /**
-     * Test of epochs method, of class TimeUtils.
+     * Test of epochs method, of class TimeUtility.
      */
     @Test
     public void testEpochs3() {
         System.out.println("epochs");
         String epoch = "b2007.0378545262108";
         double[] expResult = new double[]{2007.0378545262108, 2007.0364267212976, 2454115.0548599539};
-        double[] result = TimeUtils.epochs(epoch);
+        double[] result = TimeUtility.epochs(epoch);
         assertArrayEquals(expResult, result, 1e-12);
     }
     
 
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd() {
@@ -236,12 +236,12 @@ public class TimeUtilsTest {
         int month = 1;
         double dayNumber = 1.5d;
         double expResult = 0.0d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }
     
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd1() {
@@ -250,12 +250,12 @@ public class TimeUtilsTest {
         int month = 1;
         double dayNumber = 1.0d;
         double expResult = 1721057.5d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }    
 
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd2() {
@@ -264,12 +264,12 @@ public class TimeUtilsTest {
         int month = 10;
         double dayNumber = 4.0d;
         double expResult = 2299159.5d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }      
     
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd3() {
@@ -278,12 +278,12 @@ public class TimeUtilsTest {
         int month = 10;
         double dayNumber = 15.0d;
         double expResult = 2299170.5d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }       
     
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd4() {
@@ -292,12 +292,12 @@ public class TimeUtilsTest {
         int month = 10;
         double dayNumber = 15.5d;
         double expResult = 2299161.0d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }     
     
     /**
-     * Test of jd method, of class TimeUtils.
+     * Test of jd method, of class TimeUtility.
      */
     @Test
     public void testJd5() {
@@ -306,7 +306,7 @@ public class TimeUtilsTest {
         int month = 1;
         double dayNumber = 1d;
         double expResult = 2440587.5d;
-        double result = TimeUtils.jd(year, month, dayNumber);
+        double result = TimeUtility.jd(year, month, dayNumber);
         assertEquals(expResult, result, 0.0);
     }      
 }

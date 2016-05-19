@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,12 +34,12 @@ import java.util.logging.Logger;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public abstract class PolyConicProjection extends AbstractProjection {
+public abstract class AbstractPolyConicProjection extends AbstractProjection {
 
     /**
      * Logger.
      */
-    protected final static Logger LOG = Logger.getLogger(PolyConicProjection.class.getName());
+    protected final static Logger LOG = Logger.getLogger(AbstractPolyConicProjection.class.getName());
 
     /**
      * AbstractProjection name.
@@ -72,11 +72,11 @@ public abstract class PolyConicProjection extends AbstractProjection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta1 theta1 in degrees
      */
-    protected PolyConicProjection(final double crval1, final double crval2, final double theta1) {
+    protected AbstractPolyConicProjection(final double crval1, final double crval2, final double theta1) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta1) = ({0},{1},{2})", new Object[]{crval1, crval2, theta1});
 
-        if (NumericalUtils.equal(theta1, 0)) {
+        if (NumericalUtility.equal(theta1, 0)) {
             this.theta1 = Math.toRadians(45);
             LOG.log(Level.WARNING,"theta1=0 not allowed, reseting to 45");
         } else {

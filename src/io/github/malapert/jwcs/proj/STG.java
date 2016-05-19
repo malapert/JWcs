@@ -16,7 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -34,7 +34,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class STG extends ZenithalProjection {
+public class STG extends AbstractZenithalProjection {
     
     /**
      * Projection's name.

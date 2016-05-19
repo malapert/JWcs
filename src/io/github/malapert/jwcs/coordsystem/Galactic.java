@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**

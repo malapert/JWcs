@@ -18,7 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 
 /**
@@ -27,7 +27,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class COP extends ConicProjection {
+public class COP extends AbstractConicProjection {
 
     /**
      * Projection's name.
@@ -71,7 +71,7 @@ public class COP extends ConicProjection {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
         this.c = Math.sin(getThetaA());
-        if (NumericalUtils.equal(this.c, 0)) {
+        if (NumericalUtility.equal(this.c, 0)) {
             throw new BadProjectionParameterException(this, "theta_a: " + getThetaA() + ". It must be !=0");
         }
     }
@@ -82,7 +82,7 @@ public class COP extends ConicProjection {
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
         final double d = Math.cos(getEta());
-        if (NumericalUtils.equal(d, 0)) {
+        if (NumericalUtility.equal(d, 0)) {
             throw new BadProjectionParameterException(this, "Bad value for eta = " + getEta() + ". eta must be > 0");
         }
         final double y0 = d / Math.tan(getThetaA());
@@ -113,7 +113,7 @@ public class COP extends ConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(Math.toDegrees(this.getThetaA())), NumericalUtils.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
     }
 
     @Override

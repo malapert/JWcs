@@ -17,22 +17,23 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.aacos;
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealIdentityMatrix;
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
-import static io.github.malapert.jwcs.utility.NumericalUtils.inverse;
-import static io.github.malapert.jwcs.utility.NumericalUtils.rotX;
-import static io.github.malapert.jwcs.utility.NumericalUtils.rotY;
-import static io.github.malapert.jwcs.utility.NumericalUtils.rotZ;
-import static io.github.malapert.jwcs.utility.TimeUtils.convertEpochBessel2JD;
-import static io.github.malapert.jwcs.utility.TimeUtils.convertEpochJulian2JD;
+import static io.github.malapert.jwcs.utility.NumericalUtility.aacos;
+import static io.github.malapert.jwcs.utility.NumericalUtility.aasin;
+import static io.github.malapert.jwcs.utility.NumericalUtility.aatan2;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
+import static io.github.malapert.jwcs.utility.NumericalUtility.inverse;
+import static io.github.malapert.jwcs.utility.NumericalUtility.rotX;
+import static io.github.malapert.jwcs.utility.NumericalUtility.rotY;
+import static io.github.malapert.jwcs.utility.NumericalUtility.rotZ;
+import static io.github.malapert.jwcs.utility.TimeUtility.convertEpochBessel2JD;
+import static io.github.malapert.jwcs.utility.TimeUtility.convertEpochJulian2JD;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math3.linear.RealMatrix;
-import static io.github.malapert.jwcs.utility.NumericalUtils.equal;
-import static io.github.malapert.jwcs.utility.NumericalUtils.isInInterval;
+import static io.github.malapert.jwcs.utility.NumericalUtility.equal;
+import static io.github.malapert.jwcs.utility.NumericalUtility.isInInterval;
 
 /**
  * A Coordinate Reference System (crs) contains two different elements : 
@@ -419,10 +420,9 @@ public abstract class AbstractCrs {
      * It handles precession and the transformation between equatorial
      * systems.
      *
-     * This function includes also conversions between reference systems.
+     * <p>This function includes also conversions between reference systems.
      *
-     * <p>
-     * Notes: Return matrix to transform equatorial coordinates from
+     * <p>Notes: Return matrix to transform equatorial coordinates from
      * <code>epoch1</code> to <code>epoch2</code> in either reference frame FK4 or FK5. Or transform
      * from epoch, FK4 or FK5 to ICRS or J2000 vice versa. Note that each
      * transformation between FK4 and one of the other reference systems
@@ -802,12 +802,12 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br> 
      * ----------<br>
-     * Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
-     * IAU Resolutions on Astronomical Reference Systems, TimeUtils Scales, and
-     * Earth Rotation Models, United States Naval Observatory circular no. 179,
-     * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
-     *
-     * <p>Notes:<br>
+ Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
+ IAU Resolutions on Astronomical Reference Systems, TimeUtility Scales, and
+ Earth Rotation Models, United States Naval Observatory circular no. 179,
+ http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
+
+ <p>Notes:<br>
      * ------ <br> 
      * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
@@ -1173,11 +1173,11 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br> 
      * ----------<br>
-     * Kaplan G.H., The IAU Resolutions on Astronomical
-     * Reference systems, TimeUtils scales, and Earth Rotation Models, US Naval
-     * Observatory, Circular No. 179
-     *
-     * <p>Notes:<br>
+ Kaplan G.H., The IAU Resolutions on Astronomical
+ Reference systems, TimeUtility scales, and Earth Rotation Models, US Naval
+ Observatory, Circular No. 179
+
+ <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * FK5, J2000. We do not use the first or second order approximations given
@@ -1201,12 +1201,12 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br>
      * ----------<br>
-     * Hilton and Hohenkerk (2004), Astronomy and
-     * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
-     * Astronomical Reference systems, TimeUtils scales, and Earth Rotation
-     * Models, US Naval Observatory, Circular No. 179
-     *
-     * <p>Notes:<br>
+ Hilton and Hohenkerk (2004), Astronomy and
+ Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
+ Astronomical Reference systems, TimeUtility scales, and Earth Rotation
+ Models, US Naval Observatory, Circular No. 179
+
+ <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given
@@ -1394,9 +1394,9 @@ public abstract class AbstractCrs {
         final double x = vec[0]/len;
         final double y = vec[1]/len;
         final double z = vec[2]/len;
-        double longitude = Math.toDegrees(NumericalUtils.aatan2(y, x, 0));
+        double longitude = Math.toDegrees(aatan2(y, x, 0));
         longitude = longitude < 0 ? longitude + 360.0d : longitude;
-        final double latitude = Math.toDegrees(NumericalUtils.aasin(z));
+        final double latitude = Math.toDegrees(aasin(z));
         final double coord[] = {longitude, latitude};
         return coord;
     }    

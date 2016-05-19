@@ -20,8 +20,8 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -34,7 +34,7 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class SZP extends ZenithalProjection {
+public class SZP extends AbstractZenithalProjection {
     
     /**
      * Projection's name.
@@ -138,10 +138,10 @@ public class SZP extends ZenithalProjection {
      * @throws JWcsError Non-standard phi0 or theta0 values
      */
     protected final void check() throws BadProjectionParameterException {
-        if (!NumericalUtils.equal(getPhi0(), 0) || !NumericalUtils.equal(getTheta0(),HALF_PI)) {
+        if (!NumericalUtility.equal(getPhi0(), 0) || !NumericalUtility.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard phi0 or theta0 values");
         }
-        if (NumericalUtils.equal(this.zp, 0)) {
+        if (NumericalUtility.equal(this.zp, 0)) {
             throw new BadProjectionParameterException(this,"zp = 0. It must be !=0");
         }
     }
@@ -160,8 +160,8 @@ public class SZP extends ZenithalProjection {
         final double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
         final double sol1 = (-b - Math.sqrt(b * b - a * c)) / a;
         final double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;       
-        final double theta1 = NumericalUtils.aasin(sol1);            
-        final double theta2 = NumericalUtils.aasin(sol2);            
+        final double theta1 = NumericalUtility.aasin(sol1);            
+        final double theta2 = NumericalUtility.aasin(sol2);            
 
         final double theta;
         if (Double.isNaN(theta1) && Double.isNaN(theta2)) {
@@ -189,7 +189,7 @@ public class SZP extends ZenithalProjection {
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
         final double denom = zp - (1 - Math.sin(theta));
-        if (NumericalUtils.equal(denom, 0)) {
+        if (NumericalUtility.equal(denom, 0)) {
             throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
         }
         final double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
@@ -206,7 +206,7 @@ public class SZP extends ZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtils.round(this.mu), NumericalUtils.round(Math.toDegrees(this.phic)), NumericalUtils.round(Math.toDegrees(this.thetac)));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(Math.toDegrees(this.phic)), NumericalUtility.round(Math.toDegrees(this.thetac)));
     }
     
     @Override

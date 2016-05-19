@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
-import static io.github.malapert.jwcs.utility.NumericalUtils.createRealMatrix;
-import static io.github.malapert.jwcs.utility.TimeUtils.epochs;
+import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
+import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -111,10 +111,10 @@ public class FK4 implements CoordinateReferenceFrame {
         //Mean obliquity of the ecliptic. Method is different compared to 
         //functions for the obliquity defined earlier. This function depends
         //on time wrt. epoch 1950 not epoch 2000.
-        double ob = (84404.836d-(46.8495d+(0.00319d+0.00181d*T)*T)*T);
+        double ob = 84404.836d-(46.8495d+(0.00319d+0.00181d*T)*T)*T;
         ob = Math.toRadians(ob/3600.0d);
         //Mean longitude of perihelion of the solar orbit
-        double p = (1015489.951d+(6190.67d+(1.65d+0.012d*T)*T)*T);
+        double p = 1015489.951d+(6190.67d+(1.65d+0.012d*T)*T)*T;
         p = Math.toRadians(p/3600.0d);
         //Calculate the E-terms vector
         final double ek = ec*Math.toRadians(20.49522d/3600.0d); // 20.49552 is constant of aberration at J2000

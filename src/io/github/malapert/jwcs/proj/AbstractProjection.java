@@ -17,9 +17,9 @@
 package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
-import io.github.malapert.jwcs.utility.NumericalUtils;
-import static io.github.malapert.jwcs.utility.NumericalUtils.HALF_PI;
-import static io.github.malapert.jwcs.utility.NumericalUtils.TWO_PI;
+import io.github.malapert.jwcs.utility.NumericalUtility;
+import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
+import static io.github.malapert.jwcs.utility.NumericalUtility.TWO_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 public abstract class AbstractProjection {
 
     /**
-     * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link NumericalUtils#HALF_PI}.
+     * Default native latitude of the celestial pole (\u03B8<sub>p</sub>) sets to {@link NumericalUtility#HALF_PI}.
      */
     public final static double DEFAULT_THETAP = HALF_PI;
 
@@ -85,7 +85,7 @@ public abstract class AbstractProjection {
      */
     private double phip = DEFAULT_PHIP;
     /**
-     * Initializes the native latitude of the celestial pole (\u03B8<sub>p</sub>) to {@link NumericalUtils#HALF_PI}. 
+     * Initializes the native latitude of the celestial pole (\u03B8<sub>p</sub>) to {@link NumericalUtility#HALF_PI}. 
      */
     private double thetap = HALF_PI;    
     /**
@@ -170,7 +170,7 @@ public abstract class AbstractProjection {
      */
     protected final double computeDefaultValueForPhip() {
         final double phi_p;
-        if (NumericalUtils.equal(getCrval2(), getTheta0())) {
+        if (NumericalUtility.equal(getCrval2(), getTheta0())) {
             phi_p = LONPOLE_0;
         } else if (getCrval2() > getTheta0()) {
             phi_p = LONPOLE_0;
@@ -216,19 +216,19 @@ public abstract class AbstractProjection {
         final double deltap = getCoordNativePole()[1];
         LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(alphap),Math.toDegrees(deltap)});        
         
-        if (NumericalUtils.equal(deltap, HALF_PI)) {
+        if (NumericalUtility.equal(deltap, HALF_PI)) {
             ra = alphap + phi - getPhip() - Math.PI;
             dec = theta;
-        } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
+        } else if (NumericalUtility.equal(deltap, -HALF_PI)) {
             ra = alphap - phi + getPhip();
             dec = -theta;
         } else {            
-            ra = alphap + NumericalUtils.aatan2(-Math.cos(theta) * Math.sin(phi - phip),
+            ra = alphap + NumericalUtility.aatan2(-Math.cos(theta) * Math.sin(phi - phip),
                     Math.sin(theta) * Math.cos(deltap)
                     - Math.cos(theta) * Math.sin(deltap)
                     * Math.cos(phi - getPhip()),0);            
 
-            dec = NumericalUtils.aasin(Math.sin(theta) * Math.sin(deltap)
+            dec = NumericalUtility.aasin(Math.sin(theta) * Math.sin(deltap)
                     + Math.cos(theta) * Math.cos(deltap)
                     * Math.cos(phi - getPhip()));
         }
@@ -266,18 +266,18 @@ public abstract class AbstractProjection {
         
         final double phi;
         final double theta;
-        if (NumericalUtils.equal(dec_p, HALF_PI)) {
+        if (NumericalUtility.equal(dec_p, HALF_PI)) {
             phi = Math.PI + getPhip() + ra - ra_p;
             theta = dec;
-        } else if (NumericalUtils.equal(dec_p, -HALF_PI)) {
+        } else if (NumericalUtility.equal(dec_p, -HALF_PI)) {
             phi = getPhip() - ra + ra_p;
             theta = -dec;            
         } else {
-            phi = getPhip() + NumericalUtils.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
+            phi = getPhip() + NumericalUtility.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
                     Math.sin(dec) * Math.cos(dec_p)
                     - Math.cos(dec) * Math.sin(dec_p)
                     * Math.cos(ra - ra_p), 0);
-            theta = NumericalUtils.aasin(Math.sin(dec) * Math.sin(dec_p)
+            theta = NumericalUtility.aasin(Math.sin(dec) * Math.sin(dec_p)
                      + Math.cos(dec) * Math.cos(dec_p)
                      * Math.cos(ra - ra_p));      
         }                   
@@ -303,8 +303,8 @@ public abstract class AbstractProjection {
      */
     protected double[] computeCoordNativePole(final double phi_p) {
 
-        if (NumericalUtils.equal(getPhi0(), 0)
-                && NumericalUtils.equal(getTheta0(), HALF_PI)) {
+        if (NumericalUtility.equal(getPhi0(), 0)
+                && NumericalUtility.equal(getTheta0(), HALF_PI)) {
             LOG.log(Level.FINEST,"No need to compute the coordinates of the native pole");
             return new double[]{getCrval1(), getCrval2()};
         }
@@ -327,21 +327,21 @@ public abstract class AbstractProjection {
      */
     private double computeLongitudeNativePole(final double phi_p) {
         final double deltap;
-        if (NumericalUtils.equal(getTheta0(), 0.0d) && NumericalUtils.equal(getCrval2(), 0) && NumericalUtils.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
+        if (NumericalUtility.equal(getTheta0(), 0.0d) && NumericalUtility.equal(getCrval2(), 0) && NumericalUtility.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
-            final double deltap_arg = NumericalUtils.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
-            final double deltap_acos = NumericalUtils.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
+            final double deltap_arg = NumericalUtility.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
+            final double deltap_acos = NumericalUtility.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
             final double deltap1 = deltap_arg + deltap_acos;
             final double deltap2 = deltap_arg - deltap_acos;
 
-            if (NumericalUtils.equal(getTheta0(), 0)
-                    && NumericalUtils.equal(getCrval2(), 0)
-                    && NumericalUtils.equal(Math.abs(getPhip()-getPhi0()), HALF_PI)) {
+            if (NumericalUtility.equal(getTheta0(), 0)
+                    && NumericalUtility.equal(getCrval2(), 0)
+                    && NumericalUtility.equal(Math.abs(getPhip()-getPhi0()), HALF_PI)) {
                 deltap = getThetap();
             } else {
-                final boolean isDeltap1InInterval = NumericalUtils.isInInterval(deltap1, -HALF_PI, HALF_PI);
-                final boolean isDeltap2InInterval = NumericalUtils.isInInterval(deltap2, -HALF_PI, HALF_PI);
+                final boolean isDeltap1InInterval = NumericalUtility.isInInterval(deltap1, -HALF_PI, HALF_PI);
+                final boolean isDeltap2InInterval = NumericalUtility.isInInterval(deltap2, -HALF_PI, HALF_PI);
                 if (isDeltap1InInterval && isDeltap2InInterval) {
                     final double diff1 = Math.abs(deltap1 - getThetap());
                     final double diff2 = Math.abs(deltap2 - getThetap());
@@ -370,16 +370,16 @@ public abstract class AbstractProjection {
      */    
     private double computeLatitudeNativePole(final double deltap, final double phi_p) {
         final double alphap;
-        if (NumericalUtils.equal(Math.abs(getCrval2()), HALF_PI)) {
+        if (NumericalUtility.equal(Math.abs(getCrval2()), HALF_PI)) {
             alphap = getCrval1();
-        } else if (NumericalUtils.equal(deltap, HALF_PI)) {
+        } else if (NumericalUtility.equal(deltap, HALF_PI)) {
             alphap = getCrval1() + phi_p - getPhi0() - Math.PI;
-        } else if (NumericalUtils.equal(deltap, -HALF_PI)) {
+        } else if (NumericalUtility.equal(deltap, -HALF_PI)) {
             alphap = getCrval1() - phi_p + getPhi0();      
         } else {
             final double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
             final double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
-            alphap = getCrval1() - NumericalUtils.aatan2(das, dac);
+            alphap = getCrval1() - NumericalUtility.aatan2(das, dac);
         }        
         return alphap;
     }
@@ -428,7 +428,7 @@ public abstract class AbstractProjection {
      * @return phi between [-PI, PI]
      */
     protected final double phiRange(final double phi) {
-        double phiCorrect = phi % (TWO_PI);
+        double phiCorrect = phi % TWO_PI;
         if (phiCorrect > Math.PI) {
             phiCorrect -= TWO_PI;
         } else if (phiCorrect < -Math.PI) {
@@ -463,7 +463,7 @@ public abstract class AbstractProjection {
      * an error happens while the projection
      */
     public double[] wcs2projectionPlane(final double ra, final double dec) throws ProjectionException {
-        final double raFixed = NumericalUtils.normalizeLongitude(ra);
+        final double raFixed = NumericalUtility.normalizeLongitude(ra);
         double[] nativeSpherical = computeNativeSpherical(raFixed, dec);
         nativeSpherical[0] = phiRange(nativeSpherical[0]);
         return projectInverse(nativeSpherical[0], nativeSpherical[1]);
