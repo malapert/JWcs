@@ -76,8 +76,9 @@ public class ICRS implements CoordinateReferenceFrame {
     }
 
     /**
-     * Returns Double.NaN
-     * No need to specify an epoch of observation in ICRS reference frame
+     * Returns NaN.
+     * 
+     * <p>No need to specify an epoch of observation in ICRS reference frame
      */    
     @Override
     public double getEpochObs() {

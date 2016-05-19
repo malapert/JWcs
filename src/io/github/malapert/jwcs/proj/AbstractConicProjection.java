@@ -238,6 +238,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     }       
 
     /**
+     * Returns theta1.
      * @return the theta1
      */
     protected final double getTheta1() {
@@ -245,7 +246,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     }
 
     /**
-     * Get theta1.
+     * Sets theta1.
      * @param theta1 the theta1 to set
      */
     protected final void setTheta1(final double theta1) {
@@ -253,7 +254,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     }
 
     /**
-     * Get theta2.
+     * Returns theta2.
      * @return the theta2
      */
     protected final double getTheta2() {
@@ -261,6 +262,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     }
 
     /**
+     * Sets theta2.
      * @param theta2 the theta2 to set
      */
     protected final void setTheta2(final double theta2) {

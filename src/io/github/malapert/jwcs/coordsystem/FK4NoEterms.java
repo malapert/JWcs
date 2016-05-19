@@ -28,7 +28,7 @@ import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class FK4_NO_E implements CoordinateReferenceFrame {
+public class FK4NoEterms implements CoordinateReferenceFrame {
 
     /**
      * The name of this reference frame.
@@ -51,9 +51,9 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
     private double epochObs;
     
     /**
-     * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4_NO_E#DEFAULT_EPOCH}
+     * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4_NO_E#DEFAULT_EPOCH}.
      */
-    public FK4_NO_E() {
+    public FK4NoEterms() {
         init(DEFAULT_EPOCH, null);
     }
     
@@ -61,7 +61,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
      * Creates a FK4_NO_E reference frame with a equinox.
      * @param epoch the epoch of equinox
      */    
-    public FK4_NO_E(final String epoch) {       
+    public FK4NoEterms(final String epoch) {       
         init(epoch, null);
     }
     
@@ -70,7 +70,7 @@ public class FK4_NO_E implements CoordinateReferenceFrame {
      * @param epoch the epoch
      * @param epochObs the epoch of observation
      */    
-    public FK4_NO_E(final String epoch, final String epochObs) {       
+    public FK4NoEterms(final String epoch, final String epochObs) {       
         init(epoch, epochObs);
     }
     

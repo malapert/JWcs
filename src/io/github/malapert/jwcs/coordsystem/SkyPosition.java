@@ -33,7 +33,7 @@ public class SkyPosition {
     public final static double TO_HOURS = 24d/360d;
     
     /**
-     * Longitude in decimal degrees of the position
+     * Longitude in decimal degrees of the position.
      * @see #getLongitude() 
      * @see #getLongitudeAsSexagesimal() 
      */

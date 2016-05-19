@@ -98,7 +98,7 @@ public class COE extends AbstractConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);                              
-        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow((y0 - yr), 2));
+        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);                   
         final double w = 1.0d / gamma + Math.sin(getTheta1()) * Math.sin(getTheta2()) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
         final double theta = NumericalUtility.aasin(w);

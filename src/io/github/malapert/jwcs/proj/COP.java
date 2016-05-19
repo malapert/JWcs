@@ -42,7 +42,7 @@ public class COP extends AbstractConicProjection {
     /**
      * Constant of the cone in radians.
      *
-     * This constant is defined as c=sin\u03B8<sub>a</sub>
+     * <p>This constant is defined as c=sin\u03B8<sub>a</sub>
      */
     private final double c;
 

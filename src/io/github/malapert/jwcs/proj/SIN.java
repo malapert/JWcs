@@ -75,7 +75,7 @@ public class SIN extends AbstractZenithalProjection {
 
    /**
      * Constructs a SIN projection based on the celestial longitude and latitude
-     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BE,\u03B7      
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BE,\u03B7.      
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point
@@ -108,7 +108,7 @@ public class SIN extends AbstractZenithalProjection {
         } else {
             final double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
             final double b = ksi * (xr - ksi) + eta * (yr - eta);
-            final double c = Math.pow((xr - ksi),2) + Math.pow((yr - eta),2) - 1;
+            final double c = Math.pow(xr - ksi,2) + Math.pow(yr - eta,2) - 1;
             final double theta1 = NumericalUtility.aasin((-b + Math.sqrt(b * b - a * c)) / a);
             final double theta2 = NumericalUtility.aasin((-b - Math.sqrt(b * b - a * c)) / a);
             final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);

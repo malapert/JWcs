@@ -42,7 +42,7 @@ public interface CoordinateReferenceFrame {
      * is related to the origin (position and the date of the origin - equinox, 
      * date of observation).
      */
-    public enum ReferenceFrame {
+    enum ReferenceFrame {
         /**
          * The International Celestial Reference System, for optical data 
          * realized through the Hipparcos catalog. 

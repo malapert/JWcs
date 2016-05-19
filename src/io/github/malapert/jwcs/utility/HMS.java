@@ -25,15 +25,20 @@ public final class HMS implements Serializable {
      * the equal test has the value false, even though +0.0==-0.0 has the
      * value true."
      * The test for 0.0 != -0.0 only works with Double.equals(minusZero).
-     * This case shows up in HMS values with zero hours and negative values,
+     
+     * <p>This case shows up in HMS values with zero hours and negative values,
      * such as "-00 24 32"
      */
     private final static Double MINUS_ZERO = -0.0;
 
-    // Number formats for 2 digit hours and minutes
+    /**
+     * Number formats for 2 digit hours and minutes.
+     */
     private final static NumberFormat NF = NumberFormat.getInstance(Locale.US);
 
-    // Number formats for seconds
+    /**
+     * Number formats for seconds.
+     */
     private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
     private final static long serialVersionUID = 6425466963081211760L;
 
@@ -49,36 +54,38 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * number of hours
+     * number of hours.
      */
     private int hours;
 
     /**
-     * number of minutes
+     * number of minutes.
      */
     private int min;
 
     /**
-     * number of seconds
+     * number of seconds.
      */
     private double sec;
 
     /**
-     * value converted to decimal
+     * value converted to decimal.
      */
     private double val;
 
     /**
-     * set to 1 or -1
+     * set to 1 or -1.
      */
     private byte sign = 1;
 
-    /* true if value has been initialized */
+    /**
+     * true if value has been initialized .
+     */
     private boolean initialized;
 
 
     /**
-     * Default constructor: initialize to null values
+     * Default constructor: initialize to null values.
      */
     public HMS() {
         this.initialized = false;
@@ -103,7 +110,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Copy constructor
+     * Copy constructor.
      * @param hms HDS as hms
      */
     public HMS(final HMS hms) {
@@ -112,10 +119,11 @@ public final class HMS implements Serializable {
 
     /**
      * Initialize from a string value, in format H:M:S.sss, hh, or H M
-     * S.  If the value is not in H:M:S and is not an integer (has a
- decimal point), assume the value is in deg convert to hours by
- dividing by 15. (Reason: some catalog servers returns RA in h:m:value
- while others return it in decimal deg.)
+     * S.  
+     * <p>If the value is not in H:M:S and is not an integer (has a
+     * decimal point), assume the value is in deg convert to hours by
+     * dividing by 15. (Reason: some catalog servers returns RA in h:m:value
+     * while others return it in decimal deg.)
      * @param value HMS as String
      */
     public HMS(final String value) {
@@ -124,7 +132,9 @@ public final class HMS implements Serializable {
 
     /**
      * Initialize from a string value, in format H:M:S.sss, hh, or
-     * H M S.  If the value is not in H:M:S and is not an
+     * H M S.  
+     * 
+     * <p>If the value is not in H:M:S and is not an
      * integer (has a decimal point), and hflag is true,
      * assume the value is in deg and convert to hours by dividing by 15.
      *
@@ -204,7 +214,8 @@ public final class HMS implements Serializable {
 
     /**
      * Return the value as a String in the form hh:mm:ss.sss.
-     * Seconds are formatted with leading zero if needed.
+     * 
+     * <p>Seconds are formatted with leading zero if needed.
      * The seconds are formatted with 3 digits of precision.
      */
     @Override
@@ -253,7 +264,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return true if this object has been initialized with a valid value
+     * Return true if this object has been initialized with a valid value.
      * @return true if this object has been initialized with a valid value
      */
     public boolean isInitialized() {
@@ -261,7 +272,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return the number of hours (not including minutes or seconds)
+     * Return the number of hours (not including minutes or seconds).
      * @return the number of hours
      */
     public int getHours() {
@@ -269,7 +280,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return the number of minutes (not including hours or seconds)
+     * Return the number of minutes (not including hours or seconds).
      * @return the number of minutes
      */
     public int getMin() {
@@ -277,7 +288,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return the number of seconds (not including hours and minutes)
+     * Return the number of seconds (not including hours and minutes).
      * @return he number of seconds
      */
     public double getSec() {
@@ -285,7 +296,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return the value (fractional number of hours) as a double
+     * Return the value (fractional number of hours) as a double.
      * @return the value as double
      */
     public double getVal() {
@@ -293,7 +304,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Return the sign of the value
+     * Return the sign of the value.
      * @return the sign of the value
      */
     public byte getSign() {
@@ -301,7 +312,7 @@ public final class HMS implements Serializable {
     }
 
     /**
-     * Define equality based on the value
+     * Define equality based on the value.
      */
     @Override
     public int hashCode() {

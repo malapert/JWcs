@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj.exception;
 
 /**
- * Exception
+ * Exception.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */

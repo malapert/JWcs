@@ -80,7 +80,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * Distance between two angles
+     * Distance between two angles.
      *
      * @param pos1 first angle
      * @param pos2 second angle.
@@ -97,7 +97,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * Atan2 operation
+     * Atan2 operation.
      *
      * @param n the ordinate coordinate
      * @param d the abscissa coordinate
@@ -109,7 +109,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * Atan2 operation
+     * Atan2 operation.
      *
      * @param n the ordinate coordinate
      * @param d the abscissa coordinate
@@ -160,7 +160,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * Normalizes the latitude
+     * Normalizes the latitude.
      *
      * @param angle latitude in radians
      * @return the angle from -half_PI to half_PI
@@ -188,7 +188,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * normalizes longitude angle in radians
+     * normalizes longitude angle in radians.
      *
      * @param angle longitude in radians
      * @return the angle from 0 to 2PI
@@ -348,7 +348,7 @@ public final class NumericalUtility {
     }
 
     /**
-     * Creates an identity matrix
+     * Creates an identity matrix.
      *
      * @param dimension matrix dimension
      * @return a matrix of dimension
@@ -377,7 +377,7 @@ public final class NumericalUtility {
     }  
     
     /**
-     * Private constructor
+     * Private constructor.
      */
     private NumericalUtility() {
         //not called

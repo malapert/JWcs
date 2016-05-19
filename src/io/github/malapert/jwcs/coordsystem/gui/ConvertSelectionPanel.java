@@ -19,7 +19,7 @@ package io.github.malapert.jwcs.coordsystem.gui;
 import io.github.malapert.jwcs.coordsystem.Ecliptic;
 import io.github.malapert.jwcs.coordsystem.Equatorial;
 import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
+import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
@@ -620,11 +620,11 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
                 break;
             case FK4_NO_E:
                 if(equinox.isEmpty() && epoch.isEmpty()) {
-                    result = new FK4_NO_E();
+                    result = new FK4NoEterms();
                 } else if (epoch.isEmpty()) {
-                    result = new FK4_NO_E(equinox);
+                    result = new FK4NoEterms(equinox);
                 } else {
-                    result = new FK4_NO_E(equinox, epoch);
+                    result = new FK4NoEterms(equinox, epoch);
                 }
                 break;
             case FK5:

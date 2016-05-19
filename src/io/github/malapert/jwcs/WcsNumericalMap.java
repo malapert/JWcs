@@ -30,6 +30,9 @@ import java.util.Map;
  */
 public class WcsNumericalMap extends AbstractJWcs {
 
+    /**
+     * List of WCS keywords provided by the user.
+     */
     private Map keywords;
 
     /**

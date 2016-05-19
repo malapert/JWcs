@@ -25,15 +25,20 @@ public final class DMS implements Serializable {
      * the equal test has the value false, even though +0.0==-0.0 has the
      * value true."
      * The test for 0.0 != -0.0 only works with Double.equals(minusZero).
-     * This case shows up in DMS values with zero degrees and negative values,
+     * 
+     * <p>This case shows up in DMS values with zero degrees and negative values,
      * such as "-00 24 32"
      */
     private final static Double MINUS_ZERO = -0.0;
 
-    // Number formats for 2 digit degrees and minutes
+    /**
+     * Number formats for 2 digit degrees and minutes.
+     */
     private final static NumberFormat NF = NumberFormat.getInstance(Locale.US);
 
-    // Number formats for seconds
+    /** 
+     * Number formats for seconds.
+     */
     private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
     private final static long serialVersionUID = -6119277651753389123L;
 
@@ -69,7 +74,7 @@ public final class DMS implements Serializable {
     private double val;
 
     /**
-     * set to 1 or -1
+     * set to 1 or -1..
      */
     private byte sign = 1;
 
@@ -186,7 +191,8 @@ public final class DMS implements Serializable {
 
     /**
      * Return the value as a String in the form dd:mm:ss.sss.
-     * Seconds are formatted with leading zero if needed.
+     * 
+     * <p>Seconds are formatted with leading zero if needed.
      * The seconds are formatted with 2 digits precision.
      */
     @Override

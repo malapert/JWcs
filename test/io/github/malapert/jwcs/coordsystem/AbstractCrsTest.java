@@ -583,7 +583,7 @@ public class AbstractCrsTest {
     @Test
     public void testSkyMatrixFK4NOEB1950toFK4B1950() {
         final CoordinateReferenceFrame fk4 = new FK4("B1950");
-        final CoordinateReferenceFrame fk4NOE = new FK4_NO_E("B1950");
+        final CoordinateReferenceFrame fk4NOE = new FK4NoEterms("B1950");
         final AbstractCrs eq1 = new Equatorial(fk4NOE);
         final AbstractCrs eq2 = new Equatorial(fk4);
         final RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);

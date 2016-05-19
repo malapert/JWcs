@@ -44,7 +44,7 @@ public class JWcsFits extends AbstractJWcs {
     private Header hdr;
     
     /**
-     * Clone
+     * Clone.
      * @param wcs wcsFits
      */
     public JWcsFits(final JWcsFits wcs) {

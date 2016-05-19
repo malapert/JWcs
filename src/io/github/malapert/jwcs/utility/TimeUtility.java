@@ -27,7 +27,7 @@ import java.util.Locale;
 /**
  * TimeUtility class for handling time.
  *
- * Parts of this class have been traduced from Python to JAVA.
+ * <p>Parts of this class have been traduced from Python to JAVA.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
@@ -37,7 +37,7 @@ import java.util.Locale;
 public final class TimeUtility {
 
     /**
-     * Convert a Julian epoch to a Julian date
+     * Convert a Julian epoch to a Julian date.
      *
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
@@ -47,7 +47,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Convert a Julian date to a Julian epoch
+     * Convert a Julian date to a Julian epoch.
      *
      * @param jd Julian date
      * @return a Julian epoch
@@ -57,7 +57,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Convert a Besselian epoch to a Julian date
+     * Convert a Besselian epoch to a Julian date.
      *
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
@@ -67,7 +67,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Convert a julian date to a Besselian epoch
+     * Convert a julian date to a Besselian epoch.
      *
      * @param jd julian date
      * @return a Besselian epoch
@@ -205,7 +205,9 @@ public final class TimeUtility {
     }
 
     /**
-     * Flexible epoch parser. The functions in this module have different input
+     * Flexible epoch parser. 
+     * 
+     * <p>The functions in this module have different input
      * parameters (Julian epoch, Besselian epochs, Julian dates) because the
      * algorithms came from different sources. What we needed was a routine that
      * could convert a string which represents a date in various formats, to
@@ -232,11 +234,12 @@ public final class TimeUtility {
     }
 
     /**
-     * Computes Besselian epoch, Julian epoch and Julian date from an epoch
+     * Computes Besselian epoch, Julian epoch and Julian date from an epoch.
      *
      * @param epochPrefix epochs should start by J, b or date format
      * @param epochValue epoch value
      * @return Returns in order Besselian epoch, Julian epoch and Julian date.
+     * @throws JWcsError Unknown prefix for epoch
      */
     private static double[] computeEpochs(final String epochPrefix, final String epochValue) {
         double b;
@@ -295,7 +298,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Extracts prefix from epoch
+     * Extracts prefix from epoch.
      *
      * @param epoch Julian epoch, Besselian epochs, Julian dates
      * @return J, b or date format
@@ -310,7 +313,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Extracts Value from epoch
+     * Extracts Value from epoch.
      *
      * @param epoch Julian epoch, Besselian epochs, Julian dates
      * @param prefix prefix from epoch
@@ -327,7 +330,9 @@ public final class TimeUtility {
 
     /**
      * Converts a fits date into a [integer year, integer month, fractional
-     * day]. Given a string from a FITS file, try to parse it and convert the
+     * day]. 
+     * 
+     * <p>Given a string from a FITS file, try to parse it and convert the
      * string into three parts: an integer year, an integer month and a
      * fractional day. It processes the following formats:
      * <ul>
@@ -367,7 +372,7 @@ public final class TimeUtility {
     }
 
     /**
-     * Computes the Julian day based on a date
+     * Computes the Julian day based on a date.
      *
      * @param year year
      * @param month month

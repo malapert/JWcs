@@ -45,6 +45,9 @@ public class BON extends AbstractPolyConicProjection {
      */
     private final static String DESCRIPTION = "no limits";     
 
+    /**
+     * SFL projection.
+     */
     private SFL sfl;
 
     /**

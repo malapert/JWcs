@@ -19,7 +19,7 @@ package io.github.malapert.jwcs;
 import io.github.malapert.jwcs.coordsystem.Ecliptic;
 import io.github.malapert.jwcs.coordsystem.Equatorial;
 import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
+import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.Galactic;
 import io.github.malapert.jwcs.coordsystem.ICRS;
@@ -498,7 +498,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @return a FK4 coordinate reference frame without Eterms
      */
     private CoordinateReferenceFrame createFK4NOE() {
-        final CoordinateReferenceFrame refSystem = new FK4_NO_E();
+        final CoordinateReferenceFrame refSystem = new FK4NoEterms();
         if (hasKeyword(EQUINOX)) {
             refSystem.setEquinox("B" + getValueAsFloat(EQUINOX));
         }
@@ -562,7 +562,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Create the equatorial coordinate reference system
+     * Creates the equatorial coordinate reference system.
      *
      * @param refSystem the coordinate reference frame
      * @return the equatorial coordinate reference system

@@ -58,7 +58,7 @@ public class CEA extends AbstractCylindricalProjection {
      * Constructs a CEA based on the celestial longitude and latitude of the
      * fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *
-     * \u03BB is set to {@link CEA#DEFAULT_VALUE}.
+     * <p>\u03BB is set to {@link CEA#DEFAULT_VALUE}.
      *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point

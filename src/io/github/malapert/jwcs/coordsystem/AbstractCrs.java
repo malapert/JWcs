@@ -802,12 +802,12 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br> 
      * ----------<br>
- Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
- IAU Resolutions on Astronomical Reference Systems, TimeUtility Scales, and
- Earth Rotation Models, United States Naval Observatory circular no. 179,
- http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
-
- <p>Notes:<br>
+     * Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
+     * IAU Resolutions on Astronomical Reference Systems, TimeUtility Scales, and
+     * Earth Rotation Models, United States Naval Observatory circular no. 179,
+     * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
+     * 
+     * <p>Notes:<br>
      * ------ <br> 
      * The epoch is entered in Julian date and the time is
      * calculated w.r.t. J2000. The obliquity is the angle between the mean
@@ -1198,12 +1198,12 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br>
      * ----------<br>
- Hilton and Hohenkerk (2004), Astronomy and
- Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
- Astronomical Reference systems, TimeUtility scales, and Earth Rotation
- Models, US Naval Observatory, Circular No. 179
-
- <p>Notes:<br>
+     * Hilton and Hohenkerk (2004), Astronomy and
+     * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
+     * Astronomical Reference systems, TimeUtility scales, and Earth Rotation
+     * Models, US Naval Observatory, Circular No. 179
+     * 
+     * <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given

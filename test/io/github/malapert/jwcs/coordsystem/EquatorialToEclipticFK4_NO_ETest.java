@@ -30,7 +30,7 @@ public class EquatorialToEclipticFK4_NO_ETest extends ConverterTest {
      */
     public EquatorialToEclipticFK4_NO_ETest() throws JWcsException {
         super();
-        final CoordinateReferenceFrame fk4 = new FK4_NO_E();
+        final CoordinateReferenceFrame fk4 = new FK4NoEterms();
         this.source = new Equatorial();
         this.target = new Ecliptic(fk4);        
         

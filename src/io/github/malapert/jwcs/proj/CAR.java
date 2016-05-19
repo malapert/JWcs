@@ -44,7 +44,7 @@ public class CAR extends AbstractCylindricalProjection{
 
     /**
      * Constructs a CAR based on the celestial longitude and 
-     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>)
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the fiducial point

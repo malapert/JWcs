@@ -21,7 +21,7 @@ import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.coordsystem.Ecliptic;
 import io.github.malapert.jwcs.coordsystem.Equatorial;
 import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4_NO_E;
+import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
 import io.github.malapert.jwcs.coordsystem.FK5;
 import io.github.malapert.jwcs.coordsystem.ICRS;
 import io.github.malapert.jwcs.coordsystem.J2000;
@@ -343,16 +343,16 @@ public class Main {
         if (parameters != null) {
             switch (parameters.length) {
                 case 1:
-                    ref = new FK4_NO_E(parameters[0]);
+                    ref = new FK4NoEterms(parameters[0]);
                     break;
                 case 2:
-                    ref = new FK4_NO_E(parameters[0], parameters[1]);
+                    ref = new FK4NoEterms(parameters[0], parameters[1]);
                     break;
                 default:
                     throw new IllegalArgumentException("");
             }
         } else {
-            ref = new FK4_NO_E();
+            ref = new FK4NoEterms();
         }
         return ref;
     }

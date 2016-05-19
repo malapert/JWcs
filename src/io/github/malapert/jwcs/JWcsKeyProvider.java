@@ -103,7 +103,7 @@ public interface JWcsKeyProvider {
     double latpole();
     
     /**
-     * The epoch of the equinox
+     * The epoch of the equinox.
      * @return the equinox
      */
     double equinox();
