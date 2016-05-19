@@ -196,14 +196,14 @@ public interface JWcsKeyProvider {
     double getValueAsDouble(String keyword);
     
     /**
-     * Returns the keyword value as float
+     * Returns the keyword value as float.
      * @param keyword the keyword
      * @return the value
      */
     float getValueAsFloat(String keyword);    
     
     /**
-     * Returns the keyword value as String
+     * Returns the keyword value as String.
      * @param keyword the keyword
      * @return the value.
      */

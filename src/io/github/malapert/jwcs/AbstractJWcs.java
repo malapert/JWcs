@@ -1061,7 +1061,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Creates ZPN projection
+     * Creates ZPN projection.
      *
      * @param cx the scale factor along X
      * @param cy the scale factor along Y

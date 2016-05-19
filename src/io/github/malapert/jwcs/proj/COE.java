@@ -63,7 +63,7 @@ public class COE extends AbstractConicProjection {
     /**
      * Constant of the cone in radians.
      * 
-     * This constant is equal to 0.5*\u0263
+     * <p>This constant is equal to 0.5*\u0263
      */
     private final double c;    
     

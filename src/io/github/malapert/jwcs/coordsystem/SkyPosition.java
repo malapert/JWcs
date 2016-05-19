@@ -107,7 +107,7 @@ public class SkyPosition {
     }
     
     /**
-     * Returns the latitude in sexagesimal DD:MM:SS.SS
+     * Returns the latitude in sexagesimal DD:MM:SS.SS.
      * @return the latitude
      */
     public String getLatitudeAsSexagesimal() {
