@@ -55,6 +55,9 @@ public abstract class AbstractPolyConicProjection extends AbstractProjection {
      */
     protected final static double DEFAULT_THETA0 = 0;
 
+    /**
+     * theta1.
+     */
     private final double theta1;
     /**
      * Native longitude in radians of the ﬁducial point for the polyconic projection.
@@ -66,7 +69,7 @@ public abstract class AbstractPolyConicProjection extends AbstractProjection {
     private double theta0;
 
     /**
-     * Creates a new polyconic projection
+     * Creates a new polyconic projection.
      *
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * @param crval2 Celestial latitude in degrees of the ﬁducial point

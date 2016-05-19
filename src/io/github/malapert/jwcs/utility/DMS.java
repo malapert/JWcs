@@ -241,7 +241,7 @@ public final class DMS implements Serializable {
     }
 
     /**
-     * Return true if this object has been initialized with a valid value
+     * Return true if this object has been initialized with a valid value.
      * @return true if this object has been initialized with a valid value
      */
     public boolean isInitialized() {

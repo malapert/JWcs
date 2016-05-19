@@ -175,7 +175,7 @@ public interface JWcsKeyProvider {
     double[] getFov() throws JWcsException;
     
     /**
-     * Checks if a keyword exists
+     * Checks if a keyword exists.
      * @param keyword keyword to test
      * @return True when the keyword exists else False
      */

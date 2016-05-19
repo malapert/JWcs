@@ -479,7 +479,7 @@ public abstract class AbstractProjection {
     }
 
     /**
-     * Returns the celestial latitude in radians of the ﬁducial point (\u03B4<sub>0</sub>) 
+     * Returns the celestial latitude in radians of the ﬁducial point (\u03B4<sub>0</sub>). 
      *
      * @return  \u03B4<sub>0</sub> in radians
      */

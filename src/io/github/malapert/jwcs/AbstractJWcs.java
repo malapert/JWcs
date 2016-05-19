@@ -577,7 +577,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Create the ecliptic coordinate reference system
+     * Create the ecliptic coordinate reference system.
      *
      * @param refSystem the coordinate reference frame
      * @return the ecliptic coordinate reference system
@@ -591,7 +591,9 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Make the initialization of the WCS. By default, you must call
+     * Make the initialization of the WCS. 
+     * 
+     * <p>By default, you must call
      * {@link #init()}
      *
      * @throws io.github.malapert.jwcs.proj.exception.JWcsException when an

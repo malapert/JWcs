@@ -25,7 +25,7 @@ public final class HMS implements Serializable {
      * the equal test has the value false, even though +0.0==-0.0 has the
      * value true."
      * The test for 0.0 != -0.0 only works with Double.equals(minusZero).
-     
+     *
      * <p>This case shows up in HMS values with zero hours and negative values,
      * such as "-00 24 32"
      */
@@ -119,7 +119,8 @@ public final class HMS implements Serializable {
 
     /**
      * Initialize from a string value, in format H:M:S.sss, hh, or H M
-     * S.  
+     * S. 
+     * 
      * <p>If the value is not in H:M:S and is not an integer (has a
      * decimal point), assume the value is in deg convert to hours by
      * dividing by 15. (Reason: some catalog servers returns RA in h:m:value

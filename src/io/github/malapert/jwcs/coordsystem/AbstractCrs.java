@@ -1170,11 +1170,11 @@ public abstract class AbstractCrs {
      *
      * <p>Reference:<br> 
      * ----------<br>
- Kaplan G.H., The IAU Resolutions on Astronomical
- Reference systems, TimeUtility scales, and Earth Rotation Models, US Naval
- Observatory, Circular No. 179
-
- <p>Notes:<br>
+     * Kaplan G.H., The IAU Resolutions on Astronomical
+     * Reference systems, TimeUtility scales, and Earth Rotation Models, US Naval
+     * Observatory, Circular No. 179
+     * 
+     * <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * FK5, J2000. We do not use the first or second order approximations given
@@ -1214,8 +1214,7 @@ public abstract class AbstractCrs {
      * ----------<br>
      * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
      *
-     * <p>
-     * Notes:<br>
+     * <p>Notes:<br>
      * ------<br>
      * Note that we apply this precession only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting

@@ -74,8 +74,7 @@ public final class ZPN extends AbstractZenithalProjection {
     /**
      * The point of inflection closest to the pole.
      *
-     * <p>
-     * coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
+     * <p>coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
      * Radius of the first point of inflection (N &gt; 2)
      */
     private final transient double[] coeff;
@@ -257,7 +256,7 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
-     * The point of inflection closest to the pole
+     * The point of inflection closest to the pole.
      *
      * @return the coeff
      */
@@ -480,7 +479,7 @@ public final class ZPN extends AbstractZenithalProjection {
      * Sets pv.
      * @param pv the pv to set
      */
-    protected void setPv(double[] pv) {
+    protected final void setPv(final double[] pv) {
         if (pv == null) {
             this.pv = new double[0];
         } else {

@@ -81,7 +81,7 @@ public class AZP extends AbstractZenithalProjection {
      * Creates a new AZP projection based on the celestial longitude and
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03BC and \u0263.
      * 
-     * \u03BC is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees. 
+     * <p>\u03BC is set by the FITS keyword PV<code>nbAxis</code>_2 in degrees. 
      * \u0263 is set by the FITS keyword PV<code>nbAxis</code>_1 in radii.
      *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the fiducial point

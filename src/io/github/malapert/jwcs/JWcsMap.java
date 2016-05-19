@@ -33,6 +33,9 @@ import java.util.Map;
  */
 public class JWcsMap extends AbstractJWcs {
 
+    /**
+     * WCS keywords provided by the user.
+     */
     private Map keywords;
 
     /**

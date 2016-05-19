@@ -39,7 +39,7 @@ public class SkyPosition {
      */
     private double longitude;
     /**
-     * Latitude in decimal degrees of the position
+     * Latitude in decimal degrees of the position.
      * @see #getLatitude() 
      * @see #getLatitudeAsSexagesimal()  
      */    
