@@ -236,8 +236,11 @@ public class Main {
      * @param file Header file
      * @param extension HDU number when file is a FITS file
      * @param precision precision such as %.15f
-     */
-    private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension, final String precision) throws ProjectionException, JWcsException, IOException, URISyntaxException {
+     * @throws JWcsException Exception
+     * @throws IOException Exception
+     * @throws URISyntaxException Exception
+     */ 
+    private static void projectToCameraFromCommandLine(final String pos, final String file, final int extension, final String precision) throws JWcsException, IOException, URISyntaxException {
         final Map<String, String> keyMap = new HashMap();
         final String[] argumentsPos = pos.split(",");
         if (argumentsPos.length != 2) {
@@ -435,6 +438,7 @@ public class Main {
      * @param file Fits or header file
      * @param from source crs
      * @param to target crs
+     * @param extension FITS extension
      * @param precision precision such as %.15f
      * @throws URISyntaxException Cannot retrieve the Header file
      * @throws IOException Header file not found

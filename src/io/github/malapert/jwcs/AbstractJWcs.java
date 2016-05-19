@@ -537,6 +537,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * the coordinate reference frame.
      *
      * @param ctype keyword value of CTYPE1
+     * @param refSystem coordinate reference frame
      * @return a coordinate reference system
      * @throws JWcsError the CRS is not supported
      */
@@ -621,10 +622,10 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * 
      * <p>The supported projection families are the following:
      * <ul>
-     * <li>{@link io.github.malapert.jwcs.proj.CylindricalProjection}</li>
-     * <li>{@link io.github.malapert.jwcs.proj.ConicProjection}</li>
-     * <li>{@link io.github.malapert.jwcs.proj.PolyConicProjection}</li>
-     * <li>{@link io.github.malapert.jwcs.proj.ZenithalProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.AbstractCylindricalProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.AbstractConicProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.AbstractPolyConicProjection}</li>
+     * <li>{@link io.github.malapert.jwcs.proj.AbstractZenithalProjection}</li>
      * </ul>
      *
      * @return the projection's name

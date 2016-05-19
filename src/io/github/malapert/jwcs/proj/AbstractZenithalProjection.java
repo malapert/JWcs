@@ -76,7 +76,7 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
      * <li>by computing \u03D5<SUB>p</SUB></li>
      * </ul>
      *
-     * @see ZenithalProjection#computeDefaultValueForPhip()
+     * @see AbstractZenithalProjection#computeDefaultValueForPhip()
      *
      * @param crval1 Celestial longitude in degrees of the ﬁducial point
      * (\u03B1<sub>0</sub>)

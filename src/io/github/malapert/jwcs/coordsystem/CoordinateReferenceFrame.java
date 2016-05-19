@@ -31,7 +31,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsError;
  * @version 2.0
  * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
  * "Representations of celestial coordinates in FITS, M. R. Calabretta and E. W. Greisen - page 6 "</a> 
- * @see io.github.malapert.jwcs.coordsystem.Crs
+ * @see io.github.malapert.jwcs.coordsystem.AbstractCrs
  */
 public interface CoordinateReferenceFrame {
 

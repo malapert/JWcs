@@ -97,7 +97,7 @@ public abstract class AbstractProjection {
     /**
      * Creates an instance of projection by given sky position coordinates.
      * 
-     * <p>Initializes {@link Projection#crval1} with crval1, {@link Projection#crval2} with crval2 and {@link Projection#thetap} to {@link Projection#DEFAULT_THETAP}
+     * <p>Initializes {@link AbstractProjection#crval1} with crval1, {@link AbstractProjection#crval2} with crval2 and {@link AbstractProjection#thetap} to {@link AbstractProjection#DEFAULT_THETAP}
      *
      * @param crval1 Celestial longitude (\u03B1<sub>0</sub>) in degrees of the ﬁducial point
      * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point

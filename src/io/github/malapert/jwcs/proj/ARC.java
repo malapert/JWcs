@@ -28,8 +28,8 @@ import java.util.logging.Level;
  *  This projection was also known in antiquity.
  * 
  * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
- * "Representations of celestial coordinates in FITS"</a>, 
- * M. R. Calabretta and E. W. Greisen - page 14
+ * "Representations of celestial coordinates in FITS", M. R. Calabretta and 
+ * E. W. Greisen - page 14</a> 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0

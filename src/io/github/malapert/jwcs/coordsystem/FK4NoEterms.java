@@ -51,7 +51,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
     private double epochObs;
     
     /**
-     * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4_NO_E#DEFAULT_EPOCH}.
+     * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4NoEterms#DEFAULT_EPOCH}.
      */
     public FK4NoEterms() {
         init(DEFAULT_EPOCH, null);

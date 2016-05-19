@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides the graphical user interface for handling projections.
+ * Provides the graphical user interface for handling projections and crs conversion.
  *
  */
 package io.github.malapert.jwcs.proj.gui;
