@@ -56,7 +56,7 @@ public class COE extends AbstractConicProjection {
     /**
      * Constant in radians.
      * 
-     * This constant is equal to sin\u03B8<sub>1</sub>+sin\u03B8<sub>2</sub>
+     * <p>This constant is equal to sin\u03B8<sub>1</sub>+sin\u03B8<sub>2</sub>
      */
     private final double gamma;
     

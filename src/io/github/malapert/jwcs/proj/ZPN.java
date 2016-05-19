@@ -335,8 +335,7 @@ public final class ZPN extends AbstractZenithalProjection {
     /**
      * Computes an iterative solution for an equation where order &gt; 2.
      *
-     * <p>
-     * The end of the iterative solution is given by the expected numerical
+     * <p>The end of the iterative solution is given by the expected numerical
      * precision or the maximal number of iterations.
      *
      * @param r radius
@@ -469,6 +468,7 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
+     * Returns pv.
      * @return the pv
      */
     protected double[] getPv() {
@@ -479,7 +479,7 @@ public final class ZPN extends AbstractZenithalProjection {
      * Sets pv.
      * @param pv the pv to set
      */
-    protected final void setPv(final double[] pv) {
+    protected void setPv(final double[] pv) {
         if (pv == null) {
             this.pv = new double[0];
         } else {

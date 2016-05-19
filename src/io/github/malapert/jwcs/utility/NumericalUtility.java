@@ -124,7 +124,7 @@ public final class NumericalUtility {
     /**
      * Asin operation.
      *
-     * Returns the arc sine of a value; the returned angle is in the range -pi/2
+     * <p>Returns the arc sine of a value; the returned angle is in the range -pi/2
      * through pi/2. Special cases:
      * <ul>
      * <li>If the argument is NaN or its absolute value is greater than 1, then

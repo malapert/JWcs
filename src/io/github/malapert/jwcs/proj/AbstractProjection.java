@@ -634,6 +634,7 @@ public abstract class AbstractProjection {
         } 
 
         /**
+         * Sets the validity interval.
          * @param validInterval the validInterval to set
          */
         protected final void setValidInterval(final double[] validInterval) {

@@ -74,7 +74,7 @@ public class SkyPosition {
     }
     
     /**
-     * Returns the longitude in sexagesimal HH:MM:SS.SS
+     * Returns the longitude in sexagesimal HH:MM:SS.SS.
      * @return the longitude in sexagesimal HH:MM:SS.SS
      */
     public String getLongitudeAsSexagesimal() {

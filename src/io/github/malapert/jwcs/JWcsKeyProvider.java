@@ -189,7 +189,7 @@ public interface JWcsKeyProvider {
     int getValueAsInt(String keyword);
     
     /**
-     * Returns the keyword value as double
+     * Returns the keyword value as double.
      * @param keyword the keyword
      * @return the value
      */

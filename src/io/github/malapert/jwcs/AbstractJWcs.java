@@ -903,7 +903,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Creates a projection based on its projection code
+     * Creates a projection based on its projection code.
      *
      * @param projectionCode projection code
      * @param cx scale factor along X
