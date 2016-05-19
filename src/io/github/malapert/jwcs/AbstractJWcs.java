@@ -1096,7 +1096,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     }
 
     /**
-     * Sets the Native longitude of the fiducial point to the projection
+     * Sets the Native longitude of the fiducial point to the projection.
      *
      * @param projection the projection
      */
