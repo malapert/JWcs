@@ -163,9 +163,12 @@ public abstract class AbstractProjection {
     public abstract void setTheta0(final double theta0);
 
     /**
-     * Computes the default value for \u03D5<sub>p</sub>. The default value of
-     * \u03D5<sub>p</sub> will be {@link AbstractProjection#LONPOLE_0} for \u03B4<sub>0</sub> &ge;
-     * \u03B8<sub>0</sub> or {@link AbstractProjection#LONPOLE_PI} for \u03B4<sub>0</sub> &lt; \u03B8<sub>0</sub>.
+     * Computes the default value for \u03D5<sub>p</sub>. 
+     * 
+     * <p>The default value of \u03D5<sub>p</sub> will be 
+     * {@link AbstractProjection#LONPOLE_0} for \u03B4<sub>0</sub> &ge;
+     * \u03B8<sub>0</sub> or {@link AbstractProjection#LONPOLE_PI} for
+     * \u03B4<sub>0</sub> &lt; \u03B8<sub>0</sub>.
      *
      * @return \u03D5<sub>p</sub> in radians.
      */
@@ -552,7 +555,7 @@ public abstract class AbstractProjection {
     /**
      * The ProjectionParameter object deFINERs few metadata about a projection parameter.
      * 
-     * <p>This object is used in the GUI to display the projection parameter. It deFINERs :
+     * <p>This object is used in the GUI to display the projection parameter. It defines :
      * <ul>
      * <li>The name of the parameter.
      * <li>The PV keyword related to the name.

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides the graphical user interface for handling coordinate reference 
+ * Provides the graphical user interfaces for handling coordinate reference 
  * systems conversion.
  *
  */

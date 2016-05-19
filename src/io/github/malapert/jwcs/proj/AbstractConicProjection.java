@@ -141,7 +141,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * @param y projection plane coordinate along Y
      * @param r_theta radius
      * @param y0 y0
-     * @param c c
+     * @param c constant of the cone
      * @return native spherical coordinate (\u03D5) in radians along longitude
      */
     protected double computePhi(final double x, final double y, final double r_theta, final double y0, final double c) {
@@ -153,7 +153,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * 
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @param r_theta radius
-     * @param c c
+     * @param c constant of the cone
      * @return the projection plane coordinate along X
      */
     protected double computeX(final double phi, final double r_theta, final double c) {
@@ -165,8 +165,8 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * 
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @param r_theta radius
-     * @param c c
-     * @param y0 y0
+     * @param c constant of the cone
+     * @param y0 y0 in radians
      * @return the projection plane coordinate along Y
      */
     protected double computeY(final double phi, final double r_theta, final double c, final double y0) {

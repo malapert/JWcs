@@ -47,7 +47,15 @@ public class COD extends AbstractConicProjection {
      */
     private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s"; 
 
-    private final double c,y0;
+    /**
+     * Constant of the cone in radians.
+     */
+    private final double c;
+            
+    /**
+     * y0.
+     */
+    private final double y0;
 
     /**
      * Constructs a COD projection based on the celestial longitude and latitude

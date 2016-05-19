@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
@@ -158,26 +159,12 @@ public class SZP extends AbstractZenithalProjection {
         final double a = X1 * X1 + Y1 * Y1 + 1;
         final double b = X1 * (X - X1) + Y1 * (Y - Y1);
         final double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
-        final double sol1 = (-b - Math.sqrt(b * b - a * c)) / a;
-        final double sol2 = (-b + Math.sqrt(b * b - a * c)) / a;       
-        final double theta1 = NumericalUtility.aasin(sol1);            
-        final double theta2 = NumericalUtility.aasin(sol2);            
-
         final double theta;
-        if (Double.isNaN(theta1) && Double.isNaN(theta2)) {
+        try {
+            theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
+        } catch (JWcsException ex) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
                     + ", " + y + ")");
-        } else if (Double.isNaN(theta1)) {
-            theta = theta2;
-        } else if (Double.isNaN(theta2)) {
-            theta = theta1;
-        } else {
-            // The right solution is this one which is closer to 90°.
-            if (Math.abs(theta1 - HALF_PI) > Math.abs(theta2 - HALF_PI)) {
-                theta = theta2;
-            } else {
-                theta = theta1;
-            }
         }
         final double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
         final double[] pos = {phi, theta};

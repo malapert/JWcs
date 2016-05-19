@@ -17,9 +17,16 @@
 package io.github.malapert.jwcs.utility;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.text.DecimalFormat;
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.function.Sin;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * NumericalUtility class.
@@ -27,7 +34,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public final class NumericalUtility {
-    
+
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
      */
@@ -124,7 +131,8 @@ public final class NumericalUtility {
     /**
      * Asin operation.
      *
-     * <p>Returns the arc sine of a value; the returned angle is in the range -pi/2
+     * <p>
+     * Returns the arc sine of a value; the returned angle is in the range -pi/2
      * through pi/2. Special cases:
      * <ul>
      * <li>If the argument is NaN or its absolute value is greater than 1, then
@@ -239,6 +247,9 @@ public final class NumericalUtility {
      * @return True when number is included in [min,max] otherwise False.
      */
     public static boolean isInInterval(final double number, final double min, final double max, final double precision) {
+        if (Double.isNaN(number)) {
+            return false;
+        }
         if (NumericalUtility.equal(number, min, precision)) {
             return true;
         }
@@ -276,18 +287,19 @@ public final class NumericalUtility {
     /**
      * Calculates the matrix that represents a 3d rotation around the X axis.
      *
-     * <p>Reference:<br>
+     * <p>
+     * Reference:<br>
      * ---------- <br>
-     * Diebel, J. 2006, Stanford University, Representing
-     * Attitude: Euler angles, Unit Quaternions and Rotation Vectors.
+     * Diebel, J. 2006, Stanford University, Representing Attitude: Euler
+     * angles, Unit Quaternions and Rotation Vectors.
      * http://ai.stanford.edu/~diebel/attitude.html
      *
-     * <p>Notes:<br>
+     * <p>
+     * Notes:<br>
      * ------<br>
-     * Return the rotation matrix for a rotation around the X
-     * axis. This is a rotation in the YZ plane. Note that we construct a new
-     * vector with: xnew = R1.x In the literature, this rotation is usually
-     * called R1
+     * Return the rotation matrix for a rotation around the X axis. This is a
+     * rotation in the YZ plane. Note that we construct a new vector with: xnew
+     * = R1.x In the literature, this rotation is usually called R1
      *
      * @param angle Rotation angle in degrees
      * @return A 3x3 matrix representing the rotation about angle around X axis.
@@ -305,18 +317,19 @@ public final class NumericalUtility {
     /**
      * Calculates the matrix that represents a 3d rotation around the Y axis.
      *
-     * <p>Reference:<br>
+     * <p>
+     * Reference:<br>
      * ----------<br>
-     * Diebel, J. 2006, Stanford University, Representing
-     * Attitude: Euler angles, Unit Quaternions and Rotation Vectors.
+     * Diebel, J. 2006, Stanford University, Representing Attitude: Euler
+     * angles, Unit Quaternions and Rotation Vectors.
      * http://ai.stanford.edu/~diebel/attitude.html
      *
-     * <p>Notes:<br>
+     * <p>
+     * Notes:<br>
      * ------<br>
-     * Return the rotation matrix for a rotation around the X
-     * axis. This is a rotation in the YZ plane. Note that we construct a new
-     * vector with: xnew = R1.x In the literature, this rotation is usually
-     * called R1
+     * Return the rotation matrix for a rotation around the X axis. This is a
+     * rotation in the YZ plane. Note that we construct a new vector with: xnew
+     * = R1.x In the literature, this rotation is usually called R1
      *
      * @param angle Rotation angle in degrees
      * @return A 3x3 matrix representing the rotation about angle around Y axis.
@@ -369,17 +382,43 @@ public final class NumericalUtility {
 
     /**
      * Inverse matrix.
+     *
      * @param matrix the matrix to inverse
      * @return the inverse matrix
      */
     public static RealMatrix inverse(final RealMatrix matrix) {
         return (RealMatrix) MatrixUtils.inverse(matrix);
-    }  
-    
+    }
+
+    public static double computeQuatraticSolution(double[] coefficients) throws JWcsException {
+        coefficients[1] *=2;        
+        final LaguerreSolver solver = new LaguerreSolver(1e-15);
+        final Complex[] solutions = solver.solveAllComplex(coefficients, 0);
+        final Complex sol1 = solutions[0];
+        final Complex sol2 = solutions[1];                       
+        final double theta1 = NumericalUtility.aasin(sol1.getReal());
+        final double theta2 = NumericalUtility.aasin(sol2.getReal());
+        final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
+        final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
+        final double theta;
+        if (isTheta1Valid && isTheta2Valid) {
+            final double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
+            final double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
+            theta = diffTheta1Pole < diffTheta2Pole ? theta1 : theta2;
+        } else if (isTheta1Valid) {
+            theta = theta1;
+        } else if (isTheta2Valid) {
+            theta = theta2;
+        } else {
+            throw new JWcsException("No mathematical solution found");
+        }
+        return theta;
+    }
+
     /**
      * Private constructor.
      */
     private NumericalUtility() {
         //not called
-    }    
+    }
 }

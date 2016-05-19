@@ -20,7 +20,7 @@ import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 /**
  * The old FK4 (barycentric) equatorial system
- * but without the *E-terms of aberration*.
+ * but without the <b>E-terms of aberration</b>.
  * 
  * <p>This coordinate system should also be 
  * qualified by both an Equinox and an Epoch value.
@@ -66,7 +66,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
     }
     
     /**
-     * Creates a FK4_NO_E reference frame with both equinox and epoch of observation.
+     * Creates a FK4NoEterms reference frame with both equinox and epoch of observation.
      * @param epoch the epoch
      * @param epochObs the epoch of observation
      */    

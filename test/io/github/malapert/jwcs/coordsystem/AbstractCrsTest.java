@@ -568,8 +568,8 @@ public class AbstractCrsTest {
         final AbstractCrs eq1 = new Equatorial(fk4);
         final AbstractCrs eq2 = new Equatorial(fk5);
         final RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
-        final RealMatrix etermsIn = eq1.getEtermsIn();
-        final RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        final RealMatrix etermsIn = AbstractCrs.getEterms(eq1);
+        final RealMatrix etermsOut = AbstractCrs.getEterms(eq2);
         assertArrayEquals(new double[]{9.99925679e-01,  -1.11814832e-02,  -4.85900382e-03}, rotationMatrix.getRow(0), 1e-9);
         assertArrayEquals(new double[]{1.11814832e-02,   9.99937485e-01,  -2.71625947e-05}, rotationMatrix.getRow(1), 1e-9);
         assertArrayEquals(new double[]{4.85900377e-03,  -2.71702937e-05,   9.99988195e-01}, rotationMatrix.getRow(2), 1e-9);
@@ -587,8 +587,8 @@ public class AbstractCrsTest {
         final AbstractCrs eq1 = new Equatorial(fk4NOE);
         final AbstractCrs eq2 = new Equatorial(fk4);
         final RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
-        final RealMatrix etermsIn = eq1.getEtermsIn();
-        final RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        final RealMatrix etermsIn = AbstractCrs.getEterms(eq1);
+        final RealMatrix etermsOut = AbstractCrs.getEterms(eq2);
         assertArrayEquals(new double[]{1.,  0.,  -0.}, rotationMatrix.getRow(0), 1e-9);
         assertArrayEquals(new double[]{0.,   1.,  0.}, rotationMatrix.getRow(1), 1e-9);
         assertArrayEquals(new double[]{0.,  0.,   1.}, rotationMatrix.getRow(2), 1e-9);
@@ -606,8 +606,8 @@ public class AbstractCrsTest {
         final AbstractCrs eq1 = new Equatorial(fk4);
         final AbstractCrs eq2 = new Equatorial(fk5);
         final RealMatrix rotationMatrix = eq1.getRotationMatrix(eq2);
-        final RealMatrix etermsIn = eq1.getEtermsIn();
-        final RealMatrix etermsOut = eq1.getEtermsOut(eq2);
+        final RealMatrix etermsIn = AbstractCrs.getEterms(eq1);
+        final RealMatrix etermsOut = AbstractCrs.getEterms(eq2);
         assertArrayEquals(new double[]{9.99925679e-01,  -1.11818698e-02,  -4.85829658e-03}, rotationMatrix.getRow(0), 1e-9);
         assertArrayEquals(new double[]{1.11818699e-02,   9.99937481e-01,  -2.71546879e-05}, rotationMatrix.getRow(1), 1e-9);
         assertArrayEquals(new double[]{4.85829648e-03,  -2.71721706e-05,   9.99988198e-01}, rotationMatrix.getRow(2), 1e-9);

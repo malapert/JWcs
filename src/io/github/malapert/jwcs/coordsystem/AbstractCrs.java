@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aacos;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aasin;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aatan2;
@@ -94,17 +95,17 @@ public abstract class AbstractCrs {
         /**
          * Indicates if the coordinate system has a coordinate reference frame.
          */
-        private final boolean hasReferenceFrame;
+        private final boolean hasCoordinateReferenceFrame;
         
         /**
          * Constructor.
          * @param name coordinate system name
-         * @param hasReferenceFrame Indicates if the coordinate system has a 
-         * coordinate reference frame.
+         * @param hasCoordinateReferenceFrame Indicates if the coordinate system has a 
+         * configurable coordinate reference frame.
          */
-        CoordinateSystem(final String name, final boolean hasReferenceFrame) {
+        CoordinateSystem(final String name, final boolean hasCoordinateReferenceFrame) {
             this.name = name;
-            this.hasReferenceFrame = hasReferenceFrame;
+            this.hasCoordinateReferenceFrame = hasCoordinateReferenceFrame;
         }
         
         /**
@@ -120,8 +121,8 @@ public abstract class AbstractCrs {
          * @return True when the coordinate system has a coordinate reference 
          * frame otherwise false
          */
-        public final boolean hasReferenceFrame() {
-            return this.hasReferenceFrame;
+        public final boolean hasCoordinateReferenceFrame() {
+            return this.hasCoordinateReferenceFrame;
         }
       
         /**
@@ -163,7 +164,7 @@ public abstract class AbstractCrs {
     };
 
     /**
-     * Computes the rotation matrix from a reference frame to another one.
+     * Computes the rotation matrix to apply from a reference frame to another one.
      *
      * @param crs the output coordinate Reference System
      * @return the rotation matrix in the output coordinate Reference System
@@ -174,7 +175,7 @@ public abstract class AbstractCrs {
     protected abstract RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError;
 
     /**
-     * Returns the type of the coordinate system of the CRS.     
+     * Returns the coordinate system of the CRS.     
      * @return the type of the coordinate system
      */
     public abstract CoordinateSystem getCoordinateSystem();    
@@ -189,69 +190,37 @@ public abstract class AbstractCrs {
      * Sets the coordinate reference frame of the CRS.
      * @param refFrame the coordinate reference frame
      */
-    public abstract void setCoordinateReferenceFrame(CoordinateReferenceFrame refFrame);      
+    public abstract void setCoordinateReferenceFrame(final CoordinateReferenceFrame refFrame);      
     
     /**
-     * Returns Eterms matrix for the input coordinate Reference System.
+     * Returns the elliptical terms of aberration matrix for the input 
+     * coordinate Reference System.
+     * 
+     * <p>Stellar aberration is caused by the motion of the earth in its orbit. 
+     * This motion is represented by a circular velocity component and a 
+     * component perpendicular to the major axis caused by the fact that the 
+     * orbit is elliptical. This velocity component is responsible for 
+     * elliptical terms of aberration (E-terms) which are less than 
+     * 0.35 arcseconds (maximum is equal to the constant of aberration times 
+     * the eccentricity of the earths orbit = 20”.496 x 0.01673 ~= 343 mas). 
+     * The terms are independent of the position of the earth and depend only 
+     * on the position of the object in the sky.
+     * 
+     * <p>The elliptical terms of aberration are only applied for FK4 coordinate
+     * reference frame.
      *
-     * @return Eterms matrix
+     * @param crs the coordinate reference system
+     * @return the elliptical terms of aberration matrix
      */
-    protected final RealMatrix getEtermsIn() {
+    protected static final RealMatrix getEterms(final AbstractCrs crs) {
         RealMatrix eterms = null;
-        final CoordinateReferenceFrame.ReferenceFrame refSystem;
-        switch (getCoordinateSystem()) {
-            case EQUATORIAL:
-                refSystem = this.getCoordinateReferenceFrame().getReferenceFrame();
-                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    final double equinox = ((Equatorial) this).getEquinox();
-                    eterms = FK4.getEterms(equinox);
-                    LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});
-                }
-                break;
-            case ECLIPTIC:
-                refSystem = this.getCoordinateReferenceFrame().getReferenceFrame();
-                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    final double equinox = ((Ecliptic) this).getEquinox();
-                    eterms = FK4.getEterms(equinox);
-                    LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
-                }
-                break;
-            default: //do nothing
-                break;
+        final CoordinateReferenceFrame refFrame = crs.getCoordinateReferenceFrame();        
+        if (refFrame!=null && CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refFrame.getReferenceFrame())) {
+            final double equinox = refFrame.getEquinox();
+            eterms = FK4.getEterms(equinox);
+            LOG.log(Level.FINER, "getEterms {0}(FK4) from {1} : {2}", new Object[]{crs.getCoordinateSystem(),equinox,eterms});
         }
-        return eterms;
-    }
-
-    /**
-     * Returns Eterms matrix for the output coordinate Reference System.
-     *
-     * @param refFrame the output reference system
-     * @return Eterms matrix
-     */
-    protected final RealMatrix getEtermsOut(final AbstractCrs refFrame) {
-        RealMatrix eterms = null;
-        CoordinateReferenceFrame.ReferenceFrame refSystem;
-        switch (refFrame.getCoordinateSystem()) {
-            case EQUATORIAL:
-                refSystem = ((Equatorial) refFrame).getReferenceFrame();
-                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    final double equinox = ((Equatorial) refFrame).getEquinox();
-                    eterms = FK4.getEterms(equinox);
-                    LOG.log(Level.FINER, "getEterms EQUATORIAL(FK4) from {0} : {1}", new Object[]{equinox,eterms});                    
-                }
-                break;
-            case ECLIPTIC:
-                refSystem = ((Ecliptic) refFrame).getReferenceFrame();
-                if (CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refSystem)) {
-                    final double equinox = ((Ecliptic) refFrame).getEquinox();
-                    eterms = FK4.getEterms(equinox);
-                    LOG.log(Level.FINER, "getEterms ECLIPTIC(FK4) from {0} : {1}", new Object[]{equinox,eterms});                                        
-                }
-                break;
-            default: //do nothing
-                break;                
-        }
-        return eterms;
+        return eterms;        
     }
   
     /**
@@ -277,15 +246,13 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * Converts the (longitude, latitude) coordinates into the output coordinate
-     * Reference System.
+     * Converts the (longitude, latitude) coordinates from the current 
+     * coordinate reference system into the target coordinate reference System.     
      *
-     * <p>The method has been traduced from Python to JAVA.
-     *
-     * @param crs the output coordinate Reference System
+     * @param crs the target coordinate Reference System
      * @param longitude longitude in decimal degrees
      * @param latitude latitude in decimal degrees
-     * @return the position in the sky in the output coordinate Reference System
+     * @return the position on the sky in the target coordinate reference system
      * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
      * code in Python</a>
      */
@@ -295,9 +262,9 @@ public abstract class AbstractCrs {
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
         final RealMatrix rotation = getRotationMatrix(crs);
         LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});        
-        final RealMatrix etermsIn = getEtermsIn();
+        final RealMatrix etermsIn = AbstractCrs.getEterms(this);
         LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});        
-        final RealMatrix etermsOut = getEtermsOut(crs);
+        final RealMatrix etermsOut = AbstractCrs.getEterms(crs);
         LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});        
         if (etermsIn != null) {
             xyz = removeEterms(xyz, etermsIn);
@@ -317,9 +284,10 @@ public abstract class AbstractCrs {
 
     /**
      * Converts an array of (longitude1, latitude2, longitude2, latitude2, ...)
-     * coordinates into the coordinate Reference System.
+     * coordinates from the current coordinate system into the target 
+     * coordinate reference system.
      *
-     * @param crs the output coordinate Reference System
+     * @param crs the target coordinate reference system
      * @param coordinates an array of (longitude1, latitude2, longitude2,
      * latitude2, ...) in degrees
      * @return an array of SkyPosition
@@ -336,9 +304,9 @@ public abstract class AbstractCrs {
 
         final RealMatrix rotation = getRotationMatrix(crs);
         LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});
-        final RealMatrix etermsIn = getEtermsIn();
+        final RealMatrix etermsIn = AbstractCrs.getEterms(this);
         LOG.log(Level.FINER, "EtermsIn : {0}", etermsIn);
-        final RealMatrix etermsOut = getEtermsOut(crs);
+        final RealMatrix etermsOut = AbstractCrs.getEterms(crs);
         LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});
 
         int indice = 0;
@@ -366,7 +334,8 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * Computes the angular separation between two sky positions.
+     * Computes the angular separation between two positions in different
+     * coordinate reference systems.
      *
      * @param pos1 sky position in a coordinate Reference System
      * @param pos2 sky position in a coordinate Reference System
@@ -385,14 +354,15 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * Creates a CRS based on the coordinate system.
+     * Creates a coordinate reference system based on the coordinate system and 
+     * a default coordinate reference frame.
      * 
-     * <p>The CRS is built based on ICRS reference frame when the coordinate system
-     * is equatorial or ecliptic
+     * <p>The coordinate reference system is built based on ICRS reference frame
+     * when the coordinate system is equatorial or ecliptic
      *
      * @param coordinateSystem the coordinate system
-     * @return the coordinate Reference System
-     * @exception JWcsError coordinate system not supported
+     * @return the coordinate reference system
+     * @exception JWcsError the coordinate system is not supported
      */
     public final static AbstractCrs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
         AbstractCrs skySystem;
@@ -418,25 +388,21 @@ public abstract class AbstractCrs {
     
     /**
      * It handles precession and the transformation between equatorial
-     * systems.
-     *
-     * <p>This function includes also conversions between reference systems.
+     * reference frames.
      *
      * <p>Notes: Return matrix to transform equatorial coordinates from
-     * <code>epoch1</code> to <code>epoch2</code> in either reference frame FK4 or FK5. Or transform
-     * from epoch, FK4 or FK5 to ICRS or J2000 vice versa. Note that each
-     * transformation between FK4 and one of the other reference systems
-     * involves a conversion to FK5 and therefore the epoch of observation will
-     * be involved. Note that if no systems are entered and the one epoch is
-     * &gt; 1984 and the other &lt; 1984, then the transformation involves both
-     * sky reference systems FK4 and FK5.
+     * <code>epoch1</code> to <code>epoch2</code> in either reference frame 
+     * FK4 or FK5. Or transforms from epoch, FK4 or FK5 to ICRS or J2000 
+     * vice versa. Note that each transformation between FK4 and one of the 
+     * other reference systems involves a conversion to FK5 and therefore the 
+     * epoch of observation will be involved. 
      *
-     * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
+     * @param epoch1 epoch belonging to coordinate reference frame s1 : either 
      * Besselian or Julian.
-     * @param epoch2 Epoch belonging to coordinate reference frame s2 : either
+     * @param epoch2 epoch belonging to coordinate reference frame s2 : either
      * Besselian or Julian.
-     * @param s1 Input coordinate reference frame
-     * @param s2 Output coordinate reference frame
+     * @param s1 input coordinate reference frame
+     * @param s2 output coordinate reference frame
      * @param epobs Epoch of observation. Only valid for conversions between FK4
      * and FK5.
      * @return Rotation matrix to transform a position in one of the coordinate 
@@ -669,7 +635,7 @@ public abstract class AbstractCrs {
     
     /**
      * Remove the elliptic component of annual aberration when this is included
-     * in a catalogue fk4 position..
+     * in a catalogue fk4 position.
      *
      * @param xyz vector xyz
      * @param eterm E-terms vector (as returned by getEterms()). If input is
@@ -874,34 +840,39 @@ public abstract class AbstractCrs {
      * Usually this is J2000, but it can also be the epoch of date. The
      * additional reference system indicates whether we need a Besselian or a
      * Julian epoch.
-     *<br>
+     * <br>
      * 2. In the FITS paper of Calabretta and Greisen (2002), one observes the
-     * following relations to FITS: -Keyword RADESYSa sets the catalog system
+     * following relations to FITS: 
+     * <ul>
+     * <li>Keyword RADESYSa sets the catalog system
      * FK4, FK4-NO-E or FK5 This applies to equatorial and ecliptical
-     * coordinates with the exception of FK4-NO-E. -FK4 coordinates are not
-     * strictly spherical since they include a contribution from the elliptic
-     * terms of aberration, the so-called e-terms which amount to max. 343
-     * milliarcsec. FITS paper: *'Strictly speaking, therefore, a map obtained
-     * from, say, a radio synthesis telescope, should be regarded as FK4-NO-E
-     * unless it has been appropriately re-sampled or a distortion correction
-     * provided. In common usage, however, CRVALia for such maps is usually
-     * given in FK4 coordinates. In doing so, the e-terms are effectively
-     * corrected to first order only.'*. (See also ES, eq. 3.531-1 page 170.
-     * -Keyword EQUINOX sets the epoch of the mean equator and equinox. -Keyword
-     * EPOCH is often used in older FITS files. It is a deprecated keyword and
-     * should be replaced by EQUINOX. It does not require keyword RADESYS. From
-     * its value we derive whether the reference system is FK4 or FK5 (the
-     * marker value is 1984.0) -Ecliptic coordinates require the epoch of the
+     * coordinates with the exception of FK4-NO-E.</li>
+     * <li>FK4 coordinates are not strictly spherical since they include a 
+     * contribution from the elliptic terms of aberration, the so-called e-terms
+     * which amount to max. 343 milliarcsec. FITS paper: <i>'Strictly speaking, 
+     * therefore, a map obtained from, say, a radio synthesis telescope, should 
+     * be regarded as FK4-NO-E unless it has been appropriately re-sampled or a 
+     * distortion correction provided. In common usage, however, CRVALia for 
+     * such maps is usually given in FK4 coordinates. In doing so, the e-terms 
+     * are effectively corrected to first order only.'</i>. 
+     * (See also ES, eq. 3.531-1 page 170).</li>
+     * <li>Keyword EQUINOX sets the epoch of the mean equator and equinox.</li> 
+     * <li>Keyword EPOCH is often used in older FITS files. It is a deprecated 
+     * keyword and should be replaced by EQUINOX. It does not require keyword 
+     * RADESYS. From its value we derive whether the reference system is FK4 or FK5 (the
+     * marker value is 1984.0)</li>
+     * <li>Ecliptic coordinates require the epoch of the
      * equator and equinox of date. This will be taken as the time of
-     * observation rather than EQUINOX. FITS paper: *'The time of observation
+     * observation rather than EQUINOX. FITS paper: <i>'The time of observation
      * may also be required for other astrometric purposes in addition to the
      * usual astrophysical uses, for example, to specify when the mean place was
      * correct in accounting for proper motion, including "fictitious" proper
      * motions in the conversion between the FK4 and FK5 systems. The old
      * *DATE-OBS* keyword may be used for this purpose. However, to provide a
      * more convenient specification we here introduce the new keyword
-     * MJD-OBS'.* So MJD-OBS is the modified Julian Date (JD - 2400000.5) of the
-     * start of the observation.
+     * MJD-OBS'.</i> So MJD-OBS is the modified Julian Date (JD - 2400000.5) of 
+     * the start of the observation.</li>
+     * </ul>
      *<br>
      * 3. Equatorial to ecliptic transformations use the time dependent
      * obliquity of the equator (also known as the obliquity of the ecliptic).
@@ -909,7 +880,7 @@ public abstract class AbstractCrs {
      * rotX(eps) In fact this is only a rotation around the X axis
      *
      * @param epoch Epoch of the equator and equinox of date
-     * @param refSystem equatorial system to determine if one entered epoch in B
+     * @param refSystem equatorial refrence frame to determine if one entered epoch in B
      * or J coordinates
      * @return 3x3 RealMatrix M as in XYZecl = M * XYZeq
      */
@@ -930,7 +901,7 @@ public abstract class AbstractCrs {
     }  
     
     /**
-     * Precession from one epoch to another in the fk5 system.
+     * Precession from one epoch to another in the fk5 coordinate reference frame.
      *
      * <p>Reference:<br> 
      * ----------<br> 
@@ -964,7 +935,7 @@ public abstract class AbstractCrs {
      *
      * @param jd1 Julian date for start epoch
      * @param jd2 Julian date for end epoch
-     * @return Angles \u03B6 (zeta), z, \u03B8 (theta) degrees
+     * @return Angles \u03B6 (zeta), z, \u03B8 (theta) in decimal degrees
      */
     private static double[] lieskeprecangles(final double jd1, final double jd2) {
         // T = (Current epoch - 1 jan, 2000, 12h noon)
@@ -974,7 +945,8 @@ public abstract class AbstractCrs {
         final double w = 2306.2181d+(1.39656d-0.000139d*T0)*T0;
         final double zeta = (w+((0.30188d-0.000344d*T0)+0.017998d*T)*T)*T;
         final double z = (w+(1.09468d+0.000066d*T0+0.018203d*T)*T)*T;
-        final double theta = (2004.3109d+(-0.85330d-0.000217d*T0)*T0+((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
+        final double theta = (2004.3109d+(-0.85330d-0.000217d*T0)*T0+
+                ((-0.42665d-0.000217d*T0)-0.041833d*T)*T)*T;        
         //Return values in degrees
         return new double[]{zeta / 3600.0d, z / 3600.0d, theta / 3600.0d};
     }
@@ -986,9 +958,9 @@ public abstract class AbstractCrs {
      * theta. Rotation matrix: R = rotZ(-z).rotY(th).rotZ(-zeta) (ES 3.21-7, p
      * 103). Also allowed is the expression: rotZ(-90-z)*rotX(th)*rotZ(90-zeta)
      *
-     * @param zeta zeta in decimal degree
+     * @param zeta \u03B6  in decimal degrees
      * @param z z in decimal degree
-     * @param theta theta in decimal degree
+     * @param theta \u03B8 in decimal degrees
      * @return Rotation matrix M as in XYZepoch1 = M * XYZepoch2
      */
     private static RealMatrix precessionMatrix(final double zeta, final double z, final double theta) {
@@ -996,7 +968,7 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * Precession from one epoch to another in the fk4 system.
+     * Precession from one epoch to another in the FK4 coordinate reference frame.
      *
      * <p>Reference:<br> 
      * ----------<br> 
@@ -1140,7 +1112,8 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * See convertFK42FK5Matrix.
+     * Create a matrix to precess from B1950 in FK4 to J2000 in FK5 following to
+     * Murray’s (1989) procedure without epoch of observation.
      *
      * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
      */
@@ -1256,7 +1229,7 @@ public abstract class AbstractCrs {
         final RealMatrix result;
         if (equal(epoch1, epoch2)) {
             result = createRealIdentityMatrix(3);
-        } else if (epoch1 == 2000.0) {
+        } else if (equal(epoch1,2000.0,1e-3)) {
             final double[] precessionAngles = convertIAU2006PrecAngles(epoch2);
             result = precessionMatrix(precessionAngles[0], precessionAngles[1], precessionAngles[2]);
         } else { // If both epochs are not J2000.0
@@ -1333,8 +1306,8 @@ public abstract class AbstractCrs {
      * points toward the north celestial pole, and the x-axis points toward the
      * origin of right ascension.
      *
-     * @param longitude longitude in decimal degree
-     * @param latitude latitude in decimal degree
+     * @param longitude longitude in decimal degrees
+     * @param latitude latitude in decimal degrees
      * @return Corresponding values of x,y,z in same order as input
      */
     protected static RealMatrix longlat2xyz(final double longitude, final double latitude) {

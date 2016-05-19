@@ -18,9 +18,9 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
-import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 
 /**
@@ -109,19 +109,9 @@ public class SIN extends AbstractZenithalProjection {
             final double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
             final double b = ksi * (xr - ksi) + eta * (yr - eta);
             final double c = Math.pow(xr - ksi,2) + Math.pow(yr - eta,2) - 1;
-            final double theta1 = NumericalUtility.aasin((-b + Math.sqrt(b * b - a * c)) / a);
-            final double theta2 = NumericalUtility.aasin((-b - Math.sqrt(b * b - a * c)) / a);
-            final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
-            final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
-            if (isTheta1Valid && isTheta2Valid) {
-                final double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
-                final double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
-                theta = diffTheta1Pole < diffTheta2Pole ? theta1 : theta2;
-            } else if (isTheta1Valid) {
-                theta = theta1;
-            } else if (isTheta2Valid) {
-                theta = theta2;
-            } else {
+            try {
+                theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
+            } catch (JWcsException ex) {
                 throw new BadProjectionParameterException(this," (ksi,eta) = (" + ksi + " , " + eta+")");
             }
 

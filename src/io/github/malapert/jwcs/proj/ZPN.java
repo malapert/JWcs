@@ -306,29 +306,7 @@ public final class ZPN extends AbstractZenithalProjection {
         final double a = pv[2];
         final double b = pv[1];
         final double c = pv[0] - r;
-        double d = b * b - 4.0 * a * c;
-        if (d < 0.0) {
-            throw new Exception("No solution for quadratic computation");
-        }
-        d = Math.sqrt(d);
-        // Choose solution closest to pole. 
-        final double x1 = (-b + d) / (2.0 * a);
-        final double x2 = (-b - d) / (2.0 * a);
-        double x = x1 < x2 ? x1 : x2;
-        if (x < -getTolerance()) {
-            x = x1 > x2 ? x1 : x2;
-        }
-        if (x < 0.0) {
-            if (x < -getTolerance()) {
-                throw new Exception("No solution for quadratic computation");
-            }
-            x = 0.0;
-        } else if (x > Math.PI) {
-            if (x > Math.PI + getTolerance()) {
-                throw new Exception("No solution for quadratic computation");
-            }
-            x = Math.PI;
-        }
+        final double x = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
         return x;
     }
 

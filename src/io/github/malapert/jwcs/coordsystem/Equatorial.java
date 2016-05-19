@@ -135,7 +135,7 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
     }
 
     /**
-     * Sets the reference system.
+     * Sets the coordinate reference system.
      * @param coordinateReferenceFrame the coordinateReferenceFrame to set
      */
     @Override

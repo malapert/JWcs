@@ -60,8 +60,8 @@ public class FK4 implements CoordinateReferenceFrame {
     }
     
     /**
-     * Creates a FK4 reference frame with an epoch.
-     * @param epoch the epoch
+     * Creates a FK4 reference frame with an epoch of equinox.
+     * @param epoch the epoch of equinox
      */
     public FK4(final String epoch) {       
         init(epoch, null);
@@ -69,7 +69,7 @@ public class FK4 implements CoordinateReferenceFrame {
     
     /**
      * Creates a FK4 reference frame with both equinox and epoch of observation.
-     * @param epoch the epoch
+     * @param epoch the epoch of equinox
      * @param epochObs the epoch of observation
      */
     public FK4(final String epoch, final String epochObs) {       
@@ -78,7 +78,7 @@ public class FK4 implements CoordinateReferenceFrame {
     
     /**
      * initialization.
-     * @param epoch the epoch
+     * @param epoch the epoch of equinox
      * @param epochObs the epoch of observation
      */
     private void init(final String epoch, final String epochObs) {        

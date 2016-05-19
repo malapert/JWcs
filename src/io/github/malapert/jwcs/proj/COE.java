@@ -49,7 +49,7 @@ public class COE extends AbstractConicProjection {
     /**
      * Constant in radians.
      *
-     * <p>This constant is equal to sin\u03B8<sub>a</sub>*     
+     * <p>This constant is equal to sin\u03B8<sub>a</sub>     
      */
     private final double y0;
     
