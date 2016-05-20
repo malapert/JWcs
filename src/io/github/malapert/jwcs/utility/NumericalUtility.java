@@ -410,7 +410,7 @@ public final class NumericalUtility {
      * @see <a href="http://mathworld.wolfram.com/LaguerresMethod.html"> 
      * The Laguerre's method</a>
      */
-    public static double computeQuatraticSolution(double[] coefficients) throws JWcsException {
+    public static double computeQuatraticSolution(final double[] coefficients) throws JWcsException {
         final Complex[] solutions = solverLaguerre.solveAllComplex(coefficients, 0);
         final Complex sol1 = solutions[0];
         final Complex sol2 = solutions[1];

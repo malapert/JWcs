@@ -27,8 +27,7 @@ import java.util.logging.Level;
 /**
  * Zenithal polynomial.
  *
- * <p>
- * The zenithal polynomial projection, ZPN, generalizes the ARC projection by
+ * <p>The zenithal polynomial projection, ZPN, generalizes the ARC projection by
  * adding polynomial terms up to a large degree in the zenith distance
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
