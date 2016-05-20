@@ -65,7 +65,7 @@ public class PCO extends AbstractPolyConicProjection {
     /**
      * Function to solve theta.
      */
-    private final PcoFunction pco;
+    private final PcoFunction pcoFunction;
 
     /**
      * Constructs a PCO projection based on the celestial longitude and latitude
@@ -81,7 +81,7 @@ public class PCO extends AbstractPolyConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
-        this.pco = new PcoFunction();
+        this.pcoFunction = new PcoFunction();
     }
 
     /**
@@ -134,7 +134,7 @@ public class PCO extends AbstractPolyConicProjection {
             phi = 0.0;
             theta = yr < 0.0 ? -HALF_PI : HALF_PI;
         } else {
-            double[] position = computeIterativeSolution(xr, yr);
+            final double[] position = computeIterativeSolution(xr, yr);
             phi = position[0];
             theta = position[1];
         }
@@ -184,8 +184,8 @@ public class PCO extends AbstractPolyConicProjection {
             min = -HALF_PI;
             max = 0;
         }
-        this.pco.set(xr, yr);
-        final double theta = NumericalUtility.computeFunctionSolution(getMaxIter(), pco, min, max);  
+        this.pcoFunction.set(xr, yr);
+        final double theta = NumericalUtility.computeFunctionSolution(getMaxIter(), pcoFunction, min, max);  
         final double tanthe = FastMath.tan(theta);
         final double xp = 1 - (yr - theta) * tanthe;
         final double yp = xr * tanthe;

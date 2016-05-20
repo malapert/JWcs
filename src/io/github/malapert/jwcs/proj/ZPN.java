@@ -189,12 +189,11 @@ public final class ZPN extends AbstractZenithalProjection {
     /**
      * Compute the solution for whatever polynomial equation.
      *
-     * @param r radius
      * @param polynomialFunction polynomial function
      * @return the solution for whatever polynomial equation
      * @throws Exception Exception
      */
-    private double computeSolution(final double r, final Object polynomialFunction) throws Exception {
+    private double computeSolution(final Object polynomialFunction) throws Exception {
         final double result;
         switch (getN()) {
             case 1:
@@ -221,7 +220,7 @@ public final class ZPN extends AbstractZenithalProjection {
             coeffPolynomial[0] = coeffPolynomial[0] - r_theta;
             final Object polynomialFunction = NumericalUtility.createPolynomialFunction(coeffPolynomial);
             final double phi = computePhi(xr, yr, r_theta);
-            final double theta = HALF_PI - computeSolution(r_theta, polynomialFunction);
+            final double theta = HALF_PI - computeSolution(polynomialFunction);
             final double[] pos = {phi, theta};
             LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
             return pos;
