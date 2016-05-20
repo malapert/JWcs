@@ -279,31 +279,40 @@ public class JWcsMap extends AbstractJWcs {
     @Override
     protected void checkWcs() throws JWcsException {
         if(!hasRequiredWcs()) {
-            final List<String> check = new ArrayList();
-            final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
-            final boolean hasCd = hasCd() || hasOldCd;            
-            if (!hasCd) {
-                check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
-            }
-            if (!this.hasKeyword(CTYPE1)) {
-                check.add(CTYPE1 + " is missing");
-            }
-            if (!this.hasKeyword(CTYPE2)) {
-                check.add(CTYPE2 + " is missing");
-            }
-            if (!this.hasKeyword(CRPIX1)) {
-                check.add(CRPIX1 + " is missing");
-            }
-            if (!this.hasKeyword(CRPIX2)) {
-                check.add(CRPIX2 + " is missing");
-            }
-            if (!this.hasKeyword(CRVAL1)) {
-                check.add(CRVAL1 + " is missing");
-            }
-            if (!this.hasKeyword(CRVAL2)) {
-                check.add(CRVAL2 + " is missing");
-            }
-            throw new JWcsException(check.toString());
+            fillStackError();
         }
+    }
+    
+    /**
+     * Fills stack of error in JWcsException.
+     * @throws JWcsException All missing mandatory keywords
+     */
+    private void fillStackError() throws JWcsException {
+        final List<String> check = new ArrayList();
+        final boolean hasOldCd = this.hasKeyword(CDELT1) && this.hasKeyword(CDELT2) && this.hasKeyword(CROTA2);
+        final boolean hasCd = hasCd() || hasOldCd;            
+        if (!hasCd) {
+            check.add("(CDELT1,CDELT2,CROTA2) or (CD11,C12,CD21,CD22) or (PC11, PC12, P21, PC22, CDELT1, CDELT2) are missing");
+        }
+        if (!this.hasKeyword(CTYPE1)) {
+            check.add(CTYPE1 + " is missing");
+        }
+        if (!this.hasKeyword(CTYPE2)) {
+            check.add(CTYPE2 + " is missing");
+        }
+        if (!this.hasKeyword(CRPIX1)) {
+            check.add(CRPIX1 + " is missing");
+        }
+        if (!this.hasKeyword(CRPIX2)) {
+            check.add(CRPIX2 + " is missing");
+        }
+        if (!this.hasKeyword(CRVAL1)) {
+            check.add(CRVAL1 + " is missing");
+        }
+        if (!this.hasKeyword(CRVAL2)) {
+            check.add(CRVAL2 + " is missing");
+        }
+        throw new JWcsException(check.toString());
+        
     }
 }
