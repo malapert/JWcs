@@ -159,25 +159,57 @@ public class AZP extends AbstractZenithalProjection {
         final double theta2 = NumericalUtility.normalizeLatitude(psi + omega + Math.PI);        
         final double theta;        
         if(Math.abs(mu) < 1) {
-            final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
-            final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
-            if(isTheta1Valid && isTheta2Valid) {
-                throw new JWcsError("It seems to be a bug");
-            } else if (isTheta1Valid) {
-                theta = theta1;
-            } else if (isTheta2Valid) {
-                theta = theta2;
-            } else {
-                throw new JWcsError("It seems to be a bug");
-            }            
+            theta = findTheValidSolution(theta1, theta2);
         } else {
-            final double diffTheta1With90 = Math.abs(theta1-HALF_PI);
-            final double diffTheta2With90 = Math.abs(theta2-HALF_PI);
-            if (diffTheta1With90 > diffTheta2With90) {
-                theta = theta2; 
-            } else {
-                theta = theta1;
-            }
+            theta = findTheSolutionNearestNorthPole(theta1, theta2);
+        }
+        return theta;
+    }
+    
+    /**
+     * Finds the right solution among theta1 and theta2.
+     * 
+     * <p>The right solution is this one the nearest from the north pole.
+     * 
+     * @param theta1 First solution
+     * @param theta2 Second solution
+     * @return theta1 or theta2
+     */
+    private double findTheSolutionNearestNorthPole(final double theta1, final double theta2) {
+        final double theta;
+        final double diffTheta1With90 = Math.abs(theta1-HALF_PI);
+        final double diffTheta2With90 = Math.abs(theta2-HALF_PI);
+        if (diffTheta1With90 > diffTheta2With90) {
+            theta = theta2; 
+        } else {
+            theta = theta1;
+        }    
+        return theta;
+    }
+    
+    /**
+     * Finds the valid solution among the two solutions.
+     * 
+     * <p>Only one theta is valid. A valid theta is a theta in which the value
+     * is included in [-HalfPi, HalfPi].
+     * 
+     * @param theta1 First solution
+     * @param theta2 Second solution
+     * @return theta1 or theta2
+     * @throws JWcsError No valid solution
+     */
+    private double findTheValidSolution(final double theta1, final double theta2) {
+        final double theta;
+        final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
+        final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
+        if(isTheta1Valid && isTheta2Valid) {
+            throw new JWcsError("No valid solution");
+        } else if (isTheta1Valid) {
+            theta = theta1;
+        } else if (isTheta2Valid) {
+            theta = theta2;
+        } else {
+            throw new JWcsError("No valid solution");
         }
         return theta;
     }

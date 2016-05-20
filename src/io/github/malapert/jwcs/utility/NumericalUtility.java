@@ -34,9 +34,14 @@ import org.apache.commons.math3.analysis.solvers.BisectionSolver;
  */
 public final class NumericalUtility {
     
-
+    /**
+     * Bisection algorithm.
+     */
     private static final BisectionSolver solverBisection = new BisectionSolver(1e-15);
     
+    /**
+     * Laguerre algorithm.
+     */
     private static final LaguerreSolver solverLaguerre = new LaguerreSolver(1e-15);
 
     /**
@@ -443,7 +448,7 @@ public final class NumericalUtility {
      * @return a zero root
      * @see <a href="http://mathworld.wolfram.com/Bisection.html">Bisection algorithm</a>     
      */
-    public static double computePolynomialSolution(final int maxEval, final Object f, double min, double max) {
+    public static double computePolynomialSolution(final int maxEval, final Object f, final double min, final double max) {
         return solverBisection.solve(maxEval, (PolynomialFunction)f, min, max);
     }
 
@@ -478,11 +483,11 @@ public final class NumericalUtility {
      * @throws JWcsError the type of object is not supported
      */
     public static int getPolynomialOrder(final Object f) {
-        int result;
+        final int result;
         if (f instanceof PolynomialFunction) {
             result = ((PolynomialFunction)f).degree();
         } else if (f instanceof double[]) {
-            PolynomialFunction fNew = new PolynomialFunction((double[])f);
+            final PolynomialFunction fNew = new PolynomialFunction((double[])f);
             result = fNew.degree();
         } else {
             throw new JWcsError("f is not a polynomialFunction or a an array of polynomial coefficients");
@@ -515,7 +520,7 @@ public final class NumericalUtility {
      * @return a fresh copy of the coefficients array
      */
     public static double[] getPolynomialCoefficients(final Object f) {
-        PolynomialFunction poly = (PolynomialFunction)f;
+        final PolynomialFunction poly = (PolynomialFunction)f;
         return poly.getCoefficients();
     }
 
