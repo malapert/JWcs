@@ -16,8 +16,10 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
+import io.github.malapert.jwcs.utility.PcoFunction;
 import java.util.logging.Level;
 
 /**
@@ -60,6 +62,11 @@ public class PCO extends AbstractPolyConicProjection {
     private int maxIter;
 
     /**
+     * Function to solve theta.
+     */
+    private final PcoFunction pco;
+
+    /**
      * Constructs a PCO projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *
@@ -70,9 +77,10 @@ public class PCO extends AbstractPolyConicProjection {
      */
     public PCO(final double crval1, final double crval2) {
         super(crval1, crval2, 45);
-        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1,crval2});                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
+        this.pco = new PcoFunction();
     }
 
     /**
@@ -105,20 +113,19 @@ public class PCO extends AbstractPolyConicProjection {
     /**
      * Sets the maximal number of iterations.
      *
-     * @param maxIter the maxIter to set
+     * @param maxIter the maximum number of iteration
      */
     public final void setMaxIter(final int maxIter) {
         this.maxIter = maxIter;
     }
 
     @Override
-    protected double[] project(final double x, final double y) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         final double xr = Math.toRadians(x);
         final double yr = Math.toRadians(y);
-
         final double phi;
-        double theta = 0;
+        final double theta;
         if (NumericalUtility.equal(yr, 0)) {
             phi = xr;
             theta = 0.0;
@@ -126,77 +133,19 @@ public class PCO extends AbstractPolyConicProjection {
             phi = 0.0;
             theta = yr < 0.0 ? -HALF_PI : HALF_PI;
         } else {
-            double thepos;
-            // Iterative solution using weighted division of the interval. 
-            if (yr > 0.0) {
-                thepos = HALF_PI;
-            } else {
-                thepos = -HALF_PI;
-            }
-            double theneg = 0.0;
-
-            final double xx = xr * xr;
-            double ymthe = yr - thepos;
-            double fpos = xx + ymthe * ymthe;
-            double fneg = -999.0;
-            double tanthe = 1.0;
-            for (int j = 0; j < getMaxIter(); j++) {
-                if (fneg < -100.0) {
-
-                    // Equal division of the interval. 
-                    theta = (thepos + theneg) / 2.0;
-                } else {
-
-                    // Weighted division of the interval. 
-                    double lambda = fpos / (fpos - fneg);
-                    if (lambda < 0.1) {
-                        lambda = 0.1;
-                    } else if (lambda > 0.9) {
-                        lambda = 0.9;
-                    }
-                    theta = thepos - lambda * (thepos - theneg);
-                }
-
-                // Compute the residue. 
-                ymthe = yr - theta;
-                tanthe = Math.tan(theta);
-                final double f = xx + ymthe * (ymthe - 2 / tanthe);
-
-                // Check for convergence. 
-                if (NumericalUtility.equal(f, 0, getTolerance())) {
-                    break;
-                }
-                if (NumericalUtility.equal(thepos, theneg, getTolerance())) {
-                    break;
-                }
-
-                // Redefine the interval. 
-                if (f > 0.0) {
-                    thepos = theta;
-                    fpos = f;
-                } else {
-                    theneg = theta;
-                    fneg = f;
-                }
-            }
-
-            final double xp = 1 - ymthe * tanthe;
-            final double yp = xr * tanthe;
-            if (NumericalUtility.equal(xp, 0) && NumericalUtility.equal(yp, 0)) {
-                phi = 0.0;
-            } else {
-                phi = NumericalUtility.aatan2(yp, xp) / Math.sin(theta);
-            }
+            double[] position = computeIterativeSolution(xr, yr);
+            phi = position[0];
+            theta = position[1];
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
         final double costhe = Math.cos(theta);
         final double sinthe = Math.sin(theta);
         final double a = phi * sinthe;
@@ -211,9 +160,42 @@ public class PCO extends AbstractPolyConicProjection {
             y = cotthe * (1.0 - Math.cos(a)) + theta;
         }
         final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);
         return coord;
     }
+    
+    /**
+     * Computes the iterative solution of the {@link PcoFunction}  using 
+     * bisection algorithm.
+     * 
+     * @param xr projection plane coordinate along X in radians
+     * @param yr projection plane coordinate along Y in radians
+     * @return an array representing in the order phi and theta
+     * @throws PixelBeyondProjectionException Not defined for (x,y) value
+     */
+    private double[] computeIterativeSolution(final double xr, final double yr) throws PixelBeyondProjectionException {
+        final double min;
+        final double max;        
+        if (yr > 0.0) {
+            min = 0;
+            max = HALF_PI;
+        } else {
+            min = -HALF_PI;
+            max = 0;
+        }
+        this.pco.set(xr, yr);
+        final double theta = NumericalUtility.computeFunctionSolution(getMaxIter(), pco, min, max);  
+        final double tanthe = Math.tan(theta);
+        final double xp = 1 - (yr - theta) * tanthe;
+        final double yp = xr * tanthe;
+        final double phi;
+        if (NumericalUtility.equal(xp, 0) && NumericalUtility.equal(yp, 0)) {
+            phi = 0.0;
+        } else {
+            phi = NumericalUtility.aatan2(yp, xp) / Math.sin(theta);
+        }
+        return new double[]{phi, theta};
+    }    
 
     @Override
     public String getName() {

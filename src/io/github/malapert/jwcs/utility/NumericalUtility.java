@@ -470,7 +470,7 @@ public final class NumericalUtility {
     public static double computeFunctionSolution(final int maxEval, final UnivariateFunction function, final double min, final double max) {
         return solverBisection.solve(maxEval, function, min, max);
     }
-    
+  
     /**
      * Returns the degree of the polynomial function.
      * 

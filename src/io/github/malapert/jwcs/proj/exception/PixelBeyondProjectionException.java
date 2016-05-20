@@ -20,7 +20,7 @@ import io.github.malapert.jwcs.proj.AbstractProjection;
 import java.util.logging.Level;
 
 /**
- * Pixel Beyond AbstractProjection Exception.
+ * Pixel Beyond Projection Exception.
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */

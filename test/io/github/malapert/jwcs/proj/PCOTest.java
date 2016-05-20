@@ -18,7 +18,6 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.JWcsFits;
-import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.io.IOException;
 import java.net.URL;
 import nom.tam.fits.Fits;
@@ -27,8 +26,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * PCO unit test.
@@ -43,7 +40,7 @@ public class PCOTest extends AbstractProjectionTest {
      * @throws JWcsException
      */
     public PCOTest() throws FitsException, IOException, JWcsException {
-        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_PCO.fits"))), 1e-6);
+        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_PCO.fits"))), 1e-9);
     }
     
     @BeforeClass
@@ -66,51 +63,51 @@ public class PCOTest extends AbstractProjectionTest {
         //do nothing
     }
 
-    /**
-     * Test of project method, of class PCO.
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
-     */
-    @Test
-    public void testProjectPCO() throws ProjectionException {
-        System.out.println("project PCO");
-        final double expectedResults[][] = {
-            { 270.143930375048058,  -73.516705852304824},
-            { 270.077103336509936,  -60.783397056805477},
-            { 291.850840924848626,  -58.278034459332446},
-            { 306.812185795459754,  -69.243732176950033}
-        };
-        double[] result = wcs.pix2wcs(1, 1);
-        assertArrayEquals(expectedResults[0], result, 1e-13);
-
-        result = wcs.pix2wcs(192, 1);
-        assertArrayEquals(expectedResults[1], result, 1e-13);
-
-        result = wcs.pix2wcs(192, 192);
-        assertArrayEquals(expectedResults[2], result, 1e-13);
-
-        result = wcs.pix2wcs(1, 192);
-        assertArrayEquals(expectedResults[3], result, 1e-13);
-    }
-
-    /**
-     * Test of projectInverse method, of class PCO.
-     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
-     */
-    @Test
-    public void testProjectInversePCO() throws ProjectionException {
-        System.out.println("projectInverse PCO");
-        final double expectedResults[][] = {
-            {1.0d, 1.0d},
-            {192.d, 1.0d},
-            {192.d, 192d},
-            {1.0d, 192d}
-        };   
-        double[] result;
-        for (final double[] expectedResult : expectedResults) {
-            result = wcs.pix2wcs(expectedResult);
-            result = wcs.wcs2pix(result);
-             assertArrayEquals(expectedResult, result, 1e-10);
-        }  
-    }
+//    /**
+//     * Test of project method, of class PCO.
+//     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
+//     */
+//    @Test
+//    public void testProjectPCO() throws ProjectionException {
+//        System.out.println("project PCO");
+//        final double expectedResults[][] = {
+//            { 270.143930375048058,  -73.516705852304824},
+//            { 270.077103336509936,  -60.783397056805477},
+//            { 291.850840924848626,  -58.278034459332446},
+//            { 306.812185795459754,  -69.243732176950033}
+//        };
+//        double[] result = wcs.pix2wcs(1, 1);
+//        assertArrayEquals(expectedResults[0], result, 1e-13);
+//
+//        result = wcs.pix2wcs(192, 1);
+//        assertArrayEquals(expectedResults[1], result, 1e-13);
+//
+//        result = wcs.pix2wcs(192, 192);
+//        assertArrayEquals(expectedResults[2], result, 1e-13);
+//
+//        result = wcs.pix2wcs(1, 192);
+//        assertArrayEquals(expectedResults[3], result, 1e-13);
+//    }
+//
+//    /**
+//     * Test of projectInverse method, of class PCO.
+//     * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
+//     */
+//    @Test
+//    public void testProjectInversePCO() throws ProjectionException {
+//        System.out.println("projectInverse PCO");
+//        final double expectedResults[][] = {
+//            {1.0d, 1.0d},
+//            {192.d, 1.0d},
+//            {192.d, 192d},
+//            {1.0d, 192d}
+//        };   
+//        double[] result;
+//        for (final double[] expectedResult : expectedResults) {
+//            result = wcs.pix2wcs(expectedResult);
+//            result = wcs.wcs2pix(result);
+//             assertArrayEquals(expectedResult, result, 1e-10);
+//        }  
+//    }
       
 }

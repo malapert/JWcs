@@ -19,16 +19,16 @@ package io.github.malapert.jwcs.utility;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 
 /**
- * Gamma function to solve for the Mollweide's projection.
+ * GammaFunction function to solve for the Mollweide's projection.
  * 
  * <p>The following function must be solved:<br>
- * <code>v + Math.sin(v) - PI * sin(theta) = 0</code><br>
+ * <code>v + sin(v) - PI * sin(theta) = 0</code><br>
  * with <code>v</code> the value to find.
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class Gamma implements UnivariateFunction {
+public class GammaFunction implements UnivariateFunction {
 
     /**
      * theta value.
@@ -38,7 +38,7 @@ public class Gamma implements UnivariateFunction {
     /**
      * Initialize the constructor with <code>theta</code>=0.
      */
-    public Gamma() {
+    public GammaFunction() {
         this.theta = 0;
     }
     

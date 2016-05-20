@@ -17,7 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.utility.Gamma;
+import io.github.malapert.jwcs.utility.GammaFunction;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
@@ -64,9 +64,9 @@ public class MOL extends AbstractCylindricalProjection {
     private int maxIter;
     
     /**
-     * Gamma function to solve.
+     * GammaFunction function to solve.
      */
-    private final Gamma gammaFunction;
+    private final GammaFunction gammaFunction;
 
     /**
      * Constructs a MOL projection based on the celestial longitude and latitude
@@ -82,7 +82,7 @@ public class MOL extends AbstractCylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
-        this.gammaFunction = new Gamma();
+        this.gammaFunction = new GammaFunction();
     }
 
     @Override
@@ -182,7 +182,7 @@ public class MOL extends AbstractCylindricalProjection {
      * @param theta the native spherical coordinate (\u03B8) in radians along
      * latitude
      * @return gamma
-     * @see Gamma
+     * @see GammaFunction
      */
     private double computeGamma(final double theta) {
         this.gammaFunction.setTheta(theta);
