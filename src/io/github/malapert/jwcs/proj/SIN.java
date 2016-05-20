@@ -22,6 +22,7 @@ import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Slant orthographic.
@@ -94,8 +95,8 @@ public class SIN extends AbstractZenithalProjection {
     @Override
     public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double phi;
         final double theta;
         if (NumericalUtility.equal(ksi, DEFAULT_VALUE) && NumericalUtility.equal(eta, DEFAULT_VALUE)) {
@@ -106,32 +107,32 @@ public class SIN extends AbstractZenithalProjection {
             phi = computePhi(xr, yr, r_theta);
             theta = NumericalUtility.aacos(r_theta);
         } else {
-            final double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
+            final double a = FastMath.pow(ksi, 2) + FastMath.pow(eta, 2) + 1;
             final double b = (ksi * (xr - ksi) + eta * (yr - eta)) * 2;
-            final double c = Math.pow(xr - ksi,2) + Math.pow(yr - eta,2) - 1;
+            final double c = FastMath.pow(xr - ksi,2) + FastMath.pow(yr - eta,2) - 1;
             try {
                 theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
             } catch (JWcsException ex) {
                 throw new BadProjectionParameterException(this," (ksi,eta) = (" + ksi + " , " + eta+")");
             }
 
-            phi = NumericalUtility.aatan2(xr - ksi * (1 - Math.sin(theta)), -(yr - eta * (1 - Math.sin(theta))));
+            phi = NumericalUtility.aatan2(xr - ksi * (1 - FastMath.sin(theta)), -(yr - eta * (1 - FastMath.sin(theta))));
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                        
-        final double thetax = -Math.atan(ksi*Math.sin(phi)-eta*Math.cos(phi));
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                        
+        final double thetax = -FastMath.atan(ksi*FastMath.sin(phi)-eta*FastMath.cos(phi));
         if (theta < thetax) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+Math.toDegrees(phi)+","+Math.toDegrees(theta)+")");
+            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+FastMath.toDegrees(phi)+","+FastMath.toDegrees(theta)+")");
         }
-        final double x = Math.toDegrees(Math.cos(theta) * Math.sin(phi) + ksi * (1 - Math.sin(theta)));
-        final double y = Math.toDegrees(-Math.cos(theta) * Math.cos(phi) + eta * (1 - Math.sin(theta)));
+        final double x = FastMath.toDegrees(FastMath.cos(theta) * FastMath.sin(phi) + ksi * (1 - FastMath.sin(theta)));
+        final double y = FastMath.toDegrees(-FastMath.cos(theta) * FastMath.cos(phi) + eta * (1 - FastMath.sin(theta)));
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         return coord;

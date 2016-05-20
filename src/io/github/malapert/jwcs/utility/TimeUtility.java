@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * TimeUtility class for handling time.
@@ -94,21 +95,21 @@ public final class TimeUtility {
         double m;
         final Date date = new Date();
         jd += 0.5;
-        final double z = Math.floor(jd);
+        final double z = FastMath.floor(jd);
         final double f = jd - z;
 
         if (z >= 2299161.0) {
-            a = Math.floor((z - 1867216.25) / 36524.25);
-            a = z + 1 + a - Math.floor(a / 4);
+            a = FastMath.floor((z - 1867216.25) / 36524.25);
+            a = z + 1 + a - FastMath.floor(a / 4);
         } else {
             a = z;
         }
 
         final double b = a + 1524;
-        final double c = Math.floor((b - 122.1) / 365.25);
-        final double d = Math.floor(365.25 * c);
-        final double e = Math.floor((b - d) / 30.6001);
-        double aux = b - d - Math.floor(30.6001 * e) + f;
+        final double c = FastMath.floor((b - 122.1) / 365.25);
+        final double d = FastMath.floor(365.25 * c);
+        final double e = FastMath.floor((b - d) / 30.6001);
+        double aux = b - d - FastMath.floor(30.6001 * e) + f;
         final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, (int) aux);
@@ -186,10 +187,10 @@ public final class TimeUtility {
 
         final double extra = 100.0 * year + month - 190002.5;
         return 367.0 * year
-                - Math.floor(7.0 * (year + Math.floor((month + 9.0) / 12.0)) / 4.0)
-                + Math.floor((275.0 * month) / 9.0)
+                - FastMath.floor(7.0 * (year + FastMath.floor((month + 9.0) / 12.0)) / 4.0)
+                + FastMath.floor((275.0 * month) / 9.0)
                 + day + ((hour + ((minute + (second / 60.0)) / 60.0)) / 24.0)
-                + 1721013.5 - ((0.5 * extra) / Math.abs(extra)) + 0.5;
+                + 1721013.5 - ((0.5 * extra) / FastMath.abs(extra)) + 0.5;
     }
 
     /**

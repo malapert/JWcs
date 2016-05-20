@@ -23,6 +23,7 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Zenithal perspective.
@@ -92,7 +93,7 @@ public class AZP extends AbstractZenithalProjection {
      */
     public AZP(final double crval1, final double crval2, final double mu, final double gamma) throws BadProjectionParameterException {
         super(crval1, crval2);
-        this.gamma = Math.toRadians(gamma);
+        this.gamma = FastMath.toRadians(gamma);
         this.mu = mu;
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,gamma)=({0},{1},{2},{3})", new Object[]{crval1,crval2,mu,gamma});        
         checkParameters(this.gamma);
@@ -105,7 +106,7 @@ public class AZP extends AbstractZenithalProjection {
      * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
      */
     private void checkParameters(final double gamma) throws BadProjectionParameterException {
-        if(NumericalUtility.equal(Math.abs(gamma), HALF_PI)) {
+        if(NumericalUtility.equal(FastMath.abs(gamma), HALF_PI)) {
             throw new BadProjectionParameterException(this, "gamma="+gamma+". Gamma must be != +/-HALF_PI");
         }
     }
@@ -127,7 +128,7 @@ public class AZP extends AbstractZenithalProjection {
      * @return the plane coordinate along Y with application of parameter projection
      */    
     private double computeYr(final double y) {
-        return y * Math.cos(gamma);
+        return y * FastMath.cos(gamma);
     }            
     
     /**
@@ -141,12 +142,12 @@ public class AZP extends AbstractZenithalProjection {
      * @throws PixelBeyondProjectionException When (x,y) has no solution
      */
     private double computeTheta(final double x, final double y, final double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {
-        final double denom = mu + 1 + y * Math.tan(gamma);
+        final double denom = mu + 1 + y * FastMath.tan(gamma);
         if (NumericalUtility.equal(denom,0)) {
             throw new BadProjectionParameterException(this,"(mu,gamma) = (" + mu + ", " + gamma+"). (mu + 1) + y * tan(gamma) must be !=0");
         }    
         final double rho = radius / denom;
-        final double val = mu*rho/Math.sqrt(Math.pow(rho, 2)+1);
+        final double val = mu*rho/FastMath.sqrt(FastMath.pow(rho, 2)+1);
         final double omega = NumericalUtility.aasin(val);
         if (Double.isNaN(omega)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");
@@ -156,9 +157,9 @@ public class AZP extends AbstractZenithalProjection {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x + ", " + y + ")");            
         }
         final double theta1 = NumericalUtility.normalizeLatitude(psi - omega);
-        final double theta2 = NumericalUtility.normalizeLatitude(psi + omega + Math.PI);        
+        final double theta2 = NumericalUtility.normalizeLatitude(psi + omega + FastMath.PI);        
         final double theta;        
-        if(Math.abs(mu) < 1) {
+        if(FastMath.abs(mu) < 1) {
             theta = findTheValidSolution(theta1, theta2);
         } else {
             theta = findTheSolutionNearestNorthPole(theta1, theta2);
@@ -177,8 +178,8 @@ public class AZP extends AbstractZenithalProjection {
      */
     private double findTheSolutionNearestNorthPole(final double theta1, final double theta2) {
         final double theta;
-        final double diffTheta1With90 = Math.abs(theta1-HALF_PI);
-        final double diffTheta2With90 = Math.abs(theta2-HALF_PI);
+        final double diffTheta1With90 = FastMath.abs(theta1-HALF_PI);
+        final double diffTheta2With90 = FastMath.abs(theta2-HALF_PI);
         if (diffTheta1With90 > diffTheta2With90) {
             theta = theta2; 
         } else {
@@ -217,38 +218,38 @@ public class AZP extends AbstractZenithalProjection {
     @Override
     public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
-        final double xr = computeXr(Math.toRadians(x));
-        final double yr = computeYr(Math.toRadians(y));
+        final double xr = computeXr(FastMath.toRadians(x));
+        final double yr = computeYr(FastMath.toRadians(y));
         final double r = computeRadius(xr, yr);
         final double theta = computeTheta(xr, yr, r);
         final double phi = computePhi(xr, yr, r);              
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                        
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                        
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                
         double thetax;
         if (NumericalUtility.equal(mu, 0)) {
             thetax = 0;
-        } else if (Math.abs(mu) > 1) {
+        } else if (FastMath.abs(mu) > 1) {
             thetax = NumericalUtility.aasin(-1 / mu);
         } else {
             thetax = NumericalUtility.aasin(-mu);
         }
 
-        final double denom = mu + Math.sin(theta) + Math.cos(theta) * Math.cos(phi) * Math.tan(gamma);
+        final double denom = mu + FastMath.sin(theta) + FastMath.cos(theta) * FastMath.cos(phi) * FastMath.tan(gamma);
 
         if (NumericalUtility.equal(denom, 0) || theta < thetax) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = " + Math.toDegrees(theta));
+            throw new PixelBeyondProjectionException(this,"theta[deg] = " + FastMath.toDegrees(theta));
         }
 
-        double r = (mu + 1) * Math.cos(theta) / denom;        
-        r = Math.toDegrees(r);
-        final double x = r * Math.sin(phi);
-        final double y = -r * Math.cos(phi) / Math.cos(gamma);
+        double r = (mu + 1) * FastMath.cos(theta) / denom;        
+        r = FastMath.toDegrees(r);
+        final double x = r * FastMath.sin(phi);
+        final double y = -r * FastMath.cos(phi) / FastMath.cos(gamma);
         final double[] pos = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         return pos;
@@ -261,7 +262,7 @@ public class AZP extends AbstractZenithalProjection {
     
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, this.mu, NumericalUtility.round(Math.toDegrees(this.gamma)));
+        return String.format(DESCRIPTION, this.mu, NumericalUtility.round(FastMath.toDegrees(this.gamma)));
     }
 
     @Override

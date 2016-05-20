@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * In conic projections the sphere is thought to be projected onto
@@ -100,17 +101,17 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     protected AbstractConicProjection(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta_a,eta) = ({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
-        this.thetaA = Math.toRadians(theta_a);
-        this.eta = Math.toRadians(eta);        
+        this.thetaA = FastMath.toRadians(theta_a);
+        this.eta = FastMath.toRadians(eta);        
         this.theta1 = this.thetaA - this.eta;
         this.theta2 = this.thetaA + this.eta;
-        LOG.log(Level.FINEST, "(theta1,theta2)[deg]=({0},{1})", new Object[]{Math.toDegrees(this.theta1),Math.toDegrees(this.theta2)}); 
+        LOG.log(Level.FINEST, "(theta1,theta2)[deg]=({0},{1})", new Object[]{FastMath.toDegrees(this.theta1),FastMath.toDegrees(this.theta2)}); 
         checkParameters(theta1, theta2);
         setPhi0(DEFAULT_PHI0);
         setTheta0(this.thetaA);
         setPhip(computeDefaultValueForPhip());
-        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(this.thetaA)});
-        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));         
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{FastMath.toDegrees(DEFAULT_PHI0), FastMath.toDegrees(this.thetaA)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", FastMath.toDegrees(computeDefaultValueForPhip()));         
     }
     
     /**
@@ -157,7 +158,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * @return the projection plane coordinate along X
      */
     protected double computeX(final double phi, final double r_theta, final double c) {
-        return r_theta * Math.sin(c*phi);
+        return r_theta * FastMath.sin(c*phi);
     }
 
     /**
@@ -170,7 +171,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * @return the projection plane coordinate along Y
      */
     protected double computeY(final double phi, final double r_theta, final double c, final double y0) {
-        return -r_theta * Math.cos(c*phi) + y0;
+        return -r_theta * FastMath.cos(c*phi) + y0;
     }    
 
     @Override
@@ -222,7 +223,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
     @Override
     public boolean inside(final double lon, final double lat) {     
         final double angle = NumericalUtility.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-        LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
+        LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{FastMath.toDegrees(lon), FastMath.toDegrees(lat), angle});
         return NumericalUtility.equal(angle, HALF_PI) || angle <= HALF_PI;
     }   
     

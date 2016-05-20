@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Bonnes's equal area.
@@ -73,14 +74,14 @@ public class BON extends AbstractPolyConicProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         final double[] result;
         if (this.sfl == null) {
-            final double xr = Math.toRadians(x);
-            final double yr = Math.toRadians(y);
-            final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());            
-            final double r_theta = Math.signum(getTheta1())* Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+            final double xr = FastMath.toRadians(x);
+            final double yr = FastMath.toRadians(y);
+            final double y0 = getTheta1() + 1.0d / FastMath.tan(getTheta1());            
+            final double r_theta = FastMath.signum(getTheta1())* FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
             final double aphi = NumericalUtility.aatan2(xr / r_theta, (y0 - yr) / r_theta);
             
             final double theta = y0 - r_theta;
-            final double cos_theta = Math.cos(theta);
+            final double cos_theta = FastMath.cos(theta);
             final double phi;
             if (NumericalUtility.equal(cos_theta,0)) {
                 phi = 0;
@@ -92,26 +93,26 @@ public class BON extends AbstractPolyConicProjection {
         } else {
             result = this.sfl.project(x, y);
         }
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(result[0]),Math.toDegrees(result[1])});                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(result[0]),FastMath.toDegrees(result[1])});                                
         return result;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                        
         double[] result;
         if (sfl == null) {
-            final double y0 = getTheta1() + 1.0d / Math.tan(getTheta1());
+            final double y0 = getTheta1() + 1.0d / FastMath.tan(getTheta1());
             final double r_theta = y0 - theta;
             final double aphi;
             if (NumericalUtility.equal(r_theta, 0)) {
                 aphi=0;
             } else {
-                aphi = phi * Math.cos(theta) / r_theta;
+                aphi = phi * FastMath.cos(theta) / r_theta;
             }
-            final double x = r_theta * Math.sin(aphi);
-            final double y = -r_theta * Math.cos(aphi) + y0;
-            final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+            final double x = r_theta * FastMath.sin(aphi);
+            final double y = -r_theta * FastMath.cos(aphi) + y0;
+            final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
             result = coord;
         } else {
             result = sfl.projectInverse(phi, theta);

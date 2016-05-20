@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Conic orthomorphic.
@@ -63,39 +64,39 @@ public class COO extends AbstractConicProjection {
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
-        final double tan1 = Math.tan((HALF_PI - this.getTheta1()) * 0.5);
-        final double tan2 = Math.tan((HALF_PI - this.getTheta2()) * 0.5);
-        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? Math.sin(getTheta1()) : Math.log(Math.cos(getTheta2()) / Math.cos(getTheta1())) / Math.log(tan2 / tan1);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
+        final double tan1 = FastMath.tan((HALF_PI - this.getTheta1()) * 0.5);
+        final double tan2 = FastMath.tan((HALF_PI - this.getTheta2()) * 0.5);
+        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? FastMath.sin(getTheta1()) : FastMath.log(FastMath.cos(getTheta2()) / FastMath.cos(getTheta1())) / FastMath.log(tan2 / tan1);
         if (NumericalUtility.equal(c,0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). c must be != 0");
         }
-        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(getTheta2()) / (c * Math.pow(tan2, c)) : Math.cos(getTheta1()) / (c * Math.pow(tan1, c));
-        final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
-        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        final double psi = NumericalUtility.equal(tan1,0) ? FastMath.cos(getTheta2()) / (c * FastMath.pow(tan2, c)) : FastMath.cos(getTheta1()) / (c * FastMath.pow(tan1, c));
+        final double y0 = psi * FastMath.pow(FastMath.tan((HALF_PI - getThetaA()) * 0.5), c);
+        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);            
-        final double theta = HALF_PI - 2 * Math.atan(Math.pow(r_theta / psi, 1.0 / c));
+        final double theta = HALF_PI - 2 * FastMath.atan(FastMath.pow(r_theta / psi, 1.0 / c));
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
-        final double tan1 = Math.tan((HALF_PI - this.getTheta1()) * 0.5);
-        final double tan2 = Math.tan((HALF_PI - this.getTheta2()) * 0.5);
-        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? Math.sin(getTheta1()) : Math.log(Math.cos(getTheta2()) / Math.cos(getTheta1())) / Math.log(tan2 / tan1);
-        final double psi = NumericalUtility.equal(tan1,0) ? Math.cos(getTheta2()) / (c * Math.pow(tan2, c)) : Math.cos(getTheta1()) / (c * Math.pow(tan1, c));
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                        
+        final double tan1 = FastMath.tan((HALF_PI - this.getTheta1()) * 0.5);
+        final double tan2 = FastMath.tan((HALF_PI - this.getTheta2()) * 0.5);
+        final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? FastMath.sin(getTheta1()) : FastMath.log(FastMath.cos(getTheta2()) / FastMath.cos(getTheta1())) / FastMath.log(tan2 / tan1);
+        final double psi = NumericalUtility.equal(tan1,0) ? FastMath.cos(getTheta2()) / (c * FastMath.pow(tan2, c)) : FastMath.cos(getTheta1()) / (c * FastMath.pow(tan1, c));
         if (NumericalUtility.equal(psi,0)) {
             throw new BadProjectionParameterException(this,"(theta_a, eta) = (" + getThetaA() + ", " + getEta()+")");
         }
-        final double y0 = psi * Math.pow(Math.tan((HALF_PI - getThetaA()) * 0.5), c);
-        final double r_theta = psi * Math.pow(Math.tan((HALF_PI - theta) * 0.5), c);       
+        final double y0 = psi * FastMath.pow(FastMath.tan((HALF_PI - getThetaA()) * 0.5), c);
+        final double r_theta = psi * FastMath.pow(FastMath.tan((HALF_PI - theta) * 0.5), c);       
         final double x = computeX(phi, r_theta, c);
         final double y = computeY(phi, r_theta, c, y0);
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                
         return coord;
     }
@@ -107,12 +108,12 @@ public class COO extends AbstractConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(FastMath.toDegrees(this.getThetaA())), NumericalUtility.round(FastMath.toDegrees(this.getEta())));
     }
         
     @Override
     public boolean inside(final double lon, final double lat) {
-        LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{Math.toDegrees(lon),Math.toDegrees(lat),super.inside(lon, lat) && !NumericalUtility.equal(lat, -HALF_PI)});
+        LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{FastMath.toDegrees(lon),FastMath.toDegrees(lat),super.inside(lon, lat) && !NumericalUtility.equal(lat, -HALF_PI)});
         return super.inside(lon, lat) && !NumericalUtility.equal(lat, -HALF_PI);
     }
 

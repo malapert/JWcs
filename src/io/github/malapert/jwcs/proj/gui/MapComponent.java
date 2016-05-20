@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Map is a JComponent that draws a set of MapLine objects.
@@ -93,7 +94,7 @@ public class MapComponent extends JComponent {
         final double horScale = dim.getWidth() / ext.getWidth();
         final double verScale = dim.getHeight() / ext.getHeight();
         final double borderScale = 1 / (1 + BORDER_PERCENTAGE * 2 / 100);
-        return Math.min(horScale, verScale) * borderScale;
+        return FastMath.min(horScale, verScale) * borderScale;
     }
 
     /**

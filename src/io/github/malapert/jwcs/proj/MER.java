@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Mercator.
@@ -64,32 +65,32 @@ public class MER extends AbstractCylindricalProjection {
     @Override
     protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double phi = xr;
-        final double theta = 2*Math.atan(Math.exp(yr)) - HALF_PI;
+        final double theta = 2*FastMath.atan(FastMath.exp(yr)) - HALF_PI;
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException  {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                
         final double x = phi;
-        if (NumericalUtility.equal(Math.abs(theta), HALF_PI)) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));            
+        if (NumericalUtility.equal(FastMath.abs(theta), HALF_PI)) {
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+FastMath.toDegrees(theta));            
         }
         final double angle = (HALF_PI + theta) * 0.5d;
-        if(NumericalUtility.equal(Math.abs(angle), HALF_PI)) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));        
+        if(NumericalUtility.equal(FastMath.abs(angle), HALF_PI)) {
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+FastMath.toDegrees(theta));        
         }
-        final double d = Math.tan(angle);
+        final double d = FastMath.tan(angle);
         if (d<0 || NumericalUtility.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));       
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+FastMath.toDegrees(theta));       
         }
-        final double y = Math.log(d);
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double y = FastMath.log(d);
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                        
         return coord;        
     }
@@ -106,6 +107,6 @@ public class MER extends AbstractCylindricalProjection {
         
     @Override
     public boolean inside(final double lon, final double lat) {
-        return super.inside(lon, lat) && !NumericalUtility.equal(Math.abs(lat), HALF_PI);   
+        return super.inside(lon, lat) && !NumericalUtility.equal(FastMath.abs(lat), HALF_PI);   
     }
 }

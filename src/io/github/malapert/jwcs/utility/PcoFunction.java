@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.utility;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Pco function to solve.
@@ -58,7 +59,7 @@ public class PcoFunction implements UnivariateFunction {
     
     @Override
     public double value(final double theta) {
-        final double tanthe = Math.tan(theta);
+        final double tanthe = FastMath.tan(theta);
         final double cothe = 1/tanthe;
         final double xx = getX()*getX();
         final double ymthe = getY()- theta;        

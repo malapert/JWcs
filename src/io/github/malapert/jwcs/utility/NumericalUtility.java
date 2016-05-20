@@ -26,6 +26,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.BisectionSolver;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * NumericalUtility class.
@@ -52,12 +53,12 @@ public final class NumericalUtility {
     /**
      * Half PI value.
      */
-    public final static double HALF_PI = Math.PI * 0.5d;
+    public final static double HALF_PI = FastMath.PI * 0.5d;
 
     /**
      * Two Pi value.
      */
-    public final static double TWO_PI = Math.PI * 2.0d;
+    public final static double TWO_PI = FastMath.PI * 2.0d;
 
     /**
      * Compares two doubles.
@@ -68,7 +69,7 @@ public final class NumericalUtility {
      * @return True when <code>val1</code> and <code>val2</code> are equals.
      */
     public static boolean equal(final double val1, final double val2, final double precision) {
-        return Math.abs(val2 - val1) <= precision;
+        return FastMath.abs(val2 - val1) <= precision;
     }
 
     /**
@@ -79,9 +80,9 @@ public final class NumericalUtility {
      */
     public static double[] radec2xyz(final double pos[]) {
         final double[] xyz = new double[3];
-        xyz[0] = Math.cos(pos[1]) * Math.cos(pos[0]);
-        xyz[1] = Math.cos(pos[1]) * Math.sin(pos[0]);
-        xyz[2] = Math.sin(pos[1]);
+        xyz[0] = FastMath.cos(pos[1]) * FastMath.cos(pos[0]);
+        xyz[1] = FastMath.cos(pos[1]) * FastMath.sin(pos[0]);
+        xyz[2] = FastMath.sin(pos[1]);
         return xyz;
     }
 
@@ -92,7 +93,7 @@ public final class NumericalUtility {
      * @return the norm of the position.
      */
     public static double normVector(final double[] pos) {
-        return Math.hypot(pos[0], pos[1]);
+        return FastMath.hypot(pos[0], pos[1]);
     }
 
     /**
@@ -134,7 +135,7 @@ public final class NumericalUtility {
      * that corresponds to the point (x, y) in Cartesian coordinates.
      */
     public static double aatan2(final double n, final double d, final double defaultValue) {
-        return Math.abs(n) < DOUBLE_TOLERANCE && Math.abs(d) < DOUBLE_TOLERANCE ? defaultValue : Math.atan2(n, d);
+        return FastMath.abs(n) < DOUBLE_TOLERANCE && FastMath.abs(d) < DOUBLE_TOLERANCE ? defaultValue : FastMath.atan2(n, d);
     }
 
     /**
@@ -154,11 +155,11 @@ public final class NumericalUtility {
      */
     public static double aasin(final double v) {
         if (equal(v, 1, DOUBLE_TOLERANCE)) {
-            return Math.PI / 2;
+            return FastMath.PI / 2;
         } else if (equal(v, -1, DOUBLE_TOLERANCE)) {
-            return -Math.PI / 2;
+            return -FastMath.PI / 2;
         } else {
-            return Math.asin(v);
+            return FastMath.asin(v);
         }
     }
 
@@ -169,10 +170,10 @@ public final class NumericalUtility {
      * @return the value whose arc cosine is to be returned
      */
     public static double aacos(final double v) {
-        if (Math.abs(v) > 1.) {
-            return v < 0.0 ? Math.PI : 0.0;
+        if (FastMath.abs(v) > 1.) {
+            return v < 0.0 ? FastMath.PI : 0.0;
         }
-        return Math.acos(v);
+        return FastMath.acos(v);
     }
 
     /**
@@ -186,18 +187,18 @@ public final class NumericalUtility {
         if (Double.isInfinite(resut) || Double.isNaN(resut)) {
             throw new JWcsError("Infinite latitude");
         }
-        if (Math.abs(resut - HALF_PI) < DOUBLE_TOLERANCE) {
+        if (FastMath.abs(resut - HALF_PI) < DOUBLE_TOLERANCE) {
             return HALF_PI;
         }
-        if (Math.abs(resut + HALF_PI) < DOUBLE_TOLERANCE) {
+        if (FastMath.abs(resut + HALF_PI) < DOUBLE_TOLERANCE) {
             return -HALF_PI;
         }
 
-        if (resut > Math.PI) {
+        if (resut > FastMath.PI) {
             resut -= TWO_PI;
         }
 
-        if (resut < -Math.PI) {
+        if (resut < -FastMath.PI) {
             resut += TWO_PI;
         }
         return resut;
@@ -218,10 +219,10 @@ public final class NumericalUtility {
         // avoid instable computations with very small numbers: if the
         // angle is very close to the graticule boundary, return +/-PI.
         // Bernhard Jenny, May 25 2010.
-        if (Math.abs(result - 0) < DOUBLE_TOLERANCE) {
+        if (FastMath.abs(result - 0) < DOUBLE_TOLERANCE) {
             return 0;
         }
-        if (Math.abs(result - TWO_PI) < DOUBLE_TOLERANCE) {
+        if (FastMath.abs(result - TWO_PI) < DOUBLE_TOLERANCE) {
             return TWO_PI;
         }
 
@@ -311,11 +312,11 @@ public final class NumericalUtility {
      * @return A 3x3 matrix representing the rotation about angle around X axis.
      */
     public static RealMatrix rotX(final double angle) {
-        final double angleRadians = Math.toRadians(angle);
+        final double angleRadians = FastMath.toRadians(angle);
         final double[][] array = {
             {1, 0, 0},
-            {0, Math.cos(angleRadians), Math.sin(angleRadians)},
-            {0, -Math.sin(angleRadians), Math.cos(angleRadians)}
+            {0, FastMath.cos(angleRadians), FastMath.sin(angleRadians)},
+            {0, -FastMath.sin(angleRadians), FastMath.cos(angleRadians)}
         };
         return createRealMatrix(array);
     }
@@ -339,11 +340,11 @@ public final class NumericalUtility {
      * @return A 3x3 matrix representing the rotation about angle around Y axis.
      */
     public static RealMatrix rotY(final double angle) {
-        final double angleRadians = Math.toRadians(angle);
+        final double angleRadians = FastMath.toRadians(angle);
         final double[][] array = {
-            {Math.cos(angleRadians), 0, -Math.sin(angleRadians)},
+            {FastMath.cos(angleRadians), 0, -FastMath.sin(angleRadians)},
             {0, 1, 0},
-            {Math.sin(angleRadians), 0, Math.cos(angleRadians)}
+            {FastMath.sin(angleRadians), 0, FastMath.cos(angleRadians)}
         };
         return createRealMatrix(array);
     }
@@ -355,10 +356,10 @@ public final class NumericalUtility {
      * @return A 3x3 matrix representing the rotation about angle around Z axis.
      */
     public static RealMatrix rotZ(final double angle) {
-        final double angleRadians = Math.toRadians(angle);
+        final double angleRadians = FastMath.toRadians(angle);
         final double[][] array = {
-            {Math.cos(angleRadians), Math.sin(angleRadians), 0},
-            {-Math.sin(angleRadians), Math.cos(angleRadians), 0},
+            {FastMath.cos(angleRadians), FastMath.sin(angleRadians), 0},
+            {-FastMath.sin(angleRadians), FastMath.cos(angleRadians), 0},
             {0, 0, 1}
         };
         return createRealMatrix(array);
@@ -420,8 +421,8 @@ public final class NumericalUtility {
         final boolean isTheta2Valid = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
         final double theta;
         if (isTheta1Valid && isTheta2Valid) {
-            final double diffTheta1Pole = Math.abs(theta1 - HALF_PI);
-            final double diffTheta2Pole = Math.abs(theta2 - HALF_PI);
+            final double diffTheta1Pole = FastMath.abs(theta1 - HALF_PI);
+            final double diffTheta2Pole = FastMath.abs(theta2 - HALF_PI);
             theta = diffTheta1Pole < diffTheta2Pole ? theta1 : theta2;
         } else if (isTheta1Valid) {
             theta = theta1;

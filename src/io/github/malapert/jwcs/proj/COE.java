@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Conic equal area.
@@ -85,38 +86,38 @@ public class COE extends AbstractConicProjection {
     public COE(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);  
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                                
-        gamma = Math.sin(getTheta1()) + Math.sin(getTheta2());
+        gamma = FastMath.sin(getTheta1()) + FastMath.sin(getTheta2());
         c = gamma * 0.5;
         if (NumericalUtility.equal(c, 0)) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). sin(theta1) + sin(theta2) must be != 0");
         }         
-        y0 = Math.sqrt(1.0d + Math.sin(getTheta1()) * Math.sin(getTheta2()) - gamma * Math.sin((getTheta1()+getTheta2())*0.5)) / c;
+        y0 = FastMath.sqrt(1.0d + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) - gamma * FastMath.sin((getTheta1()+getTheta2())*0.5)) / c;
     }
 
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);                              
-        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);                              
+        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);                   
-        final double w = 1.0d / gamma + Math.sin(getTheta1()) * Math.sin(getTheta2()) / gamma - gamma * Math.pow(r_theta * 0.5, 2);
+        final double w = 1.0d / gamma + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) / gamma - gamma * FastMath.pow(r_theta * 0.5, 2);
         final double theta = NumericalUtility.aasin(w);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this,"(x,y) = ("+x+","+y+")");
         }        
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                
-        final double r_theta = Math.sqrt(1.0d + Math.sin(getTheta1()) * Math.sin(getTheta2()) - gamma * Math.sin(theta)) / c;      
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                
+        final double r_theta = FastMath.sqrt(1.0d + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) - gamma * FastMath.sin(theta)) / c;      
         final double x = computeX(phi, r_theta, c);
         final double y = computeY(phi, r_theta, c, y0);
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
         return coord;
     }
@@ -128,7 +129,7 @@ public class COE extends AbstractConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(FastMath.toDegrees(this.getThetaA())), NumericalUtility.round(FastMath.toDegrees(this.getEta())));
     }   
     
     @Override

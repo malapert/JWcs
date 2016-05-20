@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Polyconic projection.
@@ -80,16 +81,16 @@ public abstract class AbstractPolyConicProjection extends AbstractProjection {
         LOG.log(Level.FINER, "INPUTS[deg] (crval1,crval2,theta1) = ({0},{1},{2})", new Object[]{crval1, crval2, theta1});
 
         if (NumericalUtility.equal(theta1, 0)) {
-            this.theta1 = Math.toRadians(45);
+            this.theta1 = FastMath.toRadians(45);
             LOG.log(Level.WARNING,"theta1=0 not allowed, reseting to 45");
         } else {
-            this.theta1 = Math.toRadians(theta1);
+            this.theta1 = FastMath.toRadians(theta1);
         }
         setPhi0(DEFAULT_PHI0);
         setTheta0(DEFAULT_THETA0);
         setPhip(computeDefaultValueForPhip());
-        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(DEFAULT_THETA0)});
-        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{FastMath.toDegrees(DEFAULT_PHI0), FastMath.toDegrees(DEFAULT_THETA0)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", FastMath.toDegrees(computeDefaultValueForPhip()));
     }
 
     @Override
@@ -135,7 +136,7 @@ public abstract class AbstractPolyConicProjection extends AbstractProjection {
     @Override
     public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
         LOG.log(Level.FINER, "(pos1,pos2)=({0},{1}) ({2},{3})", new Object[]{pos1[0],pos1[1],pos2[0],pos2[1]});
-        return Math.abs(pos1[0] - pos2[0]) < 50;
+        return FastMath.abs(pos1[0] - pos2[0]) < 50;
     }
     
     @Override

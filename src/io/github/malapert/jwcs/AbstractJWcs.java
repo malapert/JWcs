@@ -55,6 +55,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * The FITS "World Coordinate System" (WCS) standard defines keywords and usage
@@ -663,11 +664,11 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * @return the cd matrix as array
      */
     protected final static double[][] computeCdFromCdelt(final double[] cdelt, final double crota) {
-        final double cos0 = Math.cos(Math.toRadians(crota));
-        final double sin0 = Math.sin(Math.toRadians(crota));
+        final double cos0 = FastMath.cos(FastMath.toRadians(crota));
+        final double sin0 = FastMath.sin(FastMath.toRadians(crota));
         final double cd11 = cdelt[0] * cos0;
-        final double cd12 = Math.abs(cdelt[1]) * Math.signum(cdelt[0]) * sin0;
-        final double cd21 = -Math.abs(cdelt[0]) * Math.signum(cdelt[1]) * sin0;
+        final double cd12 = FastMath.abs(cdelt[1]) * FastMath.signum(cdelt[0]) * sin0;
+        final double cd21 = -FastMath.abs(cdelt[0]) * FastMath.signum(cdelt[1]) * sin0;
         final double cd22 = cdelt[1] * cos0;
         final double[][] array = {
             {cd11, cd12},
@@ -869,7 +870,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
                     cx = 1 / 3600000;
                     break;
                 case "rad":
-                    cx = 180 / Math.PI;
+                    cx = 180 / FastMath.PI;
                     break;
                 default:
                     cx = 1;
@@ -1127,7 +1128,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     private void setNativeLongitudeOfCelestialPole(final AbstractProjection projection) {
         if (!Double.isNaN(lonpole())) {
             LOG.log(Level.INFO, "Sets phip to {0}", lonpole());
-            projection.setPhip(Math.toRadians(lonpole()));
+            projection.setPhip(FastMath.toRadians(lonpole()));
         }
     }
 
@@ -1139,7 +1140,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     private void setNativeLatitudeOfCelestialPole(final AbstractProjection projection) {
         if (!Double.isNaN(latpole())) {
             LOG.log(Level.INFO, "Sets thetap to {0}", latpole());
-            projection.setThetap(Math.toRadians(latpole()));
+            projection.setThetap(FastMath.toRadians(latpole()));
         }
     }
 
@@ -1225,7 +1226,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      */
     @Override
     public boolean inside(final double lon, final double lat) {
-        return this.getProj().inside(Math.toRadians(lon), Math.toRadians(lat));
+        return this.getProj().inside(FastMath.toRadians(lon), FastMath.toRadians(lat));
     }
 
     /**
@@ -1259,7 +1260,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     @Override
     public double[] wcs2pix(final double longitude, final double latitude) throws ProjectionException {
         checkLongitudeLatitude(longitude, latitude);
-        final double[] coordVal = this.getProj().wcs2projectionPlane(Math.toRadians(longitude), Math.toRadians(latitude));
+        final double[] coordVal = this.getProj().wcs2projectionPlane(FastMath.toRadians(longitude), FastMath.toRadians(latitude));
         final double[][] coord = {
             {coordVal[0], coordVal[1]}
         };

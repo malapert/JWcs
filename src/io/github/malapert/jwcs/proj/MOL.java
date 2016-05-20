@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.utility.GammaFunction;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Mollweide's.
@@ -88,14 +89,14 @@ public class MOL extends AbstractCylindricalProjection {
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);        
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);        
         final double[] phis = computePhiAndS(xr, yr);
         final double phi = phis[0];
         final double s = phis[1];
         final double theta = computeTheta(xr, yr, s);
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         return pos;
     }
 
@@ -111,22 +112,22 @@ public class MOL extends AbstractCylindricalProjection {
      * @throws PixelBeyondProjectionException Solution not defined
      */
     private double computeTheta(final double xr, final double yr, final double s) throws PixelBeyondProjectionException {
-        double z = yr / Math.sqrt(2);
-        if (NumericalUtility.equal(Math.abs(z), 1)) {
-            z = (z < 0.0 ? -1.0 : 1.0) + s * yr / Math.PI;
-        } else if (Math.abs(1) > 1) {
-            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + Math.toDegrees(yr));
+        double z = yr / FastMath.sqrt(2);
+        if (NumericalUtility.equal(FastMath.abs(z), 1)) {
+            z = (z < 0.0 ? -1.0 : 1.0) + s * yr / FastMath.PI;
+        } else if (FastMath.abs(1) > 1) {
+            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for y: " + FastMath.toDegrees(yr));
         } else {
-            z = NumericalUtility.aasin(z) / HALF_PI + s * yr / Math.PI;
+            z = NumericalUtility.aasin(z) / HALF_PI + s * yr / FastMath.PI;
         }
-        if (NumericalUtility.equal(Math.abs(z), 1)) {
+        if (NumericalUtility.equal(FastMath.abs(z), 1)) {
             z = z < 0.0 ? -1.0 : 1.0;
-        } else if (Math.abs(1) > 1) {
-            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + Math.toDegrees(xr) + ", " + Math.toDegrees(yr));
+        } else if (FastMath.abs(1) > 1) {
+            throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x,y: " + FastMath.toDegrees(xr) + ", " + FastMath.toDegrees(yr));
         }
         final double theta = NumericalUtility.aasin(z);
         if (Double.isNaN(theta)) {
-            throw new PixelBeyondProjectionException(this, "(x,y)=(" + Math.toDegrees(xr) + "," + Math.toDegrees(yr) + ")");
+            throw new PixelBeyondProjectionException(this, "(x,y)=(" + FastMath.toDegrees(xr) + "," + FastMath.toDegrees(yr) + ")");
         }
         return theta;
     }
@@ -143,20 +144,20 @@ public class MOL extends AbstractCylindricalProjection {
      */
     private double[] computePhiAndS(final double xr, final double yr) throws PixelBeyondProjectionException {
         final double tol = 1.0e-12;        
-        double s = 2 - Math.pow(yr, 2);
+        double s = 2 - FastMath.pow(yr, 2);
         final double phi;
         if (s <= tol) {
             if (s < -tol) {
                 throw new PixelBeyondProjectionException(this,
-                        "MOL: Solution not defined for y: " + Math.toDegrees(yr));
+                        "MOL: Solution not defined for y: " + FastMath.toDegrees(yr));
             }
             s = 0.0;
-            if (Math.abs(xr) > tol) {
-                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x: " + Math.toDegrees(xr));
+            if (FastMath.abs(xr) > tol) {
+                throw new PixelBeyondProjectionException(this, "MOL: Solution not defined for x: " + FastMath.toDegrees(xr));
             }
             phi = 0;
         } else {
-            s = Math.sqrt(s);
+            s = FastMath.sqrt(s);
             phi = HALF_PI * xr / s;
         }
         return new double[]{phi, s};
@@ -164,10 +165,10 @@ public class MOL extends AbstractCylindricalProjection {
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         final double gamma = computeGamma(theta);
-        final double x = Math.toDegrees((Math.sqrt(2.0d) / HALF_PI) * phi * Math.cos(gamma));
-        final double y = Math.toDegrees(Math.sqrt(2.0d) * Math.sin(gamma));
+        final double x = FastMath.toDegrees((FastMath.sqrt(2.0d) / HALF_PI) * phi * FastMath.cos(gamma));
+        final double y = FastMath.toDegrees(FastMath.sqrt(2.0d) * FastMath.sin(gamma));
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         return coord;
@@ -186,7 +187,7 @@ public class MOL extends AbstractCylindricalProjection {
      */
     private double computeGamma(final double theta) {
         this.gammaFunction.setTheta(theta);
-        return NumericalUtility.computeFunctionSolution(this.getMaxIter(), this.gammaFunction, -Math.PI, Math.PI) * 0.5;
+        return NumericalUtility.computeFunctionSolution(this.getMaxIter(), this.gammaFunction, -FastMath.PI, FastMath.PI) * 0.5;
     }
 
     /**

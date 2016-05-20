@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Zenithal equal-area.
@@ -55,8 +56,8 @@ public class ZEA extends AbstractZenithalProjection {
     @Override
     public double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double r_theta = computeRadius(xr, yr);
         final double phi = computePhi(xr, yr, r_theta);        
         final double theta;
@@ -66,17 +67,17 @@ public class ZEA extends AbstractZenithalProjection {
 	    theta = HALF_PI - 2*NumericalUtility.aasin(r_theta * 0.5);
 	}        
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                                
         return pos;      
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                                        
-        final double r = 2 * Math.sin((HALF_PI-theta)*0.5d);
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                                        
+        final double r = 2 * FastMath.sin((HALF_PI-theta)*0.5d);
         final double x = computeX(r, phi);
         final double y = computeY(r, phi);
-        final double[] pos = {Math.toDegrees(x),Math.toDegrees(y)};
+        final double[] pos = {FastMath.toDegrees(x),FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{pos[0],pos[1]});                                                                                                                                                        
         return pos;
     }

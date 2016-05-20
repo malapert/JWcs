@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Cylindrical perspective.
@@ -118,26 +119,26 @@ public class CYP extends AbstractCylindricalProjection {
     @Override
     public double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                        
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double phi = xr / getLambda();        
         final double eta = yr / (getMu() + getLambda());
-        final double theta = NumericalUtility.aatan2(eta, 1) + NumericalUtility.aasin(getMu() * eta / Math.sqrt(Math.pow(eta, 2) + 1));       
+        final double theta = NumericalUtility.aatan2(eta, 1) + NumericalUtility.aasin(getMu() * eta / FastMath.sqrt(FastMath.pow(eta, 2) + 1));       
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                        
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                        
         final double x = getLambda() * phi;
-        final double ctheta = Math.cos(theta);
+        final double ctheta = FastMath.cos(theta);
         if(NumericalUtility.equal(getMu(), -ctheta)) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = "+Math.toDegrees(theta));
+            throw new PixelBeyondProjectionException(this,"theta[deg] = "+FastMath.toDegrees(theta));
         }
-        final double y = (getMu()+getLambda())/(getMu() + ctheta) * Math.sin(theta);
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double y = (getMu()+getLambda())/(getMu() + ctheta) * FastMath.sin(theta);
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                
         return coord;
     }

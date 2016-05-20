@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Zenithal or azimuthal projections all map the sphere directly onto a plane.
@@ -89,8 +90,8 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
         setTheta0(DEFAULT_THETA0);
         setPhip(computeDefaultValueForPhip());
         LOG.log(Level.FINER, "INPUTS[deg]: (crval1,crval2)=({0},{1})", new Object[]{crval1, crval2});
-        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{Math.toDegrees(DEFAULT_PHI0), Math.toDegrees(DEFAULT_THETA0)});
-        LOG.log(Level.FINEST, "phip[deg]={0}", Math.toDegrees(computeDefaultValueForPhip()));
+        LOG.log(Level.FINEST, "(phi0,theta0)[DEG]=({0},{1})", new Object[]{FastMath.toDegrees(DEFAULT_PHI0), FastMath.toDegrees(DEFAULT_THETA0)});
+        LOG.log(Level.FINEST, "phip[deg]={0}", FastMath.toDegrees(computeDefaultValueForPhip()));
 
     }
 
@@ -126,7 +127,7 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
      * @return the radius
      */
     protected double computeRadius(final double x, final double y) {
-        return Math.hypot(x, y);
+        return FastMath.hypot(x, y);
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
      * @return the projection plane coordinate along X
      */
     protected double computeX(final double radius, final double phi) {
-        return radius * Math.sin(phi);
+        return radius * FastMath.sin(phi);
     }
 
     /**
@@ -146,7 +147,7 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
      * @return the projection plane coordinate along Y
      */    
     protected double computeY(final double radius, final double phi) {
-        return -radius * Math.cos(phi);
+        return -radius * FastMath.cos(phi);
     }
 
     /**
@@ -168,7 +169,7 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
     @Override
     public boolean inside(final double lon, final double lat) {
         final double angle = NumericalUtility.distAngle(new double[]{getCrval1(), getCrval2()}, new double[]{lon, lat});
-        LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{Math.toDegrees(lon), Math.toDegrees(lat), angle});
+        LOG.log(Level.FINER, "(lont,lat,distAngle)[deg] = ({0},{1}) {2}", new Object[]{FastMath.toDegrees(lon), FastMath.toDegrees(lat), angle});
         return NumericalUtility.equal(angle, HALF_PI) || angle <= HALF_PI;
     }
 

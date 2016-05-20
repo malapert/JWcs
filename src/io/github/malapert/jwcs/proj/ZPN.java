@@ -23,6 +23,7 @@ import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.Arrays;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Zenithal polynomial.
@@ -181,7 +182,7 @@ public final class ZPN extends AbstractZenithalProjection {
      */
     private double polynomialSolution(final Object f) {
         final double[] coeff = NumericalUtility.getPolynomialCoefficients(f);
-        final double result = coeff[0] > 0 ? 0 : NumericalUtility.computePolynomialSolution(this.getMaxIter(), f, 0, Math.PI);
+        final double result = coeff[0] > 0 ? 0 : NumericalUtility.computePolynomialSolution(this.getMaxIter(), f, 0, FastMath.PI);
         return result;
     }
 
@@ -213,8 +214,8 @@ public final class ZPN extends AbstractZenithalProjection {
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         try {
-            final double xr = Math.toRadians(x);
-            final double yr = Math.toRadians(y);
+            final double xr = FastMath.toRadians(x);
+            final double yr = FastMath.toRadians(y);
             final double r_theta = computeRadius(xr, yr);
             final double[] coeffPolynomial = getPv();
             coeffPolynomial[0] = coeffPolynomial[0] - r_theta;
@@ -222,7 +223,7 @@ public final class ZPN extends AbstractZenithalProjection {
             final double phi = computePhi(xr, yr, r_theta);
             final double theta = HALF_PI - computeSolution(r_theta, polynomialFunction);
             final double[] pos = {phi, theta};
-            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
+            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
             return pos;
         } catch (Exception ex) {
             throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
@@ -231,8 +232,8 @@ public final class ZPN extends AbstractZenithalProjection {
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
-        final double r_theta = Math.toDegrees(polyEval(HALF_PI - theta, getPv()));
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
+        final double r_theta = FastMath.toDegrees(polyEval(HALF_PI - theta, getPv()));
         final double x = computeX(r_theta, phi);
         final double y = computeY(r_theta, phi);
         final double[] coord = {x, y};

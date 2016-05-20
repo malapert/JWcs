@@ -24,6 +24,7 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Slant zenithal perspective.
@@ -124,11 +125,11 @@ public class SZP extends AbstractZenithalProjection {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,phic,thetac)=({0},{1},{2},{3},{4})", new Object[]{crval1,crval2,mu,phic,thetac});                                                                                                                                                
         this.mu = mu;
-        this.thetac = Math.toRadians(thetac);
-        this.phic = Math.toRadians(phic);
-        this.xp = -this.mu * Math.cos(this.thetac) * Math.sin(this.phic);
-        this.yp = this.mu * Math.cos(this.thetac) * Math.cos(this.phic);
-        this.zp = this.mu * Math.sin(this.thetac) + 1;        
+        this.thetac = FastMath.toRadians(thetac);
+        this.phic = FastMath.toRadians(phic);
+        this.xp = -this.mu * FastMath.cos(this.thetac) * FastMath.sin(this.phic);
+        this.yp = this.mu * FastMath.cos(this.thetac) * FastMath.cos(this.phic);
+        this.zp = this.mu * FastMath.sin(this.thetac) + 1;        
         check();        
     }
 
@@ -150,8 +151,8 @@ public class SZP extends AbstractZenithalProjection {
     @Override
     public double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);        
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);        
         final double X = xr;
         final double Y = yr;
         final double X1 = (X - xp) / zp;
@@ -166,22 +167,22 @@ public class SZP extends AbstractZenithalProjection {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
                     + ", " + y + ")");
         }
-        final double phi = computePhi(X - X1 * (1 - Math.sin(theta)), Y - Y1 * (1 - Math.sin(theta)), 1);
+        final double phi = computePhi(X - X1 * (1 - FastMath.sin(theta)), Y - Y1 * (1 - FastMath.sin(theta)), 1);
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                                                                                        
-        final double denom = zp - (1 - Math.sin(theta));
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                        
+        final double denom = zp - (1 - FastMath.sin(theta));
         if (NumericalUtility.equal(denom, 0)) {
-            throw new PixelBeyondProjectionException(this, "theta = " + Math.toDegrees(theta));
+            throw new PixelBeyondProjectionException(this, "theta = " + FastMath.toDegrees(theta));
         }
-        final double x = (zp * Math.cos(theta) * Math.sin(phi) - xp * (1 - Math.sin(theta)))/denom;
-        final double y = -(zp * Math.cos(theta) * Math.cos(phi) + yp * (1 - Math.sin(theta)))/denom;
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double x = (zp * FastMath.cos(theta) * FastMath.sin(phi) - xp * (1 - FastMath.sin(theta)))/denom;
+        final double y = -(zp * FastMath.cos(theta) * FastMath.cos(phi) + yp * (1 - FastMath.sin(theta)))/denom;
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                        
         return coord;
     }  
@@ -193,7 +194,7 @@ public class SZP extends AbstractZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(Math.toDegrees(this.phic)), NumericalUtility.round(Math.toDegrees(this.thetac)));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(FastMath.toDegrees(this.phic)), NumericalUtility.round(FastMath.toDegrees(this.thetac)));
     }
     
     @Override

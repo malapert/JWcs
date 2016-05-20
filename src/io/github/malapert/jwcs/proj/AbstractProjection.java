@@ -23,6 +23,7 @@ import static io.github.malapert.jwcs.utility.NumericalUtility.TWO_PI;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Conversion of intermediate world coordinates (or projection plane
@@ -65,7 +66,7 @@ public abstract class AbstractProjection {
      * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
      * &lt; \u03B8<sub>0</sub>.
      */
-    protected final static double LONPOLE_PI = Math.PI;
+    protected final static double LONPOLE_PI = FastMath.PI;
 
     /**
      * Native longitude in radians of the celestial pole for \u03B4<sub>0</sub>
@@ -103,10 +104,10 @@ public abstract class AbstractProjection {
      * @param crval2 Celestial latitude (\u03B4<sub>0</sub>) in degrees of the ﬁducial point
      */
     protected AbstractProjection(final double crval1, final double crval2) {
-        this.crval1 = Math.toRadians(crval1);
-        this.crval2 = Math.toRadians(crval2);
+        this.crval1 = FastMath.toRadians(crval1);
+        this.crval2 = FastMath.toRadians(crval2);
         LOG.log(Level.FINER, "INPUTS: crval1[deg]={0} crval2[deg]={1}", new Object[]{crval1,crval2});        
-        LOG.log(Level.FINEST, "Theta_p[deg]={0}", new Object[]{Math.toDegrees(DEFAULT_THETAP)});
+        LOG.log(Level.FINEST, "Theta_p[deg]={0}", new Object[]{FastMath.toDegrees(DEFAULT_THETAP)});
         setThetap(DEFAULT_THETAP);
     }
 
@@ -214,37 +215,37 @@ public abstract class AbstractProjection {
     protected double[] computeCelestialSpherical(final double phi, final double theta) {
         double ra;
         double dec;
-        LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});        
+        LOG.log(Level.FINER, "INPUTS[deg]: (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});        
         
         final double alphap = getCoordNativePole()[0];
         final double deltap = getCoordNativePole()[1];
-        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(alphap),Math.toDegrees(deltap)});        
+        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{FastMath.toDegrees(alphap),FastMath.toDegrees(deltap)});        
         
         if (NumericalUtility.equal(deltap, HALF_PI)) {
-            ra = alphap + phi - getPhip() - Math.PI;
+            ra = alphap + phi - getPhip() - FastMath.PI;
             dec = theta;
         } else if (NumericalUtility.equal(deltap, -HALF_PI)) {
             ra = alphap - phi + getPhip();
             dec = -theta;
         } else {            
-            ra = alphap + NumericalUtility.aatan2(-Math.cos(theta) * Math.sin(phi - phip),
-                    Math.sin(theta) * Math.cos(deltap)
-                    - Math.cos(theta) * Math.sin(deltap)
-                    * Math.cos(phi - getPhip()),0);            
+            ra = alphap + NumericalUtility.aatan2(-FastMath.cos(theta) * FastMath.sin(phi - phip),
+                    FastMath.sin(theta) * FastMath.cos(deltap)
+                    - FastMath.cos(theta) * FastMath.sin(deltap)
+                    * FastMath.cos(phi - getPhip()),0);            
 
-            dec = NumericalUtility.aasin(Math.sin(theta) * Math.sin(deltap)
-                    + Math.cos(theta) * Math.cos(deltap)
-                    * Math.cos(phi - getPhip()));
+            dec = NumericalUtility.aasin(FastMath.sin(theta) * FastMath.sin(deltap)
+                    + FastMath.cos(theta) * FastMath.cos(deltap)
+                    * FastMath.cos(phi - getPhip()));
         }
         // convert ra, dec to degrees
-        ra = Math.toDegrees(ra);
-        dec = Math.toDegrees(dec);
+        ra = FastMath.toDegrees(ra);
+        dec = FastMath.toDegrees(dec);
         if (ra < 0) {
             ra += 360;
         }
         
         final double[] pos = {ra, dec};
-        LOG.log(Level.FINER, "OUTPUTS[deg] pos=({0},{1})", new Object[]{Math.toDegrees(pos[0]),Math.toDegrees(pos[1])});
+        LOG.log(Level.FINER, "OUTPUTS[deg] pos=({0},{1})", new Object[]{FastMath.toDegrees(pos[0]),FastMath.toDegrees(pos[1])});
         return pos;
     }
 
@@ -262,31 +263,31 @@ public abstract class AbstractProjection {
      * @return Returns native longitude and latitude in radians
      */
     protected double[] computeNativeSpherical(final double ra, final double dec) {
-        LOG.log(Level.FINER, "INPUTS[deg]: (ra,dec)=({0},{1})", new Object[]{Math.toDegrees(ra),Math.toDegrees(dec)});        
+        LOG.log(Level.FINER, "INPUTS[deg]: (ra,dec)=({0},{1})", new Object[]{FastMath.toDegrees(ra),FastMath.toDegrees(dec)});        
 
         final double ra_p = getCoordNativePole()[0];
         final double dec_p = getCoordNativePole()[1];
-        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{Math.toDegrees(ra_p),Math.toDegrees(dec_p)});                
+        LOG.log(Level.FINEST, "CoordinateNativePole[deg]: (alphap,deltap)=({0},{1})", new Object[]{FastMath.toDegrees(ra_p),FastMath.toDegrees(dec_p)});                
         
         final double phi;
         final double theta;
         if (NumericalUtility.equal(dec_p, HALF_PI)) {
-            phi = Math.PI + getPhip() + ra - ra_p;
+            phi = FastMath.PI + getPhip() + ra - ra_p;
             theta = dec;
         } else if (NumericalUtility.equal(dec_p, -HALF_PI)) {
             phi = getPhip() - ra + ra_p;
             theta = -dec;            
         } else {
-            phi = getPhip() + NumericalUtility.aatan2(-Math.cos(dec) * Math.sin(ra - ra_p),
-                    Math.sin(dec) * Math.cos(dec_p)
-                    - Math.cos(dec) * Math.sin(dec_p)
-                    * Math.cos(ra - ra_p), 0);
-            theta = NumericalUtility.aasin(Math.sin(dec) * Math.sin(dec_p)
-                     + Math.cos(dec) * Math.cos(dec_p)
-                     * Math.cos(ra - ra_p));      
+            phi = getPhip() + NumericalUtility.aatan2(-FastMath.cos(dec) * FastMath.sin(ra - ra_p),
+                    FastMath.sin(dec) * FastMath.cos(dec_p)
+                    - FastMath.cos(dec) * FastMath.sin(dec_p)
+                    * FastMath.cos(ra - ra_p), 0);
+            theta = NumericalUtility.aasin(FastMath.sin(dec) * FastMath.sin(dec_p)
+                     + FastMath.cos(dec) * FastMath.cos(dec_p)
+                     * FastMath.cos(ra - ra_p));      
         }                   
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});
+        LOG.log(Level.FINER, "OUTPUTS[deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});
         return pos;
     }
 
@@ -330,24 +331,24 @@ public abstract class AbstractProjection {
      */
     private double computeLongitudeNativePole(final double phi_p) {
         final double deltap;
-        if (NumericalUtility.equal(getTheta0(), 0.0d) && NumericalUtility.equal(getCrval2(), 0) && NumericalUtility.equal(Math.abs(phi_p - getPhi0()), HALF_PI)) {
+        if (NumericalUtility.equal(getTheta0(), 0.0d) && NumericalUtility.equal(getCrval2(), 0) && NumericalUtility.equal(FastMath.abs(phi_p - getPhi0()), HALF_PI)) {
             deltap = getThetap();
         } else {
-            final double deltap_arg = NumericalUtility.aatan2(Math.sin(getTheta0()), Math.cos(getTheta0()) * Math.cos(phi_p - getPhi0()));
-            final double deltap_acos = NumericalUtility.aacos(Math.sin(getCrval2()) / Math.sqrt(1 - Math.pow(Math.cos(getTheta0()), 2) * Math.pow(Math.sin(phi_p - getPhi0()), 2)));
+            final double deltap_arg = NumericalUtility.aatan2(FastMath.sin(getTheta0()), FastMath.cos(getTheta0()) * FastMath.cos(phi_p - getPhi0()));
+            final double deltap_acos = NumericalUtility.aacos(FastMath.sin(getCrval2()) / FastMath.sqrt(1 - FastMath.pow(FastMath.cos(getTheta0()), 2) * FastMath.pow(FastMath.sin(phi_p - getPhi0()), 2)));
             final double deltap1 = deltap_arg + deltap_acos;
             final double deltap2 = deltap_arg - deltap_acos;
 
             if (NumericalUtility.equal(getTheta0(), 0)
                     && NumericalUtility.equal(getCrval2(), 0)
-                    && NumericalUtility.equal(Math.abs(getPhip()-getPhi0()), HALF_PI)) {
+                    && NumericalUtility.equal(FastMath.abs(getPhip()-getPhi0()), HALF_PI)) {
                 deltap = getThetap();
             } else {
                 final boolean isDeltap1InInterval = NumericalUtility.isInInterval(deltap1, -HALF_PI, HALF_PI);
                 final boolean isDeltap2InInterval = NumericalUtility.isInInterval(deltap2, -HALF_PI, HALF_PI);
                 if (isDeltap1InInterval && isDeltap2InInterval) {
-                    final double diff1 = Math.abs(deltap1 - getThetap());
-                    final double diff2 = Math.abs(deltap2 - getThetap());
+                    final double diff1 = FastMath.abs(deltap1 - getThetap());
+                    final double diff2 = FastMath.abs(deltap2 - getThetap());
                     deltap = diff1 < diff2 ? deltap1 : deltap2;
                 } else if (isDeltap1InInterval) {
                     deltap = deltap1;
@@ -373,15 +374,15 @@ public abstract class AbstractProjection {
      */    
     private double computeLatitudeNativePole(final double deltap, final double phi_p) {
         final double alphap;
-        if (NumericalUtility.equal(Math.abs(getCrval2()), HALF_PI)) {
+        if (NumericalUtility.equal(FastMath.abs(getCrval2()), HALF_PI)) {
             alphap = getCrval1();
         } else if (NumericalUtility.equal(deltap, HALF_PI)) {
-            alphap = getCrval1() + phi_p - getPhi0() - Math.PI;
+            alphap = getCrval1() + phi_p - getPhi0() - FastMath.PI;
         } else if (NumericalUtility.equal(deltap, -HALF_PI)) {
             alphap = getCrval1() - phi_p + getPhi0();      
         } else {
-            final double das = Math.sin(phi_p - getPhi0()) * Math.cos(getTheta0()) / Math.cos(getCrval2());
-            final double dac = (Math.sin(getTheta0()) - Math.sin(deltap) * Math.sin(getCrval2())) / (Math.cos(deltap) * Math.cos(getCrval2()));
+            final double das = FastMath.sin(phi_p - getPhi0()) * FastMath.cos(getTheta0()) / FastMath.cos(getCrval2());
+            final double dac = (FastMath.sin(getTheta0()) - FastMath.sin(deltap) * FastMath.sin(getCrval2())) / (FastMath.cos(deltap) * FastMath.cos(getCrval2()));
             alphap = getCrval1() - NumericalUtility.aatan2(das, dac);
         }        
         return alphap;
@@ -432,9 +433,9 @@ public abstract class AbstractProjection {
      */
     protected final double phiRange(final double phi) {
         double phiCorrect = phi % TWO_PI;
-        if (phiCorrect > Math.PI) {
+        if (phiCorrect > FastMath.PI) {
             phiCorrect -= TWO_PI;
-        } else if (phiCorrect < -Math.PI) {
+        } else if (phiCorrect < -FastMath.PI) {
             phiCorrect += TWO_PI;
         }
         return phiCorrect;

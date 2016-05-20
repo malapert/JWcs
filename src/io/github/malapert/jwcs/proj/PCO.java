@@ -21,6 +21,7 @@ import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import io.github.malapert.jwcs.utility.PcoFunction;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Polyconic.
@@ -122,8 +123,8 @@ public class PCO extends AbstractPolyConicProjection {
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double phi;
         final double theta;
         if (NumericalUtility.equal(yr, 0)) {
@@ -139,15 +140,15 @@ public class PCO extends AbstractPolyConicProjection {
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
-        final double costhe = Math.cos(theta);
-        final double sinthe = Math.sin(theta);
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
+        final double costhe = FastMath.cos(theta);
+        final double sinthe = FastMath.sin(theta);
         final double a = phi * sinthe;
         double x;
         double y;
@@ -156,10 +157,10 @@ public class PCO extends AbstractPolyConicProjection {
             y = 0.0;
         } else {
             final double cotthe = costhe / sinthe;
-            x = cotthe * Math.sin(a);
-            y = cotthe * (1.0 - Math.cos(a)) + theta;
+            x = cotthe * FastMath.sin(a);
+            y = cotthe * (1.0 - FastMath.cos(a)) + theta;
         }
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);
         return coord;
     }
@@ -185,14 +186,14 @@ public class PCO extends AbstractPolyConicProjection {
         }
         this.pco.set(xr, yr);
         final double theta = NumericalUtility.computeFunctionSolution(getMaxIter(), pco, min, max);  
-        final double tanthe = Math.tan(theta);
+        final double tanthe = FastMath.tan(theta);
         final double xp = 1 - (yr - theta) * tanthe;
         final double yp = xr * tanthe;
         final double phi;
         if (NumericalUtility.equal(xp, 0) && NumericalUtility.equal(yp, 0)) {
             phi = 0.0;
         } else {
-            phi = NumericalUtility.aatan2(yp, xp) / Math.sin(theta);
+            phi = NumericalUtility.aatan2(yp, xp) / FastMath.sin(theta);
         }
         return new double[]{phi, theta};
     }    

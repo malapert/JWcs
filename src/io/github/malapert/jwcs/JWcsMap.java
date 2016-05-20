@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A class allowing to compute the WCS by initializing the WCS structure by
@@ -194,7 +195,7 @@ public class JWcsMap extends AbstractJWcs {
                 case "CYP":
                     wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
                     wcsKeywords.put(AbstractJWcs.PV21, "1");
-                    wcsKeywords.put(AbstractJWcs.PV22, String.valueOf(Math.sqrt(2) * 0.5));
+                    wcsKeywords.put(AbstractJWcs.PV22, String.valueOf(FastMath.sqrt(2) * 0.5));
                     break;
                 case "COP":
                     wcsKeywords.put(AbstractJWcs.CRVAL2, "90");

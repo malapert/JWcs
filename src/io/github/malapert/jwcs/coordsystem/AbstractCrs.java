@@ -128,6 +128,7 @@ import static io.github.malapert.jwcs.utility.NumericalUtility.isInInterval;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aatan2;
 import static io.github.malapert.jwcs.utility.NumericalUtility.equal;
 import static io.github.malapert.jwcs.utility.NumericalUtility.isInInterval;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A Coordinate Reference System (crs) contains two different elements : 
@@ -439,11 +440,11 @@ public abstract class AbstractCrs {
         final SkyPosition pos1InRefFramePos2 = crs.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
         final double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
         final double[] pos2XYZ = pos2.getCartesian();
-        final double normPos1 = Math.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
-        final double normPos2 = Math.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
+        final double normPos1 = FastMath.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
+        final double normPos2 = FastMath.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
         final double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
-        LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, Math.toDegrees(separation)});
-        return Math.toDegrees(separation);
+        LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, FastMath.toDegrees(separation)});
+        return FastMath.toDegrees(separation);
     }
 
     /**
@@ -1404,7 +1405,7 @@ public abstract class AbstractCrs {
      * @return Corresponding values of x,y,z in same order as input
      */
     protected static RealMatrix longlat2xyz(final double longitude, final double latitude) {
-        return longlatRad2xyz(Math.toRadians(longitude), Math.toRadians(latitude));
+        return longlatRad2xyz(FastMath.toRadians(longitude), FastMath.toRadians(latitude));
     }
 
     /**
@@ -1424,9 +1425,9 @@ public abstract class AbstractCrs {
      * @return Corresponding values of x,y,z in same order as input
      */
     protected static RealMatrix longlatRad2xyz(final double longitudeRad, final double latitudeRad) {
-        final double x = Math.cos(longitudeRad) * Math.cos(latitudeRad);
-        final double y = Math.sin(longitudeRad) * Math.cos(latitudeRad);
-        final double z = Math.sin(latitudeRad);
+        final double x = FastMath.cos(longitudeRad) * FastMath.cos(latitudeRad);
+        final double y = FastMath.sin(longitudeRad) * FastMath.cos(latitudeRad);
+        final double z = FastMath.sin(latitudeRad);
         final double[][] array = {
             {x},
             {y},
@@ -1451,13 +1452,13 @@ public abstract class AbstractCrs {
      */
     protected static double[] xyz2longlat(final RealMatrix xyz) {
         final double[] vec = xyz.getColumn(0);
-        final double len = Math.sqrt(Math.pow(vec[0], 2)+Math.pow(vec[1], 2)+Math.pow(vec[2], 2));
+        final double len = FastMath.sqrt(FastMath.pow(vec[0], 2)+FastMath.pow(vec[1], 2)+FastMath.pow(vec[2], 2));
         final double x = vec[0]/len;
         final double y = vec[1]/len;
         final double z = vec[2]/len;
-        double longitude = Math.toDegrees(aatan2(y, x, 0));
+        double longitude = FastMath.toDegrees(aatan2(y, x, 0));
         longitude = longitude < 0 ? longitude + 360.0d : longitude;
-        final double latitude = Math.toDegrees(aasin(z));
+        final double latitude = FastMath.toDegrees(aasin(z));
         return new double[]{longitude, latitude};
     }    
 

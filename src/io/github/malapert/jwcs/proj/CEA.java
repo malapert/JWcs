@@ -22,6 +22,7 @@ import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * The cylindrical equal area projection.
@@ -95,8 +96,8 @@ public class CEA extends AbstractCylindricalProjection {
     @Override
     protected double[] project(final double x, final double y) throws ProjectionException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
         final double phi = xr;
         final double arg = getLambda() * yr;
         final double theta = NumericalUtility.aasin(arg);
@@ -104,15 +105,15 @@ public class CEA extends AbstractCylindricalProjection {
             throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
         }
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws ProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                        
-        final double x = Math.toDegrees(phi);
-        final double y = Math.toDegrees(Math.sin(theta) / getLambda());
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                        
+        final double x = FastMath.toDegrees(phi);
+        final double y = FastMath.toDegrees(FastMath.sin(theta) / getLambda());
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;

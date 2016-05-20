@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * The plate carrée projection.
@@ -57,18 +58,18 @@ public class CAR extends AbstractCylindricalProjection{
     @Override
     protected double[] project(final double x, final double y) {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                
-        final double phi = Math.toRadians(x);
-        final double theta = Math.toRadians(y);
+        final double phi = FastMath.toRadians(x);
+        final double theta = FastMath.toRadians(y);
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                        
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                
-        final double x = Math.toDegrees(phi);
-        final double y = Math.toDegrees(theta);
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                
+        final double x = FastMath.toDegrees(phi);
+        final double y = FastMath.toDegrees(theta);
         final double[] coord = {x, y};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
         return coord;

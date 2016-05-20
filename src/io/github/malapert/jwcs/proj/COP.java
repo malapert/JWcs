@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Conic perspective.
@@ -70,7 +71,7 @@ public class COP extends AbstractConicProjection {
     public COP(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
-        this.c = Math.sin(getThetaA());
+        this.c = FastMath.sin(getThetaA());
         if (NumericalUtility.equal(this.c, 0)) {
             throw new BadProjectionParameterException(this, "theta_a: " + getThetaA() + ". It must be !=0");
         }
@@ -79,29 +80,29 @@ public class COP extends AbstractConicProjection {
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException {
         LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                
-        final double xr = Math.toRadians(x);
-        final double yr = Math.toRadians(y);
-        final double d = Math.cos(getEta());
+        final double xr = FastMath.toRadians(x);
+        final double yr = FastMath.toRadians(y);
+        final double d = FastMath.cos(getEta());
         if (NumericalUtility.equal(d, 0)) {
             throw new BadProjectionParameterException(this, "Bad value for eta = " + getEta() + ". eta must be > 0");
         }
-        final double y0 = d / Math.tan(getThetaA());
-        final double r_theta = Math.signum(getThetaA()) * Math.sqrt(Math.pow(xr, 2) + Math.pow(y0 - yr, 2));
+        final double y0 = d / FastMath.tan(getThetaA());
+        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);
-        final double theta = getThetaA() + Math.atan(1.0 / Math.tan(getThetaA()) - r_theta / Math.cos(getEta()));
+        final double theta = getThetaA() + FastMath.atan(1.0 / FastMath.tan(getThetaA()) - r_theta / FastMath.cos(getEta()));
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                        
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi),Math.toDegrees(theta)});                                                                                
-        final double y0 = Math.cos(getEta()) / Math.tan(getThetaA());
-        final double r_theta = y0 - Math.cos(getEta()) * Math.tan(theta - getThetaA());
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                
+        final double y0 = FastMath.cos(getEta()) / FastMath.tan(getThetaA());
+        final double r_theta = y0 - FastMath.cos(getEta()) * FastMath.tan(theta - getThetaA());
         final double x = computeX(phi, r_theta, c);
         final double y = computeY(phi, r_theta, c, y0);
-        final double[] coord = {Math.toDegrees(x), Math.toDegrees(y)};
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                        
         return coord;
     }
@@ -113,12 +114,12 @@ public class COP extends AbstractConicProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(Math.toDegrees(this.getThetaA())), NumericalUtility.round(Math.toDegrees(this.getEta())));
+        return String.format(DESCRIPTION, NumericalUtility.round(FastMath.toDegrees(this.getThetaA())), NumericalUtility.round(FastMath.toDegrees(this.getEta())));
     }
 
     @Override
     public boolean inside(final double lon, final double lat) {
-        LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{Math.toDegrees(lon),Math.toDegrees(lat),super.inside(lon, lat)});        
+        LOG.log(Level.FINER, "(lon,lat)=({0},{1}) {2}",new Object[]{FastMath.toDegrees(lon),FastMath.toDegrees(lat),super.inside(lon, lat)});        
         return super.inside(lon, lat);
     }
 

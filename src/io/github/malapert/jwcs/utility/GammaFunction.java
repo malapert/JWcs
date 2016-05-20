@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.utility;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * GammaFunction function to solve for the Mollweide's projection.
@@ -58,6 +59,6 @@ public class GammaFunction implements UnivariateFunction {
      */
     @Override
     public double value(final double d) {
-        return d + Math.sin(d) - Math.PI * Math.sin(theta);
+        return d + FastMath.sin(d) - FastMath.PI * FastMath.sin(theta);
     }   
 }
