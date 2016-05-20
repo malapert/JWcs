@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
+import io.github.malapert.jwcs.utility.Gamma;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
@@ -51,7 +52,7 @@ public class MOL extends AbstractCylindricalProjection {
     /**
      * Default maximum iteration for the iterative solution.
      */
-    public final static double DEFAULT_MAX_ITER = 100;
+    public final static int DEFAULT_MAX_ITER = 1000;
 
     /**
      * Tolerance for the iterative solution.
@@ -60,7 +61,12 @@ public class MOL extends AbstractCylindricalProjection {
     /**
      * Maximum iteration for the iterative solution.
      */
-    private double maxIter;
+    private int maxIter;
+    
+    /**
+     * Gamma function to solve.
+     */
+    private final Gamma gammaFunction;
 
     /**
      * Constructs a MOL projection based on the celestial longitude and latitude
@@ -76,6 +82,7 @@ public class MOL extends AbstractCylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
         setTolerance(DEFAULT_TOLERANCE);
+        this.gammaFunction = new Gamma();
     }
 
     @Override
@@ -169,32 +176,17 @@ public class MOL extends AbstractCylindricalProjection {
     /**
      * Computes gamma by an iterative solution. 
      * 
-     * <p>Solves v - PI*sin(theta) + sin(v) = 0 with v = 2*gamma
+     * <p>Solves <code>v - PI*sin(theta) + sin(v) = 0</code><br>
+     * with <code>gamma = 0.5 * v</code>
      *
      * @param theta the native spherical coordinate (\u03B8) in radians along
      * latitude
      * @return gamma
+     * @see Gamma
      */
     private double computeGamma(final double theta) {
-        final double u = Math.PI * Math.sin(theta);
-        double v0 = -Math.PI;
-        double v1 = Math.PI;
-        double v = u;
-        int nIter = 0;
-        double diff;
-        do {
-            nIter++;
-            if (nIter != 1) {
-                v = (v0 + v1) / 2.0;
-            }
-            diff = (v - u) + Math.sin(v);
-            if (diff < 0.0) {
-                v0 = v;
-            } else {
-                v1 = v;
-            }
-        } while (Math.abs(diff) > getTolerance() && nIter < getMaxIter());
-        return v * 0.5;
+        this.gammaFunction.setTheta(theta);
+        return NumericalUtility.computeFunctionSolution(this.getMaxIter(), this.gammaFunction, -Math.PI, Math.PI) * 0.5;
     }
 
     /**
@@ -217,21 +209,21 @@ public class MOL extends AbstractCylindricalProjection {
     }
 
     /**
-     * Returns the number maximal of iterations of the approximative solution of
+     * Returns the maximal number of iterations of the approximative solution of
      * the inverse projection.
      *
-     * @return the maxIter
+     * @return the number maximum of iteration
      */
-    public double getMaxIter() {
+    public int getMaxIter() {
         return maxIter;
     }
 
     /**
-     * Sets the number maximal of iterations.
+     * Sets the maximal number of iterations.
      *
-     * @param maxIter the maxIter to set
+     * @param maxIter the maximum number of iteration to set
      */
-    public final void setMaxIter(final double maxIter) {
+    public final void setMaxIter(final int maxIter) {
         this.maxIter = maxIter;
     }
 
@@ -243,5 +235,5 @@ public class MOL extends AbstractCylindricalProjection {
     @Override
     public String getDescription() {
         return DESCRIPTION;
-    }
+    }   
 }

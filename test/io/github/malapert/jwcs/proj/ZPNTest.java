@@ -32,10 +32,11 @@ import static org.junit.Assert.*;
 
 /**
  * ZPN unit test.
+ *
  * @author Jean-Christophe Malapert
  */
 public class ZPNTest extends AbstractProjectionTest {
-    
+
     /**
      *
      * @throws FitsException
@@ -45,23 +46,23 @@ public class ZPNTest extends AbstractProjectionTest {
     public ZPNTest() throws FitsException, IOException, JWcsException {
         super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_ZPN.fits"))));
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
         // do nothing        
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
         // do nothing
     }
-    
+
     @Before
     public void setUp() {
         // do nothing
-        
+
     }
-    
+
     @After
     public void tearDown() {
         // do nothing
@@ -69,16 +70,17 @@ public class ZPNTest extends AbstractProjectionTest {
 
     /**
      * Test of project method, of class ZPN.
+     *
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
      */
     @Test
     public void testProjectZPN() throws ProjectionException {
         System.out.println("project ZPN");
         final double expectedResults[][] = {
-            { 263.471000708007352,  -78.497682328997385},
-            { 266.783268968517177,  -50.24524022078576 },
-            { 294.357836271455028,  -39.77023899472649 },
-            { 312.674220190438405,  -71.468154470727242}
+            {263.471000708007352, -78.497682328997385},
+            {266.783268968517177, -50.24524022078576},
+            {294.357836271455028, -39.77023899472649},
+            {312.674220190438405, -71.468154470727242}
         };
         double[] result = wcs.pix2wcs(1, 1);
         assertArrayEquals(expectedResults[0], result, 1e-13);
@@ -95,6 +97,7 @@ public class ZPNTest extends AbstractProjectionTest {
 
     /**
      * Test of projectInverse method, of class ZPN.
+     *
      * @throws io.github.malapert.jwcs.proj.exception.ProjectionException
      */
     @Test
@@ -105,12 +108,12 @@ public class ZPNTest extends AbstractProjectionTest {
             {192.d, 1.0d},
             {192.d, 192d},
             {1.0d, 192d}
-        };   
+        };
         double[] result;
         for (final double[] expectedResult : expectedResults) {
             result = wcs.pix2wcs(expectedResult);
             result = wcs.wcs2pix(result);
-             assertArrayEquals(expectedResult, result, 1e-12);
-        }   
+            assertArrayEquals(expectedResult, result, 1e-12);
+        }
     }
 }

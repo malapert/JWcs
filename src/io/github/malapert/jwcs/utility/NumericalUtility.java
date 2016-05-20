@@ -24,9 +24,8 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.function.Sin;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.analysis.solvers.BisectionSolver;
 
 /**
  * NumericalUtility class.
@@ -34,6 +33,11 @@ import org.apache.commons.math3.util.FastMath;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public final class NumericalUtility {
+    
+
+    private static final BisectionSolver solverBisection = new BisectionSolver(1e-15);
+    
+    private static final LaguerreSolver solverLaguerre = new LaguerreSolver(1e-15);
 
     /**
      * Double tolerance for numerical precision operations sets to 1e-12.
@@ -131,8 +135,7 @@ public final class NumericalUtility {
     /**
      * Asin operation.
      *
-     * <p>
-     * Returns the arc sine of a value; the returned angle is in the range -pi/2
+     * <p>Returns the arc sine of a value; the returned angle is in the range -pi/2
      * through pi/2. Special cases:
      * <ul>
      * <li>If the argument is NaN or its absolute value is greater than 1, then
@@ -287,15 +290,13 @@ public final class NumericalUtility {
     /**
      * Calculates the matrix that represents a 3d rotation around the X axis.
      *
-     * <p>
-     * Reference:<br>
+     * <p>Reference:<br>
      * ---------- <br>
      * Diebel, J. 2006, Stanford University, Representing Attitude: Euler
      * angles, Unit Quaternions and Rotation Vectors.
      * http://ai.stanford.edu/~diebel/attitude.html
      *
-     * <p>
-     * Notes:<br>
+     * <p>Notes:<br>
      * ------<br>
      * Return the rotation matrix for a rotation around the X axis. This is a
      * rotation in the YZ plane. Note that we construct a new vector with: xnew
@@ -317,15 +318,13 @@ public final class NumericalUtility {
     /**
      * Calculates the matrix that represents a 3d rotation around the Y axis.
      *
-     * <p>
-     * Reference:<br>
+     * <p>Reference:<br>
      * ----------<br>
      * Diebel, J. 2006, Stanford University, Representing Attitude: Euler
      * angles, Unit Quaternions and Rotation Vectors.
      * http://ai.stanford.edu/~diebel/attitude.html
      *
-     * <p>
-     * Notes:<br>
+     * <p>Notes:<br>
      * ------<br>
      * Return the rotation matrix for a rotation around the X axis. This is a
      * rotation in the YZ plane. Note that we construct a new vector with: xnew
@@ -390,12 +389,26 @@ public final class NumericalUtility {
         return (RealMatrix) MatrixUtils.inverse(matrix);
     }
 
+    /**
+     * Computes the quadratic solution using the Laguerre's Method
+     * for root finding of real coefficient polynomials.
+     * 
+     * <p>Once the roots are known, the nearest root from North pole is selected.
+     * The first element of the coefficients array is the constant term. 
+     * Higher degree coefficients follow in sequence. The degree of the 
+     * resulting polynomial is the index of the last non-null element of the 
+     * array, or 0 if all elements are null.
+     * 
+     * @param coefficients polynomial coefficients
+     * @return the solution
+     * @throws JWcsException  No mathematical solution found
+     * @see <a href="http://mathworld.wolfram.com/LaguerresMethod.html"> 
+     * The Laguerre's method</a>
+     */
     public static double computeQuatraticSolution(double[] coefficients) throws JWcsException {
-        coefficients[1] *=2;        
-        final LaguerreSolver solver = new LaguerreSolver(1e-15);
-        final Complex[] solutions = solver.solveAllComplex(coefficients, 0);
+        final Complex[] solutions = solverLaguerre.solveAllComplex(coefficients, 0);
         final Complex sol1 = solutions[0];
-        final Complex sol2 = solutions[1];                       
+        final Complex sol2 = solutions[1];
         final double theta1 = NumericalUtility.aasin(sol1.getReal());
         final double theta2 = NumericalUtility.aasin(sol2.getReal());
         final boolean isTheta1Valid = NumericalUtility.isInInterval(theta1, -HALF_PI, HALF_PI);
@@ -413,6 +426,97 @@ public final class NumericalUtility {
             throw new JWcsException("No mathematical solution found");
         }
         return theta;
+    }
+
+    /**
+     * Solves for a zero root in the given interval for a given PolynomialFunction
+     * object using a Bisection algorithm.
+     * 
+     * <p>A solver may require that the interval brackets a single zero root. 
+     * Solvers that do require bracketing should be able to handle the case 
+     * where one of the endpoints is itself a root.
+     * 
+     * @param maxEval maximum number of evaluations
+     * @param f Polynomial function
+     * @param min Lower bound for the interval
+     * @param max Upper bound for the interval
+     * @return a zero root
+     * @see <a href="http://mathworld.wolfram.com/Bisection.html">Bisection algorithm</a>     
+     */
+    public static double computePolynomialSolution(final int maxEval, final Object f, double min, double max) {
+        return solverBisection.solve(maxEval, (PolynomialFunction)f, min, max);
+    }
+
+    /**
+     * Solves for a zero root in the given interval for a given function using
+     * the bisection algorithm. 
+     * 
+     * <p>A solver may require that the interval brackets a single zero root. 
+     * Solvers that do require bracketing should be able to handle the case 
+     * where one of the endpoints is itself a root.
+     * 
+     * @param maxEval maximum number of evaluations
+     * @param function function to solve
+     * @param min Lower bound for the interval
+     * @param max Upper bound for the interval
+     * @return a zero root
+     * @see <a href="http://mathworld.wolfram.com/Bisection.html">Bisection algorithm</a>
+     */
+    public static double computeFunctionSolution(final int maxEval, final UnivariateFunction function, final double min, final double max) {
+        return solverBisection.solve(maxEval, function, min, max);
+    }
+    
+    /**
+     * Returns the degree of the polynomial function.
+     * 
+     * <p>f could be a polynomial function or an array representing the polynomial
+     * coefficients.
+     * 
+     * @param f a polynomial function or an array representing the polynomial
+     * coefficients
+     * @return the degree of the polynomial function.
+     * @throws JWcsError the type of object is not supported
+     */
+    public static int getPolynomialOrder(final Object f) {
+        int result;
+        if (f instanceof PolynomialFunction) {
+            result = ((PolynomialFunction)f).degree();
+        } else if (f instanceof double[]) {
+            PolynomialFunction fNew = new PolynomialFunction((double[])f);
+            result = fNew.degree();
+        } else {
+            throw new JWcsError("f is not a polynomialFunction or a an array of polynomial coefficients");
+        }
+        return result;
+    }
+    
+    /**
+     * Creates a polynomial function based on its coefficients.
+     * 
+     * <p>Constructs a polynomial with the given coefficients. The first element
+     * of the coefficients array is the constant term. Higher degree coefficients
+     * follow in sequence. The degree of the resulting polynomial is the index of
+     * the last non-null element of the array, or 0 if all elements are null.
+     * 
+     * @param coefficients Polynomial coefficients
+     * @return a polynomial function
+     */
+    public static Object createPolynomialFunction(final double[] coefficients) {
+        return new PolynomialFunction(coefficients);
+    }
+    
+    /**
+     * Returns a copy of the coefficients array.
+     * 
+     * <p>Changes made to the returned copy will not affect the coefficients of 
+     * the polynomial.
+     * 
+     * @param f the polynomial function of PolynomialFunction type
+     * @return a fresh copy of the coefficients array
+     */
+    public static double[] getPolynomialCoefficients(final Object f) {
+        PolynomialFunction poly = (PolynomialFunction)f;
+        return poly.getCoefficients();
     }
 
     /**

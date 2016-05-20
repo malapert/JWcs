@@ -27,7 +27,8 @@ import java.util.logging.Level;
 /**
  * Zenithal polynomial.
  *
- * <p>The zenithal polynomial projection, ZPN, generalizes the ARC projection by
+ * <p>
+ * The zenithal polynomial projection, ZPN, generalizes the ARC projection by
  * adding polynomial terms up to a large degree in the zenith distance
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
@@ -46,38 +47,23 @@ public final class ZPN extends AbstractZenithalProjection {
     private final static String DESCRIPTION = "poly=(%s)";
 
     /**
-     * Default numerical tolerance for double comparison or iterative solution .
-     */
-    public final static double DEFAULT_TOLERANCE = 1E-15;
-    /**
      * Default maximum iteration for iterative solution.
      */
-    public final static double DEFAULT_MAX_ITER = 1000;
-    /**
-     * Tolerance to apply.
-     */
-    private double tolerance;
+    public final static int DEFAULT_MAX_ITER = 1000;
+
     /**
      * Maximum iteration for iterative solution.
      */
-    private double maxIter;
+    private int maxIter;
     /**
      * Projection parameters.
      */
     private double[] pv;
-
+    
     /**
-     * The highest pv coefficient not equal to 0.
+     * Order of the polynomial function.
      */
-    private transient final int n;
-
-    /**
-     * The point of inflection closest to the pole.
-     *
-     * <p>coeff[0] Co-latitude of the first point of inflection (N &gt; 2) coeff[1]
-     * Radius of the first point of inflection (N &gt; 2)
-     */
-    private final transient double[] coeff;
+    private final int n;
 
     /**
      * Creates a ZPN projection based on crval1, crval2 and the projection
@@ -97,100 +83,10 @@ public final class ZPN extends AbstractZenithalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1} PV={2})", new Object[]{crval1, crval2, Arrays.toString(pv)});
         setPv(pv);
         setMaxIter(DEFAULT_MAX_ITER);
-        setTolerance(DEFAULT_TOLERANCE);
         check();
-        n = findTheHighestPVNoNull(pv);
-        coeff = findTheInflectionPointClosestFromPole(n, pv);
+        this.n= NumericalUtility.getPolynomialOrder(pv);
     }
 
-    /**
-     * Finds the inflection point the closest from pole.
-     *
-     * @param highestPV highest pv order
-     * @param PV projection parameters
-     * @return the inflection point the closest from pole
-     * @throws BadProjectionParameterException Exception
-     */
-    private double[] findTheInflectionPointClosestFromPole(final int highestPV, final double[] PV) throws BadProjectionParameterException {
-        // Find the point of inflection closest to the pole.         
-        int i;
-        double d2 = 0.0;
-        double zd = 0.0;
-        double zd1 = 0.0;
-        double zd2 = 0.0;
-        double d1 = PV[1];
-        if (d1 <= 0.0) {
-            throw new BadProjectionParameterException(this, "p[1] - It must be > 0");
-        }
-
-        // Find the point where the derivative first goes negative. 
-        for (i = 0; i < 180; i++) {
-            zd2 = i * Math.PI / 180;
-            d2 = 0.0;
-            for (int j = highestPV; j > 0; j--) {
-                d2 = d2 * zd2 + j * PV[j];
-            }
-
-            if (d2 <= 0.0) {
-                break;
-            }
-            zd1 = zd2;
-            d1 = d2;
-        }
-
-        if (i == 180) {
-
-            // No negative derivative -> no point of inflection. 
-            zd = Math.PI;
-        } else {
-
-            // Find where the derivative is zero. 
-            for (i = 1; i <= 10; i++) {
-                zd = zd1 - d1 * (zd2 - zd1) / (d2 - d1);
-
-                double d = 0.0;
-                for (int j = highestPV; j > 0; j--) {
-                    d = d * zd + j * PV[j];
-                }
-
-                if (Math.abs(d) < getTolerance()) {
-                    break;
-                }
-
-                if (d < 0.0) {
-                    zd2 = zd;
-                    d2 = d;
-                } else {
-                    zd1 = zd;
-                    d1 = d;
-                }
-            }
-        }
-
-        double r = 0.0;
-        for (int j = highestPV; j >= 0; j--) {
-            r = r * zd + PV[j];
-        }
-        return new double[]{zd, r};
-    }
-
-    /**
-     * Searches the highest pv index <code>i</code> where <code>pv[i]</code> !=
-     * 0.
-     *
-     * @param pv parameters
-     * @return the highest pv index
-     * @throws BadProjectionParameterException Exception
-     */
-    @SuppressWarnings("empty-statement")
-    private int findTheHighestPVNoNull(final double[] pv) throws BadProjectionParameterException {
-        int i;
-        for (i = pv.length - 1; i >= 0 && NumericalUtility.equal(pv[i], 0.0, getTolerance()); i--);
-        if (i < 0) {
-            throw new BadProjectionParameterException(this, "pv parameters : All coefficients = 0");
-        }
-        return i;
-    }
 
     /**
      * Checks validity of parameters.
@@ -209,31 +105,11 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
-     * Gets the tolerance of the numerical resolution of the double and
-     * iterative solution.
+     * Returns the number of maximum iteration for the iterative solution.
      *
-     * @return the tolerance
+     * @return the maximum number or iteration
      */
-    public double getTolerance() {
-        return tolerance;
-    }
-
-    /**
-     * Sets the tolerance of the numerical resolution of the double and
-     * iterative solution.
-     *
-     * @param tolerance the tolerance to set
-     */
-    public void setTolerance(final double tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    /**
-     * Gets the number of maximum iteration for the iterative solution.
-     *
-     * @return the maxIter
-     */
-    public double getMaxIter() {
+    public int getMaxIter() {
         return maxIter;
     }
 
@@ -242,7 +118,7 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @param maxIter the maxIter to set
      */
-    public void setMaxIter(final double maxIter) {
+    public void setMaxIter(final int maxIter) {
         this.maxIter = maxIter;
     }
 
@@ -251,19 +127,10 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @return the n
      */
-    public int getN() {
+    private int getN() {
         return n;
     }
-
-    /**
-     * The point of inflection closest to the pole.
-     *
-     * @return the coeff
-     */
-    public double[] getCoeff() {
-        return coeff.clone();
-    }
-
+    
     /**
      * Computes a polynomial where orders are given by pv.
      *
@@ -286,117 +153,58 @@ public final class ZPN extends AbstractZenithalProjection {
     /**
      * Computes the solution for a linear equation.
      *
-     * @param r radius
-     * @param pv projection parameters
+     * @param f polynomial function
      * @return the solution for a linear equation
      */
-    private double linearSolution(final double r, final double[] pv) {
-        return (r - pv[0]) / pv[1];
+    private double linearSolution(final Object f) {
+        final double[] coefficients = NumericalUtility.getPolynomialCoefficients(f);
+        return -coefficients[0] / coefficients[1];
     }
 
     /**
-     * Computes the solution for a quadratic equation.
+     * Solves the solution for a quadratic equation.
      *
-     * @param r radius
-     * @param pv projection parameters
+     * @param f polynomial coefficients
      * @return the solution for a quadratic equation
      * @throws Exception Exception
+     * @see NumericalUtility#computeQuatraticSolution
      */
-    private double quadraticSolution(final double r, final double[] pv) throws Exception {
-        final double a = pv[2];
-        final double b = pv[1];
-        final double c = pv[0] - r;
-        final double x = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
-        return x;
+    private double quadraticSolution(final Object f) throws Exception {
+        final double[] coeff = NumericalUtility.getPolynomialCoefficients(f);
+        return NumericalUtility.computeQuatraticSolution(coeff);
     }
 
     /**
-     * Computes an iterative solution for an equation where order &gt; 2.
-     *
-     * <p>The end of the iterative solution is given by the expected numerical
-     * precision or the maximal number of iterations.
-     *
-     * @param r radius
-     * @param pv projection parameters
-     * @param coeff coefficient
-     * @return the solution for an equation where order &gt; 2
-     * @throws Exception Exception When an exception occurs
+     * Solves a polynomial function.
+     * @param f the polynomial function
+     * @return the solution
+     * @see NumericalUtility#computePolynomialSolution
      */
-    private double iterativeSolution(final double r, final double[] pv, final double[] coeff) throws Exception {
-        double zd1 = 0.0;
-        double r1 = pv[0];
-        double zd2 = coeff[0];
-        double r2 = coeff[1];
-        double zd;
-        if (r < r1) {
-            if (r < r1 - getTolerance()) {
-                throw new Exception("No solution for iterative computation");
-            }
-            zd = zd1;
-        } else if (r > r2) {
-            if (r > r2 + getTolerance()) {
-                throw new Exception("No solution for iterative computation");
-            }
-            zd = zd2;
-        } else {
-            zd = 0;
-            // Disect the interval. 
-            for (int j = 0; j < getMaxIter(); j++) {
-                double lambda = (r2 - r) / (r2 - r1);
-                if (lambda < 0.1) {
-                    lambda = 0.1;
-                } else if (lambda > 0.9) {
-                    lambda = 0.9;
-                }
-
-                zd = zd2 - lambda * (zd2 - zd1);
-
-                double rt = 0.0;
-                for (int i = getN(); i >= 0; i--) {
-                    rt = rt * zd + pv[i];
-                }
-
-                if (rt < r) {
-                    if (r - rt < getTolerance()) {
-                        break;
-                    }
-                    r1 = rt;
-                    zd1 = zd;
-                } else {
-                    if (rt - r < getTolerance()) {
-                        break;
-                    }
-                    r2 = rt;
-                    zd2 = zd;
-                }
-
-                if (Math.abs(zd2 - zd1) < getTolerance()) {
-                    break;
-                }
-            }
-        }
-        return zd;
+    private double polynomialSolution(final Object f) {
+        final double[] coeff = NumericalUtility.getPolynomialCoefficients(f);
+        final double result = coeff[0] > 0 ? 0 : NumericalUtility.computePolynomialSolution(this.getMaxIter(), f, 0, Math.PI);
+        return result;
     }
 
     /**
      * Compute the solution for whatever polynomial equation.
      *
      * @param r radius
-     * @param pv projection parameters
+     * @param polynomialFunction polynomial function
      * @return the solution for whatever polynomial equation
      * @throws Exception Exception
      */
-    private double computeSolution(final double r, final double[] pv) throws Exception {
+    private double computeSolution(final double r, final Object polynomialFunction) throws Exception {
         final double result;
         switch (getN()) {
             case 1:
-                result = linearSolution(r, pv);
+                result = linearSolution(polynomialFunction);
                 break;
             case 2:
-                result = quadraticSolution(r, pv);
+                result = quadraticSolution(polynomialFunction);
                 break;
             default:
-                result = iterativeSolution(r, pv, getCoeff());
+                result = polynomialSolution(polynomialFunction);
                 break;
         }
         return result;
@@ -409,8 +217,11 @@ public final class ZPN extends AbstractZenithalProjection {
             final double xr = Math.toRadians(x);
             final double yr = Math.toRadians(y);
             final double r_theta = computeRadius(xr, yr);
+            final double[] coeffPolynomial = getPv();
+            coeffPolynomial[0] = coeffPolynomial[0] - r_theta;
+            final Object polynomialFunction = NumericalUtility.createPolynomialFunction(coeffPolynomial);
             final double phi = computePhi(xr, yr, r_theta);
-            final double theta = HALF_PI - computeSolution(r_theta, getPv());
+            final double theta = HALF_PI - computeSolution(r_theta, polynomialFunction);
             final double[] pos = {phi, theta};
             LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{Math.toDegrees(phi), Math.toDegrees(theta)});
             return pos;
@@ -447,14 +258,16 @@ public final class ZPN extends AbstractZenithalProjection {
 
     /**
      * Returns pv.
+     *
      * @return the pv
      */
     protected double[] getPv() {
-        return pv;
+        return pv.clone();
     }
 
     /**
      * Sets pv.
+     *
      * @param pv the pv to set
      */
     protected void setPv(final double[] pv) {

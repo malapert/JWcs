@@ -161,7 +161,7 @@ public class SZP extends AbstractZenithalProjection {
         final double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
         final double theta;
         try {
-            theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
+            theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b*2,a});
         } catch (JWcsException ex) {
             throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
                     + ", " + y + ")");

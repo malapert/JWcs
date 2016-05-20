@@ -107,7 +107,7 @@ public class SIN extends AbstractZenithalProjection {
             theta = NumericalUtility.aacos(r_theta);
         } else {
             final double a = Math.pow(ksi, 2) + Math.pow(eta, 2) + 1;
-            final double b = ksi * (xr - ksi) + eta * (yr - eta);
+            final double b = (ksi * (xr - ksi) + eta * (yr - eta)) * 2;
             final double c = Math.pow(xr - ksi,2) + Math.pow(yr - eta,2) - 1;
             try {
                 theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
