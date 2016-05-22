@@ -155,8 +155,5 @@ public class AbstractJWcsTest {
         final double[] expResult = wcs.pix2wcs(pixels);
         final double[] result = wcs.getFov();
         assertArrayEquals(expResult, result, 1e-5);
-    }
-
-
-    
+    }    
 }

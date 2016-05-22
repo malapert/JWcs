@@ -943,7 +943,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
             case "COP":
                 LOG.log(Level.INFO, "Creates a COP projection with (crval1,crval2)=({0},{1}) (theta_a,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0)});
                 projection = new COP(crval(1) * cx, crval(2) * cy, getValueAsDouble(PV21, 0), getValueAsDouble(PV22, 0));
-                break;                
+                break;                               
             case "SZP":
                 projection = createSZPProjection(cx, cy);
                 break;
@@ -1000,15 +1000,22 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
         final AbstractProjection projection;
         final Package packageName = this.getClass().getPackage();
         final String name = packageName.getName() + ".proj.";
-        final double pv21 = getValueAsDouble(PV21);
-        final double pv22 = getValueAsDouble(PV22);
+        final double pv21 = getValueAsDouble(PV21);        
         try {
-
             final Class<?> clazz = Class.forName(name + projectionCode);
-            final Constructor<?> constructor = clazz.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE, Double.TYPE);
-            final Object instance = constructor.newInstance(crval(1) * cx, crval(2) * cy, pv21, pv22);
+            final Constructor<?> constructor;
+            final Object instance;
+            if (hasKeyword(PV22)){
+                final double pv22 = getValueAsDouble(PV22);
+                constructor = clazz.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE, Double.TYPE);                
+                instance = constructor.newInstance(crval(1) * cx, crval(2) * cy, pv21, pv22);
+                LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2}) (pv21,pv22)=({3},{4})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx, pv21, pv22});                
+            } else {
+                constructor = clazz.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);
+                instance = constructor.newInstance(crval(1) * cx, crval(2) * cy, pv21);
+                LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2}) pv21={3}", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx, pv21});
+            }
             projection = (AbstractProjection) instance;
-            LOG.log(Level.INFO, "Creates a {0} projection with (crval1,crval2)=({1},{2}) (pv21,pv22)=({3},{4})", new Object[]{projectionCode, crval(1) * cx, crval(2) * cx, pv21, pv22});
         } catch (ClassNotFoundException ex) {
             throw new JWcsError("The projection " + projectionCode + " is not supported.");
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -1034,6 +1041,8 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
     private AbstractProjection createProjection(final String projectionCode, final double cx, final double cy) {
         final AbstractProjection projection;    
          if (hasKeyword(PV21) && hasKeyword(PV22)) {
+             projection = createStandardProjectionWithParameters(projectionCode, cx, cy);
+         } else if (hasKeyword(PV21)) {
              projection = createStandardProjectionWithParameters(projectionCode, cx, cy);
          } else {
              projection = createStandardProjection(projectionCode, cx, cy);

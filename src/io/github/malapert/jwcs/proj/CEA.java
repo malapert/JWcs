@@ -149,7 +149,7 @@ public class CEA extends AbstractCylindricalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("lambda", AbstractJWcs.PV21, new double[]{0, 1}, 1);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03BB", AbstractJWcs.PV21, new double[]{0, 1}, 1);
         return new ProjectionParameter[]{p1};        
     }    
 

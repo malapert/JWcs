@@ -51,11 +51,11 @@ public class SIN extends AbstractZenithalProjection {
     public final static double DEFAULT_VALUE = 0;
 
     /**
-     * \u03BE is deFINERd as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
+     * \u03BE is defined as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
      */
     private final double ksi;
     /**
-     * \u03B7 is deFINERd as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
+     * \u03B7 is defined as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
      */
     private final double eta;
 
@@ -150,8 +150,8 @@ public class SIN extends AbstractZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("ksi", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("eta", AbstractJWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03BE", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("\u03B7", AbstractJWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
 }

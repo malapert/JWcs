@@ -173,8 +173,8 @@ public class CYP extends AbstractCylindricalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("mu", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("lambda", AbstractJWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03BC", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("\u03BB", AbstractJWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
         return new ProjectionParameter[]{p1,p2};        
     }        
 

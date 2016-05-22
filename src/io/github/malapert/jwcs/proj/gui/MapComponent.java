@@ -129,11 +129,12 @@ public class MapComponent extends JComponent {
          * y_ = (north-y)*scale = (y-north)*(-scale);
          */
         final double scale = getScaleToShowAll();
+        //g2d.scale(-scale, -scale);
         g2d.scale(scale, -scale);
-
         // add a border so that the drawing is centered.
         final double borderX = (this.getWidth() / scale - ext.getWidth()) / 2;
         final double borderY = (this.getHeight() / scale - ext.getHeight()) / 2;
+        //g2d.translate(-ext.getMinX() - 2*borderX, -ext.getMaxY() - borderY);
         g2d.translate(-ext.getMinX() + borderX, -ext.getMaxY() - borderY);
 
         // draw lines with a thin black stroke

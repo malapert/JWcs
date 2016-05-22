@@ -119,8 +119,8 @@ public class COO extends AbstractConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("theta_a", AbstractJWcs.PV21, new double[]{-90, 90}, -45);
-        final ProjectionParameter p2 = new ProjectionParameter("eta", AbstractJWcs.PV22, new double[]{0, 90}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03B8a", AbstractJWcs.PV21, new double[]{-90, 90}, -45);
+        final ProjectionParameter p2 = new ProjectionParameter("\u03B7", AbstractJWcs.PV22, new double[]{0, 90}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
 }

@@ -58,7 +58,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         Object[] projNames = new Object[]{"ARC", "AZP", "SIN", "STG", "SZP", "TAN", "ZEA", "ZPN",
             "AIT", "CAR", "CEA", "CYP", "MER", "MOL", "PAR", "SFL",
             "COD", "COE", "COO", "COP",
-            "BON", "PCO"
+            "BON", "PCO","AIR"
         };
         //Object[] projNames = new Object[]{"AIT"};
 
@@ -203,7 +203,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                     if (!currentName.equals(previousNameProjection)) {
                         PV21_Slider.setValue((int) p1.getDefaultValue());
                     }
-                    PV21_text.setName(p1.getName());
+                    PV21_text.setText(p1.getName());
                     PV21_label.setVisible(true);
                     PV21_text.setVisible(true);
                     break;
@@ -295,6 +295,8 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
             if (PV23_Slider.isVisible()) {
                 jwcsMap.getKeywords().put(AbstractJWcs.PV23, String.valueOf(PV23_Slider.getValue()));
             }
+//            jwcsMap.getKeywords().put(AbstractJWcs.PV13, String.valueOf(phip_Slider.getValue()));
+//            jwcsMap.getKeywords().put(AbstractJWcs.PV14, String.valueOf(thetap_Slider.getValue()));            
             jwcsMap.doInit();
             computeGrid(jwcsMap);
             map.setLines(lines);
@@ -390,8 +392,14 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         PV23_text = new javax.swing.JLabel();
         PV23_label = new javax.swing.JLabel();
         errorLabel = new javax.swing.JLabel();
+        phi0 = new javax.swing.JLabel();
+        phip_Slider = new javax.swing.JSlider();
+        theta0 = new javax.swing.JLabel();
+        thetap_Slider = new javax.swing.JSlider();
+        phipLabel = new javax.swing.JLabel();
+        thetapLabel = new javax.swing.JLabel();
 
-        setLayout(new java.awt.BorderLayout(10, 10));
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         selectionPanel.setPreferredSize(new java.awt.Dimension(100, 40));
         selectionPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 10));
@@ -423,10 +431,10 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         });
         selectionPanel.add(nextProjectionButton);
 
-        add(selectionPanel, java.awt.BorderLayout.NORTH);
+        add(selectionPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 604, -1));
 
         map.setPreferredSize(new java.awt.Dimension(400, 300));
-        add(map, java.awt.BorderLayout.CENTER);
+        add(map, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 604, 210));
 
         infoPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder(""), javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         infoPanel.setMinimumSize(new java.awt.Dimension(400, 96));
@@ -509,6 +517,32 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
 
         errorLabel.setForeground(new java.awt.Color(230, 17, 17));
 
+        phi0.setText("phip");
+
+        phip_Slider.setMaximum(360);
+        phip_Slider.setValue(0);
+        phip_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                phip_SliderStateChanged(evt);
+            }
+        });
+
+        theta0.setText("thetap");
+
+        thetap_Slider.setMaximum(90);
+        thetap_Slider.setMinimum(-90);
+        thetap_Slider.setToolTipText("");
+        thetap_Slider.setValue(90);
+        thetap_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                thetap_SliderStateChanged(evt);
+            }
+        });
+
+        phipLabel.setText("0");
+
+        thetapLabel.setText("90");
+
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
         infoPanelLayout.setHorizontalGroup(
@@ -516,50 +550,59 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addGap(49, 49, 49)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(infoPanelLayout.createSequentialGroup()
-                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, infoPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV22_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(94, 94, 94))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV23_text, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(28, 28, 28))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(PV21_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(123, 123, 123))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(24, 24, 24))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
                                 .addComponent(longitudeLeadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lon0Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(7, 7, 7))
+                                .addGap(4, 4, 4))
                             .addGroup(infoPanelLayout.createSequentialGroup()
                                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(infoPanelLayout.createSequentialGroup()
-                                        .addComponent(PV22_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(94, 94, 94))
-                                    .addGroup(infoPanelLayout.createSequentialGroup()
-                                        .addComponent(PV23_text, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                        .addGap(28, 28, 28))
-                                    .addGroup(infoPanelLayout.createSequentialGroup()
-                                        .addComponent(PV21_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(123, 123, 123))
-                                    .addGroup(infoPanelLayout.createSequentialGroup()
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGap(24, 24, 24)))
-                                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lat0Slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(PV21_Slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(PV22_Slider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(PV23_Slider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(32, 32, 32)
-                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lon0Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lat0Label, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(PV21_label)
-                            .addComponent(PV22_label)
-                            .addComponent(PV23_label))
-                        .addGap(98, 98, 98))
+                                    .addComponent(phi0)
+                                    .addComponent(theta0))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(phip_Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lat0Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(PV21_Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(PV22_Slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(PV23_Slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lon0Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(thetap_Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lon0Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lat0Label, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(PV21_label)
+                                .addComponent(PV22_label)
+                                .addComponent(PV23_label)
+                                .addComponent(phipLabel))
+                            .addGroup(infoPanelLayout.createSequentialGroup()
+                                .addComponent(thetapLabel)
+                                .addGap(42, 42, 42)))
+                        .addGap(86, 86, 86))
                     .addGroup(infoPanelLayout.createSequentialGroup()
                         .addGap(54, 54, 54)
                         .addComponent(descriptionLeadLabel)
                         .addGap(10, 10, 10)
                         .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(87, 87, 87))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(89, 89, 89))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -602,7 +645,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                                 .addComponent(PV22_label))
                             .addGroup(infoPanelLayout.createSequentialGroup()
                                 .addGap(2, 2, 2)
-                                .addComponent(PV22_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addComponent(PV22_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 32, Short.MAX_VALUE)
                                 .addGap(4, 4, 4))))
                     .addGroup(infoPanelLayout.createSequentialGroup()
                         .addComponent(PV21_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -615,10 +658,22 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                         .addGap(4, 4, 4)
                         .addComponent(PV23_text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(PV23_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(10, 10, 10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(infoPanelLayout.createSequentialGroup()
+                        .addComponent(phipLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(phip_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(phi0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(theta0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(thetap_Slider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(thetapLabel))
+                .addGap(23, 23, 23))
         );
 
-        add(infoPanel, java.awt.BorderLayout.SOUTH);
+        add(infoPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 268, 604, 250));
     }// </editor-fold>//GEN-END:initComponents
 
     private void lon0SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_lon0SliderStateChanged
@@ -677,6 +732,18 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         project();
     }//GEN-LAST:event_PV23_SliderStateChanged
 
+    private void phip_SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_phip_SliderStateChanged
+        JSlider slider = (JSlider) evt.getSource();
+        this.phipLabel.setText(Integer.toString(slider.getValue()));
+        project();
+    }//GEN-LAST:event_phip_SliderStateChanged
+
+    private void thetap_SliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_thetap_SliderStateChanged
+        JSlider slider = (JSlider) evt.getSource();
+        this.thetapLabel.setText(Integer.toString(slider.getValue()));
+        project();
+    }//GEN-LAST:event_thetap_SliderStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider PV21_Slider;
     private javax.swing.JLabel PV21_label;
@@ -697,9 +764,15 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     private javax.swing.JSlider lon0Slider;
     private io.github.malapert.jwcs.proj.gui.MapComponent map;
     private javax.swing.JButton nextProjectionButton;
+    private javax.swing.JLabel phi0;
+    private javax.swing.JLabel phipLabel;
+    private javax.swing.JSlider phip_Slider;
     private javax.swing.JButton previousProjectionButton;
     private javax.swing.JComboBox projectionComboBox;
     private javax.swing.JPanel selectionPanel;
+    private javax.swing.JLabel theta0;
+    private javax.swing.JLabel thetapLabel;
+    private javax.swing.JSlider thetap_Slider;
     // End of variables declaration//GEN-END:variables
 
     /**

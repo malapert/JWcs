@@ -199,9 +199,9 @@ public class SZP extends AbstractZenithalProjection {
     
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("mu", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("phic", AbstractJWcs.PV22, new double[]{0, 360}, 0);                
-        final ProjectionParameter p3 = new ProjectionParameter("thetac", AbstractJWcs.PV23, new double[]{0, 90}, 90);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03BC", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("\u03C6c", AbstractJWcs.PV22, new double[]{0, 360}, 0);                
+        final ProjectionParameter p3 = new ProjectionParameter("\u03B8c", AbstractJWcs.PV23, new double[]{0, 90}, 90);
         return new ProjectionParameter[]{p1,p2,p3};    
     }    
 

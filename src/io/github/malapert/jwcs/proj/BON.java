@@ -133,7 +133,7 @@ public class BON extends AbstractPolyConicProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("theta1", AbstractJWcs.PV11, new double[]{-90, 90}, 45);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03B81", AbstractJWcs.PV21, new double[]{-90, 90}, 45);
         return new ProjectionParameter[]{p1};
     }
 

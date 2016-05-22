@@ -267,8 +267,8 @@ public class AZP extends AbstractZenithalProjection {
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {
-        final ProjectionParameter p1 = new ProjectionParameter("mu", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
-        final ProjectionParameter p2 = new ProjectionParameter("gamma", AbstractJWcs.PV22, new double[]{0, 360}, 0);
+        final ProjectionParameter p1 = new ProjectionParameter("\u03BC", AbstractJWcs.PV21, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
+        final ProjectionParameter p2 = new ProjectionParameter("\u0263", AbstractJWcs.PV22, new double[]{0, 360}, 0);
         return new ProjectionParameter[]{p1,p2};        
     }
 }

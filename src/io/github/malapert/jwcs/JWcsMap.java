@@ -256,6 +256,10 @@ public class JWcsMap extends AbstractJWcs {
                 wcsKeywords.put("PV2_6", "0.003");
                 wcsKeywords.put("PV2_7", "-0.001");
                 break;
+            case "AIR":
+                wcsKeywords.put(AbstractJWcs.CRVAL2, "90");
+                wcsKeywords.put(AbstractJWcs.PV21, "45");
+                break;
             default:
                 wcsKeywords.put(AbstractJWcs.CRVAL2, "0");
                 break;
