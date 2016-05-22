@@ -23,8 +23,7 @@ import org.apache.commons.math3.util.FastMath;
  * The Airy function R<sub>\u03B8</sub> to solve in an iterative way when a
  * point is projected.
  *
- * <p>
- * R<sub>\u03B8</sub> + 2 *
+ * <p>R<sub>\u03B8</sub> + 2 *
  * (ln(cos\u03B6)/tan\u03B6+ln(cos\u03B6<sub>b</sub>)/tan<sup>2</sup>\u03B6<sub>b</sub>*tan\u03B6) = 0
  * with:
  * <ul>
@@ -39,6 +38,10 @@ public class AiryFunction implements UnivariateFunction {
      * \u03B8<sub>b</sub>.
      */
     private final double thetab;
+    
+    /**
+     * Radius.
+     */
     private double radius;
     
     /**
