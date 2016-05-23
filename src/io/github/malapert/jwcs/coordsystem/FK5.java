@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 
@@ -41,6 +42,10 @@ public class FK5 implements CoordinateReferenceFrame {
     
     /**
      * The epoch of the equinox.
+     * 
+     * <p>An equinox is an astronomical event in which the plane of Earth's 
+     * equator passes through the center of the Sun, which occurs twice each 
+     * year, around 20 March and 23 September.     
      */    
     private double equinox;
     
@@ -53,6 +58,10 @@ public class FK5 implements CoordinateReferenceFrame {
     
     /**
      * Creates a FK5 reference frame with a equinox value.
+     * 
+     * <p>The epoch of equinox is transformed in Julian epoch
+     * using {@link TimeUtility#epochs(java.lang.String)}. 
+     * 
      * @param epoch the epoch of equinox
      */    
     public FK5(final String epoch) {
@@ -91,7 +100,11 @@ public class FK5 implements CoordinateReferenceFrame {
     }
 
     /**
-     * Sets the equinox.
+     * Sets the equinox and transforms it in a Julian epoch.
+     * 
+     * <p>The epoch of equinox is transformed in Julian epoch
+     * using {@link TimeUtility#epochs(java.lang.String) }. 
+     * 
      * @param equinox the equinox to set
      */
     @Override
@@ -114,7 +127,7 @@ public class FK5 implements CoordinateReferenceFrame {
      * <p>No need to specify the epoch of observation in FK5 reference frame
      */
     public void setEpochObs(final String epochObs) { 
-        //Do nothing
+        //Do nothing 
     }
 
     @Override
@@ -124,12 +137,12 @@ public class FK5 implements CoordinateReferenceFrame {
      * <p>No need to specify the epoch of observation in FK5 reference frame
      */    
     public void setEpochObs(final double epochObs) {
-        //Do nothing
+        //Intentionally empty
     }  
 
     @Override
     public String toString() {
-        return "FK5("+this.equinox+")";
+        return "FK5(J"+this.equinox+")";
     }
         
 }

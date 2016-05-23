@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -27,10 +28,11 @@ import org.apache.commons.math3.linear.RealMatrix;
  * and the fundamental plane approximately in the galactic plane. 
  * 
  * <p>It uses the right-handed convention, meaning that coordinates are positive 
- * toward the north and toward the east in the fundamental plane.
+ * toward the north and toward the east in the fundamental plane.  
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
+ * @see <a href="https://en.wikipedia.org/wiki/Galactic_coordinate_system">Galactic coordinate system</a>
  */
 public class Galactic extends AbstractCrs {
     /**
@@ -39,31 +41,59 @@ public class Galactic extends AbstractCrs {
     private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;       
     
     /**
-     * Computes the rotation matrix from a reference frame to another one.
-     *
-     * @param crs the output coordinate Reference System
-     * @return the rotation matrix in the output coordinate Reference System
+     * Returns the rotation matrix to convert from this current CRS to 
+     * another one.
+     * 
+     * <p>The algorithm for the conversion is the following:
+     * <ul>
+     * <li>For {@link Equatorial} : <code>m = m2.multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEqB19502Gal().transpose()</code><br>
+     *  - <code>m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN)</code>
+     * </li>
+     * <li>For {@link Galactic} : <code>m = createRealIdentityMatrix(3)</code></li>
+     * <li>For {@link SuperGalactic}: <code>m = convertMatrixGal2Sgal()</code></li>
+     * <li>For {@link Ecliptic} : <code>m = m3.multiply(m2).multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEqB19502Gal().transpose()</code><br>
+     *  - <code>m2= convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN)</code><br>
+     *  - <code>m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), crs.getCoordinateReferenceFrame().getReferenceFrame())</code>
+     * </li>
+     * </ul>     
+     * 
+     * @param crs target coordinate reference system
+     * @return the rotation matrix to convert from this current CRS to 
+     * another one
      * @throws JWcsError Unknown output crs
-     */    
+     * @see AbstractCrs#convertMatrixEq2Ecl(double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame)      
+     * @see AbstractCrs#convertMatrixEpoch12Epoch2(double, double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double) 
+     * @see AbstractCrs#convertMatrixEqB19502Gal()    
+     * @see NumericalUtility#createRealIdentityMatrix(int) 
+     * @see AbstractCrs#convertMatrixGal2Sgal() 
+     */   
     @Override
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
-        if (crs instanceof Equatorial) {
-            final RealMatrix m1 = convertMatrixEqB19502Gal().transpose(); 
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            m = m2.multiply(m1);
-        } else if (crs instanceof Galactic) {
-            m = createRealIdentityMatrix(3);
-        } else if (crs instanceof SuperGalactic) {
-            m = convertMatrixGal2Sgal();
-        } else if (crs instanceof Ecliptic) {
-            final RealMatrix m1 = convertMatrixEqB19502Gal().transpose();
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-            final RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), ((Ecliptic)crs).getReferenceFrame());
-            m = m3.multiply(m2).multiply(m1);
-        } else {
-            throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        switch(cs) {
+            case EQUATORIAL:
+                RealMatrix m1 = convertMatrixEqB19502Gal().transpose(); 
+                RealMatrix m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+                m = m2.multiply(m1);
+                break;
+            case GALACTIC:
+                m = createRealIdentityMatrix(3);
+                break;
+            case SUPER_GALACTIC:
+                m = convertMatrixGal2Sgal();
+                break;
+            case ECLIPTIC:
+                m1 = convertMatrixEqB19502Gal().transpose();
+                m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
+                RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), crs.getCoordinateReferenceFrame().getReferenceFrame());
+                m = m3.multiply(m2).multiply(m1);
+                break;
+            default:
+                throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));
         }
         return m;
     }

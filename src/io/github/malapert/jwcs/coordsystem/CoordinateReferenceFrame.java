@@ -17,20 +17,14 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.TimeUtility;
 
 /**
- * Specifies the origin of the equatorial and the ecliptic coordinate system. 
- * 
- * <p>In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
- * we read that all reference systems are allowed for both equatorial and 
- * ecliptic coordinates, except FK4-NO-E, which is only allowed for equatorial 
- * coordinates. If FK4-NO-E is given in combination with an ecliptic 
- * crs then silently FK4 is assumed.
+ * The coordinate reference frame defines how the CRS is related to the origin
+ * (position and the date of the origin - equinox, date of observation ). 
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
- * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
- * "Representations of celestial coordinates in FITS, M. R. Calabretta and E. W. Greisen - page 6 "</a> 
  * @see io.github.malapert.jwcs.coordsystem.AbstractCrs
  */
 public interface CoordinateReferenceFrame {
@@ -66,6 +60,7 @@ public interface CoordinateReferenceFrame {
          * system, which should be qualified by an Equinox value.
          * For accurate work FK4 coordinate systems should also be qualified
          * by an Epoch value. This is the *epoch of observation*.
+         * 
          */
         FK4("FK4", true, true),
         /**
@@ -74,6 +69,16 @@ public interface CoordinateReferenceFrame {
          * 
          * <p>This coordinate system should also be 
          * qualified by both an Equinox and an Epoch value.
+         * 
+         * <p>In 'Representations of celestial coordinates in FITS' (Calabretta and Greisen) 
+         * we read that all reference systems are allowed for both equatorial and 
+         * ecliptic coordinates, except FK4-NO-E, which is only allowed for equatorial 
+         * coordinates. If FK4-NO-E is given in combination with an ecliptic 
+         * crs then silently FK4 is assumed.         
+         * 
+         * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
+         * "Representations of celestial coordinates in FITS, M. R. Calabretta and E. W. Greisen - page 6 "</a> 
+         *          
          */
         FK4_NO_E("FK4 NO E-terms", true, true), 
         /**
@@ -177,8 +182,8 @@ public interface CoordinateReferenceFrame {
     };    
    
     /**
-     * Returns the reference system that is used.
-     * @return the reference system that is used
+     * Returns the reference frame that is used.
+     * @return the reference frame that is used
      */
     CoordinateReferenceFrame.ReferenceFrame getReferenceFrame();
     
@@ -187,6 +192,8 @@ public interface CoordinateReferenceFrame {
      * according to the reference frame.
      * @return Double.NaN when epoch of observation is not required otherwise
      * the epoch of observation
+     * @see TimeUtility#convertEpochBessel2JD(double) 
+     * @see TimeUtility#convertEpochJulian2JD(double) 
      */
     double getEpochObs();
     
@@ -194,18 +201,22 @@ public interface CoordinateReferenceFrame {
      * Returns the equinox as a Besselian or a Julian value according to the 
      * reference frame.
      * @return the equinox
+     * @see TimeUtility#convertEpochBessel2JD(double) 
+     * @see TimeUtility#convertEpochJulian2JD(double)      
      */
     double getEquinox();
     
     /**
      * Sets the epoch of observation.
      * @param epochObs the epoch of observation
+     * @see TimeUtility#epochs(java.lang.String) 
      */
     void setEpochObs(final String epochObs);
     
     /**
      * Sets the equinox.
      * @param equinox the equinox
+     * @see TimeUtility#epochs(java.lang.String)      
      */
     void setEquinox(final String equinox);
     
@@ -213,6 +224,8 @@ public interface CoordinateReferenceFrame {
      * Sets the epoch of observation as a Julian or Besselian epoch according to
      * the reference frame.
      * @param epochObs the epoch of observation
+     * @see TimeUtility#convertEpochBessel2JD(double) 
+     * @see TimeUtility#convertEpochJulian2JD(double)     
      */
     void setEpochObs(final double epochObs);
     
@@ -220,6 +233,8 @@ public interface CoordinateReferenceFrame {
      * Sets the equinox as a Julian or Besselian epoch according to
      * the reference frame.
      * @param equinox the equinox
+     * @see TimeUtility#convertEpochBessel2JD(double) 
+     * @see TimeUtility#convertEpochJulian2JD(double)     
      */
     void setEquinox(final double equinox);    
        

@@ -93,7 +93,7 @@ public class J2000 implements CoordinateReferenceFrame {
      */ 
     @Override   
     public void setEquinox(final String equinox) { 
-        //Do nothing
+        //Intentionally empty because the equinox is invariant in J2000 CRS.
     }    
     
     /**
@@ -103,7 +103,7 @@ public class J2000 implements CoordinateReferenceFrame {
      */    
     @Override
     public void setEquinox(final double equinox) {
-        //Do nothing
+        //Intentionally empty because the equinox is invariant in J2000 CRS.
     }      
     
     /**
@@ -123,7 +123,7 @@ public class J2000 implements CoordinateReferenceFrame {
      */     
     @Override   
     public void setEpochObs(final double epochObs) {
-        //DO nothing
+        //Intentionally empty because the epoch is invariant in J2000 CRS.
     }     
 
     @Override

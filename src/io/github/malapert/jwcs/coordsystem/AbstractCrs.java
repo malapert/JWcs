@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aacos;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aasin;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
@@ -31,10 +32,11 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.FastMath;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aatan2;
 import static io.github.malapert.jwcs.utility.NumericalUtility.equal;
 import static io.github.malapert.jwcs.utility.NumericalUtility.isInInterval;
-import org.apache.commons.math3.util.FastMath;
+import io.github.malapert.jwcs.utility.TimeUtility;
 
 /**
  * A Coordinate Reference System (crs) contains two different elements : 
@@ -169,8 +171,6 @@ public abstract class AbstractCrs {
      * @param crs the output coordinate Reference System
      * @return the rotation matrix in the output coordinate Reference System
      * @throws JWcsError Unknown output crs
-     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
-     * code in Python</a>
      */        
     protected abstract RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError;
 
@@ -211,6 +211,7 @@ public abstract class AbstractCrs {
      *
      * @param crs the coordinate reference system
      * @return the elliptical terms of aberration matrix
+     * @see FK4#getEterms(double) 
      */
     protected static final RealMatrix getEterms(final AbstractCrs crs) {
         RealMatrix eterms = null;
@@ -248,13 +249,24 @@ public abstract class AbstractCrs {
     /**
      * Converts the (longitude, latitude) coordinates from the current 
      * coordinate reference system into the target coordinate reference System.     
+     * 
+     * <p>The algorithm to convert coordinates from a CRS to another if the following:
+     * <ul>
+     * <li>Transforms coordinates to rectangular coordinates</li>
+     * <li>Removes E-terms of source CRS from rectangular coordinates when necessary</li>
+     * <li>Applies the rotation matrix from the target CRS to rectangular coordinates</li>
+     * <li>Adds E-terms of target CRS from the previous step when necessary</li>
+     * <li>Converts to longitude/latitude</li>
+     * </ul>
      *
      * @param crs the target coordinate Reference System
      * @param longitude longitude in decimal degrees
      * @param latitude latitude in decimal degrees
      * @return the position on the sky in the target coordinate reference system
-     * @see <a href="http://www.astro.rug.nl/software/kapteyn/">The original
-     * code in Python</a>
+     * @see AbstractCrs#longlat2xyz(double, double) 
+     * @see AbstractCrs#getRotationMatrix(io.github.malapert.jwcs.coordsystem.AbstractCrs) 
+     * @see AbstractCrs#getEterms(io.github.malapert.jwcs.coordsystem.AbstractCrs) 
+     * @see AbstractCrs#xyz2longlat(org.apache.commons.math3.linear.RealMatrix) 
      */
     public final SkyPosition convertTo(final AbstractCrs crs, final double longitude, final double latitude) {
         checkCoordinates(longitude, latitude);
@@ -292,6 +304,7 @@ public abstract class AbstractCrs {
      * latitude2, ...) in degrees
      * @return an array of SkyPosition
      * @throws JWcsError coordinates should be an array containing a set of [longitude, latitude]
+     * @see #convertTo(io.github.malapert.jwcs.coordsystem.AbstractCrs, double, double) 
      */
     public final SkyPosition[] convertTo(final AbstractCrs crs, final double[] coordinates) throws JWcsError {
         
@@ -363,27 +376,31 @@ public abstract class AbstractCrs {
      * @param coordinateSystem the coordinate system
      * @return the coordinate reference system
      * @exception JWcsError the coordinate system is not supported
+     * @see Ecliptic
+     * @see Equatorial
+     * @see Galactic
+     * @see SuperGalactic
      */
     public final static AbstractCrs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
-        AbstractCrs skySystem;
+        AbstractCrs crs;
         LOG.log(Level.INFO, "Get sky system {0}", new Object[]{coordinateSystem.name()});
         switch (coordinateSystem) {
             case ECLIPTIC:
-                skySystem = new Ecliptic();
+                crs = new Ecliptic();
                 break;
             case EQUATORIAL:
-                skySystem = new Equatorial();
+                crs = new Equatorial();
                 break;
             case GALACTIC:
-                skySystem = new Galactic();
+                crs = new Galactic();
                 break;
             case SUPER_GALACTIC:
-                skySystem = new SuperGalactic();
+                crs = new SuperGalactic();
                 break;
             default:
                 throw new JWcsError(coordinateSystem + " not supported as coordinate reference system");
         }
-        return skySystem;
+        return crs;
     }
     
     /**
@@ -409,6 +426,10 @@ public abstract class AbstractCrs {
      * reference frame <code>s1</code> with <code>epoch1</code> to an equatorial
      * system with equator and equinox at <code>epoch2</code> in reference system <code>S2</code>.
      * @throws JWcsError <code>s1</code> to <code>s2</code> conversion is not supported
+     * @see #convertICRSTo(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double) 
+     * @see #convertFK5To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
+     * @see #convertFK4To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
+     * @see #convertJ2000To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
      */
     protected static RealMatrix convertMatrixEpoch12Epoch2(final double epoch1, final double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, final double epobs) {
        final RealMatrix result;
@@ -435,6 +456,20 @@ public abstract class AbstractCrs {
     /**
      * Converts J2000 to another coordinate reference frame.     
      *
+     * <p>The matrix to compute J2000 to <code>s2</code> is computed in this way:
+     * <ul>
+     * <li>for ICRS :  m2.multiply(m1) with m2 = convertICRS2J2000Matrix().transpose()
+     * and m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0)</li>
+     * <li>for FK5 : m4.multiply(m3).multiply(m2).multiply(m1) with
+     * m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0), m2 = convertICRS2J2000Matrix().transpose(),
+     * m3 = convertICRS2FK5Matrix() and m4 = convertJulianMatrixEpoch12Epoch2(2000.0, epoch2)</li>
+     * <li>for FK4 and FK4-NO-E : m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1)
+     * with m1 = convertIAU2006MatrixEpoch12Epoch2(epoch1, 2000.0), m2 = convertICRS2J2000Matrix().transpose(),
+     * m3 = convertICRS2FK5Matrix(), m4 = convertFK52FK4Matrix(epobs), 
+     * m5 = convertBesselianMatrixEpoch12Epoch2(1950, epoch2)</li>
+     * <li>for J2000 : convertIAU2006MatrixEpoch12Epoch2(epoch1, epoch2)</li>
+     * </ul>     
+     * 
      * @param s2 Output coordinate reference frame
      * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
      * Besselian or Julian.
@@ -446,6 +481,12 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      * coordinate reference frame <code>s2</code>.
      * @throws JWcsError J2000 to <code>s2</code> conversion is not supported
+     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double) 
+     * @see #convertICRS2J2000Matrix() 
+     * @see #convertICRS2FK5Matrix() 
+     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertFK52FK4Matrix(java.lang.Double) 
+     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
      */
     private static RealMatrix convertJ2000To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -486,7 +527,20 @@ public abstract class AbstractCrs {
     }    
 
     /**
-     * Converts FK4 to another coordinate reference frame.     
+     * Converts FK4 to another coordinate reference frame.  
+     * 
+     * <p>The matrix to compute FK4 to <code>s2</code> is computed in this way:
+     * <ul>
+     * <li>for ICRS :  m3.multiply(m2).multiply(m1) with m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0),
+     * m2 = convertFK42FK5Matrix(epobs) and m3 = convertICRS2FK5Matrix().transpose()</li>
+     * <li>for FK5 : m3.multiply(m2).multiply(m1) with m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0),
+     * m2 = convertFK42FK5Matrix(epobs) and m3 = convertJulianMatrixEpoch12Epoch2(2000.0, epoch2)</li>
+     * <li>for FK4 and FK4-NO-E : convertBesselianMatrixEpoch12Epoch2(epoch1, epoch2)</li>
+     * <li>for J2000 : m5.multiply(m4).multiply(m3).multiply(m2).multiply(m1)
+     * with m1 = convertBesselianMatrixEpoch12Epoch2(epoch1, 1950.0), 
+     * m2 = convertFK52FK4Matrix(epobs).transpose(), m3 = convertICRS2FK5Matrix().transpose(), 
+     * m4 = convertICRS2J2000Matrix() and m5 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2)</li>
+     * </ul>          
      *
      * @param s2 Output coordinate reference frame
      * @param epoch1 Epoch belonging to coordinate reference frame s1 : either
@@ -499,6 +553,13 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      *  coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
+     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertFK42FK5Matrix() 
+     * @see #convertICRS2FK5Matrix() 
+     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertFK52FK4Matrix(java.lang.Double) 
+     * @see #convertICRS2J2000Matrix() 
+     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
      */    
     private static RealMatrix convertFK4To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -541,6 +602,20 @@ public abstract class AbstractCrs {
     /**
      * Converts FK5 to another coordinate reference frame.     
      *
+     * <p>The matrix to compute FK5 to <code>s2</code> is computed in this way:
+     * <ul>
+     * <li>for ICRS :  m2.multiply(m1) with m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0),
+     * m2 = convertICRS2FK5Matrix().transpose()</li>
+     * <li>for FK5 : convertJulianMatrixEpoch12Epoch2(epoch1, epoch2)</li>
+     * <li>for FK4 and FK4-NO-E : m3.multiply(m2).multiply(m1) with 
+     * m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000), m2 = convertFK52FK4Matrix(epobs),
+     * m3 = convertBesselianMatrixEpoch12Epoch2(1950.0, epoch2)</li>
+     * <li>for J2000 : m4.multiply(m3).multiply(m2).multiply(m1) with
+     * m1 = convertJulianMatrixEpoch12Epoch2(epoch1, 2000.0),
+     * m2 = convertICRS2FK5Matrix().transpose(), m3 = convertICRS2J2000Matrix(), 
+     * m4 = convertIAU2006MatrixEpoch12Epoch2(2000.0, epoch2)</li>
+     * </ul>   
+     * 
      * @param s2 Output coordinate reference frame
      * @param epoch1 Epoch belonging to coordinate reference frame s1 : either 
      * Besselian or Julian.
@@ -552,6 +627,12 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      * coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK5 to <code>s2</code> conversion is not supported
+     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertICRS2FK5Matrix() 
+     * @see #convertFK52FK4Matrix(java.lang.Double) 
+     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertICRS2J2000Matrix() 
+     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
      */    
     private static RealMatrix convertFK5To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -589,7 +670,19 @@ public abstract class AbstractCrs {
     }
     
     /**
-     * Converts ICRS to another coordinate reference frame.     
+     * Converts ICRS to another coordinate reference frame.    
+     * 
+     * <p>The matrix to compute ICRS to <code>s2</code> is computed in this way:
+     * <ul>
+     * <li>for ICRS :  createRealIdentityMatrix(3)</li>
+     * <li>for FK5 : m2.multiply(m1) with m1 = convertICRS2FK5Matrix() and 
+     * m2 = convertJulianMatrixEpoch12Epoch2(2000.0, epoch2)</li>
+     * <li>for FK4 and FK4-NO-E : m3.multiply(m2).multiply(m1) with 
+     * m1 = convertICRS2FK5Matrix(), m2 = convertFK52FK4Matrix(epobs) and 
+     * m3 = convertBesselianMatrixEpoch12Epoch2(1950.0, epoch2)</li>
+     * <li>for J2000 : m2.multiply(m1) with m1 = convertICRS2J2000Matrix() 
+     * and m2 = convertIAU2006MatrixEpoch12Epoch2(2000.0d, epoch2)</li>
+     * </ul>      
      *
      * @param s2 Output coordinate reference frame
      * @param epoch2 Epoch belonging to coordinate reference frame s2 : either 
@@ -600,6 +693,13 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      *  coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
+     * @see NumericalUtility#createRealIdentityMatrix(int) 
+     * @see #convertICRS2FK5Matrix() 
+     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertFK52FK4Matrix(java.lang.Double) 
+     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertICRS2J2000Matrix() 
+     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
      */    
     private static RealMatrix convertICRSTo(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -641,6 +741,7 @@ public abstract class AbstractCrs {
      * @param eterm E-terms vector (as returned by getEterms()). If input is
      * omitted (== <code>null</code>), the e-terms for 1950 will be substituted.
      * @return Mean place
+     * @see FK4#getEterms(double) 
      */
     private static RealMatrix removeEterms(final RealMatrix xyz, final RealMatrix eterm) {
         RealMatrix etermToRemove = eterm;
@@ -657,7 +758,8 @@ public abstract class AbstractCrs {
      * @param xyz Cartesian position(s) converted from long/lat
      * @param eterm E-terms vector (as returned by getEterms()). If input is
      * omitted (i.e. == <code>null</code>), the e-terms for 1950 will be substituted.
-     * @return Apparent place,
+     * @return Apparent place
+     * @see FK4#getEterms(double) 
      */
     private static RealMatrix addEterms(final RealMatrix xyz, final RealMatrix eterm) {
         RealMatrix etermToAdd = eterm;
@@ -669,18 +771,9 @@ public abstract class AbstractCrs {
 
     /**
      * Create matrix to convert equatorial fk4 coordinates (without e-terms) to
-     * IAU 1958 lII,bII system of galactic coordinates.
+     * IAU 1958 lII,bII system of galactic coordinates.     
      *
-     * <p>Reference:<br> 
-     * ----------<br> 
-     * 1. Blaauw, A., Gum C.S., Pawsey, J.L., Westerhout,
-     * G.: 1958,<br> 
-     * 2. Monthly Notices Roy. Astron. Soc. 121, 123, 3. Blaauw, A.,
-     * 2007. Private communications.<br>
-     *
-     * <p>Notes:<br> 
-     * ------ <br>
-     * Original definitions from 1.:
+     * <p>Original definitions from 1.:
      * <ul>
      * <li>The new north galactic pole lies in the direction 
      * alpha = 12h49m (192.25 deg), delta=27.4 deg (equinox 1950.0). </li>
@@ -716,6 +809,13 @@ public abstract class AbstractCrs {
      * this circle (note that we rotated the original X axis about 192.25 deg).
      * The last rotation angle therefore is a3=+180-123: M =
      * rotZ(180-123.0)*rotY(90-27.4)*rotZ(192.25)
+     * 
+     * <p>Reference:<br> 
+     * ----------<br> 
+     * 1. Blaauw, A., Gum C.S., Pawsey, J.L., Westerhout,
+     * G.: 1958,<br> 
+     * 2. Monthly Notices Roy. Astron. Soc. 121, 123, 3. Blaauw, A.,
+     * 2007. Private communications.<br>     
      *
      * <p>The composed rotation matrix is the same as in Slalib's 'ge50.f' and the
      * matrix in eq. (32) of Murray (1989).
@@ -727,16 +827,9 @@ public abstract class AbstractCrs {
     }
 
     /**
-     * Transforms galactic to supergalactic coordinates.
+     * Transforms galactic to supergalactic coordinates.     
      *
-     * <p>Reference: <br> 
-     * ----------<br> 
-     * Lahav, O., The supergalactic plane revisited with
-     * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)
-     *
-     * <p>Notes:<br>
-     * ------<br>
-     * The Supergalactic equator is conceptually defined by the
+     * <p>The Supergalactic equator is conceptually defined by the
      * plane of the local (Virgo-Hydra-Centaurus) supercluster, and the origin
      * of supergalactic longitude is at the intersection of the supergalactic
      * and galactic planes. (de Vaucouleurs)
@@ -755,8 +848,13 @@ public abstract class AbstractCrs {
      * to be sgl=0 we have to rotate this plane along the new z-axis about an 
      * angle of 90 degrees. So the composed rotation matrix is: 
      * M = Rotz(90)*Roty(90-6.32)*Rotz(47.37) 
+     * 
+     * <p>Reference: <br> 
+     * ----------<br> 
+     * Lahav, O., The supergalactic plane revisited with
+     * the Optical Redshift Survey Mon. Not. R. Astron. Soc. 312, 166-176 (2000)     
      *
-     * @return RealMatrix M as in XYZsgal = M * XYZgal
+     * @return RealMatrix M as in <code>XYZsgal = M * XYZgal</code>
      */
     protected final static RealMatrix convertMatrixGal2Sgal() {
         return rotZ(90.0d).multiply(rotY(90d - 6.32d)).multiply(rotZ(47.37d));
@@ -766,19 +864,17 @@ public abstract class AbstractCrs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU model
      * 2000).
      *
-     * <p>Reference:<br> 
+     * <p>The epoch is entered in Julian date and the time is
+     * calculated w.r.t. J2000. The obliquity is the angle between the mean
+     * equator and ecliptic, or, between the ecliptic pole and mean celestial
+     * pole of date.<br>
+     * <br>
+     * Reference:<br> 
      * ----------<br>
      * Fukushima, T. 2003, AJ, 126,1 Kaplan, H., 2005, The
      * IAU Resolutions on Astronomical Reference Systems, TimeUtility Scales, and
      * Earth Rotation Models, United States Naval Observatory circular no. 179,
-     * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)
-     * 
-     * <p>Notes:<br>
-     * ------ <br> 
-     * The epoch is entered in Julian date and the time is
-     * calculated w.r.t. J2000. The obliquity is the angle between the mean
-     * equator and ecliptic, or, between the ecliptic pole and mean celestial
-     * pole of date.
+     * http://aa.usno.navy.mil/publications/docs/Circular_179.pdf (page 44)    
      *
      * @param jd Julian date
      * @return Mean obliquity in degrees
@@ -799,18 +895,16 @@ public abstract class AbstractCrs {
      * What is the obliquity of the ecliptic at this Julian date? (IAU 1980
      * model).
      *
-     * <p>Reference:<br>
+     * <p>The epoch is entered in Julian date and the time is
+     * calculated w.r.t. J2000. The obliquity is the angle between the mean
+     * equator and ecliptic, or, between the ecliptic pole and mean celestial
+     * pole of date<br>
+     * <br>
+     * Reference:<br>
      * ---------- <br>
      * Explanatory Supplement to the Astronomical Almanac,
      * P. Kenneth Seidelmann (ed), University Science Books (1992), Expression
-     * 3.222-1 (p114).
-     *
-     * <p>Notes:<br>
-     * ------<br>
-     * The epoch is entered in Julian date and the time is
-     * calculated w.r.t. J2000. The obliquity is the angle between the mean
-     * equator and ecliptic, or, between the ecliptic pole and mean celestial
-     * pole of date
+     * 3.222-1 (p114).     
      *
      * @param jd Julian date
      * @return Mean obliquity in degrees
@@ -823,17 +917,9 @@ public abstract class AbstractCrs {
 
     /**
      * Calculates a rotation matrix to convert equatorial coordinates to
-     * ecliptical coordinates.
-     *
-     * <p>Reference:<br>
-     * ----------<br>
-     * Representations of celestial coordinates in FITS, 
-     * Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
-     * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf
+     * ecliptical coordinates.     
      * 
-     * <p>Notes:<br>
-     * ------<br>
-     * 1. The origin for ecliptic longitude is the vernal equinox.
+     * <p>1. The origin for ecliptic longitude is the vernal equinox.
      * Therefore the coordinates of a fixed object is subject to shifts due to
      * precession. The rotation matrix uses the obliquity to do the conversion
      * to the wanted ecliptic coordinates. So we always need to enter an epoch.
@@ -876,13 +962,19 @@ public abstract class AbstractCrs {
      *<br>
      * 3. Equatorial to ecliptic transformations use the time dependent
      * obliquity of the equator (also known as the obliquity of the ecliptic).
-     * Again, start with: M = rotZ(0).rotX(eps).rotZ(0) = E.rotX(eps).E =
-     * rotX(eps) In fact this is only a rotation around the X axis
+     * Again, start with: <code>M = rotZ(0).rotX(eps).rotZ(0) = E.rotX(eps).E =
+     * rotX(eps)</code> In fact this is only a rotation around the X axis
+     * 
+     * <p>Reference:<br>
+     * ----------<br>
+     * Representations of celestial coordinates in FITS, 
+     * Calabretta. M.R., and Greisen, E.w., (2002) Astronomy and Astrophysics,
+     * 395, 1077-1122. http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf     
      *
      * @param epoch Epoch of the equator and equinox of date
      * @param refSystem equatorial refrence frame to determine if one entered epoch in B
      * or J coordinates
-     * @return 3x3 RealMatrix M as in XYZecl = M * XYZeq
+     * @return 3x3 RealMatrix M as in <code>XYZecl = M * XYZeq</code>
      */
     protected final static RealMatrix convertMatrixEq2Ecl(final double epoch, final CoordinateReferenceFrame.ReferenceFrame refSystem) {
         final double jd;
@@ -903,19 +995,17 @@ public abstract class AbstractCrs {
     /**
      * Precession from one epoch to another in the fk5 coordinate reference frame.
      *
-     * <p>Reference:<br> 
+     * <p>The precession matrix is: <code>M = rotZ(-z).rotY(\u03B8).rotZ(-\u03B6)</code><br>
+     * <br> 
+     * Reference:<br> 
      * ----------<br> 
      * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
      *
-     * <p>Notes:<br>
-     * ------<br>
-     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
-     *
      * @param jEpoch1 Julian start epoch
      * @param jEpoch2 Julian epoch to process to
-     * @return 3x3 rotation matrix M as in XYZepoch2 = M * XYZepoch1
+     * @return 3x3 rotation matrix M as in <code>XYZepoch2 = M * XYZepoch1</code>
      */
     private static RealMatrix convertJulianMatrixEpoch12Epoch2(final double jEpoch1, final double jEpoch2) {
         final double jd1 = convertEpochJulian2JD(jEpoch1);
@@ -955,13 +1045,13 @@ public abstract class AbstractCrs {
      * Given three precession angles, creates the corresponding rotation matrix.
      *
      * <p>Return the precession matrix for the three precession angles zeta, z and
-     * theta. Rotation matrix: R = rotZ(-z).rotY(th).rotZ(-zeta) (ES 3.21-7, p
-     * 103). Also allowed is the expression: rotZ(-90-z)*rotX(th)*rotZ(90-zeta)
+     * theta. Rotation matrix: <code>M = rotZ(-z).rotY(\u03B8).rotZ(-\u03B6)</code> (ES 3.21-7, p
+     * 103). Also allowed is the expression: <code>rotZ(-90-z)*rotX(th)*rotZ(90-zeta)</code>
      *
      * @param zeta \u03B6  in decimal degrees
      * @param z z in decimal degree
      * @param theta \u03B8 in decimal degrees
-     * @return Rotation matrix M as in XYZepoch1 = M * XYZepoch2
+     * @return Rotation matrix M as in <code>XYZepoch1 = M * XYZepoch2</code>
      */
     private static RealMatrix precessionMatrix(final double zeta, final double z, final double theta) {
         return rotZ(-z).multiply(rotY(theta)).multiply(rotZ(-zeta));
@@ -970,19 +1060,19 @@ public abstract class AbstractCrs {
     /**
      * Precession from one epoch to another in the FK4 coordinate reference frame.
      *
-     * <p>Reference:<br> 
+     * <p>The precession matrix is: <code>M = rotZ(-z).rotY(\u03B8).rotZ(-\u03B6)</code><br>
+     * <br>
+     * Reference:<br> 
      * ----------<br> 
      * Seidelman, P.K., 1992. Explanatory Supplement to
      * the Astronomical Almanac. University Science Books, Mill Valley. 3.214 p
      * 106
      *
-     * <p>Notes:<br>
-     * ------<br>
-     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
-     *
      * @param bEpoch1 Besselian start epoch
      * @param bEpoch2 Besselian epoch to precess to.
-     * @return 3x3 rotation matrix M as in XYZepoch2 = M * XYZepoch1
+     * @return 3x3 rotation matrix M as in <code>XYZepoch2 = M * XYZepoch1</code>
+     * @see #newcombPrecAngles(double, double) 
+     * @see #precessionMatrix(double, double, double) 
      */
     private static RealMatrix convertBesselianMatrixEpoch12Epoch2(final double bEpoch1, final double bEpoch2) {
         final double[] precessionAngles = newcombPrecAngles(bEpoch1, bEpoch2);
@@ -993,14 +1083,13 @@ public abstract class AbstractCrs {
      * Calculates precession angles for a precession in FK4, using Newcomb's
      * method (Woolard and Clemence angles).
      *
-     * <p>Notes:<br> 
-     * ------<br> 
-     * Newcomb's precession angles for old catalogs (FK4), see ES
+     * <p>Newcomb's precession angles for old catalogs (FK4), see ES
      * 3.214 p.106. Input are <b>Besselian epochs</b>! Adopted accumulated
      * precession angles from equator and equinox at B1950 to 1984 January 1d 0h
-     * according to ES (table 3.214.1, p 107) are: ``zeta=783.7092, z=783.8009
-     * and theta=681.3883``. The Woolard and Clemence angles (derived in this
-     * routine) are: ``zeta=783.70925, z=783.80093 and theta=681.38830``
+     * according to ES (table 3.214.1, p 107) are: <code>zeta=783.7092</code>, 
+     * <code>z=783.8009</code> and <code>theta=681.3883</code>. The Woolard and 
+     * Clemence angles (derived in this routine) are: <code>zeta=783.70925</code>,
+     * <code>z=783.80093</code> and <code>theta=681.38830</code>
      *
      * @param epoch1 Besselian start epoch
      * @param epoch2 Besselian end epoch
@@ -1051,24 +1140,11 @@ public abstract class AbstractCrs {
      * Creates a matrix to precess from B1950 in FK4 to J2000 in FK5 following
      * to Murray's (1989) procedure.
      *
-     * <p>Reference:<br> 
-     * ----------<br>
-     * <ul>
-     * <li>Murray, C.A. The Transformation of coordinates
-     * between the systems B1950.0 and J2000.0, and the principal galactic axis
-     * referred to J2000.0, Astronomy and Astrophysics (ISSN 0004-6361), vol.
-     * 218, no. 1-2, July 1989, p. 325-329.</li> 
-     * <li>Poppe P.C.R.,, Martin, V.A.F.,
-     * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas</li>
-     * </ul>
-     *
-     * <p>Notes:<br> 
-     * ------<br> 
-     * Murray precesses from B1950 to J2000 using a precession
+     * <p>Murray precesses from B1950 to J2000 using a precession
      * matrix by Lieske. Then applies the equinox correction and ends up with a
      * transformation matrix <b>X(0)</b> as given in this function. In Murray's
      * article it is proven that using the procedure as described in the
-     * article, ``r_fk5 = X(0).r_fk4`` for extra galactic sources where we
+     * article, <code>r_fk5 = X(0).r_fk4</code> for extra galactic sources where we
      * assumed that the proper motion in FK5 is zero. This procedure is
      * independent of the epoch of observation. Note that the matrix is not a
      * rotation matrix. FK4 is not an inertial coordinate frame (because of the
@@ -1079,10 +1155,22 @@ public abstract class AbstractCrs {
      * away from 1950.0 The focus of this library is on data of which we do not
      * have information about the proper motions. So for positions of which we
      * allow non zero proper motion in FK5 one needs to supply the epoch of
-     * observation.
+     * observation.<br>
+     * <br>
+     * Reference:<br> 
+     * ----------<br>
+     * <ul>
+     * <li>Murray, C.A. The Transformation of coordinates
+     * between the systems B1950.0 and J2000.0, and the principal galactic axis
+     * referred to J2000.0, Astronomy and Astrophysics (ISSN 0004-6361), vol.
+     * 218, no. 1-2, July 1989, p. 325-329.</li> 
+     * <li>Poppe P.C.R.,, Martin, V.A.F.,
+     * Sobre as Bases de Referencia Celeste SitientibusSerie Ciencias Fisicas</li>
+     * </ul>     
      *
      * @param t Besselian epoch as epoch of observation
-     * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
+     * @return 3x3 matrix M as in <i>XYZfk5 = M * XYZfk4</i>
+     * @see TimeUtility#convertEpochBessel2JD(double)      
      */
     private static RealMatrix convertFK42FK5Matrix(final Double t) {
         final RealMatrix mat = convertFK42FK5Matrix();
@@ -1115,7 +1203,7 @@ public abstract class AbstractCrs {
      * Create a matrix to precess from B1950 in FK4 to J2000 in FK5 following to
      * Murray’s (1989) procedure without epoch of observation.
      *
-     * @return 3x3 matrix M as in XYZfk5 = M * XYZfk4
+     * @return 3x3 matrix M as in <code>XYZfk5 = M * XYZfk4</code>
      */
     private static RealMatrix convertFK42FK5Matrix() {
         final double[][] array = {
@@ -1132,7 +1220,7 @@ public abstract class AbstractCrs {
      *
      * @param t Epoch of observation for those situations where we allow no-zero
      * proper motion in fk4
-     * @return Rotation matrix M as in XYZfk5 = M * XYZfk4
+     * @return Rotation matrix M as in <code>XYZfk5 = M * XYZfk4</code>
      */
     private static RealMatrix convertFK52FK4Matrix(final Double t) {
         return inverse(convertFK42FK5Matrix(t));
@@ -1141,21 +1229,22 @@ public abstract class AbstractCrs {
     /**
      * Creates a rotation matrix to convert a position from ICRS to fk5, J2000.
      *
-     * <p>Reference:<br> 
-     * ----------<br>
-     * Kaplan G.H., The IAU Resolutions on Astronomical
-     * Reference systems, TimeUtility scales, and Earth Rotation Models, US Naval
-     * Observatory, Circular No. 179
-     * 
      * <p>Notes:<br>
      * ------<br>
      * Return a matrix that converts a position vector in ICRS to
      * FK5, J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices from the same paper
-     * to obtain the exact result M = rotX(-eta0)*rotY(xi0)*rotZ(da0) eta0 =
-     * -19.9 mas, xi0 = 9.1 mas and da0 = -22.9 mas
+     * to obtain the exact result <code>M = rotX(-eta0)*rotY(xi0)*rotZ(da0)</code>
+     * <code>eta0 = -19.9 mas</code>, <code>xi0 = 9.1 mas</code> and 
+     * <code>da0 = -22.9 mas</code><br>
+     * <br>
+     * Reference:<br> 
+     * ----------<br>
+     * Kaplan G.H., The IAU Resolutions on Astronomical
+     * Reference systems, TimeUtility scales, and Earth Rotation Models, US Naval
+     * Observatory, Circular No. 179     
      *
-     * @return 3x3 rotation matrix M as in XYZfk5 = M * XYZicrs
+     * @return 3x3 rotation matrix M as in <code>XYZfk5 = M * XYZicrs</code>
      */
     private static RealMatrix convertICRS2FK5Matrix() {
         final double eta0 = -19.9d / (3600d * 1000d);  //Convert mas to degree
@@ -1169,31 +1258,27 @@ public abstract class AbstractCrs {
      * dynamical reference system based on the dynamical mean equator and
      * equinox of J2000.0 (called the dynamical J2000 system).
      *
-     * <p>Reference:<br>
-     * ----------<br>
-     * Hilton and Hohenkerk (2004), Astronomy and
-     * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
-     * Astronomical Reference systems, TimeUtility scales, and Earth Rotation
-     * Models, US Naval Observatory, Circular No. 179
-     * 
-     * <p>Notes:<br>
-     * ------<br>
-     * Return a matrix that converts a position vector in ICRS to
+     * <p>Return a matrix that converts a position vector in ICRS to
      * Dyn. J2000. We do not use the first or second order approximations given
      * in the reference, but use the three rotation matrices to obtain the
      * exact.<br> 
      * <br>
      * Reference:<br>
      * ----------<br>
-     * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
-     *
-     * <p>Notes:<br>
-     * ------<br>
-     * Note that we apply this precession only to equatorial
+     * Hilton and Hohenkerk (2004), Astronomy and
+     * Astrophysics 413, 765-770 Kaplan G.H., The IAU Resolutions on
+     * Astronomical Reference systems, TimeUtility scales, and Earth Rotation
+     * Models, US Naval Observatory, Circular No. 179
+     * 
+     * <p>Note the precession is applied only to equatorial
      * coordinates in the system of dynamical J2000 coordinates. When converting
      * from ICRS coordinates this means applying a frame bias. Therefore the
      * angles differ from the precession Fukushima-Williams angles (IAU 2006).
-     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
+     * The precession matrix is: <code>M = rotZ(-z).rotY(\u03B8).rotZ(\u03B6)</code><br>
+     * <br>
+     * Reference:<br>
+     * ----------<br>
+     * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
      *
      * @return Rotation matrix to transform positions from ICRS to dyn J2000
      */
@@ -1206,24 +1291,22 @@ public abstract class AbstractCrs {
 
     /**
      * Creates a rotation matrix for a precession based on IAU 2000/2006
-     * expressions, see `IAU2006precangles`.
+     * expressions, see {@link #convertIAU2006PrecAngles(double) }.
      *
+     * <p>Note that we apply this precession only to equatorial
+     * coordinates in the system of dynamical J2000 coordinates. When converting
+     * from ICRS coordinates this means applying a frame bias. Therefore the
+     * angles differ from the precession Fukushima-Williams angles (IAU 2006)
+     * The precession matrix is: <code>M = rotZ(-z).rotY(\u03B8).rotZ(-\u03B6)</code>
+     * 
      * <p>Reference:<br>
      * ----------<br>
      * Capitaine N. et al.: IAU 2000 precession A and A 412, 567-586 (2003)
      *
-     * <p>Notes:<br>
-     * ------<br>
-     * Note that we apply this precession only to equatorial
-     * coordinates in the system of dynamical J2000 coordinates. When converting
-     * from ICRS coordinates this means applying a frame bias. Therefore the
-     * angles differ from the precession Fukushima-Williams angles (IAU 2006)
-     * The precession matrix is: M = rotZ(-z).rotY(+theta).rotZ(-zeta)
-     *
      * @param epoch1 Julian start epoch
      * @param epoch2 Julian epoch to precess to
      * @return RealMatrix to transform equatorial coordinates from epoch1 to epoch2
-     * as in XYZepoch2 = M * XYZepoch1
+     * as in <code>XYZepoch2 = M * XYZepoch1</code>
      */
     private static RealMatrix convertIAU2006MatrixEpoch12Epoch2(final double epoch1, final double epoch2) {
         final RealMatrix result;
@@ -1247,21 +1330,17 @@ public abstract class AbstractCrs {
      * Calculates IAU 2000 precession angles for precession from input epoch to
      * J2000.
      *
+     * <p>Input are Julian epochs! <code>T = (jd-2451545.0)/36525.0</code> 
+     * Combined with <code>jd = Jepoch-2000.0)*365.25 + 2451545.0</code> gives:
+     * <code>T = (epoch-2000.0)/100.0</code>
+     * 
      * <p>Reference:<br>
      * ----------<br>
-     * Capitaine N. et al., IAU 2000 precession A and A 412, 567-586 (2003)
-     * 
-     * <p>Notes:<br>
-     * ------<br>
-     * Input are Julian epochs! ``T = (jd-2451545.0)/36525.0`` 
-     * Combined with ``jd = Jepoch-2000.0)*365.25 + 2451545.0`` gives: (see 
-     * convertEpochJulian2JD(epoch)*) ``T = (epoch-2000.0)/100.0`` This function 
-     * should be updated as soon as there are IAU2006 adopted angles to replace 
-     * the angles used in this function.
+     * Capitaine N. et al., IAU 2000 precession A and A 412, 567-586 (2003)     
      *
      * @param epoch Julian epoch of observation
      * @return Angles \u03B6 (zeta), z, \u03B8 (theta) in degrees to setup a
-     * rotation matrix to transform from J2000 to input epoch.
+     * rotation matrix to transform from J2000 to input epoch.     
      */
     private static double[] convertIAU2006PrecAngles(final double epoch) {
         // T = (Current epoch - 1 jan, 2000, 12h noon)
@@ -1298,9 +1377,7 @@ public abstract class AbstractCrs {
      * Given two angles in longitude and latitude returns corresponding
      * Cartesian coordinates x,y,z.
      *
-     * <p>Notes: <br>
-     * ------ <br>
-     * The three coordinate axes x, y and z, the set of
+     * <p>NotesThe three coordinate axes x, y and z, the set of
      * right-handed Cartesian axes that correspond to the usual celestial
      * spherical coordinate system. The xy-plane is the equator, the z-axis
      * points toward the north celestial pole, and the x-axis points toward the
@@ -1318,9 +1395,7 @@ public abstract class AbstractCrs {
      * Given two angles in longitude and latitude returns corresponding
      * Cartesian coordinates x,y,z.
      *
-     * <p>Notes: <br>
-     * ------ <br>
-     * The three coordinate axes x, y and z, the set of
+     * <p>The three coordinate axes x, y and z, the set of
      * right-handed Cartesian axes that correspond to the usual celestial
      * spherical coordinate system. The xy-plane is the equator, the z-axis
      * points toward the north celestial pole, and the x-axis points toward the
@@ -1346,9 +1421,7 @@ public abstract class AbstractCrs {
      * Given Cartesian x,y,z return corresponding longitude and latitude in
      * degrees.
      *
-     * <p>Notes: <br>
-     * ------ <br>
-     * Note that one can expect strange behavior for the values of
+     * <p>Note that one can expect strange behavior for the values of
      * the longitudes very close to the pole. In fact, at the poles itself, the
      * longitudes are meaningless.
      *

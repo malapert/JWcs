@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
+import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.FastMath;
@@ -45,11 +46,17 @@ public class FK4 implements CoordinateReferenceFrame {
     
     /**
      * The epoch of the equinox.
+     * 
+     * <p>An equinox is an astronomical event in which the plane of Earth's 
+     * equator passes through the center of the Sun, which occurs twice each 
+     * year, around 20 March and 23 September.     
      */    
     private double equinox;
     
     /**
      * The epoch of observation.
+     * 
+     * <p>This is the time when the mean place was correct.
      */    
     private double epochObs;       
     
@@ -70,8 +77,13 @@ public class FK4 implements CoordinateReferenceFrame {
     
     /**
      * Creates a FK4 reference frame with both equinox and epoch of observation.
+     * 
+     * <p>The epoch of equinox and epoch of observation are transformed in 
+     * Besselian epochs using {@link TimeUtility#epochs(java.lang.String)}.
+     * 
      * @param epoch the epoch of equinox
      * @param epochObs the epoch of observation
+     * @see TimeUtility#epochs(java.lang.String) 
      */
     public FK4(final String epoch, final String epochObs) {       
         init(epoch, epochObs);
@@ -79,8 +91,13 @@ public class FK4 implements CoordinateReferenceFrame {
     
     /**
      * initialization.
+     * 
+     * <p>The epoch of equinox and epoch of observation are transformed in 
+     * Besselian epochs using {@link TimeUtility#epochs(java.lang.String)}. 
+     * 
      * @param epoch the epoch of equinox
      * @param epochObs the epoch of observation
+     * @see TimeUtility#epochs(java.lang.String)      
      */
     private void init(final String epoch, final String epochObs) {        
         this.setEpochObs(epochObs);
@@ -149,8 +166,13 @@ public class FK4 implements CoordinateReferenceFrame {
     }
 
     /**
-     * Sets the equinox.
+     * Sets the equinox and transforms it in a Besselian epoch.
+     * 
+     * <p>The epoch of equinox is transformed in Besselian epochs 
+     * using {@link TimeUtility#epochs(java.lang.String)}. 
+     * 
      * @param equinox the equinox to set
+     * @see TimeUtility#epochs(java.lang.String) 
      */
     @Override
     public final void setEquinox(final String equinox) {
@@ -167,7 +189,7 @@ public class FK4 implements CoordinateReferenceFrame {
     }    
 
     /**
-     * Sets the epoch.
+     * Sets the epoch and transforms it in a Besselian epoch.
      * @param epochObs the epochObs to set
      */
     @Override
@@ -187,6 +209,6 @@ public class FK4 implements CoordinateReferenceFrame {
 
     @Override
     public String toString() {
-        return "FK4("+this.equinox+","+this.epochObs+")";
+        return "FK4(B"+this.equinox+", B"+this.epochObs+")";
     }        
 }

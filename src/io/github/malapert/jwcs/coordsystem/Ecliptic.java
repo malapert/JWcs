@@ -56,7 +56,7 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
     }
 
     /**
-     * Creates the Ecliptic coordinate system based on FK5 reference system.
+     * Creates the Ecliptic coordinate system based on FK5 reference frame.
      */
     public Ecliptic() {
         this(new FK5());
@@ -86,32 +86,74 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
         return result;
     }
 
+    /**
+     * Returns the rotation matrix to convert from this current CRS to 
+     * another one.
+     * 
+     * <p>The algorithm for the conversion is the following:
+     * <ul>
+     * <li>For {@link Equatorial} : <code>m = m2.multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose()</code><br>
+     *  - <code>m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);</code>
+     * </li>
+     * <li>For {@link Galactic} : <code>m = m3.multiply(m2).multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose()</code><br>
+     *  - <code>m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN)</code><br>
+     *  - <code>m3 = convertMatrixEqB19502Gal()</code>
+     * </li>
+     * <li>For {@link SuperGalactic}: <code>m = m4.multiply(m3).multiply(m2).multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose()</code><br>
+     *  - <code>m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN)</code><br>
+     *  - <code>m3 = convertMatrixEqB19502Gal()</code><br>
+     *  - <code>m4 = convertMatrixGal2Sgal()</code>     
+     * </li>
+     * <li>For {@link Ecliptic} : <code>m = m3.multiply(m2).multiply(m1)</code> with <br>
+     *  - <code>m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose()</code><br>
+     *  - <code>m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN)</code><br>
+     *  - <code>m3 = convertMatrixEq2Ecl(this.getEquinox(), targetCrs.getReferenceFrame())</code>
+     * </li>
+     * </ul>     
+     * 
+     * @param crs target coordinate reference system
+     * @return the rotation matrix to convert from this current CRS to 
+     * another one
+     * @throws JWcsError Unknown output crs
+     * @see AbstractCrs#convertMatrixEq2Ecl(double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame)      
+     * @see AbstractCrs#convertMatrixEpoch12Epoch2(double, double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double) 
+     * @see AbstractCrs#convertMatrixEqB19502Gal()      
+     */
     @Override
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();
-        if (crs instanceof Equatorial) {
-            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
-            m = m2.multiply(m1);
-        } else if (crs instanceof Galactic) {
-            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            final RealMatrix m3 = convertMatrixEqB19502Gal();
-            m = m3.multiply(m2).multiply(m1);
-        } else if (crs instanceof SuperGalactic) {
-            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
-            final RealMatrix m3 = convertMatrixEqB19502Gal();
-            final RealMatrix m4 = convertMatrixGal2Sgal();
-            m = m4.multiply(m3).multiply(m2).multiply(m1);
-        } else if (crs instanceof Ecliptic) {
-            final RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
-            final RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
-            final RealMatrix m3 = convertMatrixEq2Ecl(this.getEquinox(), targetCrs.getReferenceFrame());
-            m = m3.multiply(m2).multiply(m1);
-        } else {
-            throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        switch(cs) {
+            case EQUATORIAL:
+                RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+                RealMatrix m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
+                m = m2.multiply(m1);                
+                break;
+            case GALACTIC:
+                m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+                m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+                RealMatrix m3 = convertMatrixEqB19502Gal();
+                m = m3.multiply(m2).multiply(m1);                
+                break;
+            case SUPER_GALACTIC:
+                m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+                m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
+                m3 = convertMatrixEqB19502Gal();
+                RealMatrix m4 = convertMatrixGal2Sgal(); 
+                m = m4.multiply(m3).multiply(m2).multiply(m1);
+                break;
+            case ECLIPTIC:
+                m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
+                m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), Double.NaN);
+                m3 = convertMatrixEq2Ecl(this.getEquinox(), targetCrs.getReferenceFrame());
+                m = m3.multiply(m2).multiply(m1);                
+                break;
+            default:
+                throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));                                
         }
         return m;
     }

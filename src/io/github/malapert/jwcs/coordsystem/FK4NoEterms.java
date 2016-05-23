@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 /**
@@ -42,6 +43,10 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
     
     /**
      * The epoch of the equinox.
+     * 
+     * <p>An equinox is an astronomical event in which the plane of Earth's 
+     * equator passes through the center of the Sun, which occurs twice each 
+     * year, around 20 March and 23 September.     
      */
     private double equinox;
     
@@ -76,7 +81,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
     
     /**
      * Initialization.
-     * @param epoch the epoch
+     * @param epoch the epoch of equinox
      * @param epochObs the epoch of observation
      */
     private void init(final String epoch, final String epochObs) {        
@@ -107,6 +112,10 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
 
     /**
      * Sets the equinox.
+     * 
+     * <p>The epoch of equinox is transformed in Besselian epoch
+     * using {@link TimeUtility#epochs(java.lang.String) }. 
+     * 
      * @param equinox the equinox to set
      */
     @Override
@@ -116,6 +125,12 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
 
     /**
      * Sets the epoch of observation.
+     * 
+     * <p>The epoch of observation is transformed in Besselian epoch
+     * using {@link TimeUtility#epochs(java.lang.String) }. 
+     * 
+     * <p>When epochObs is null, the epochObs is set to NaN.
+     * 
      * @param epochObs the epochObs to set
      */
     @Override

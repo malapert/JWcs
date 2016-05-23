@@ -32,8 +32,6 @@ import org.apache.commons.math3.util.FastMath;
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 1.0
- * @see <a href="http://www.astro.rug.nl/software/kapteyn/">Original code in
- * python</a>
  */
 public final class TimeUtility {
 
@@ -42,6 +40,7 @@ public final class TimeUtility {
      *
      * @param jEpoch Julian epoch (in format nnnn.nn)
      * @return Julian date
+     * @see TimeUtility#convertJD2epochJulian(double) 
      */
     public static double convertEpochJulian2JD(final double jEpoch) {
         return (jEpoch - 2000.0d) * 365.25d + 2451545.0d;
@@ -49,9 +48,25 @@ public final class TimeUtility {
 
     /**
      * Convert a Julian date to a Julian epoch.
+     * 
+     * <p>A Julian year is an interval with the length of a mean year in the 
+     * Julian calendar, i.e. 365.25 days. 
+     * 
+     * <p>An epoch optionally prefixed by "J" and designated as a 
+     * year with decimals (2000 +x), where x is positive or negative and quoted 
+     * to 1 or 2 decimal places, has come to mean a date that is an interval of
+     * x Julian years of 365.25 days away from the epoch 
+     * J2000 = JD 2451545.0 (TT), still corresponding (in spite of the use of t
+     * he prefix "J" or word "Julian") to the Gregorian calendar date of 
+     * 2000 Jan 1 at 12h TT.
+     * 
+     * <p>The equation, which is applied is the following:
+     * <code>julianEpoch = 2000.0 + (jd - 2451545.0) / 365.25</code>
      *
      * @param jd Julian date
      * @return a Julian epoch
+     * @see <a href="https://en.wikipedia.org/wiki/Epoch_(astronomy)#Julian_years_and_J2000">
+     * Julian years and J2000</a>
      */
     public static double convertJD2epochJulian(final double jd) {
         return 2000.0d + (jd - 2451545.0d) / 365.25d;
@@ -62,16 +77,29 @@ public final class TimeUtility {
      *
      * @param bEpoch Besselian epoch in format nnnn.nn
      * @return Julian date
+     * @see TimeUtility#convertJD2epochBessel(double) 
      */
     public static double convertEpochBessel2JD(final double bEpoch) {
         return (bEpoch - 1900.0d) * 365.242198781d + 2415020.31352d;
     }
 
     /**
-     * Convert a julian date to a Besselian epoch.
+     * Convert a Julian date to a Besselian epoch.
+     * 
+     * <p>A Besselian year defines the moment at which the mean longitude of the
+     * Sun, including the effect of aberration and measured from the mean equinox
+     * of the date, is exactly 280 degrees. This moment falls near the beginning
+     * of the corresponding Gregorian year. The definition depended on a 
+     * particular theory of the orbit of the Earth around the Sun, that of 
+     * Newcomb (1895), which is now obsolete; for that reason among others, 
+     * the use of Besselian years has also become or is becoming obsolete.
+     * 
+     * <p>The equation, which is applied is the following:
+     * <code>besselianEpoch = 1900.0 + (jd - 2415020.31352) / 365.242198781</code>     
      *
-     * @param jd julian date
+     * @param jd Julian date
      * @return a Besselian epoch
+     * @see <a href="https://en.wikipedia.org/wiki/Epoch_(astronomy)#Besselian_years">Definition of a Besselian date</a>
      */
     public static double convertJD2epochBessel(final double jd) {
         return 1900.0d + (jd - 2415020.31352d) / 365.242198781d;
@@ -237,7 +265,7 @@ public final class TimeUtility {
     /**
      * Computes Besselian epoch, Julian epoch and Julian date from an epoch.
      *
-     * @param epochPrefix epochs should start by J, b or date format
+     * @param epochPrefix epochs should start by J, -J, B, -B, JD, MJD, RJD or F
      * @param epochValue epoch value
      * @return Returns in order Besselian epoch, Julian epoch and Julian date.
      * @throws JWcsError Unknown prefix for epoch
@@ -302,13 +330,14 @@ public final class TimeUtility {
      * Extracts prefix from epoch.
      *
      * @param epoch Julian epoch, Besselian epochs, Julian dates
-     * @return J, b or date format
-     * @throws JWcsError Epochs should start by J, b or date format
+     * @return a prefix
+     * @throws JWcsError Epochs should start by a prefix
+     * @see TimeUtility#computeEpochs(java.lang.String, java.lang.String) 
      */
     private static String extractPrefixFromEpoch(final String epoch) {
         final String[] val = epoch.split("(\\d.*)");
         if (val.length == 0) {
-            throw new JWcsError("Epochs should start by J, B or date format");
+            throw new JWcsError("Epochs should start by a prefix");
         }
         return val[0];
     }

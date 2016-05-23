@@ -52,6 +52,10 @@ public class ICRS implements CoordinateReferenceFrame {
     
     /**
      * The epoch of the equinox.
+     * 
+     * <p>An equinox is an astronomical event in which the plane of Earth's 
+     * equator passes through the center of the Sun, which occurs twice each 
+     * year, around 20 March and 23 September.
      */
     private double equinox;
 
@@ -99,7 +103,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */ 
     @Override   
     public void setEquinox(final String equinox) {
-        //Do nothing
+        //Intentionally empty because the equinox is invariant in ICRS frame.
     }    
     
     /**
@@ -108,7 +112,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */    
     @Override
     public void setEquinox(final double equinox) {
-        //Do nothing
+        //Intentionally empty because the equinox is invariant in ICRS frame.
     }      
     
     /**
@@ -117,7 +121,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */    
     @Override
     public void setEpochObs(final String epochObs) { 
-        //Do noting
+        //Intentionally empty because the equinox is invariant in ICRS frame.
     }
 
     /**
@@ -126,7 +130,7 @@ public class ICRS implements CoordinateReferenceFrame {
      */    
     @Override    
     public void setEpochObs(final double epochObs) {
-        //Do nothing
+        //Intentionally empty because the equinox is invariant in ICRS frame.
     }     
 
     @Override
