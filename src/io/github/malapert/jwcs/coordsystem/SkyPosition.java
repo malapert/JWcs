@@ -180,10 +180,7 @@ public class SkyPosition {
         if (Double.doubleToLongBits(this.latitude) != Double.doubleToLongBits(other.latitude)) {
             return false;
         }
-        if (!Objects.equals(this.crs, other.crs)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.crs, other.crs);
     }
     
     

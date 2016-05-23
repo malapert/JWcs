@@ -139,7 +139,7 @@ public class J2000 implements CoordinateReferenceFrame {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -150,10 +150,7 @@ public class J2000 implements CoordinateReferenceFrame {
             return false;
         }
         final J2000 other = (J2000) obj;
-        if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
-            return false;
-        }
-        return true;
+        return Double.doubleToLongBits(this.equinox) == Double.doubleToLongBits(other.equinox);
     }
 
 }

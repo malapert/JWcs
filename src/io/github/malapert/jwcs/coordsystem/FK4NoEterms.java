@@ -176,7 +176,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -190,10 +190,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
         if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
             return false;
         }
-        if (Double.doubleToLongBits(this.epochObs) != Double.doubleToLongBits(other.epochObs)) {
-            return false;
-        }
-        return true;
+        return Double.doubleToLongBits(this.epochObs) == Double.doubleToLongBits(other.epochObs);
     }
     
 }

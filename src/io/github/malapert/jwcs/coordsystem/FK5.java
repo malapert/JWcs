@@ -153,7 +153,7 @@ public class FK5 implements CoordinateReferenceFrame {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -164,10 +164,7 @@ public class FK5 implements CoordinateReferenceFrame {
             return false;
         }
         final FK5 other = (FK5) obj;
-        if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
-            return false;
-        }
-        return true;
+        return Double.doubleToLongBits(this.equinox) == Double.doubleToLongBits(other.equinox);
     }
         
 }

@@ -232,7 +232,7 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -243,10 +243,7 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
             return false;
         }
         final Ecliptic other = (Ecliptic) obj;
-        if (!Objects.equals(this.coordinateReferenceFrame, other.coordinateReferenceFrame)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.coordinateReferenceFrame, other.coordinateReferenceFrame);          
     }
 
 }
