@@ -345,6 +345,35 @@ public abstract class AbstractCrs {
         LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getCoordinateSystem(), crs.getCoordinateSystem(), Arrays.toString(skyPositionArray)});
         return skyPositionArray;
     }
+    
+    /**
+     * Converts a sky position in a CRS to a target CRS.
+     * @param targetCrs target CRS
+     * @param position position in a CRS
+     * @return a SkyPosition to a target CRS
+     */
+    public final static SkyPosition convertTo(final AbstractCrs targetCrs, final SkyPosition position) {
+        final double longitude = position.getLongitude();
+        final double latitude = position.getLatitude();
+        final AbstractCrs sourceCrs = position.getCrs();
+        return sourceCrs.convertTo(targetCrs, longitude, latitude);
+    }    
+    
+    /**
+     * Converts an array of sky positions to a target CRS.
+     * @param targetCrs the target CRS
+     * @param positions the difference position in different CRS
+     * @return an array of sky positions to a target CRS
+     */
+    public final static SkyPosition[] convertTo(final AbstractCrs targetCrs, final SkyPosition[] positions) {
+        final SkyPosition[] targetPositions = new SkyPosition[positions.length];
+        int i =0;
+        for (final SkyPosition position:positions) {
+            targetPositions[i] = convertTo(targetCrs, position);
+            i++;
+        }
+        return targetPositions;
+    }
 
     /**
      * Computes the angular separation between two positions in different
@@ -364,7 +393,7 @@ public abstract class AbstractCrs {
         final double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
         LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, FastMath.toDegrees(separation)});
         return FastMath.toDegrees(separation);
-    }
+    }    
 
     /**
      * Creates a coordinate reference system based on the coordinate system and 
@@ -1451,5 +1480,5 @@ public abstract class AbstractCrs {
             result = getCoordinateSystem().getName()+" with "+refSystem.getReferenceFrame();
         }
         return result;
-    }        
+    }    
 }

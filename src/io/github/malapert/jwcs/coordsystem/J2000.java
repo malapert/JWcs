@@ -19,7 +19,7 @@ package io.github.malapert.jwcs.coordsystem;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 /**
- * This is an equatorial coordinate system based on 
+ * This is an equatorial coordinate reference frame based on 
  * the mean dynamical equator and equinox at epoch J2000.
  * 
  * <p>The dynamical equator and equinox differ slightly 
@@ -130,5 +130,30 @@ public class J2000 implements CoordinateReferenceFrame {
     public String toString() {
         return "J2000";
     }        
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.equinox) ^ (Double.doubleToLongBits(this.equinox) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final J2000 other = (J2000) obj;
+        if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -165,5 +165,35 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
             result = "FK4_NO_E(B"+this.equinox+",B"+this.epochObs+")";
         }
         return result;
-    }        
+    } 
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.equinox) ^ (Double.doubleToLongBits(this.equinox) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.epochObs) ^ (Double.doubleToLongBits(this.epochObs) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FK4NoEterms other = (FK4NoEterms) obj;
+        if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.epochObs) != Double.doubleToLongBits(other.epochObs)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

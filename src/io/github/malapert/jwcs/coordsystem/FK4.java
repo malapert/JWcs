@@ -210,5 +210,35 @@ public class FK4 implements CoordinateReferenceFrame {
     @Override
     public String toString() {
         return "FK4(B"+this.equinox+", B"+this.epochObs+")";
-    }        
+    }    
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.equinox) ^ (Double.doubleToLongBits(this.equinox) >>> 32));
+        hash = 17 * hash + (int) (Double.doubleToLongBits(this.epochObs) ^ (Double.doubleToLongBits(this.epochObs) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FK4 other = (FK4) obj;
+        if (Double.doubleToLongBits(this.equinox) != Double.doubleToLongBits(other.equinox)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.epochObs) != Double.doubleToLongBits(other.epochObs)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

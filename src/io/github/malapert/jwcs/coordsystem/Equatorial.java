@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.coordsystem;
 
 import io.github.malapert.jwcs.proj.exception.JWcsError;
+import java.util.Objects;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -182,5 +183,31 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
     @Override
     public String toString() {
         return SKY_NAME+"("+coordinateReferenceFrame+")";
-    }        
+    } 
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.coordinateReferenceFrame);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Equatorial other = (Equatorial) obj;
+        if (!Objects.equals(this.coordinateReferenceFrame, other.coordinateReferenceFrame)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

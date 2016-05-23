@@ -117,4 +117,5 @@ public class Galactic extends AbstractCrs {
     public void setCoordinateReferenceFrame(final CoordinateReferenceFrame coordinateReferenceFrame) {
         //Do nothing
     }    
+    
 }

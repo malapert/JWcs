@@ -19,6 +19,7 @@ package io.github.malapert.jwcs.coordsystem;
 import static io.github.malapert.jwcs.coordsystem.AbstractCrs.longlat2xyz;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
+import java.util.Objects;
 
 /**
  * Represents a position in the sky.
@@ -124,7 +125,7 @@ public class SkyPosition {
     }
 
     /**
-     * Returns the sky system.
+     * Returns the coordinate reference system.
      * @return the crs
      */
     public AbstractCrs getCrs() {
@@ -132,7 +133,7 @@ public class SkyPosition {
     }
 
     /**
-     * Sets the sky system.
+     * Sets the coordinate reference system.
      * @param crs the crs to set
      */
     public void setCrs(final AbstractCrs crs) {
@@ -151,4 +152,39 @@ public class SkyPosition {
     public String toString() {        
         return "SkyPosition : (" + getLongitude() + "," + getLatitude() + ") or (" + getLongitudeAsSexagesimal() + "," + getLatitudeAsSexagesimal() + ") in " + getCrs();
     }  
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.longitude) ^ (Double.doubleToLongBits(this.longitude) >>> 32));
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.latitude) ^ (Double.doubleToLongBits(this.latitude) >>> 32));
+        hash = 53 * hash + Objects.hashCode(this.crs);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SkyPosition other = (SkyPosition) obj;
+        if (Double.doubleToLongBits(this.longitude) != Double.doubleToLongBits(other.longitude)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.latitude) != Double.doubleToLongBits(other.latitude)) {
+            return false;
+        }
+        if (!Objects.equals(this.crs, other.crs)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
