@@ -89,7 +89,7 @@ public class Galactic extends AbstractCrs {
             case ECLIPTIC:
                 m1 = convertMatrixEqB19502Gal().transpose();
                 m2 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-                RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), crs.getCoordinateReferenceFrame().getReferenceFrame());
+                final RealMatrix m3 = convertMatrixEq2Ecl(targetCrs.getEquinox(), crs.getCoordinateReferenceFrame().getReferenceFrame());
                 m = m3.multiply(m2).multiply(m1);
                 break;
             default:

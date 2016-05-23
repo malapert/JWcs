@@ -108,7 +108,7 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
             case SUPER_GALACTIC:
                 m1 = convertMatrixEpoch12Epoch2(getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
                 m2 = convertMatrixEqB19502Gal();
-                RealMatrix m3 = convertMatrixGal2Sgal();
+                final RealMatrix m3 = convertMatrixGal2Sgal();
                 m = m3.multiply(m2).multiply(m1);                
                 break;
             case ECLIPTIC:

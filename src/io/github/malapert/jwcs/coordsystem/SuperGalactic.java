@@ -107,7 +107,7 @@ public class SuperGalactic extends AbstractCrs {
                 m1 = convertMatrixGal2Sgal().transpose();
                 m2 = convertMatrixEqB19502Gal().transpose();
                 m3 = convertMatrixEpoch12Epoch2(1950.0d, targetCrs.getEquinox(), CoordinateReferenceFrame.ReferenceFrame.FK4, targetCrs.getReferenceFrame(), Double.NaN);
-                RealMatrix m4 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
+                final RealMatrix m4 = convertMatrixEq2Ecl(targetCrs.getEquinox(), targetCrs.getReferenceFrame());
                 m = m4.multiply(m3).multiply(m2).multiply(m1);
                 break;
             default:

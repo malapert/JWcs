@@ -144,7 +144,7 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
                 m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
                 m2 = convertMatrixEpoch12Epoch2(this.getEquinox(), 1950.0d, getReferenceFrame(), CoordinateReferenceFrame.ReferenceFrame.FK4, Double.NaN);
                 m3 = convertMatrixEqB19502Gal();
-                RealMatrix m4 = convertMatrixGal2Sgal(); 
+                final RealMatrix m4 = convertMatrixGal2Sgal(); 
                 m = m4.multiply(m3).multiply(m2).multiply(m1);
                 break;
             case ECLIPTIC:
