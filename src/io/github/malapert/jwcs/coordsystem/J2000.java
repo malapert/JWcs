@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.coordsystem;
 
+import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
 
 /**
@@ -53,7 +54,7 @@ public class J2000 implements CoordinateReferenceFrame {
     public J2000() {
         init(DEFAULT_EPOCH);
     }
-
+    
     /**
      * Initialization.
      *
@@ -87,23 +88,20 @@ public class J2000 implements CoordinateReferenceFrame {
     }
     
     /**
-     * Do nothing.
-     * 
-     * <p>No need to specify the epoch of equinox
+     * Sets the equinox and transforms it as an Julian epoch.
+     * @see TimeUtility#epochs(java.lang.String) 
      */ 
     @Override   
     public void setEquinox(final String equinox) { 
-        //Intentionally empty because the equinox is invariant in J2000 CRS.
+        this.equinox = epochs(equinox)[1];
     }    
     
     /**
-     * Do nothing.
-     * 
-     * <p>No need to specify the epoch of equinox
+     * Sets the equinox as Julian epoch.
      */    
     @Override
     public void setEquinox(final double equinox) {
-        //Intentionally empty because the equinox is invariant in J2000 CRS.
+        this.equinox = equinox;
     }      
     
     /**

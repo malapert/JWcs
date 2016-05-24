@@ -678,4 +678,39 @@ public class AbstractCrsTest {
         }
     }
     
+    @Test
+    public void testExceptionCoordinates() {
+        System.out.println("Exception in convertTo");
+        AbstractCrs crs = new Galactic();        
+        JWcsError expected = new JWcsError("longitude must be in [0,360]");
+        JWcsError result = null;
+        try {
+            crs.convertTo(new SuperGalactic(), 400, -90);
+        } catch (JWcsError error) {
+            result = error;
+        } finally {
+            assertEquals(expected.toString(), result.toString());
+        }
+        
+        expected = new JWcsError("latitude must be in [-90,90]");
+        result = null;
+        try {
+            crs.convertTo(new SuperGalactic(), 360, -91);
+        } catch (JWcsError error) {
+            result = error;
+        } finally {
+            assertEquals(expected.toString(), result.toString());
+        }  
+        
+        expected = new JWcsError("longitude must be in [0,360] and latitude in [-90,90]");
+        result = null;
+        try {
+            crs.convertTo(new SuperGalactic(), 400, -91);
+        } catch (JWcsError error) {
+            result = error;
+        } finally {
+            assertEquals(expected.toString(), result.toString());
+        }         
+    }    
+    
 }

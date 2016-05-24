@@ -242,7 +242,7 @@ public abstract class AbstractCrs {
         } else if (!isLongInterval) {
             throw new JWcsError("longitude must be in [0,360]");    
         } else if (!isLatInterval) {
-            throw new JWcsError("latitude must be in [0,360]");    
+            throw new JWcsError("latitude must be in [-90,90]");    
         }
     }
 

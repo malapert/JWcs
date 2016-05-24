@@ -81,7 +81,7 @@ public class J2000Test {
         String equinox = "J2001";
         J2000 instance = new J2000();
         instance.setEquinox(equinox);
-        double expResult = 2000.0;
+        double expResult = 2001.0;
         double result = instance.getEquinox();
         assertEquals(expResult, result, 0.0);
     }
@@ -95,7 +95,7 @@ public class J2000Test {
         double equinox = 2001.0;
         J2000 instance = new J2000();
         instance.setEquinox(equinox);
-        double expResult = 2000.0;
+        double expResult = 2001.0;
         double result = instance.getEquinox();
         assertEquals(expResult, result, 0.0);
     }

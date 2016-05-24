@@ -89,6 +89,7 @@ public class ConverterTest {
         this.source = source;
         this.target = target;
         this.tolerance = tolerance;
+        LOG.setLevel(Level.OFF);
     }
 
     /**

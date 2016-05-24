@@ -19,6 +19,8 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.JWcsFits;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -51,6 +53,8 @@ public class AbstractProjectionTest {
      *
      */
     protected double tolerance;
+    
+    static final Logger LOG = Logger.getLogger("");
 
     private static final double TOLERANCE = 1.0e-10;
 
@@ -73,6 +77,7 @@ public class AbstractProjectionTest {
         this.wcs = wcs;
         this.tolerance = tolerance;
         this.wcs.doInit();
+        LOG.setLevel(Level.OFF);
     }
 
     @BeforeClass
