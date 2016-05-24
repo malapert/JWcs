@@ -123,7 +123,7 @@ public class FK4NoEtermsTest {
         double epochObs = 2000.0;
         FK4NoEterms instance = new FK4NoEterms();
         instance.setEpochObs(epochObs);
-        double expResult = 1950.0;
+        double expResult = 2000.0;
         double result = instance.getEpochObs();
         assertEquals(expResult, result, 0.0);
     }
@@ -136,7 +136,7 @@ public class FK4NoEtermsTest {
         System.out.println("toString");
         FK4NoEterms instance = new FK4NoEterms("B1950", "B2000");
         instance.setEquinox(1978);
-        String expResult = "FK4_NO_E(B1978,B2000)";
+        String expResult = "FK4_NO_E(B1978.0,B2000.0)";
         String result = instance.toString();
         assertEquals(expResult, result);
     }
