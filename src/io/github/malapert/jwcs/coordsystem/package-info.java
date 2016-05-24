@@ -104,5 +104,6 @@
  * SkyPosition pos1 = new SkyPosition(10, 9, sysEqIcrs);<br>
  * SkyPosition result = AbstractCrs.convertTo(sysEqFK5, pos1);
  * </code>
+ * 
  */
 package io.github.malapert.jwcs.coordsystem;

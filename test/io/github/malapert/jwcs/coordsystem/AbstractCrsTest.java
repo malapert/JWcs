@@ -20,6 +20,7 @@ import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.JWcsFits;
 import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEpoch12Epoch2;
 import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEqB19502Gal;
+import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
@@ -85,6 +86,20 @@ public class AbstractCrsTest {
         //do nothing
     }
 
+    @Test
+    public void testToString() {
+        System.out.println("Test toString");
+        AbstractCrs crs1 = new Galactic();
+        AbstractCrs crs2 = new Equatorial(new FK5("J2001"));
+        String result1 = crs1.toString();
+        String result2 = crs2.toString();
+        String expectedResult1 = "GALACTIC";
+        String expectedResult2 = "EQUATORIAL(FK5(J2001.0))";
+        assertEquals(expectedResult2, result2);
+        assertEquals(expectedResult1, result1);
+        
+    }
+    
     /**
      *
      */
@@ -646,5 +661,21 @@ public class AbstractCrsTest {
         assertArrayEquals(new double[]{4.47301372e-03,   9.99989996e-01,  -4.34712255e-06}, result.getRow(1), 1e-9);
         assertArrayEquals(new double[]{1.94362889e-03,  -4.34680782e-06,   9.99998111e-01}, result.getRow(2), 1e-9);
     }    
+    
+    @Test
+    public void testExceptionConvertTo() {
+        System.out.println("Exception in convertTo");
+        double[] longlat = new double[]{0,0,1,6,2};
+        AbstractCrs crs = new Galactic();
+        final JWcsError expected = new JWcsError("coordinates should be an array containing a set of [longitude, latitude]");
+        JWcsError result = null;
+        try {
+            crs.convertTo(new SuperGalactic(), longlat);
+        } catch (JWcsError error) {
+            result = error;
+        } finally {
+            assertEquals(expected.toString(), result.toString());
+        }
+    }
     
 }

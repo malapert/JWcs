@@ -95,4 +95,62 @@ public class SkyPositionTest {
         String result = instance.getLatitudeAsSexagesimal();
         assertEquals(expResult, result);
     }
+
+    /**
+     * Test of setLongitude method, of class SkyPosition.
+     */
+    @Test
+    public void testSetLongitude() {
+        System.out.println("setLongitude");
+        double longitude = 20.0;
+        SkyPosition instance = new SkyPosition(0, 0, new Equatorial());
+        instance.setLongitude(longitude);
+        double expResult = 20.0;
+        double result = instance.getLongitude();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of setLatitude method, of class SkyPosition.
+     */
+    @Test
+    public void testSetLatitude() {
+        System.out.println("setLatitude");
+        double latitude = -20.0;
+        SkyPosition instance = new SkyPosition(0, 0, new Equatorial());
+        instance.setLatitude(latitude);
+        double expResult = -20.0;
+        double result = instance.getLatitude();
+        assertEquals(expResult, result, 0.0);
+    }
+
+    /**
+     * Test of getDoubleArray method, of class SkyPosition.
+     */
+    @Test
+    public void testGetDoubleArray() {
+        System.out.println("getDoubleArray");
+        SkyPosition instance = new SkyPosition(10, -20, new Equatorial());
+        double[] expResult = new double[]{10,-20};
+        double[] result = instance.getDoubleArray();
+        assertArrayEquals(expResult, result, 1e-13);
+    }
+
+    /**
+     * Test of equals method, of class SkyPosition.
+     */
+    @Test
+    public void testEquals() {
+        System.out.println("equals");
+        Object obj = new SkyPosition(0, 0, new Equatorial(new ICRS()));
+        Object obj2 = new SkyPosition(0, 0, new Equatorial(new FK5()));
+        SkyPosition instance = new SkyPosition(0, 0, new Equatorial());
+        boolean expResult = true;
+        boolean expResult2 = false;        
+        boolean result = instance.equals(obj);
+        boolean result2 = instance.equals(obj2);
+        assertEquals(expResult, result);
+        assertEquals(expResult2, result2);
+        
+    }
 }
