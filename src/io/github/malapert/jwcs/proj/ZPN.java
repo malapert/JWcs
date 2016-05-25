@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
@@ -166,10 +167,10 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @param f polynomial coefficients
      * @return the solution for a quadratic equation
-     * @throws Exception Exception
+     * @throws MathematicalSolutionException No mathematical solution found
      * @see NumericalUtility#computeQuatraticSolution
      */
-    private double quadraticSolution(final Object f) throws Exception {
+    private double quadraticSolution(final Object f) throws MathematicalSolutionException {
         final double[] coeff = NumericalUtility.getPolynomialCoefficients(f);
         return NumericalUtility.computeQuatraticSolution(coeff);
     }
@@ -191,9 +192,9 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @param polynomialFunction polynomial function
      * @return the solution for whatever polynomial equation
-     * @throws Exception Exception
+     * @throws MathematicalSolutionException No mathematical solution found
      */
-    private double computeSolution(final Object polynomialFunction) throws Exception {
+    private double computeSolution(final Object polynomialFunction) throws MathematicalSolutionException {
         final double result;
         switch (getN()) {
             case 1:
@@ -211,7 +212,6 @@ public final class ZPN extends AbstractZenithalProjection {
 
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         try {
             final double xr = FastMath.toRadians(x);
             final double yr = FastMath.toRadians(y);
@@ -222,21 +222,18 @@ public final class ZPN extends AbstractZenithalProjection {
             final double phi = computePhi(xr, yr, r_theta);
             final double theta = HALF_PI - computeSolution(polynomialFunction);
             final double[] pos = {phi, theta};
-            LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
             return pos;
-        } catch (Exception ex) {
-            throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
+        } catch (MathematicalSolutionException ex) {
+            throw new PixelBeyondProjectionException(this, x, y, ex.getMessage(), true);
         }
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         final double r_theta = FastMath.toDegrees(polyEval(HALF_PI - theta, getPv()));
         final double x = computeX(r_theta, phi);
         final double y = computeY(r_theta, phi);
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0], coord[1]});
         return coord;
     }
 
@@ -256,7 +253,7 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     /**
-     * Returns pv.
+     * Returns a copy of pv.
      *
      * @return the pv
      */

@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.utility;
 
+import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.util.FastMath;
 
@@ -24,12 +25,18 @@ import org.apache.commons.math3.util.FastMath;
  * point is projected.
  *
  * <p>R<sub>\u03B8</sub> + 2 *
- * (ln(cos\u03B6)/tan\u03B6+ln(cos\u03B6<sub>b</sub>)/tan<sup>2</sup>\u03B6<sub>b</sub>*tan\u03B6) = 0
+ * ( ln(cos\u03B6) / tan\u03B6 + ln(cos\u03B6<sub>b</sub>) / tan<sup>2</sup>\u03B6<sub>b</sub> * tan\u03B6) = 0
  * with:
  * <ul>
  * <li>\u03B6 = 0.5 * (HALF_PI - \u03B8)</li>
  * <li>\u03B6<sub>b</sub> = 0.5 * (HALF_PI - \u03B8<sub>b</sub>)</li>
  * </ul>     
+ * 
+ * <p>Special cases must be handled for ln(cos\u03B6<sub>b</sub>) / tan<sup>2</sup>\u03B6<sub>b</sub>,
+ * this is managed to {@link AiryFunction#computeC() }
+ * 
+ * <p>When \u03B8<sub>b</sub>
+ * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class AiryFunction implements UnivariateFunction {
@@ -56,15 +63,41 @@ public class AiryFunction implements UnivariateFunction {
         this.thetab = thetab;
         this.radius = 0;
     }
+    
+    /**
+     * Computes ln(cos\u03B6<sub>b</sub>) / tan<sup>2</sup>\u03B6<sub>b</sub>.
+     * 
+     * <p>When cos\u03B6<sub>b</sub> = 0, then 0 is returned<br>
+     * When cos\u03B6<sub>b</sub> = 1 or tan\u03B6<sub>b</sub> = 0, then c 
+     * approaches to its asymptotic value of -0.5<br>
+     * Otherwise computes ln(cos\u03B6<sub>b</sub>) / tan<sup>2</sup>\u03B6<sub>b</sub>
+     * 
+     * @return c, the result of the computation
+     */
+    private double computeC() {
+        final double zetab = 0.5 * (NumericalUtility.HALF_PI - getThetab());
+        final double cos_zetab = FastMath.cos(zetab); 
+        final double c;
+        if (NumericalUtility.equal(cos_zetab, 0)) {
+            c = 0d;
+        } else if (NumericalUtility.equal(cos_zetab, 1) || NumericalUtility.equal(FastMath.tan(zetab), 0)) {
+            c = -0.5d;
+        } else {
+            c = FastMath.log(FastMath.cos(zetab))/FastMath.pow(FastMath.tan(zetab), 2);
+        }         
+        return c;
+    }
 
     @Override
     public double value(final double theta) {
-        final double zetab = 0.5 * (NumericalUtility.HALF_PI - getThetab());
-        final double zeta = 0.5 * (NumericalUtility.HALF_PI - theta);
+        final double c = computeC();
+        final double zeta = 0.5 * (NumericalUtility.HALF_PI - theta);        
+        if (NumericalUtility.equal(zeta, 0)) {
+            throw new MathematicalSolutionException("zeta cannot be 0");
+        }
         final double lncZeta = FastMath.log(FastMath.cos(zeta));
-        final double lncZetab = FastMath.log(FastMath.cos(zetab));
         final double tanZeta = FastMath.tan(zeta);
-        return 2 * (lncZeta / tanZeta + lncZetab / FastMath.pow(tanZeta, 2)) * tanZeta + getRadius();
+        return 2 * (lncZeta / tanZeta + c * tanZeta) + getRadius();       
     }
 
     /**

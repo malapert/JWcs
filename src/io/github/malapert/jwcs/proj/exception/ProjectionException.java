@@ -29,6 +29,11 @@ public class ProjectionException extends JWcsException {
      * Class where the exception happens.
      */
     private final AbstractProjection projectionName;
+    
+    public ProjectionException(final AbstractProjection projectionName) {
+        super();  
+        this.projectionName = projectionName;
+    }
 
     /**
      * Creates a ProjectionException based on the projection class and a message.

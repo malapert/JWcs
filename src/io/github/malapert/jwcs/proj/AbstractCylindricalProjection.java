@@ -28,6 +28,12 @@ import org.apache.commons.math3.util.FastMath;
  * with the axis of the cylinder. Meridians and parallels are mapped onto a 
  * rectangular graticule.
  * 
+ * <p><img alt="View of the zenithal projection" src="doc-files/cylindricalProjection.png">
+ * <br>The sphere is projected onto a cylinder of radius \u03BB spherical radii 
+ * from points in the equatorial plane of the native system at a distance \u03BC
+ * spherical radii measured from the center of the sphere in the direction opposite
+ * the projected surface
+ * 
  * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R., 
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p15
  * 

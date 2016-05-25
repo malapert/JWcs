@@ -87,35 +87,39 @@ public class CEA extends AbstractCylindricalProjection {
     public CEA(final double crval1, final double crval2, final double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,lambda)=({0},{1},{2})", new Object[]{crval1,crval2,lambda});                        
+        setLambda(lambda);
+    }
+    
+    /**
+     * Checks lambda parameter.
+     * @param lambda \u03BB dimensionless
+     * @throws BadProjectionParameterException lambda not in ]0,1]
+     */
+    private void checkParameter(final double lambda) throws BadProjectionParameterException {
         if (NumericalUtility.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
             throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside of range (0,1]");
-        }
-        setLambda(lambda);
+        }        
     }
 
     @Override
     protected double[] project(final double x, final double y) throws ProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double phi = xr;
         final double arg = getLambda() * yr;
         final double theta = NumericalUtility.aasin(arg);
         if(Double.isNaN(theta)) {
-            throw new PixelBeyondProjectionException(this, "(x,y)=("+x+","+y+")");
+            throw new PixelBeyondProjectionException(this, x, y, true);
         }
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws ProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                        
         final double x = FastMath.toDegrees(phi);
         final double y = FastMath.toDegrees(FastMath.sin(theta) / getLambda());
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;
     }
 
@@ -132,9 +136,11 @@ public class CEA extends AbstractCylindricalProjection {
      * Sets \u03BB, the scaling parameter.
      *
      * @param lambda the lambda to set
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException lambda not in ]0,1]
      */
-    private void setLambda(final double lambda) {
+    public final void setLambda(final double lambda) throws BadProjectionParameterException {
         this.lambda = lambda;
+        checkParameter(lambda);
     }
 
     @Override

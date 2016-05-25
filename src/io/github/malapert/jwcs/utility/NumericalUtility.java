@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs.utility;
 
+import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.text.DecimalFormat;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
@@ -256,18 +256,58 @@ public final class NumericalUtility {
      * @return True when number is included in [min,max] otherwise False.
      */
     public static boolean isInInterval(final double number, final double min, final double max, final double precision) {
+        return isInInterval(number, min, true, max, true, precision);
+    }
+    
+    /**
+     * Checks if the number is included in [min,max], [min,max[, ]min,max] or
+     * ]min, max[ with a numerical precision.
+     *
+     * @param number number to test
+     * @param min minimum value
+     * @param minIsClosed the min value is included
+     * @param max maximum value
+     * @param maxIsClosed the max value is included
+     * @param precision numerical precision
+     * @return True when number is included in the interval otherwise False.
+     */
+    public static boolean isInInterval(final double number, final double min, final boolean minIsClosed, final double max, final boolean maxIsClosed, final double precision) {
         if (Double.isNaN(number)) {
             return false;
         }
         if (NumericalUtility.equal(number, min, precision)) {
-            return true;
+            return minIsClosed;
         }
         if (NumericalUtility.equal(number, max, precision)) {
-            return true;
+            return maxIsClosed;
         }
         return min < number && number < max;
-    }
+    }    
 
+    /**
+     * Checks if the number is included in [min,max], [min,max[, ]min,max] or
+     * ]min, max[ with a numerical precision of {@link NumericalUtility#DOUBLE_TOLERANCE}.
+     *
+     * @param number number to test
+     * @param min minimum value
+     * @param minIsClosed the min value is included
+     * @param max maximum value
+     * @param maxIsClosed the max value is included    
+     * @return True when number is included in the interval otherwise False.
+     */
+    public static boolean isInInterval(final double number, final double min, final boolean minIsClosed, final double max, final boolean maxIsClosed) {
+        if (Double.isNaN(number)) {
+            return false;
+        }
+        if (NumericalUtility.equal(number, min)) {
+            return minIsClosed;
+        }
+        if (NumericalUtility.equal(number, max)) {
+            return maxIsClosed;
+        }
+        return min < number && number < max;
+    }     
+    
     /**
      * Compares two doubles with a numerical precision of
      * {@link NumericalUtility#DOUBLE_TOLERANCE}.
@@ -407,11 +447,11 @@ public final class NumericalUtility {
      * 
      * @param coefficients polynomial coefficients
      * @return the solution
-     * @throws JWcsException  No mathematical solution found
+     * @throws MathematicalSolutionException  No mathematical solution found
      * @see <a href="http://mathworld.wolfram.com/LaguerresMethod.html"> 
      * The Laguerre's method</a>
      */
-    public static double computeQuatraticSolution(final double[] coefficients) throws JWcsException {
+    public static double computeQuatraticSolution(final double[] coefficients) throws MathematicalSolutionException {
         final Complex[] solutions = solverLaguerre.solveAllComplex(coefficients, 0);
         final Complex sol1 = solutions[0];
         final Complex sol2 = solutions[1];
@@ -429,7 +469,7 @@ public final class NumericalUtility {
         } else if (isTheta2Valid) {
             theta = theta2;
         } else {
-            throw new JWcsException("No mathematical solution found");
+            throw new MathematicalSolutionException("No mathematical solution found");
         }
         return theta;
     }

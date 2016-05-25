@@ -209,7 +209,7 @@ public class FK4 implements CoordinateReferenceFrame {
 
     @Override
     public String toString() {
-        return "FK4(B"+this.equinox+", B"+this.epochObs+")";
+        return Double.isNaN(this.epochObs) ? "FK4(B"+this.equinox+")" : "FK4(B"+this.equinox+", B"+this.epochObs+")";
     }    
 
     @Override

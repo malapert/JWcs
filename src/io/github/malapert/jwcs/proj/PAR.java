@@ -59,26 +59,22 @@ public class PAR extends AbstractCylindricalProjection {
 
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double theta = 3 * NumericalUtility.aasin(yr / FastMath.PI);
         if (Double.isNaN(theta)) {
-            throw new PixelBeyondProjectionException(this, "(x,y)=(" + x + "," + y + ")");
+            throw new PixelBeyondProjectionException(this, x, y, true);
         }
         final double phi = xr / (1 - 4 * FastMath.pow(yr / FastMath.PI, 2));
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                        
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                
         final double y = FastMath.toDegrees(FastMath.PI * FastMath.sin(theta / 3d));
         final double x = FastMath.toDegrees(phi * (2d * FastMath.cos(theta / 1.5d) - 1d));
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                        
         return coord;
     }
 

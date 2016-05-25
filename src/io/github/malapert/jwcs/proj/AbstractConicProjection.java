@@ -32,10 +32,13 @@ import org.apache.commons.math3.util.FastMath;
  * rays that intersect at a point (either directly or by extrapolation), and 
  * parallels are projected as equiangular arcs of concentric circles.
  * 
+ * <p><img alt="View of the zenithal projection" src="doc-files/conicProjection.png">
+ * 
  * <p>Two-standard conic projections are characterized by two
  * latitudes, theta1 and theta2, whose parallels are projected at their true
  * length. In the conic perspective projection these are the latitudes at which 
- * the cone intersects the sphere. One-standard conic projections have 
+ * the cone intersects the sphere. 
+ * <br>One-standard conic projections have 
  * theta1 = theta2 and the cone is tangent to the sphere as shown. 
  * Since conics are designed to minimize distortion in the regions between the
  * two standard parallels they are constructed so that the point on the prime 

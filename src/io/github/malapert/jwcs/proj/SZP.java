@@ -18,8 +18,8 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
+import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
-import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
@@ -150,7 +150,6 @@ public class SZP extends AbstractZenithalProjection {
 
     @Override
     public double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);        
         final double X = xr;
@@ -158,32 +157,28 @@ public class SZP extends AbstractZenithalProjection {
         final double X1 = (X - xp) / zp;
         final double Y1 = (Y - yp) / zp;
         final double a = X1 * X1 + Y1 * Y1 + 1;
-        final double b = X1 * (X - X1) + Y1 * (Y - Y1);
+        final double b = (X1 * (X - X1) + Y1 * (Y - Y1))*2;
         final double c = (X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) - 1;
         final double theta;
         try {
-            theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b*2,a});
-        } catch (JWcsException ex) {
-            throw new PixelBeyondProjectionException(this,"(x,y) = (" + x
-                    + ", " + y + ")");
+            theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
+        } catch (MathematicalSolutionException ex) {
+            throw new PixelBeyondProjectionException(this, x, y, ex.getMessage(), true);
         }
         final double phi = computePhi(X - X1 * (1 - FastMath.sin(theta)), Y - Y1 * (1 - FastMath.sin(theta)), 1);
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                        
         final double denom = zp - (1 - FastMath.sin(theta));
         if (NumericalUtility.equal(denom, 0)) {
-            throw new PixelBeyondProjectionException(this, "theta = " + FastMath.toDegrees(theta));
+            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
         final double x = (zp * FastMath.cos(theta) * FastMath.sin(phi) - xp * (1 - FastMath.sin(theta)))/denom;
         final double y = -(zp * FastMath.cos(theta) * FastMath.cos(phi) + yp * (1 - FastMath.sin(theta)))/denom;
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                                                                        
         return coord;
     }  
     

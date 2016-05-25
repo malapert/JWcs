@@ -473,7 +473,9 @@ public abstract class AbstractProjection {
      * an error happens while the projection
      */
     public double[] projectionPlane2wcs(final double x, final double y) throws ProjectionException {
+        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                                
         final double[] pos = project(x, y);
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(pos[0]),FastMath.toDegrees(pos[1])}); 
         return computeCelestialSpherical(pos[0], pos[1]);
     }
 
@@ -491,7 +493,10 @@ public abstract class AbstractProjection {
         final double raFixed = NumericalUtility.normalizeLongitude(ra);
         double[] nativeSpherical = computeNativeSpherical(raFixed, dec);
         nativeSpherical[0] = phiRange(nativeSpherical[0]);
-        return projectInverse(nativeSpherical[0], nativeSpherical[1]);
+        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(nativeSpherical[0]), FastMath.toDegrees(nativeSpherical[1])});
+        double[] coord = projectInverse(nativeSpherical[0], nativeSpherical[1]);
+        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord); 
+        return coord;
     }
 
     /**

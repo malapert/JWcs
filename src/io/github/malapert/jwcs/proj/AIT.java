@@ -63,26 +63,23 @@ public class AIT extends AbstractCylindricalProjection {
     public AIT(final double crval1, final double crval2) {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
-
     }
 
     @Override
     public double[] project(final double x, final double y) throws PixelBeyondProjectionException  {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         double z = 1 - FastMath.pow(xr / 4, 2) - FastMath.pow(yr / 2, 2);
         if (z < 0) {
-            throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
+            throw new PixelBeyondProjectionException(this, x, y, true);
         }
         z = FastMath.sqrt(z);      
         final double phi = 2 * NumericalUtility.aatan2(z * xr / 2, 2 * FastMath.pow(z, 2) - 1);
         final double theta = NumericalUtility.aasin(yr * z);         
         if(Double.isNaN(theta)) {
-            throw new PixelBeyondProjectionException(this,"(x,y)= (" + x + ", " + y+")");
+            throw new PixelBeyondProjectionException(this, x, y, true);
         }
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});        
         return pos;
     }
 
@@ -97,16 +94,14 @@ public class AIT extends AbstractCylindricalProjection {
      */    
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {         
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                
         final double d = 1 + FastMath.cos(theta) * FastMath.cos(phi * 0.5d);
         if (NumericalUtility.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=(" + FastMath.toDegrees(phi) + ", " + FastMath.toDegrees(theta)+")");
+            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
         final double gamma = FastMath.toDegrees(FastMath.sqrt(2.0d / d));        
         final double x = 2 * gamma * FastMath.cos(theta) * FastMath.sin(phi * 0.5d);
         final double y = gamma * FastMath.sin(theta);
         final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        
         return coord;
     }
 

@@ -25,23 +25,91 @@ import java.util.logging.Level;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class PixelBeyondProjectionException extends ProjectionException {
+
     private final static long serialVersionUID = -3719985099230583709L;
 
+    private final double x;
+    private final double y;
+    private final boolean isPlaneCoordinate;
+
     /**
-     * Creates a PixelBeyondProjectionException based on a message.
+     * Creates a PixelBeyondProjectionException based on the pixel coordinate.
      *
      * @param projectionName AbstractProjection
-     * @param message message
+     * @param x x coordinate of the pixel
+     * @param y y coordinate of the pixel
+     * @param isPlaneCoordinate True when the error is related to plane coordinate
      */
-    public PixelBeyondProjectionException(final AbstractProjection projectionName, final String message) {
+    public PixelBeyondProjectionException(final AbstractProjection projectionName, final double x, final double y, final boolean isPlaneCoordinate) {
+        super(projectionName);
+        this.x = x;
+        this.y = y;
+        this.isPlaneCoordinate = isPlaneCoordinate;        
+        if (isPlaneCoordinate) {
+            getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for (x,y) = ({1},{2})", new Object[]{this.getProjection().getClass().getName(), x, y});
+        } else {
+            getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for (phi,theta) = ({1},{2})", new Object[]{this.getProjection().getClass().getName(), x, y});    
+        }
+    }
+
+    /**
+     * Creates a PixelBeyondProjectionException based on the pixel coordinate
+     * and a message.
+     *
+     * @param projectionName AbstractProjection
+     * @param x x coordinate of the pixel
+     * @param y y coordinate of the pixel
+     * @param message message
+     * @param isPlaneCoordinate True when the error is related to plane coordinate
+     */
+    public PixelBeyondProjectionException(final AbstractProjection projectionName, final double x, final double y, final String message, final boolean isPlaneCoordinate) {
         super(projectionName, message);
-        getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for {1}", new Object[]{this.getProjection().getClass().getName(), message});
-        
+        this.x = x;
+        this.y = y;
+        this.isPlaneCoordinate = isPlaneCoordinate;
+        if (isPlaneCoordinate) {
+            getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for (x,y) = ({1},{2}) : {3}", new Object[]{this.getProjection().getClass().getName(), x, y, message});            
+        } else {
+            getProjection().getLogger().log(Level.FINE, "{0} - Solution not defined for (phi,theta) = ({1},{2}) : {3}", new Object[]{this.getProjection().getClass().getName(), x, y, message});            
+        }
+    }
+
+    /**
+     * Returns the X coordinate of the pixel.
+     *
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * Returns the Y coordinate of the pixel.
+     *
+     * @return the y
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * Returns true when the error is related to plane coordinate.
+     * @return the isPlaneCoordinate
+     */
+    public boolean isIsPlaneCoordinate() {
+        return isPlaneCoordinate;
     }
 
     @Override
     public String toString() {
-        return this.getProjection().getClass().getName() + " - Solution not defined for " + getMessage();
+        final String coordinates = isPlaneCoordinate ? "(x,y)" : "(phi,theta)";
+        final String result;
+        if (getMessage().isEmpty()) {
+            result = String.format("{0} - Solution not defined for {1} = ({2},{3})", this.getProjection().getClass().getName(), coordinates, getX(), getY());
+        } else {
+            result = String.format("{0} - Solution not defined for {1} = ({2},{3}) : {4}", this.getProjection().getClass().getName(), coordinates, getX(), getY(), getMessage());
+        }
+        return result;
     }
 
 }

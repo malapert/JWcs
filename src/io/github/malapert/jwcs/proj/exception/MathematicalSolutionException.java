@@ -14,23 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.proj;
-
-import io.github.malapert.jwcs.JWcsFits;
-import io.github.malapert.jwcs.proj.exception.JWcsException;
-import java.io.IOException;
-import java.net.URL;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
+package io.github.malapert.jwcs.proj.exception;
 
 /**
  *
  * @author malapert
  */
-public class AIRTest extends AbstractProjectionTest {
+public class MathematicalSolutionException extends JWcsError {
     
-    public AIRTest() throws JWcsException, FitsException, IOException {
-        super(new JWcsFits(new Fits(new URL("http://tdc-www.harvard.edu/wcstools/samples/1904-66_AIR.fits"))));
+    public MathematicalSolutionException() {
+        super();
+    }    
+    
+    public MathematicalSolutionException(final String message) {
+        super(message);
     }
     
+    public MathematicalSolutionException(final Throwable cause) {
+        super(cause);
+    }
+    
+    public MathematicalSolutionException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

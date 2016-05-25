@@ -53,7 +53,7 @@ public class CYP extends AbstractCylindricalProjection {
     /**
      * Default value for \u03BB.
      */
-    public final static double DEFAULT_LAMBDA = 1;
+    public final static double DEFAULT_LAMBDA = FastMath.sqrt(2)/2;
     
     /**
      * \u03BC: distance in spherical radii from the center of the sphere to the equatorial plane of the native system. 
@@ -108,43 +108,39 @@ public class CYP extends AbstractCylindricalProjection {
     protected final void check() {
         if (getLambda() < 0 || NumericalUtility.equal(getLambda(), 0)) {
             LOG.log(Level.WARNING, "CYP: Lambda must be > 0 -- resetting to 1");
-            this.lambda = 1;
+            this.setLambda(1);
         }
         if (NumericalUtility.equal(getMu(),-getLambda())) {
             LOG.log(Level.WARNING, "CYP: Mu must not be -lambda -- resetting to 1");
-            this.mu = 1;
+            this.setMu(1);
         }              
     }
 
     @Override
     public double[] project(final double x, final double y) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double phi = xr / getLambda();        
         final double eta = yr / (getMu() + getLambda());
         final double theta = NumericalUtility.aatan2(eta, 1) + NumericalUtility.aasin(getMu() * eta / FastMath.sqrt(FastMath.pow(eta, 2) + 1));       
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                
         return pos;
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                        
         final double x = getLambda() * phi;
         final double ctheta = FastMath.cos(theta);
         if(NumericalUtility.equal(getMu(), -ctheta)) {
-            throw new PixelBeyondProjectionException(this,"theta[deg] = "+FastMath.toDegrees(theta));
+            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
         final double y = (getMu()+getLambda())/(getMu() + ctheta) * FastMath.sin(theta);
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{coord[0],coord[1]});                                                                                
         return coord;
     }
 
     /**
-     * Returns \u03BC.
+     * Returns \u03BC in spherical radii.
      * 
      * @return the mu
      */
@@ -168,7 +164,7 @@ public class CYP extends AbstractCylindricalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(this.lambda));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.getMu()), NumericalUtility.round(this.getLambda()));
     }
     
     @Override
@@ -177,5 +173,23 @@ public class CYP extends AbstractCylindricalProjection {
         final ProjectionParameter p2 = new ProjectionParameter("\u03BB", AbstractJWcs.PV22, new double[]{0, Double.POSITIVE_INFINITY}, 1);
         return new ProjectionParameter[]{p1,p2};        
     }        
+
+    /**
+     * Sets \u03BC in spherical radii.
+     * @param mu the mu to set
+     */
+    public void setMu(final double mu) {
+        this.mu = mu;
+        check();
+    }
+
+    /**
+     * Sets \u03BB in spherical radii.
+     * @param lambda the lambda to set
+     */
+    public void setLambda(final double lambda) {
+        this.lambda = lambda;
+        check();
+    }
 
 }

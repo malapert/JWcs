@@ -63,7 +63,6 @@ public class COO extends AbstractConicProjection {
 
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double tan1 = FastMath.tan((HALF_PI - this.getTheta1()) * 0.5);
@@ -78,13 +77,11 @@ public class COO extends AbstractConicProjection {
         final double phi = computePhi(xr, yr, r_theta, y0, c);            
         final double theta = HALF_PI - 2 * FastMath.atan(FastMath.pow(r_theta / psi, 1.0 / c));
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                        
         final double tan1 = FastMath.tan((HALF_PI - this.getTheta1()) * 0.5);
         final double tan2 = FastMath.tan((HALF_PI - this.getTheta2()) * 0.5);
         final double c = NumericalUtility.equal(getTheta1(), getTheta2()) ? FastMath.sin(getTheta1()) : FastMath.log(FastMath.cos(getTheta2()) / FastMath.cos(getTheta1())) / FastMath.log(tan2 / tan1);
@@ -97,7 +94,6 @@ public class COO extends AbstractConicProjection {
         final double x = computeX(phi, r_theta, c);
         final double y = computeY(phi, r_theta, c, y0);
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                
         return coord;
     }
     

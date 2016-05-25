@@ -63,25 +63,21 @@ public class STG extends AbstractZenithalProjection {
 
     @Override
     public double[] project(final double x, final double y) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                                
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double r_theta = computeRadius(xr, yr);
         final double phi = computePhi(x, y, r_theta);        
         final double theta = HALF_PI - 2 * FastMath.atan(r_theta * 0.5);       
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                        
         return pos;       
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                                
         final double r = 2 * FastMath.tan((HALF_PI-theta)*0.5d);
         final double x = r * FastMath.sin(phi);
         final double y = -r * FastMath.cos(phi);
         final double[] pos = {FastMath.toDegrees(x),FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{pos[0],pos[1]});                                                                                                                                
         return pos;
     } 
     

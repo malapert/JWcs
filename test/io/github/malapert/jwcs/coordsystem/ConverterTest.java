@@ -106,7 +106,7 @@ public class ConverterTest {
      */
     @Test
     public void testConvertUnconvert() {
-        System.out.println("Convert & unconvert on the whole sphere");
+        System.out.println("Convert & unconvert "+this.source.toString()+" <--> "+this.target.toString()+" on the whole sphere");
         double deltaLongitudeMax = 0.0;
         double deltaLatitudeMax = 0.0;
 

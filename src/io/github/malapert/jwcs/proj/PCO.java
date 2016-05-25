@@ -122,7 +122,6 @@ public class PCO extends AbstractPolyConicProjection {
 
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x, y});
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double phi;
@@ -140,13 +139,11 @@ public class PCO extends AbstractPolyConicProjection {
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi), FastMath.toDegrees(theta)});
         final double costhe = FastMath.cos(theta);
         final double sinthe = FastMath.sin(theta);
         final double a = phi * sinthe;
@@ -161,7 +158,6 @@ public class PCO extends AbstractPolyConicProjection {
             y = cotthe * (1.0 - FastMath.cos(a)) + theta;
         }
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);
         return coord;
     }
     

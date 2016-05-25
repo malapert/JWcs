@@ -18,7 +18,7 @@ package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
-import io.github.malapert.jwcs.proj.exception.JWcsException;
+import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
@@ -53,11 +53,12 @@ public class SIN extends AbstractZenithalProjection {
     /**
      * \u03BE is defined as \u03BE = cot\u03B8<sub>c</sub>sin\u03D5<sub>c</sub>.    
      */
-    private final double ksi;
+    private double ksi;
+    
     /**
      * \u03B7 is defined as \u03B7 = -cot\u03B8<sub>c</sub>cos\u03D5<sub>c</sub>.
      */
-    private final double eta;
+    private double eta;
 
    /**
      * Constructs a SIN projection based on the celestial longitude and latitude
@@ -94,47 +95,57 @@ public class SIN extends AbstractZenithalProjection {
 
     @Override
     public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double phi;
         final double theta;
-        if (NumericalUtility.equal(ksi, DEFAULT_VALUE) && NumericalUtility.equal(eta, DEFAULT_VALUE)) {
+        if (NumericalUtility.equal(getKsi(), DEFAULT_VALUE) && NumericalUtility.equal(getEta(), DEFAULT_VALUE)) {
             final double r_theta = computeRadius(xr, yr);
-            if(NumericalUtility.equal(r_theta, 1)) {
-                throw new PixelBeyondProjectionException(this,"(x,y)=("+x+","+y+") : r_theta must be < 1");
-            }
             phi = computePhi(xr, yr, r_theta);
+            
+            //computes theta
+            if(!NumericalUtility.isInInterval(r_theta, 0, true, 1, false)) {
+                throw new PixelBeyondProjectionException(this, x ,y, "r_theta must be < 1", true);
+            }             
             theta = NumericalUtility.aacos(r_theta);
+            
         } else {
-            final double a = FastMath.pow(ksi, 2) + FastMath.pow(eta, 2) + 1;
-            final double b = (ksi * (xr - ksi) + eta * (yr - eta)) * 2;
-            final double c = FastMath.pow(xr - ksi,2) + FastMath.pow(yr - eta,2) - 1;
+            final double[] coeffFromReducedDiscrimant = computeCoeffOfReducedDiscrimant(xr, yr);
             try {
-                theta = NumericalUtility.computeQuatraticSolution(new double[]{c,b,a});
-            } catch (JWcsException ex) {
-                throw new BadProjectionParameterException(this," (ksi,eta) = (" + ksi + " , " + eta+")");
+                theta = NumericalUtility.computeQuatraticSolution(coeffFromReducedDiscrimant);
+            } catch (MathematicalSolutionException ex) {
+                throw new PixelBeyondProjectionException(this, x, y, ex.getMessage(), true);
             }
 
-            phi = NumericalUtility.aatan2(xr - ksi * (1 - FastMath.sin(theta)), -(yr - eta * (1 - FastMath.sin(theta))));
+            phi = NumericalUtility.aatan2(xr - getKsi() * (1 - FastMath.sin(theta)), -(yr - eta * (1 - FastMath.sin(theta))));
         }
 
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                
         return pos;
+    }
+    
+    /**
+     * Computes the coefficients of the reduced discrimant.
+     * @param xr projection plane coordinate along X in radians
+     * @param yr projection plane coordinate along Y in radians
+     * @return the coefficients of the reduced discrimant as (c,b,a)
+     */
+    private double[] computeCoeffOfReducedDiscrimant(final double xr, final double yr) {
+        final double a = FastMath.pow(getKsi(), 2) + FastMath.pow(getEta(), 2) + 1;
+        final double b = (getKsi() * (xr - getKsi()) + getEta() * (yr - getEta())) * 2;
+        final double c = FastMath.pow(xr - getKsi(),2) + FastMath.pow(yr - getEta(),2) - 1;
+        return new double[]{c,b,a};
     }
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                                                                                        
         final double thetax = -FastMath.atan(ksi*FastMath.sin(phi)-eta*FastMath.cos(phi));
         if (theta < thetax) {
-            throw new PixelBeyondProjectionException(this,"(phi,theta)=("+FastMath.toDegrees(phi)+","+FastMath.toDegrees(theta)+")");
+            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
-        final double x = FastMath.toDegrees(FastMath.cos(theta) * FastMath.sin(phi) + ksi * (1 - FastMath.sin(theta)));
-        final double y = FastMath.toDegrees(-FastMath.cos(theta) * FastMath.cos(phi) + eta * (1 - FastMath.sin(theta)));
-        final double[] coord = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                                                                                        
+        final double x = FastMath.cos(theta) * FastMath.sin(phi) + getKsi() * (1 - FastMath.sin(theta));
+        final double y = -FastMath.cos(theta) * FastMath.cos(phi) + getEta() * (1 - FastMath.sin(theta));
+        final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         return coord;
     }
 
@@ -145,7 +156,7 @@ public class SIN extends AbstractZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(this.ksi), NumericalUtility.round(this.eta));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.getKsi()), NumericalUtility.round(this.getEta()));
     }
     
     @Override
@@ -154,4 +165,36 @@ public class SIN extends AbstractZenithalProjection {
         final ProjectionParameter p2 = new ProjectionParameter("\u03B7", AbstractJWcs.PV22, new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
+
+    /**
+     * Returns \u03BE dimensionless.
+     * @return the ksi
+     */
+    public double getKsi() {
+        return ksi;
+    }
+
+    /**
+     * Sets \u03BE dimensionless.
+     * @param ksi the ksi to set
+     */
+    public void setKsi(double ksi) {
+        this.ksi = ksi;
+    }
+
+    /**
+     * Returns \u03B7 dimensionless.
+     * @return the eta
+     */
+    public double getEta() {
+        return eta;
+    }
+
+    /**
+     * Sets \u03B7 dimensionless.
+     * @param eta the eta to set
+     */
+    public void setEta(final double eta) {
+        this.eta = eta;
+    }
 }

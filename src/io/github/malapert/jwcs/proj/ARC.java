@@ -27,13 +27,12 @@ import org.apache.commons.math3.util.FastMath;
  * It is widely used as the approximate projection of Schmidt telescopes.
  * The native meridians are uniformly divided to give equispaced parallels.
  *  This projection was also known in antiquity.
- * 
- * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
- * "Representations of celestial coordinates in FITS", M. R. Calabretta and 
- * E. W. Greisen - page 14</a> 
  *
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
+ * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">
+ * "Representations of celestial coordinates in FITS", M. R. Calabretta and 
+ * E. W. Greisen - page 14</a>  
  */
 public class ARC extends AbstractZenithalProjection {
     
@@ -56,31 +55,26 @@ public class ARC extends AbstractZenithalProjection {
      */    
     public ARC(final double crval1, final double crval2) {
         super(crval1, crval2);
-        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
-        
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                
     }
  
     @Override
     protected double[] project(final double x, final double y) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double r_theta = computeRadius(xr, yr);
         final double phi = computePhi(xr, yr, r_theta);
         final double theta = HALF_PI - r_theta;
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                        
         final double r = FastMath.toDegrees(HALF_PI - theta);  // theta between [-HALF_PI, HALF_PI] => no need to test
         final double x = computeX(r, phi);
         final double y = computeY(r, phi);
         final double[] pos = {x, y};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                
         return pos;
     }  
     

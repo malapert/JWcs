@@ -28,6 +28,18 @@ import org.apache.commons.math3.util.FastMath;
  * <p>The native coordinate system is chosen to have the polar axis orthogonal to
  * the plane of projection at the refer.
  * 
+ * <p><img alt="View of the zenithal projection" src="doc-files/zenithalProjection.png">
+ * <br>The left picture shows the native coordinate system with its pole at the 
+ * reference point (\u03D5<SUB>0</SUB>,\u03B8<SUB>0</SUB>)=(0&deg;,90&deg;). The
+ * right picture shows the intersection of the equator and prime meridian at the
+ * reference point (\u03D5<SUB>0</SUB>,\u03B8<SUB>0</SUB>)=(0&deg;,0&deg;).
+ * 
+ * <p><img alt="View of the zenithal projection" src="doc-files/zenithalProjection2.png">
+ * <br>The left picture shows the geometry of the zenithal perspective 
+ * projections, the point of projection at P is \u03BC spherical radii from the 
+ * center of the sphere. On the right picture, the three important special cases
+ * are represented.
+ * 
  * <p>Ref : "Representations of celestial coordinates in FITS", Calabretta, M.R.,
  * and Greisen, E.W., (2002), Astronomy and Astrophysics, 395, 1077-1122. - p9
  *
@@ -122,6 +134,10 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     /**
      * Computes the radius.
+     * 
+     * <p>The radius is computed as : <br>
+     * <code>R<sub>\u03B8</sub> = sqrt(x<sup>2</sup>+y<sup>2</sup>)</code>
+     * 
      * @param x the projection plane coordinate along X
      * @param y the projection plane coordinate along Y
      * @return the radius
@@ -132,6 +148,10 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     /**
      * Computes the projection plane coordinate along X.
+     * 
+     * <p>x coordinate is computed as:<br>
+     * <code>x = R<sub>\u03B8</sub> * sin(\u03D5)</code>
+     * 
      * @param radius the radius
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @return the projection plane coordinate along X
@@ -142,6 +162,10 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     /**
      * Computes the projection plane coordinate along Y.
+     * 
+     * <p>y coordinate is computed as:<br>
+     * <code>y = -R<sub>\u03B8</sub> * cos(\u03D5)</code>
+     * 
      * @param radius the radius
      * @param phi the native spherical coordinate (\u03D5) in radians along longitude
      * @return the projection plane coordinate along Y
@@ -152,6 +176,12 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     /**
      * Computes the  native spherical coordinate (\u03D5) in radians along longitude.
+     * 
+     * <p>\u03D5 is computed as :<br>
+     * \u03D5 = arg(-y,x)
+     * 
+     * <p>When the radius is set to 0, \u03D5 = 0;
+     * 
      * @param x the projection plane coordinate along X
      * @param y the projection plane coordinate along Y
      * @param radius the radius

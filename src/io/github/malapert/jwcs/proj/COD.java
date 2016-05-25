@@ -99,25 +99,21 @@ public class COD extends AbstractConicProjection {
      */
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                        
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);     
         final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);
         final double theta = getThetaA() + y0 - r_theta;
         final double[] pos = {phi, theta};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                
         return pos;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                        
         final double r_theta = getThetaA() + y0 - theta;       
         final double x = computeX(phi, r_theta, c);
         final double y = computeY(phi, r_theta, c, y0);
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                                                
         return coord;
     }
     

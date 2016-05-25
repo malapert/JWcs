@@ -71,7 +71,6 @@ public class BON extends AbstractPolyConicProjection {
 
     @Override
     protected double[] project(final double x, final double y) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (x,y)=({0},{1})", new Object[]{x,y});                        
         final double[] result;
         if (this.sfl == null) {
             final double xr = FastMath.toRadians(x);
@@ -93,13 +92,11 @@ public class BON extends AbstractPolyConicProjection {
         } else {
             result = this.sfl.project(x, y);
         }
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(result[0]),FastMath.toDegrees(result[1])});                                
         return result;
     }
 
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                        
         double[] result;
         if (sfl == null) {
             final double y0 = getTheta1() + 1.0d / FastMath.tan(getTheta1());
@@ -117,7 +114,6 @@ public class BON extends AbstractPolyConicProjection {
         } else {
             result = sfl.projectInverse(phi, theta);
         }
-        LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", new Object[]{result[0],result[1]});                                
         return result;
     }
     

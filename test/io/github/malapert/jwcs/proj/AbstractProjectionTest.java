@@ -91,7 +91,7 @@ public class AbstractProjectionTest {
      */
     @Test
     public void testProjUnproj() {
-        System.out.println("project & inverse project on the whole sphere");
+        System.out.println("project & inverse project "+this.wcs.getName()+" on the whole sphere");
         double deltaLongitudeMax = 0.0;
         double deltaLatitudeMax = 0.0;
 
