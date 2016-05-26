@@ -125,7 +125,18 @@ public class SIN extends AbstractZenithalProjection {
     }
     
     /**
-     * Computes the coefficients of the reduced discrimant.
+     * Computes if theta is beyond the limb.
+     * @param phi phi phi
+     * @param theta theta     
+     * @return false when theta is beyond the limb
+     */
+    private boolean isVisible(final double phi, final double theta) {
+        final double thetax = -FastMath.atan(ksi*FastMath.sin(phi)-eta*FastMath.cos(phi));
+        return theta > thetax;
+    }    
+    
+    /**
+     * Computes the coefficients of the reduced discriminant.
      * @param xr projection plane coordinate along X in radians
      * @param yr projection plane coordinate along Y in radians
      * @return the coefficients of the reduced discrimant as (c,b,a)
@@ -139,8 +150,7 @@ public class SIN extends AbstractZenithalProjection {
 
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        final double thetax = -FastMath.atan(ksi*FastMath.sin(phi)-eta*FastMath.cos(phi));
-        if (theta < thetax) {
+        if (!isVisible(phi, theta)) {
             throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
         final double x = FastMath.cos(theta) * FastMath.sin(phi) + getKsi() * (1 - FastMath.sin(theta));
@@ -148,6 +158,14 @@ public class SIN extends AbstractZenithalProjection {
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         return coord;
     }
+    
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        return isVisible(nativeSpherical[0], nativeSpherical[1]);
+    }     
 
     @Override
     public String getName() {
@@ -196,5 +214,5 @@ public class SIN extends AbstractZenithalProjection {
      */
     public void setEta(final double eta) {
         this.eta = eta;
-    }
+    }        
 }

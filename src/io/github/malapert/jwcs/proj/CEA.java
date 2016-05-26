@@ -19,7 +19,6 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
 import org.apache.commons.math3.util.FastMath;
@@ -97,12 +96,27 @@ public class CEA extends AbstractCylindricalProjection {
      */
     private void checkParameter(final double lambda) throws BadProjectionParameterException {
         if (NumericalUtility.equal(lambda, 0) || lambda < 0 || lambda > 1.0) {
-            throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside of range (0,1]");
+            throw new BadProjectionParameterException(this,"lambda =" + lambda + " - lambda outside the range ]0,1]");
         }        
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes \u03D5 = x</li>
+     * <li>computes \u03B8 = asin(\u03BB * y)</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (x,y)
+     */     
     @Override
-    protected double[] project(final double x, final double y) throws ProjectionException {
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double phi = xr;
@@ -115,8 +129,22 @@ public class CEA extends AbstractCylindricalProjection {
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes x = \u03D5</li>
+     * <li>computes y = sin\u03B8 / \u03BB</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */    
     @Override
-    protected double[] projectInverse(final double phi, final double theta) throws ProjectionException {
+    protected double[] projectInverse(final double phi, final double theta) {
         final double x = FastMath.toDegrees(phi);
         final double y = FastMath.toDegrees(FastMath.sin(theta) / getLambda());
         final double[] coord = {x, y};
@@ -139,8 +167,8 @@ public class CEA extends AbstractCylindricalProjection {
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException lambda not in ]0,1]
      */
     public final void setLambda(final double lambda) throws BadProjectionParameterException {
-        this.lambda = lambda;
         checkParameter(lambda);
+        this.lambda = lambda;
     }
 
     @Override

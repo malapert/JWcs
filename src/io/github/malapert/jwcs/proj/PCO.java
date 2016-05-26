@@ -54,10 +54,6 @@ public class PCO extends AbstractPolyConicProjection {
     public final static int DEFAULT_MAX_ITER = 1000;
 
     /**
-     * Tolerance for the approximative solution.
-     */
-    private double tolerance;
-    /**
      * Number of iterations for the approximative solution.
      */
     private int maxIter;
@@ -80,27 +76,9 @@ public class PCO extends AbstractPolyConicProjection {
         super(crval1, crval2, 45);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1},45)", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
-        setTolerance(DEFAULT_TOLERANCE);
         this.pcoFunction = new PcoFunction();
     }
 
-    /**
-     * Returns the tolerance.
-     *
-     * @return the tolerance
-     */
-    public double getTolerance() {
-        return tolerance;
-    }
-
-    /**
-     * Sets the tolerance.
-     *
-     * @param tolerance the tolerance to set
-     */
-    public final void setTolerance(final double tolerance) {
-        this.tolerance = tolerance;
-    }
 
     /**
      * Returns the maximal number of iterations.

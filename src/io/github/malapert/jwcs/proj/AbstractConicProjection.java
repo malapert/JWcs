@@ -99,7 +99,7 @@ public abstract class AbstractConicProjection extends AbstractProjection {
      * @param crval2 Celestial latitude in degrees of the ﬁducial point
      * @param theta_a (theta1 + theta2) / 2 in degrees
      * @param eta abs(theta1 - theta2) / 2 in degrees
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Each angle must be -90<=theta1,theta2<=90"
      */
     protected AbstractConicProjection(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2);
@@ -129,9 +129,10 @@ public abstract class AbstractConicProjection extends AbstractProjection {
         final boolean inRangeTheta2 = NumericalUtility.isInInterval(theta2, -HALF_PI, HALF_PI);
         if(!inRangeTheta1 || !inRangeTheta2) {
             throw new BadProjectionParameterException(this,"(theta1,theta2). Each angle must be -90<=theta1,theta2<=90");
-        }
-        
+        }        
     }
+    
+    
     
     @Override
     public String getNameFamily() {

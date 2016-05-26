@@ -76,46 +76,102 @@ public class COD extends AbstractConicProjection {
     public COD(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                        
-        if(NumericalUtility.equal(FastMath.toRadians(eta), 0)) {
-            this.c = FastMath.sin(FastMath.toRadians(theta_a));
-            this.y0 = 1.0/FastMath.tan(FastMath.toRadians(theta_a));           
-        } else {
-            this.c = FastMath.sin(getThetaA()) * FastMath.sin(FastMath.toRadians(eta)) / FastMath.toRadians(eta);   
-            this.y0 = FastMath.toRadians(eta) / (FastMath.tan(FastMath.toRadians(eta)) * FastMath.tan(FastMath.toRadians(theta_a)));
-        }  
+        checkParameters(theta_a, eta);  
+        this.c = FastMath.sin(getThetaA()) * FastMath.sin(getEta()) / getEta();   
         if (NumericalUtility.equal(this.c, 0)) {
             throw new BadProjectionParameterException(this,"c must be != 0");
         } 
+        this.y0 = getEta() / (FastMath.tan(getEta()) * FastMath.tan(getThetaA()));                
+    }
+    
+    /**
+     * Check the validity of projection parameters.
+     * @param theta_a value to check
+     * @param eta value to check
+     * @throws BadProjectionParameterException \u03B7,\u03B8 cannot be 0 or \u03B7,\u03B8&gte;90
+     */
+    private void checkParameters(final double theta_a, final double eta) throws BadProjectionParameterException {
+        if(NumericalUtility.equal(eta, 0)) {
+            throw new BadProjectionParameterException(this, "\u03B7 cannot be 0");
+        }
+        if(NumericalUtility.equal(eta, 90) || eta > 90) {
+            throw new BadProjectionParameterException(this, "\u03B7 cannot be >= 90");
+        }        
+        if(NumericalUtility.equal(theta_a, 0)) {
+            throw new BadProjectionParameterException(this, "\u03B8 cannot be 0");
+        }
+        if(NumericalUtility.equal(theta_a, 90) || theta_a > 90) {
+            throw new BadProjectionParameterException(this, "\u03B8 cannot be >= 90");
+        }   
     }
 
     /**
-     * Computes the native spherical coordinates from the projection plane
-     * coordinates.
-     *
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : sign(\u03B8<sub>a</sub>) * sqrt(x<sup>2</sup> + (y0 - y)<sup>2</sup>)
+     * with y0 = \u03B7 / (tan\u03B7 * tan\u03B8<sub>a</sub></li>
+     * <li>computes \u03D5 : {@link AbstractConicProjection#computePhi(double, double, double, double, double) }</li>
+     * <li>computes \u03B8 : \u03B8<sub>a</sub> + y0 - radius</li>
+     * </ul>
+     * 
      * @param x projection plane coordinate along X
      * @param y projection plane coordinate along Y
-     * @return the native spherical coordinates in radians
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException when the projection parameter is wrong
-     */
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     */ 
     @Override
-    protected double[] project(final double x, final double y) throws BadProjectionParameterException {
+    protected double[] project(final double x, final double y) {
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);     
-        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
-        final double phi = computePhi(xr, yr, r_theta, y0, c);
-        final double theta = getThetaA() + y0 - r_theta;
+        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(getY0() - yr, 2));
+        final double phi = computePhi(xr, yr, r_theta, getY0(), getC());
+        final double theta = getThetaA() + getY0() - r_theta;
         final double[] pos = {phi, theta};
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : \u03B8<sub>a</sub> + y0 - \u03B8
+     * with y0 = \u03B7 / (tan\u03B7 * tan\u03B8<sub>a</sub></li>
+     * <li>computes x : {@link AbstractConicProjection#computeX(double, double, double) }</li>
+     * <li>computes y : {@link AbstractConicProjection#computeY(double, double, double, double) } </li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */     
     @Override
-    protected double[] projectInverse(final double phi, final double theta) throws BadProjectionParameterException {
-        final double r_theta = getThetaA() + y0 - theta;       
-        final double x = computeX(phi, r_theta, c);
-        final double y = computeY(phi, r_theta, c, y0);
+    protected double[] projectInverse(final double phi, final double theta) {
+        final double r_theta = getThetaA() + getY0() - theta;       
+        final double x = computeX(phi, r_theta, getC());
+        final double y = computeY(phi, r_theta, getC(), getY0());
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         return coord;
     }
+        
+    /**
+     * Returns y0.
+     * @return the y0
+     */
+    private double getY0() {
+        return y0;
+    }
+
+    /**
+     * Returns c.
+     * @return the c
+     */
+    private double getC() {
+        return c;
+    }    
     
     @Override
     public String getName() {

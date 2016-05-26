@@ -46,19 +46,10 @@ public class MOL extends AbstractCylindricalProjection {
     private final static String DESCRIPTION = "no limits";
 
     /**
-     * Default tolerance for the iterative solution.
-     */
-    public final static double DEFAULT_TOLERANCE = 1E-15;
-
-    /**
      * Default maximum iteration for the iterative solution.
      */
     public final static int DEFAULT_MAX_ITER = 1000;
 
-    /**
-     * Tolerance for the iterative solution.
-     */
-    private double tolerance;
     /**
      * Maximum iteration for the iterative solution.
      */
@@ -82,7 +73,6 @@ public class MOL extends AbstractCylindricalProjection {
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1, crval2});
         setMaxIter(DEFAULT_MAX_ITER);
-        setTolerance(DEFAULT_TOLERANCE);
         this.gammaFunction = new GammaFunction();
     }
 
@@ -183,25 +173,6 @@ public class MOL extends AbstractCylindricalProjection {
     private double computeGamma(final double theta) {
         this.gammaFunction.setTheta(theta);
         return NumericalUtility.computeFunctionSolution(this.getMaxIter(), this.gammaFunction, -FastMath.PI, FastMath.PI) * 0.5;
-    }
-
-    /**
-     * Returns the tolerance of the approximative solution of the inverse
-     * projection.
-     *
-     * @return the tolerance
-     */
-    public double getTolerance() {
-        return tolerance;
-    }
-
-    /**
-     * Sets the tolerance of the approximative solution.
-     *
-     * @param tolerance the tolerance to set
-     */
-    public final void setTolerance(final double tolerance) {
-        this.tolerance = tolerance;
     }
 
     /**

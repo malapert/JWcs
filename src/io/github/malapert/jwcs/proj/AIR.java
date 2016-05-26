@@ -17,9 +17,9 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
+import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
-import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.utility.AiryFunction;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import org.apache.commons.math3.util.FastMath;
@@ -33,7 +33,7 @@ import org.apache.commons.math3.util.FastMath;
  * "Representations of celestial coordinates in FITS", M. R. Calabretta and E.
  * W. Greisen - page 14</a>
  */
-public class AIR extends AbstractZenithalProjection {
+public final class AIR extends AbstractZenithalProjection {
 
     /**
      * Projection's name.
@@ -82,8 +82,9 @@ public class AIR extends AbstractZenithalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point     
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException \u03B8<sub>b</sub> outside the range ]-90,90]   
      */
-    public AIR(final double crval1, final double crval2) {
+    public AIR(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_VALUE_THETHAB);
     }
 
@@ -95,16 +96,45 @@ public class AIR extends AbstractZenithalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @param thetab \u03B4<sub>b</sub>
+     * @param thetab \u03B4<sub>b</sub>, projection parameter
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException \u03B8<sub>b</sub> outside the range ]-90,90]
      */
-    public AIR(final double crval1, final double crval2, final double thetab) {
+    public AIR(final double crval1, final double crval2, final double thetab) throws BadProjectionParameterException {
         super(crval1, crval2);
-        this.thetab = FastMath.toRadians(thetab);
+        setThetab(FastMath.toRadians(thetab));
         this.airyFunction = new AiryFunction(this.thetab);
     }
+    
+    /**
+     * Checks the validity range of \u03B8<sub>b</sub>
+     * @param thetab \u03B8<sub>b</sub>, projection parameter
+     * @throws BadProjectionParameterException \u03B8<sub>b</sub> outside the range ]-90,90]
+     */
+    private void checkParameter(final double thetab) throws BadProjectionParameterException {
+        if (!NumericalUtility.isInInterval(thetab, -NumericalUtility.HALF_PI, false, NumericalUtility.HALF_PI, true)) {
+            throw new BadProjectionParameterException(this, "\u03B4<sub>b</sub> is outside the valid range ]-90,90]");
+        }
+    }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes the radius : {@link AbstractZenithalProjection#computeRadius(double, double) }</li>
+     * <li>solves by an iterative way \u03B8 : {@link AiryFunction}</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>
+     * </ul>
+     *
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException 
+     * No valid solution for (x,y) when an error happens during {@link NumericalUtility#computeFunctionSolution(int, org.apache.commons.math3.analysis.UnivariateFunction, double, double) }
+     */    
     @Override
-    protected double[] project(final double x, final double y) throws ProjectionException {
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {  
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double radius = this.computeRadius(xr, yr);
@@ -119,8 +149,26 @@ public class AIR extends AbstractZenithalProjection {
         return new double[]{phi, theta};
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes c : {@link AIR#computeC() }</li>
+     * <li>computes term1 = ln(cos\u03B6) / tan\u03B6</li>
+     * <li>computes the radius : -2 * (term1 + c * tan(\u03B6))</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>     
+     *
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B6) in radians along latitude
+     * @return the projection plane coordinates
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (x,y) when \u03B6=0
+     */    
     @Override
-    protected double[] projectInverse(final double phi, final double theta) throws ProjectionException {
+    protected double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException  {
         final double c = computeC();
         final double zeta = 0.5 * (NumericalUtility.HALF_PI - theta);
         if (NumericalUtility.equal(zeta, 0)) {
@@ -156,6 +204,14 @@ public class AIR extends AbstractZenithalProjection {
         }         
         return c;
     }    
+    
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        final double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        return !NumericalUtility.equal(nativeSpherical[1], -NumericalUtility.HALF_PI);
+    }    
 
     @Override
     public String getName() {
@@ -176,7 +232,7 @@ public class AIR extends AbstractZenithalProjection {
     /**
      * Returns the Airy function to solve.
      *
-     * @return the airyFunction
+     * @return the airyFunction     
      */
     private AiryFunction getAiryFunction() {
         return airyFunction;
@@ -195,8 +251,11 @@ public class AIR extends AbstractZenithalProjection {
      * Sets \u03B8<SUB>b</SUB> in radians.
      *
      * @param thetab the thetab to set
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException 
+     * \u03B8<sub>b</sub> outside the range ]-90,90]
      */
-    public void setThetab(final double thetab) {
+    public void setThetab(final double thetab) throws BadProjectionParameterException {
+        checkParameter(thetab);
         this.thetab = thetab;
     }
 

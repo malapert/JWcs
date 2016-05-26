@@ -187,10 +187,10 @@ public final class NumericalUtility {
         if (Double.isInfinite(resut) || Double.isNaN(resut)) {
             throw new JWcsError("Infinite latitude");
         }
-        if (FastMath.abs(resut - HALF_PI) < DOUBLE_TOLERANCE) {
+        if (equal(resut,HALF_PI)) {
             return HALF_PI;
         }
-        if (FastMath.abs(resut + HALF_PI) < DOUBLE_TOLERANCE) {
+        if (equal(resut,-HALF_PI)) {
             return -HALF_PI;
         }
 

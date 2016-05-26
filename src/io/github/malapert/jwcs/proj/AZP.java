@@ -19,7 +19,6 @@ package io.github.malapert.jwcs.proj;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.MathematicalSolutionException;
-import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
@@ -39,7 +38,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class AZP extends AbstractZenithalProjection {
+public final class AZP extends AbstractZenithalProjection {
 
     /**
      * Projection's name.
@@ -97,22 +96,44 @@ public class AZP extends AbstractZenithalProjection {
      */
     public AZP(final double crval1, final double crval2, final double mu, final double gamma) throws BadProjectionParameterException {
         super(crval1, crval2);
-        this.gamma = FastMath.toRadians(gamma);
-        this.mu = mu;
+        setGamma(FastMath.toRadians(gamma));
+        setMu(mu);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,gamma)=({0},{1},{2},{3})", new Object[]{crval1,crval2,mu,gamma});        
-        checkParameters(this.gamma);
+        checkParameters(this.mu, this.gamma);
     }
     
     /**
-     * Checks gamma parameter.
+     * Checks \u0263 and \u03BC parameters.
      * 
+     * @param mu value to check
      * @param gamma value to check
-     * @throws BadProjectionParameterException Gamma must be different +/- HALF_PI
+     * @throws BadProjectionParameterException \u03BC must be != +/- HALF_PI and \u0263 != -1 
      */
-    private void checkParameters(final double gamma) throws BadProjectionParameterException {
-        if(NumericalUtility.equal(FastMath.abs(gamma), HALF_PI)) {
-            throw new BadProjectionParameterException(this, "gamma="+gamma+". Gamma must be != +/-HALF_PI");
+    private void checkParameters(final double mu, final double gamma) throws BadProjectionParameterException {       
+        checkParameterMu(mu);
+        checkParameterGamma(gamma);
+    }
+    
+    /**
+     * Checks the validity of \u0263.
+     * @param mu value to check
+     * @throws BadProjectionParameterException \u0263 must be != -1
+     */
+    private void checkParameterMu(final double mu) throws BadProjectionParameterException {
+        if (NumericalUtility.equal(mu, -1)) {
+            throw new BadProjectionParameterException(this, "\u0263 must be != -1");
         }
+    }
+    
+    /**
+     * Checks the validity of \u03BC.
+     * @param gamma value to check
+     * @throws BadProjectionParameterException \u03BC must be != +/-HALF_PI
+     */
+    private void checkParameterGamma(final double gamma) throws BadProjectionParameterException {
+        if(NumericalUtility.equal(FastMath.abs(gamma), HALF_PI)) {
+            throw new BadProjectionParameterException(this, "\u03BC must be != +/-HALF_PI");
+        }        
     }
     
     /**
@@ -149,7 +170,7 @@ public class AZP extends AbstractZenithalProjection {
      * @param y plane coordinate in radians along Y
      * @param radius Radius
      * @return rho
-     * @throws BadProjectionParameterException When (x,y) has no solution
+     * @throws BadProjectionParameterException getMu() + 1 + y * FastMath.tan(getGamma()) cannot be 0
      */
     private double computeRho(final double x, final double y, final double radius) throws BadProjectionParameterException {
         final double denom = getMu() + 1 + y * FastMath.tan(getGamma());
@@ -161,6 +182,15 @@ public class AZP extends AbstractZenithalProjection {
     
     /**
      * Computes theta in radians.
+     * 
+     * <p>The algorithm to compute \u03B8 is the following:
+     * <ul>
+     * <li>computes \u03C1 : {@link AZP#computeRho(double, double, double) }</li>
+     * <li>computes \u03C9 : asin(\u03BC * \u03C1 / sqrt(\u03C1<sup>2</sup> + 1)</li>
+     * <li>computes \u0471 : arg(\u03C1, 1)</li>
+     * <li>selects the right \u03B8 : {@link AZP#findTheValidSolution(double, double) }
+     * for |\u03C9| &lt; 1 else {@link AZP#findTheSolutionNearestNorthPole(double, double) }</li>
+     * </ul>     
      * 
      * @param x plane coordinate in radians along X
      * @param y plane coordinate in radians along Y
@@ -200,7 +230,7 @@ public class AZP extends AbstractZenithalProjection {
         }
         return theta;
     }
-    
+        
     /**
      * Finds the right solution among theta1 and theta2.
      * 
@@ -249,6 +279,23 @@ public class AZP extends AbstractZenithalProjection {
         return theta;
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link AbstractZenithalProjection#computeRadius(double, double) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>
+     * <li>computes \u03B8 : {@link AZP#computeTheta(double, double, double) }</li>
+     * </ul>
+     *
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException getMu() + 1 + y * FastMath.tan(getGamma()) cannot be 0
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (x,y)
+     */     
     @Override
     public double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
         final double xr = computeXr(FastMath.toRadians(x));
@@ -260,11 +307,27 @@ public class AZP extends AbstractZenithalProjection {
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link AZP#computeRadiusFrom(double, double) }</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException \u03B8 is beyond the projection
+     */     
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
         final double r = computeRadiusFrom(phi, theta);
-        final double x = r * FastMath.sin(phi);
-        final double y = -r * FastMath.cos(phi) / FastMath.cos(getGamma());
+        final double x = computeX(r, phi);
+        final double y = computeY(r / FastMath.cos(getGamma()), phi);
         final double[] pos = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         return pos;
     }
@@ -281,23 +344,43 @@ public class AZP extends AbstractZenithalProjection {
      * @throws PixelBeyondProjectionException \u03B8 is beyond the projection
      */
     private double computeRadiusFrom(final double phi, final double theta) throws PixelBeyondProjectionException {
-        final double thetax;
-        if (NumericalUtility.equal(getMu(), 0)) {
-            thetax = 0;
-        } else if (FastMath.abs(getMu()) > 1) {
-            thetax = NumericalUtility.aasin(-1 / getMu());
-        } else {
-            thetax = NumericalUtility.aasin(-getMu());
-        }
-
-        final double denom = getMu() + FastMath.sin(theta) + FastMath.cos(theta) * FastMath.cos(phi) * FastMath.tan(getGamma());
-
-        if (NumericalUtility.equal(denom, 0) || theta < thetax) {
+        final double denom = getMu() + FastMath.sin(theta) + FastMath.cos(theta) * FastMath.cos(phi) * FastMath.tan(getGamma());        
+        if (!isVisible(theta, denom)) {
             throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
         }
 
         return (getMu() + 1) * FastMath.cos(theta) / denom;          
     }
+    
+    /**
+     * Computes if theta is beyond the limb.
+     * @param phi phi
+     * @param theta theta
+     * @param denom denom
+     * @return false when theta is beyond the limb
+     */
+    private boolean isVisible(final double theta, final double denom) {
+        final double thetax;
+        if (NumericalUtility.equal(getMu(), 0)) {
+            thetax = 0;
+        } else if (FastMath.abs(getMu()) > 1) {
+            thetax = NumericalUtility.aasin(-1.0d / getMu());
+        } else {
+            thetax = NumericalUtility.aasin(-getMu());
+        }        
+        final boolean result;
+        result = !(NumericalUtility.equal(denom, 0) || theta < thetax);        
+        return result;
+    }
+    
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        final double denom = getMu() + FastMath.sin(nativeSpherical[1]) + FastMath.cos(nativeSpherical[1]) * FastMath.cos(nativeSpherical[0]) * FastMath.tan(getGamma());                
+        return isVisible(nativeSpherical[1], denom);
+    }    
 
     @Override
     public String getName() {
@@ -320,25 +403,23 @@ public class AZP extends AbstractZenithalProjection {
      * Returns \u0263 in radians.
      * @return the gamma
      */
-    public double getGamma() {
+    public double getGamma() {      
         return gamma;
     }
 
     /**
      * Sets \u0263 in radians.
      * @param gamma the gamma to set
-     * @throws BadProjectionParameterException Gamma must be != +/-HALF_PI
      */
-    public void setGamma(final double gamma) throws BadProjectionParameterException {
+    private void setGamma(final double gamma) throws BadProjectionParameterException {
         this.gamma = gamma;
-        checkParameters(gamma);
     }
 
     /**
      * Returns \u03BC.
      * @return the mu
      */
-    public double getMu() {
+    private double getMu() {
         return mu;
     }
 
@@ -346,7 +427,19 @@ public class AZP extends AbstractZenithalProjection {
      * Sets \u03BC.
      * @param mu the mu to set
      */
-    public void setMu(double mu) {
+    private void setMu(double mu) throws BadProjectionParameterException {
         this.mu = mu;
+    }
+    
+    /**
+     * Sets the projection parameters
+     * @param mu mu
+     * @param gamma gamma
+     * @throws BadProjectionParameterException \u03BC must be != +/- HALF_PI and \u0263 != -1 
+     */
+    public void setProjectionParameters(final double mu, final double gamma) throws BadProjectionParameterException {
+        checkParameters(mu, gamma);
+        setMu(mu);
+        setGamma(gamma);
     }
 }

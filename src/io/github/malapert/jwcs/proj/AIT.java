@@ -41,7 +41,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class AIT extends AbstractCylindricalProjection {
+public final class AIT extends AbstractCylindricalProjection {
     
     /**
      * Projection's name.
@@ -65,6 +65,23 @@ public class AIT extends AbstractCylindricalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});        
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes z : sqrt (1 - (x/4)<sup>2</sup> - (y/2)<sup>2</sup>)</li>
+     * <li>computes \u03D5 : 2 * arg(2 * z<sup>2</sup> - 1, z * x / 2)</li>
+     * <li>computes \u03B8 : asin(y * z)</li>
+     * </ul>
+     *
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException 
+     * No valid solution for (x,y) when z &lt; 0 or y*z is outside [-1,1]
+     */            
     @Override
     public double[] project(final double x, final double y) throws PixelBeyondProjectionException  {
         final double xr = FastMath.toRadians(x);
@@ -84,20 +101,26 @@ public class AIT extends AbstractCylindricalProjection {
     }
 
     /**
-     * Computes the projection plane coordinates from the native spherical
-     * coordinates. 
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
      *
-     * @param phi native spherical coordinate in radians along longitude
-     * @param theta native spherical coordinate in radians along latitude
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes d : 1 + cos\u03B8 * cos(\u03D5/2)</li>
+     * <li>computes \u0263 : sqrt(2/d)</li>
+     * <li>computes x : 2 * \u0263 * cos\u03B8 * sin(\u03D5/2)</li>
+     * <li>computes y : \u0263 * sin\u03B8</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
      * @return the projection plane coordinates
-     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException When (phi,theta) has no solution
-     */    
+     */   
     @Override
-    public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {         
+    public double[] projectInverse(final double phi, final double theta) {         
         final double d = 1 + FastMath.cos(theta) * FastMath.cos(phi * 0.5d);
-        if (NumericalUtility.equal(d, 0)) {
-            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
-        }
+        // d cannot be equal to 0 because the two cosinus value goes to [0,1]
+        // then we do not need to raise an exception
         final double gamma = FastMath.toDegrees(FastMath.sqrt(2.0d / d));        
         final double x = 2 * gamma * FastMath.cos(theta) * FastMath.sin(phi * 0.5d);
         final double y = gamma * FastMath.sin(theta);

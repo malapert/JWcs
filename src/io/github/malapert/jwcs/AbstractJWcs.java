@@ -900,6 +900,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
         setNativeLatitudeOfFiducialPoint(projection);
         setNativeLongitudeOfCelestialPole(projection);
         setNativeLatitudeOfCelestialPole(projection);
+        //TO DO  apply shift PV10
         return projection;
     }
 

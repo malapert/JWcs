@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj;
 
 import io.github.malapert.jwcs.AbstractJWcs;
+import io.github.malapert.jwcs.proj.exception.BadProjectionParameterException;
 import io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import java.util.logging.Level;
@@ -75,8 +76,9 @@ public class CYP extends AbstractCylindricalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
      */
-    public CYP(final double crval1, final double crval2) {
+    public CYP(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_MU, DEFAULT_LAMBDA);
     }
     
@@ -90,31 +92,33 @@ public class CYP extends AbstractCylindricalProjection {
      * fiducial point
      * @param mu \u03BC distance measured from the center of the sphere in the direction opposite the projected surface
      * @param lambda \u03BB radius of the cylinder
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
      * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">Representations of celestial coordinates in FITS, chapter 5.2.1</a>
      */
-    public CYP(final double crval1, final double crval2, final double mu, final double lambda) {
+    public CYP(final double crval1, final double crval2, final double mu, final double lambda) throws BadProjectionParameterException {
         super(crval1, crval2);
         this.mu = mu;
         this.lambda = lambda;
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,lambda)=({0},{1},{2},{3})", new Object[]{crval1, crval2, mu, lambda});        
-        check();
+        checkParameters(mu, lambda);
     }
     
     /**
      * Checks projection parameters.
      * 
      * <p>Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
+     * @param mu value to check
+     * @param lambda value to check
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
      */
-    protected final void check() {
+    protected final void checkParameters(final double mu, final double lambda) throws BadProjectionParameterException {
         if (getLambda() < 0 || NumericalUtility.equal(getLambda(), 0)) {
-            LOG.log(Level.WARNING, "CYP: Lambda must be > 0 -- resetting to 1");
-            this.setLambda(1);
+            throw new BadProjectionParameterException(this, "Lambda must be > 0");
         }
         if (NumericalUtility.equal(getMu(),-getLambda())) {
-            LOG.log(Level.WARNING, "CYP: Mu must not be -lambda -- resetting to 1");
-            this.setMu(1);
+            throw new BadProjectionParameterException(this, "Mu must not be -lambda");
         }              
-    }
+    }    
 
     @Override
     public double[] project(final double x, final double y) {
@@ -178,18 +182,28 @@ public class CYP extends AbstractCylindricalProjection {
      * Sets \u03BC in spherical radii.
      * @param mu the mu to set
      */
-    public void setMu(final double mu) {
+    private void setMu(final double mu) {
         this.mu = mu;
-        check();
     }
 
     /**
      * Sets \u03BB in spherical radii.
      * @param lambda the lambda to set
      */
-    public void setLambda(final double lambda) {
+    private void setLambda(final double lambda) {
         this.lambda = lambda;
-        check();
+    }
+    
+    /**
+     * Sets projection parameters
+     * @param mu mu
+     * @param lambda lambda
+     * @throws BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
+     */
+    public void setProjectionParameters(final double mu, final double lambda) throws BadProjectionParameterException {
+        checkParameters(mu, lambda);
+        setMu(mu);
+        setLambda(lambda);
     }
 
 }

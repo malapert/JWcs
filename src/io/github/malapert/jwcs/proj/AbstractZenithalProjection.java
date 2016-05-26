@@ -127,11 +127,6 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
         this.theta0 = theta0;
     }
 
-    @Override
-    protected double[] computeCoordNativePole(final double phi_p) {
-        return new double[]{getCrval1(), getCrval2()};
-    }
-
     /**
      * Computes the radius.
      * 
@@ -205,7 +200,6 @@ public abstract class AbstractZenithalProjection extends AbstractProjection {
 
     @Override
     public boolean isLineToDraw(final double[] pos1, final double[] pos2) {
-        LOG.log(Level.FINER, "true");
         return true;
     }
     

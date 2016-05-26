@@ -53,6 +53,21 @@ public class ZEA extends AbstractZenithalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                        
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link ZEA#computeRadius(double, double) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>      
+     * <li>computes \u03B8 : HALF_PI - 2 * asin(radius * 0.5)</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     */     
     @Override
     public double[] project(final double x, final double y) {
         final double xr = FastMath.toRadians(x);
@@ -69,6 +84,21 @@ public class ZEA extends AbstractZenithalProjection {
         return pos;      
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : -2 sin((HALF_PI - \u03B8)*0.5)</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */    
     @Override
     public double[] projectInverse(final double phi, final double theta) {
         final double r = 2 * FastMath.sin((HALF_PI-theta)*0.5d);
@@ -86,6 +116,11 @@ public class ZEA extends AbstractZenithalProjection {
     @Override
     public String getDescription() {
         return DESCRIPTION;
+    }    
+    
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        return true;
     }    
 
     @Override

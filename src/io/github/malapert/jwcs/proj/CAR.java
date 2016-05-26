@@ -31,7 +31,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class CAR extends AbstractCylindricalProjection{
+public final class CAR extends AbstractCylindricalProjection{
     
     /**
      * Projection's name.
@@ -54,7 +54,21 @@ public class CAR extends AbstractCylindricalProjection{
         super(crval1, crval2);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                
     }
-
+    
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes \u03D5 = x</li>
+     * <li>computes \u03B8 = y</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     */      
     @Override
     protected double[] project(final double x, final double y) {
         final double phi = FastMath.toRadians(x);
@@ -63,6 +77,20 @@ public class CAR extends AbstractCylindricalProjection{
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes x = \u03D5</li>
+     * <li>computes y = \u03B8</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */    
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         final double x = FastMath.toDegrees(phi);

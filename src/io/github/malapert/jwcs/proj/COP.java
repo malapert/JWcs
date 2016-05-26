@@ -71,20 +71,36 @@ public class COP extends AbstractConicProjection {
     public COP(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1, crval2, theta_a, eta});
+        checkParameters(theta_a, eta);
         this.c = FastMath.sin(getThetaA());
-        if (NumericalUtility.equal(this.c, 0)) {
-            throw new BadProjectionParameterException(this, "theta_a: " + getThetaA() + ". It must be !=0");
-        }
     }
+    
+    /**
+     * Check the validity of projection parameters.
+     * @param theta_a value to check
+     * @param eta value to check
+     * @throws BadProjectionParameterException \u03B7 cannot be 0 or \u03B7 + \u03B8<sub>a</sub> cannot be 0
+     */
+    private void checkParameters(final double theta_a, final double eta) throws BadProjectionParameterException {
+        if(NumericalUtility.equal(eta, 0)) {
+            throw new BadProjectionParameterException(this, "\u03B7 cannot be 0");
+        }
+        if(NumericalUtility.equal(eta, 90) || eta > 90) {
+            throw new BadProjectionParameterException(this, "\u03B7 cannot be >= 90");
+        }        
+        if(NumericalUtility.equal(theta_a, 0)) {
+            throw new BadProjectionParameterException(this, "\u03B8 cannot be 0");
+        }
+        if(NumericalUtility.equal(theta_a, 90) || theta_a > 90) {
+            throw new BadProjectionParameterException(this, "\u03B8 cannot be >= 90");
+        }  
+    }    
 
     @Override
     protected double[] project(final double x, final double y) throws BadProjectionParameterException {
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double d = FastMath.cos(getEta());
-        if (NumericalUtility.equal(d, 0)) {
-            throw new BadProjectionParameterException(this, "Bad value for eta = " + getEta() + ". eta must be > 0");
-        }
         final double y0 = d / FastMath.tan(getThetaA());
         final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
         final double phi = computePhi(xr, yr, r_theta, y0, c);

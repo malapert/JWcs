@@ -81,26 +81,50 @@ public class COE extends AbstractConicProjection {
      * fiducial point
      * @param theta_a \u03B8<sub>a</sub> in degrees and defined as \u03B8<sub>a</sub>=(\u03B8<sub>1</sub>+\u03B8<sub>2</sub>)/2
      * @param eta \u03B7 in degrees and defined as \u03B7=|\u03B8<sub>1</sub>-\u03B8<sub>2</sub>|/2
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Projection parameters: sin(theta1) + sin(theta2) = 0 are not allowed
      */
     public COE(final double crval1, final double crval2, final double theta_a, final double eta) throws BadProjectionParameterException {
         super(crval1, crval2, theta_a, eta);  
-        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});                                
+        LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,theta_a,eta)=({0},{1},{2},{3})", new Object[]{crval1,crval2,theta_a,eta});        
         gamma = FastMath.sin(getTheta1()) + FastMath.sin(getTheta2());
-        c = gamma * 0.5;
-        if (NumericalUtility.equal(c, 0)) {
-            throw new BadProjectionParameterException(this,"(theta1,theta2). sin(theta1) + sin(theta2) must be != 0");
-        }         
+        checkParameters(gamma);
+        c = gamma * 0.5;       
         y0 = FastMath.sqrt(1.0d + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) - gamma * FastMath.sin((getTheta1()+getTheta2())*0.5)) / c;
     }
+    
+    /**
+     * Checks parameters.
+     * @throws BadProjectionParameterException Projection parameters: sin(theta1) + sin(theta2) = 0 are not allowed
+     */
+    private void checkParameters(final double gamma) throws BadProjectionParameterException {
+        if(NumericalUtility.equal(gamma, 0)) {
+            throw new BadProjectionParameterException(this, "Projection parameters: sin(theta1) + sin(theta2) = 0 are not allowed");
+        }
+    }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : sign(\u03B8<sub>a</sub>) * sqrt(x<sup>2</sup> + ({@link COE#y0} - y)<sup>2</sup>)</li>
+     * <li>computes \u03D5 : {@link AbstractConicProjection#computePhi(double, double, double, double, double) }</li>
+     * <li>computes \u03B8 : asin(1 / {@link COE#gamma} + sin\u03B8<sub>1</sub> * sin\u03B8<sub>2</sub> / {@link COE#gamma} - {@link COE#gamma} * (0.5 * radius)<sup>2</sup>)</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (x,y)
+     */    
     @Override
-    protected double[] project(final double x, final double y) throws BadProjectionParameterException, PixelBeyondProjectionException {
+    protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);                              
-        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
-        final double phi = computePhi(xr, yr, r_theta, y0, c);                   
-        final double w = 1.0d / gamma + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) / gamma - gamma * FastMath.pow(r_theta * 0.5, 2);
+        final double r_theta = FastMath.signum(getThetaA()) * FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(getY0() - yr, 2));
+        final double phi = computePhi(xr, yr, r_theta, getY0(), getC());                   
+        final double w = 1.0d / getGamma() + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) / getGamma() - getGamma() * FastMath.pow(r_theta * 0.5, 2);
         final double theta = NumericalUtility.aasin(w);
         if (Double.isNaN(theta)) {
             throw new PixelBeyondProjectionException(this, x, y, true);
@@ -109,12 +133,27 @@ public class COE extends AbstractConicProjection {
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : sqrt( 1 + sin\u03B8<sub>1</sub> * sin\u03B8<sub>2</sub> - {@link COE#gamma} * sin\u03B8 / {@link COE#c}
+     * <li>computes x : {@link AbstractConicProjection#computeX(double, double, double) }</li>
+     * <li>computes y : {@link AbstractConicProjection#computeY(double, double, double, double) } </li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */  
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(phi),FastMath.toDegrees(theta)});                                                                
-        final double r_theta = FastMath.sqrt(1.0d + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) - gamma * FastMath.sin(theta)) / c;      
-        final double x = computeX(phi, r_theta, c);
-        final double y = computeY(phi, r_theta, c, y0);
+        final double r_theta = FastMath.sqrt(1.0d + FastMath.sin(getTheta1()) * FastMath.sin(getTheta2()) - getGamma() * FastMath.sin(theta)) / getC();      
+        final double x = computeX(phi, r_theta, getC());
+        final double y = computeY(phi, r_theta, getC(), getY0());
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord);                                                        
         return coord;
@@ -142,5 +181,26 @@ public class COE extends AbstractConicProjection {
         final ProjectionParameter p2 = new ProjectionParameter("\u03B7", AbstractJWcs.PV22, new double[]{0, 90}, 0);
         return new ProjectionParameter[]{p1,p2};    
     }    
+
+    /**
+     * @return the gamma
+     */
+    private double getGamma() {
+        return gamma;
+    }
+
+    /**
+     * @return the c
+     */
+    private double getC() {
+        return c;
+    }
+
+    /**
+     * @return the y0
+     */
+    private double getY0() {
+        return y0;
+    }
 
 }

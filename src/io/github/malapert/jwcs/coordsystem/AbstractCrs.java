@@ -250,7 +250,7 @@ public abstract class AbstractCrs {
      * Converts the (longitude, latitude) coordinates from the current 
      * coordinate reference system into the target coordinate reference System.     
      * 
-     * <p>The algorithm to convert coordinates from a CRS to another if the following:
+     * <p>The algorithm to convert coordinates from a CRS to another is the following:
      * <ul>
      * <li>Transforms coordinates to rectangular coordinates</li>
      * <li>Removes E-terms of source CRS from rectangular coordinates when necessary</li>

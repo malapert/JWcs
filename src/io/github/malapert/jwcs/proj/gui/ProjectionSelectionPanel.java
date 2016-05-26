@@ -178,9 +178,9 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
     }
 
     private void computeGrid(AbstractJWcs wcs) {
-        this.lines.addAll(drawLatitudeLines(wcs));
-        this.lines.addAll(drawLongitudeLines(wcs));
-        ///this.lines.addAll(drawLines(wcs));
+        //this.lines.addAll(drawLatitudeLines(wcs));
+        //this.lines.addAll(drawLongitudeLines(wcs));
+        this.lines.addAll(drawLines(wcs));
     }
 
     private void project() {
@@ -295,8 +295,8 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
             if (PV23_Slider.isVisible()) {
                 jwcsMap.getKeywords().put(AbstractJWcs.PV23, String.valueOf(PV23_Slider.getValue()));
             }
-//            jwcsMap.getKeywords().put(AbstractJWcs.PV13, String.valueOf(phip_Slider.getValue()));
-//            jwcsMap.getKeywords().put(AbstractJWcs.PV14, String.valueOf(thetap_Slider.getValue()));            
+            //jwcsMap.getKeywords().put(AbstractJWcs.PV13, String.valueOf(phip_Slider.getValue()));
+            //jwcsMap.getKeywords().put(AbstractJWcs.PV14, String.valueOf(thetap_Slider.getValue()));            
             jwcsMap.doInit();
             computeGrid(jwcsMap);
             map.setLines(lines);

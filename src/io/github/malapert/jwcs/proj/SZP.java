@@ -51,15 +51,15 @@ public class SZP extends AbstractZenithalProjection {
     /**
      * \u03BC : Distance in spherical radii from the center of the sphere to the source of the projection.
      */
-    private final double mu;
+    private double mu;
     /**
      * Intersection of the line PO with the sphere at the \u03D5<sub>c</sub> coordinate.
      */
-    private final double thetac;
+    private double thetac;
     /**
      * Intersection of the line PO with the sphere at the \u03B8<sub>c</sub> coordinate.
      */    
-    private final double phic;
+    private double phic;
     
     /**
      * X coordinate of P.
@@ -130,7 +130,7 @@ public class SZP extends AbstractZenithalProjection {
         this.xp = -this.mu * FastMath.cos(this.thetac) * FastMath.sin(this.phic);
         this.yp = this.mu * FastMath.cos(this.thetac) * FastMath.cos(this.phic);
         this.zp = this.mu * FastMath.sin(this.thetac) + 1;        
-        check();        
+        checkParameters();        
     }
 
     /**
@@ -139,7 +139,7 @@ public class SZP extends AbstractZenithalProjection {
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      * @throws JWcsError Non-standard phi0 or theta0 values
      */
-    protected final void check() throws BadProjectionParameterException {
+    protected final void checkParameters() throws BadProjectionParameterException {
         if (!NumericalUtility.equal(getPhi0(), 0) || !NumericalUtility.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard phi0 or theta0 values");
         }
@@ -148,6 +148,21 @@ public class SZP extends AbstractZenithalProjection {
         }
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes \u03B8 : {@link NumericalUtility#computeQuatraticSolution(double[]) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>      
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians     
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No mathematical solution found   
+     */      
     @Override
     public double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         final double xr = FastMath.toRadians(x);
@@ -170,17 +185,115 @@ public class SZP extends AbstractZenithalProjection {
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes denom : zp - (1 - sin(\u03B8))</li>     
+     * <li>computes x : (zp * cos(\u03B8) * sin(\u03D5) - x * (1 - sin(\u03B8)))/denom;</li>
+     * <li>computes y : -(zp * cos(\u03B8) * cos(\u03D5) + yp * (1 - sin(\u03B8)))/denom</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (\u03D5, \u03B8)
+     */     
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {
-        final double denom = zp - (1 - FastMath.sin(theta));
-        if (NumericalUtility.equal(denom, 0)) {
-            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);
+        final double denom = zp - (1 - FastMath.sin(theta));        
+        if (!isVisible(phi, theta, denom)) {
+            throw new PixelBeyondProjectionException(this, FastMath.toDegrees(phi), FastMath.toDegrees(theta), false);            
         }
         final double x = (zp * FastMath.cos(theta) * FastMath.sin(phi) - xp * (1 - FastMath.sin(theta)))/denom;
         final double y = -(zp * FastMath.cos(theta) * FastMath.cos(phi) + yp * (1 - FastMath.sin(theta)))/denom;
         final double[] coord = {FastMath.toDegrees(x), FastMath.toDegrees(y)};
         return coord;
     }  
+    
+    /**
+     * Computes if theta is beyond the limb.
+     * @param phi phi phi
+     * @param theta theta 
+     * @param denom denom
+     * @return false when theta is beyond the limb
+     */
+    private boolean isVisible(final double phi, final double theta, final double denom) {
+        if (!firstContstraintVisibility(phi, theta, denom)) {
+            return false;
+        }
+        if (!secondConstraintVisibility(theta)) {
+            return false;
+        }        
+        return thirdConstraintVisibility(denom);
+    }
+    
+    /**
+     * Evaluates the constraint.
+     * @param denom denom
+     * @return true when it is visible
+     */
+    private boolean thirdConstraintVisibility(final double denom) {
+        return !NumericalUtility.equal(denom, 0);     
+    }
+    
+    /**
+     * Evaluates the constraint.
+     * @param theta theta
+     * @return true when it is visible
+     */    
+    private boolean secondConstraintVisibility(final double theta) {
+        final double thetaLimit = NumericalUtility.aasin(1 - this.zp);
+        if (Double.isNaN(thetaLimit)) {
+            return true;
+        }
+        return theta > thetaLimit;
+    }
+    
+    /**
+     * Evaluates the constraint.
+     * @param phi phi
+     * @param theta theta
+     * @param denom denom
+     * @return true when it is visible
+     */    
+    private boolean firstContstraintVisibility(final double phi, final double theta, final double denom) {
+        final double rho = getMu() * FastMath.sin(getThetac());
+        final double sigma = -getMu() * FastMath.cos(getThetac()) * FastMath.cos(phi - getPhic());
+        final double omega = NumericalUtility.aasin(1.0d / FastMath.sqrt(FastMath.pow(rho, 2) + FastMath.pow(sigma, 2)));
+        final double psi = NumericalUtility.aatan2(sigma, rho);
+        double thetax1 = psi - omega;
+        if (!Double.isNaN(thetax1)) {
+            thetax1 = NumericalUtility.normalizeLatitude(thetax1)+1e-4;
+        }
+        double thetax2 = psi + omega + FastMath.PI;
+        if (!Double.isNaN(thetax2)) {
+            thetax2 = NumericalUtility.normalizeLatitude(thetax2)+1e-4;
+        }        
+        boolean result;
+        if (NumericalUtility.isInInterval(thetax1, -HALF_PI, HALF_PI) && NumericalUtility.isInInterval(thetax2, -HALF_PI, HALF_PI)) {
+            result = thetax1 < theta && theta < thetax2;
+        } else if (NumericalUtility.isInInterval(thetax1, -HALF_PI, HALF_PI)) {
+            result = theta > thetax1;
+        } else if (NumericalUtility.isInInterval(thetax2, -HALF_PI, HALF_PI)) {
+            result = theta > thetax2;
+        } else {
+            result = false;
+        }
+        return result;
+    }
+        
+
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        final double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        final double denom = zp - (1 - FastMath.sin(nativeSpherical[1])); 
+        return isVisible(nativeSpherical[0], nativeSpherical[1], denom);
+    }
     
     @Override
     public String getName() {
@@ -189,7 +302,7 @@ public class SZP extends AbstractZenithalProjection {
 
     @Override
     public String getDescription() {
-        return String.format(DESCRIPTION, NumericalUtility.round(this.mu), NumericalUtility.round(FastMath.toDegrees(this.phic)), NumericalUtility.round(FastMath.toDegrees(this.thetac)));
+        return String.format(DESCRIPTION, NumericalUtility.round(this.getMu()), NumericalUtility.round(FastMath.toDegrees(this.getPhic())), NumericalUtility.round(FastMath.toDegrees(this.getThetac())));
     }
     
     @Override
@@ -199,5 +312,53 @@ public class SZP extends AbstractZenithalProjection {
         final ProjectionParameter p3 = new ProjectionParameter("\u03B8c", AbstractJWcs.PV23, new double[]{0, 90}, 90);
         return new ProjectionParameter[]{p1,p2,p3};    
     }    
+
+    /**
+     * Returns mu.
+     * @return the mu
+     */
+    private double getMu() {
+        return mu;
+    }
+
+    /**
+     * Returns thetac.
+     * @return the thetac
+     */
+    private double getThetac() {
+        return thetac;
+    }
+
+    /**
+     * Returns phic.
+     * @return the phic
+     */
+    private double getPhic() {
+        return phic;
+    }
+
+    /**
+     * Sets mu.
+     * @param mu the mu to set
+     */
+    public void setMu(final double mu) {
+        this.mu = mu;
+    }
+
+    /**
+     * Sets thetac in radians.
+     * @param thetac the thetac to set
+     */
+    public void setThetac(final double thetac) {
+        this.thetac = thetac;
+    }
+
+    /**
+     * Sets phic in radians.
+     * @param phic the phic to set
+     */
+    public void setPhic(final double phic) {
+        this.phic = phic;
+    }
 
 }

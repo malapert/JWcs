@@ -124,7 +124,7 @@ public class AbstractProjectionTest {
                             System.out.printf("Unproject : longitude = %20.15f latitude = %20.15f\n", skyPos[0], skyPos[1]);
                             System.out.println();
                         }
-                    }
+                    } 
                 } catch (ProjectionException err) {
                     System.out.printf("Error: lng = %d  lat = %d\n",
                             longitude, latitude);

@@ -34,7 +34,7 @@ import org.apache.commons.math3.util.FastMath;
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
  */
-public class BON extends AbstractPolyConicProjection {
+public final class BON extends AbstractPolyConicProjection {
     
     /**
      * Projection's name.
@@ -69,17 +69,36 @@ public class BON extends AbstractPolyConicProjection {
         }
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : sign(\u03B8<sub>1</sub>) * sqrt(x<sup>2</sup> + (y0 - y)<sup>2</sup>) with y0 = {@link BON#computeY0() }</li>
+     * <li>computes \u03B8 : y0 - radius</li>    
+     * <li>computes \u03D5 : aphi * radius / cos\u03B8 with aphi = arg((y0 - y) / radius, x / radius)</li>
+     * </ul>
+     * 
+     * <p>Special case : \u03B8<sub>1</sub>=0 is a special case, which is handled by {@link SFL}
+     *
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     */     
     @Override
     protected double[] project(final double x, final double y) {
         final double[] result;
         if (this.sfl == null) {
             final double xr = FastMath.toRadians(x);
             final double yr = FastMath.toRadians(y);
-            final double y0 = getTheta1() + 1.0d / FastMath.tan(getTheta1());            
+            // compute radius
+            final double y0 = computeY0();            
             final double r_theta = FastMath.signum(getTheta1())* FastMath.sqrt(FastMath.pow(xr, 2) + FastMath.pow(y0 - yr, 2));
-            final double aphi = NumericalUtility.aatan2(xr / r_theta, (y0 - yr) / r_theta);
-            
+            // compute theta
             final double theta = y0 - r_theta;
+            // compute phi
+            final double aphi = NumericalUtility.aatan2(xr / r_theta, (y0 - yr) / r_theta);
             final double cos_theta = FastMath.cos(theta);
             final double phi;
             if (NumericalUtility.equal(cos_theta,0)) {
@@ -94,13 +113,43 @@ public class BON extends AbstractPolyConicProjection {
         }
         return result;
     }
+    
+    /**
+     * Computes y0.
+     * 
+     * <p>y0 = \u03B8<sub>1</sub> + 1 / tan\u03B8<sub>1</sub>
+     * 
+     * @return y0
+     */
+    private double computeY0() {
+        return getTheta1() + 1.0d / FastMath.tan(getTheta1());
+    }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : y0 - theta with y0 = {@link BON#computeY0() }</li>
+     * <li>computes x : radius * sin(aphi)</li>
+     * <li>computes y : -radius * cos(aphi) + y0 with aphi = phi * cos(\u03B8) / radius</li>
+     * </ul>
+     * 
+     * <p>Special case : \u03B8<sub>1</sub>=0 is a special case, which is handled by {@link SFL}     
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */     
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
         double[] result;
         if (sfl == null) {
-            final double y0 = getTheta1() + 1.0d / FastMath.tan(getTheta1());
+            // computes radius
+            final double y0 = computeY0();
             final double r_theta = y0 - theta;
+            // computes x and y
             final double aphi;
             if (NumericalUtility.equal(r_theta, 0)) {
                 aphi=0;

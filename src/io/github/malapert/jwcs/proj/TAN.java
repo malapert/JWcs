@@ -61,8 +61,23 @@ public class TAN extends AbstractZenithalProjection {
         
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link TAN#computeRadius(double, double) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>      
+     * <li>computes \u03B8 : arg(radius, 1)</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians     
+     */      
     @Override
-    public double[] project(final double x, final double y) throws PixelBeyondProjectionException {
+    public double[] project(final double x, final double y) {
         final double xr = FastMath.toRadians(x);
         final double yr = FastMath.toRadians(y);
         final double r_theta = computeRadius(xr, yr);        
@@ -72,6 +87,22 @@ public class TAN extends AbstractZenithalProjection {
         return pos;
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : cos\u03B8 / sin\u03B8</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (\u03D5, \u03B8)
+     */     
     @Override
     public double[] projectInverse(final double phi, final double theta) throws PixelBeyondProjectionException {        
         final double s = FastMath.sin(theta);
@@ -96,9 +127,13 @@ public class TAN extends AbstractZenithalProjection {
     }
     
     @Override
-    public boolean inside(final double lon, final double lat) {  
-       return super.inside(lon, lat) && !NumericalUtility.equal(FastMath.abs(lat), 0);
-    }     
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        final double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        final boolean result = NumericalUtility.equal(nativeSpherical[1], 0);
+        return result ? false : super.inside(lon, lat);
+    }        
 
     @Override
     public ProjectionParameter[] getProjectionParameters() {

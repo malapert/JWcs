@@ -272,7 +272,7 @@ public abstract class AbstractProjection {
         final double phi;
         final double theta;
         if (NumericalUtility.equal(dec_p, HALF_PI)) {
-            phi = FastMath.PI + getPhip() + ra - ra_p;
+            phi = getPhip() + ra - ra_p;
             theta = dec;
         } else if (NumericalUtility.equal(dec_p, -HALF_PI)) {
             phi = getPhip() - ra + ra_p;

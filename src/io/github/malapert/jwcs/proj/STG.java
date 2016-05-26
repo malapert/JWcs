@@ -16,6 +16,7 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.HALF_PI;
 import java.util.logging.Level;
 import org.apache.commons.math3.util.FastMath;
@@ -61,6 +62,21 @@ public class STG extends AbstractZenithalProjection {
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2)=({0},{1})", new Object[]{crval1,crval2});                                        
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link AbstractZenithalProjection#computeRadius(double, double) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>      
+     * <li>computes \u03B8 : HALF_PI - 2 * atan(radius * 0.5)</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians     
+     */        
     @Override
     public double[] project(final double x, final double y) {
         final double xr = FastMath.toRadians(x);
@@ -72,14 +88,38 @@ public class STG extends AbstractZenithalProjection {
         return pos;       
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : 2 * tan((HALF_PI-\u03B8)*0.5d)</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */     
     @Override
     public double[] projectInverse(final double phi, final double theta) {
         final double r = 2 * FastMath.tan((HALF_PI-theta)*0.5d);
-        final double x = r * FastMath.sin(phi);
-        final double y = -r * FastMath.cos(phi);
+        final double x = computeX(r, phi);
+        final double y = computeY(r, phi);
         final double[] pos = {FastMath.toDegrees(x),FastMath.toDegrees(y)};
         return pos;
-    } 
+    }   
+    
+    @Override
+    public boolean inside(final double lon, final double lat) {
+        final double raFixed = NumericalUtility.normalizeLongitude(lon);
+        final double[] nativeSpherical = computeNativeSpherical(raFixed, lat);
+        nativeSpherical[0] = phiRange(nativeSpherical[0]);
+        final boolean result = NumericalUtility.equal(nativeSpherical[1], -HALF_PI);
+        return result ? false : super.inside(lon, lat);
+    }      
     
     @Override
     public String getName() {

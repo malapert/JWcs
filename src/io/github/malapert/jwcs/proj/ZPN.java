@@ -210,6 +210,22 @@ public final class ZPN extends AbstractZenithalProjection {
         return result;
     }
 
+    /**
+     * Computes the native spherical coordinates (\u03D5, \u03B8) from the projection plane
+     * coordinates (x, y).
+     * 
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link ZPN#computeRadius(double, double) }</li>
+     * <li>computes \u03D5 : {@link AbstractZenithalProjection#computePhi(double, double, double) }</li>      
+     * <li>computes \u03B8 : HALF_PI - {@link ZPN#computeSolution(java.lang.Object) }</li>
+     * </ul>
+     * 
+     * @param x projection plane coordinate along X
+     * @param y projection plane coordinate along Y
+     * @return the native spherical coordinates (\u03D5, \u03B8) in radians
+     * @throws io.github.malapert.jwcs.proj.exception.PixelBeyondProjectionException No valid solution for (x,y)
+     */     
     @Override
     protected double[] project(final double x, final double y) throws PixelBeyondProjectionException {
         try {
@@ -228,9 +244,24 @@ public final class ZPN extends AbstractZenithalProjection {
         }
     }
 
+    /**
+     * Computes the projection plane coordinates (x, y) from the native spherical
+     * coordinates (\u03D5, \u03B8).
+     *
+     * <p>The algorithm to make this projection is the following:
+     * <ul>
+     * <li>computes radius : {@link ZPN#polyEval(double, double[]) }</li>
+     * <li>computes x : {@link AbstractZenithalProjection#computeX(double, double) }</li>
+     * <li>computes y : {@link AbstractZenithalProjection#computeY(double, double) }</li>
+     * </ul>
+     * 
+     * @param phi the native spherical coordinate (\u03D5) in radians along longitude
+     * @param theta the native spherical coordinate (\u03B8) in radians along latitude
+     * @return the projection plane coordinates
+     */    
     @Override
     protected double[] projectInverse(final double phi, final double theta) {
-        final double r_theta = FastMath.toDegrees(polyEval(HALF_PI - theta, getPv()));
+        final double r_theta = FastMath.toDegrees(polyEval(HALF_PI - theta, getPv()));        
         final double x = computeX(r_theta, phi);
         final double y = computeY(r_theta, phi);
         final double[] coord = {x, y};
@@ -245,6 +276,11 @@ public final class ZPN extends AbstractZenithalProjection {
     @Override
     public String getDescription() {
         return String.format(DESCRIPTION, Arrays.toString(this.getPv()));
+    }
+
+    @Override
+    public boolean inside(double lon, double lat) {
+        return true;
     }
 
     @Override
