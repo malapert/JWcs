@@ -104,8 +104,8 @@ public class SIN extends AbstractZenithalProjection {
             phi = computePhi(xr, yr, r_theta);
             
             //computes theta
-            if(!NumericalUtility.isInInterval(r_theta, 0, true, 1, false)) {
-                throw new PixelBeyondProjectionException(this,x ,y, "r_theta must be < 1", true);
+            if(!NumericalUtility.isInInterval(r_theta,0 ,true ,1 ,false)) {
+                throw new PixelBeyondProjectionException(this,x ,y , "r_theta must be < 1", true);
             }             
             theta = NumericalUtility.aacos(r_theta);
             

@@ -49,6 +49,7 @@ import io.github.malapert.jwcs.proj.COD;
 import io.github.malapert.jwcs.proj.COE;
 import io.github.malapert.jwcs.proj.COO;
 import io.github.malapert.jwcs.proj.COP;
+import io.github.malapert.jwcs.proj.SIN;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtility.inverse;
 import java.lang.reflect.Constructor;
@@ -947,6 +948,10 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
                 break;                               
             case "SZP":
                 projection = createSZPProjection(cx, cy);
+                break;
+            case "NCP":
+                LOG.log(Level.INFO, "Creates a NCP projection with (crval1,crval2)=({0},{1}) (ksi,eta)=({2},{3})", new Object[]{crval(1) * cx, crval(2) * cx, 0, 1/FastMath.tan(getValueAsDouble(CRVAL2))});
+                projection = new SIN(crval(1) * cx, crval(2) * cy, 0, 1/FastMath.tan(getValueAsDouble(CRVAL2)));
                 break;
             default:
                 projection = createProjection(projectionCode, cx, cy);

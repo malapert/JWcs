@@ -74,8 +74,7 @@ public final class AIR extends AbstractZenithalProjection {
      * Creates a new AIR projection based on the celestial longitude and
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *
-     * <p>
-     * \u03B8 is set to {@link AIR#DEFAULT_VALUE_THETHAB}.
+     * <p>\u03B8 is set to {@link AIR#DEFAULT_VALUE_THETHAB}.
      *
      * @param crval1 Celestial longitude \u03B1<sub>0</sub> in degrees of the
      * fiducial point

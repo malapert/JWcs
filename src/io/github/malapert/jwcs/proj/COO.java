@@ -42,7 +42,7 @@ public class COO extends AbstractConicProjection {
     private final static String DESCRIPTION = "\u03B8a=%s \u03B7=%s";
 
     /**
-     * Constant of the cone
+     * Constant of the cone.
      */
     private final double c;
 
