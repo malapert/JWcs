@@ -279,7 +279,7 @@ public final class ZPN extends AbstractZenithalProjection {
     }
 
     @Override
-    public boolean inside(double lon, double lat) {
+    public boolean inside(final double lon, final double lat) {
         return true;
     }
 

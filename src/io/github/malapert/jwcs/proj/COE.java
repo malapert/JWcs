@@ -183,6 +183,7 @@ public class COE extends AbstractConicProjection {
     }    
 
     /**
+     * Returns gamma.
      * @return the gamma
      */
     private double getGamma() {
@@ -190,6 +191,7 @@ public class COE extends AbstractConicProjection {
     }
 
     /**
+     * Returns the constant of the cone.
      * @return the c
      */
     private double getC() {
@@ -197,6 +199,7 @@ public class COE extends AbstractConicProjection {
     }
 
     /**
+     * Returns y0.
      * @return the y0
      */
     private double getY0() {

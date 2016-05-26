@@ -166,13 +166,12 @@ public final class AZP extends AbstractZenithalProjection {
      * <p>\u03C1 is computed as:
      * <br><code>\u03C1 = radius / (\u03BC + 1 + y * tan\u0263)</code>
      * 
-     * @param x plane coordinate in radians along X
      * @param y plane coordinate in radians along Y
      * @param radius Radius
      * @return rho
      * @throws BadProjectionParameterException getMu() + 1 + y * FastMath.tan(getGamma()) cannot be 0
      */
-    private double computeRho(final double x, final double y, final double radius) throws BadProjectionParameterException {
+    private double computeRho(final double y, final double radius) throws BadProjectionParameterException {
         final double denom = getMu() + 1 + y * FastMath.tan(getGamma());
         if (NumericalUtility.equal(denom,0)) {
             throw new BadProjectionParameterException(this,"(mu,gamma) = (" + getMu() + ", " + getGamma()+"). (mu + 1) + y * tan(gamma) must be !=0");
@@ -200,7 +199,7 @@ public final class AZP extends AbstractZenithalProjection {
      * @throws PixelBeyondProjectionException When (x,y) has no solution
      */
     private double computeTheta(final double x, final double y, final double radius) throws BadProjectionParameterException, PixelBeyondProjectionException {   
-        final double rho = computeRho(x, y, radius);
+        final double rho = computeRho(y, radius);
         
         //computes omega
         final double val = getMu()*rho/FastMath.sqrt(FastMath.pow(rho, 2)+1);
@@ -427,12 +426,12 @@ public final class AZP extends AbstractZenithalProjection {
      * Sets \u03BC.
      * @param mu the mu to set
      */
-    private void setMu(double mu) throws BadProjectionParameterException {
+    private void setMu(final double mu) throws BadProjectionParameterException {
         this.mu = mu;
     }
     
     /**
-     * Sets the projection parameters
+     * Sets the projection parameters.
      * @param mu mu
      * @param gamma gamma
      * @throws BadProjectionParameterException \u03BC must be != +/- HALF_PI and \u0263 != -1 

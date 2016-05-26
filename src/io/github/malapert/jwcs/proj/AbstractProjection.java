@@ -494,7 +494,7 @@ public abstract class AbstractProjection {
         double[] nativeSpherical = computeNativeSpherical(raFixed, dec);
         nativeSpherical[0] = phiRange(nativeSpherical[0]);
         LOG.log(Level.FINER, "INPUTS[Deg] (phi,theta)=({0},{1})", new Object[]{FastMath.toDegrees(nativeSpherical[0]), FastMath.toDegrees(nativeSpherical[1])});
-        double[] coord = projectInverse(nativeSpherical[0], nativeSpherical[1]);
+        final double[] coord = projectInverse(nativeSpherical[0], nativeSpherical[1]);
         LOG.log(Level.FINER, "OUTPUTS[Deg] (x,y)=({0},{1})", coord); 
         return coord;
     }

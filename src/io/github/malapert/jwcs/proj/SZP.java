@@ -221,7 +221,7 @@ public class SZP extends AbstractZenithalProjection {
      * @return false when theta is beyond the limb
      */
     private boolean isVisible(final double phi, final double theta, final double denom) {
-        if (!firstContstraintVisibility(phi, theta, denom)) {
+        if (!firstContstraintVisibility(phi, theta)) {
             return false;
         }
         if (!secondConstraintVisibility(theta)) {
@@ -259,7 +259,7 @@ public class SZP extends AbstractZenithalProjection {
      * @param denom denom
      * @return true when it is visible
      */    
-    private boolean firstContstraintVisibility(final double phi, final double theta, final double denom) {
+    private boolean firstContstraintVisibility(final double phi, final double theta) {
         final double rho = getMu() * FastMath.sin(getThetac());
         final double sigma = -getMu() * FastMath.cos(getThetac()) * FastMath.cos(phi - getPhic());
         final double omega = NumericalUtility.aasin(1.0d / FastMath.sqrt(FastMath.pow(rho, 2) + FastMath.pow(sigma, 2)));

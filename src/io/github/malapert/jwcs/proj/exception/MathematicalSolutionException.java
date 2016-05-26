@@ -17,8 +17,9 @@
 package io.github.malapert.jwcs.proj.exception;
 
 /**
+ * Exception.
  *
- * @author malapert
+ * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  */
 public class MathematicalSolutionException extends JWcsError {
     

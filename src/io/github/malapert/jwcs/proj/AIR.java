@@ -59,8 +59,7 @@ public final class AIR extends AbstractZenithalProjection {
      * The Airy function R<sub>\u03B8</sub> to solve in an iterative way when a
      * point is projected.
      *
-     * <p>
-     * R<sub>\u03B8</sub> = -2 *
+     * <p>R<sub>\u03B8</sub> = -2 *
      * (ln(cos\u03B6)/tan\u03B6+ln(cos\u03B6<sub>b</sub>)/tan<sup>2</sup>\u03B6<sub>b</sub>*tan\u03B6)
      * with:
      * <ul>
@@ -106,7 +105,7 @@ public final class AIR extends AbstractZenithalProjection {
     }
     
     /**
-     * Checks the validity range of \u03B8<sub>b</sub>
+     * Checks the validity range of \u03B8<sub>b</sub>.
      * @param thetab \u03B8<sub>b</sub>, projection parameter
      * @throws BadProjectionParameterException \u03B8<sub>b</sub> outside the range ]-90,90]
      */

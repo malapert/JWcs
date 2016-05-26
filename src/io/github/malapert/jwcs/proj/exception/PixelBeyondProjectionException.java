@@ -28,8 +28,19 @@ public class PixelBeyondProjectionException extends ProjectionException {
 
     private final static long serialVersionUID = -3719985099230583709L;
 
+    /**
+     * x coordinate.
+     */
     private final double x;
+    
+    /**
+     * y coordinate.
+     */
     private final double y;
+    
+    /**
+     * Specifies if the coordinates are planes or spherical.
+     */
     private final boolean isPlaneCoordinate;
 
     /**

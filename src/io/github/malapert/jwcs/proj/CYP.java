@@ -195,7 +195,7 @@ public class CYP extends AbstractCylindricalProjection {
     }
     
     /**
-     * Sets projection parameters
+     * Sets the projection parameters.
      * @param mu mu
      * @param lambda lambda
      * @throws BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
