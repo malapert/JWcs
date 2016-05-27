@@ -61,6 +61,16 @@ public class SIN extends AbstractZenithalProjection {
     private double eta;
 
    /**
+     * Constructs a SIN projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) with default \u03BE,\u03B7 
+     * 
+     * <p>\u03BE,\u03B7 parameters are set to {@link SIN#DEFAULT_VALUE}.
+     */    
+    public SIN() {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
+    
+   /**
      * Constructs a SIN projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) with default \u03BE,\u03B7 
      * 

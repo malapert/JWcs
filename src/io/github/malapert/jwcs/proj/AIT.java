@@ -52,7 +52,15 @@ public final class AIT extends AbstractCylindricalProjection {
      * Projection's description.
      */
     private final static String DESCRIPTION = "no limits";    
-        
+    
+    /**
+     * Creates a new AIT projection based on the default celestial longitude and 
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).     
+     */    
+    public AIT() {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
+    
     /**
      * Creates a new AIT projection based on the celestial longitude and 
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).

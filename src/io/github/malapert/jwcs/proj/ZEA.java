@@ -40,6 +40,14 @@ public class ZEA extends AbstractZenithalProjection {
     private final static String DESCRIPTION = "no limits";         
 
    /**
+     * Constructs a ZEA projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     */    
+    public ZEA() {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
+    
+   /**
      * Constructs a ZEA projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 

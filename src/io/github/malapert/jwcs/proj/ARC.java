@@ -47,6 +47,14 @@ public final class ARC extends AbstractZenithalProjection {
     private final static String DESCRIPTION = "no limits";
 
     /**
+     * Creates a new ARC projection based on the default celestial longitude and 
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).     
+     */    
+    public ARC() {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
+    
+    /**
      * Creates a new ARC projection based on the celestial longitude and 
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 

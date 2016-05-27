@@ -65,6 +65,18 @@ public final class AZP extends AbstractZenithalProjection {
     private final static double DEFAULT_VALUE = 0;
 
     /**
+     * Creates a new AZC projection based on the default celestial longitude and
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * <p>\u03BC and \u0263 are set to {@link AZP#DEFAULT_VALUE}.
+     *
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
+     */    
+    public AZP() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
+    
+    /**
      * Creates a new AZC projection based on the celestial longitude and
      * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      * 
@@ -99,7 +111,6 @@ public final class AZP extends AbstractZenithalProjection {
         setGamma(FastMath.toRadians(gamma));
         setMu(mu);
         LOG.log(Level.FINER, "INPUTS[Deg] (crval1,crval2,mu,gamma)=({0},{1},{2},{3})", new Object[]{crval1,crval2,mu,gamma});        
-        checkParameters(this.mu, this.gamma);
     }
     
     /**
@@ -115,9 +126,9 @@ public final class AZP extends AbstractZenithalProjection {
     }
     
     /**
-     * Checks the validity of \u0263.
+     * Checks the validity of \u03BC.
      * @param mu value to check
-     * @throws BadProjectionParameterException \u0263 must be != -1
+     * @throws BadProjectionParameterException \u03BC must be != -1
      */
     private void checkParameterMu(final double mu) throws BadProjectionParameterException {
         if (NumericalUtility.equal(mu, -1)) {
@@ -126,9 +137,9 @@ public final class AZP extends AbstractZenithalProjection {
     }
     
     /**
-     * Checks the validity of \u03BC.
+     * Checks the validity of \u0263.
      * @param gamma value to check
-     * @throws BadProjectionParameterException \u03BC must be != +/-HALF_PI
+     * @throws BadProjectionParameterException \u0263 must be != +/-HALF_PI
      */
     private void checkParameterGamma(final double gamma) throws BadProjectionParameterException {
         if(NumericalUtility.equal(FastMath.abs(gamma), HALF_PI)) {
@@ -184,7 +195,7 @@ public final class AZP extends AbstractZenithalProjection {
      * 
      * <p>The algorithm to compute \u03B8 is the following:
      * <ul>
-     * <li>computes \u03C1 : {@link AZP#computeRho(double, double, double) }</li>
+     * <li>computes \u03C1 : {@link AZP#computeRho(double, double) }</li>
      * <li>computes \u03C9 : asin(\u03BC * \u03C1 / sqrt(\u03C1<sup>2</sup> + 1)</li>
      * <li>computes \u0471 : arg(\u03C1, 1)</li>
      * <li>selects the right \u03B8 : {@link AZP#findTheValidSolution(double, double) }
@@ -353,7 +364,6 @@ public final class AZP extends AbstractZenithalProjection {
     
     /**
      * Computes if theta is beyond the limb.
-     * @param phi phi
      * @param theta theta
      * @param denom denom
      * @return false when theta is beyond the limb
@@ -409,8 +419,10 @@ public final class AZP extends AbstractZenithalProjection {
     /**
      * Sets \u0263 in radians.
      * @param gamma the gamma to set
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Gamma must be different +/- 90°
      */
-    private void setGamma(final double gamma) throws BadProjectionParameterException {
+    public void setGamma(final double gamma) throws BadProjectionParameterException {
+        checkParameterGamma(gamma);
         this.gamma = gamma;
     }
 
@@ -418,15 +430,17 @@ public final class AZP extends AbstractZenithalProjection {
      * Returns \u03BC.
      * @return the mu
      */
-    private double getMu() {
+    public double getMu() {
         return mu;
     }
 
     /**
      * Sets \u03BC.
      * @param mu the mu to set
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException mu must be != -1
      */
-    private void setMu(final double mu) throws BadProjectionParameterException {
+    public void setMu(final double mu) throws BadProjectionParameterException {
+        checkParameterMu(mu);
         this.mu = mu;
     }
     

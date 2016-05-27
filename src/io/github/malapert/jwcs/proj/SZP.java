@@ -64,17 +64,17 @@ public class SZP extends AbstractZenithalProjection {
     /**
      * X coordinate of P.
      */
-    private final double xp;
+    private double xp;
     
     /**
      * Y coordinate of P.
      */
-    private final double yp;
+    private double yp;
     
     /**
      * Z coordinate of P.
      */
-    private final double zp;
+    private double zp;
 
     /**
      * Default value for \u03BC.
@@ -91,6 +91,19 @@ public class SZP extends AbstractZenithalProjection {
      */
     public final static double DEFAULT_VALUE_THETAC = 90;
 
+   /**
+     * Constructs a SZP projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * 
+     * <p>\u03D5<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_PHIC}.
+     * \u03B8<sub>c</sub> is set to {@link SZP#DEFAULT_VALUE_THETAC}.
+     * 
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     */    
+    public SZP() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
+    
    /**
      * Constructs a SZP projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
@@ -127,19 +140,29 @@ public class SZP extends AbstractZenithalProjection {
         this.mu = mu;
         this.thetac = FastMath.toRadians(thetac);
         this.phic = FastMath.toRadians(phic);
+        init();
+        checkParameters(this.mu, this.phic, this.thetac);        
+    }
+    
+    /**
+     * Init xp,yp,zp.
+     */
+    private void init() {
         this.xp = -this.mu * FastMath.cos(this.thetac) * FastMath.sin(this.phic);
         this.yp = this.mu * FastMath.cos(this.thetac) * FastMath.cos(this.phic);
-        this.zp = this.mu * FastMath.sin(this.thetac) + 1;        
-        checkParameters();        
+        this.zp = this.mu * FastMath.sin(this.thetac) + 1;          
     }
 
     /**
      * Check.
      * 
+     * @param mu mu
+     * @param phic phic
+     * @param thetac thetac
      * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
      * @throws JWcsError Non-standard phi0 or theta0 values
      */
-    protected final void checkParameters() throws BadProjectionParameterException {
+    protected final void checkParameters(final double mu, final double phic, final double thetac) throws BadProjectionParameterException {
         if (!NumericalUtility.equal(getPhi0(), 0) || !NumericalUtility.equal(getTheta0(),HALF_PI)) {
             throw new JWcsError("Non-standard phi0 or theta0 values");
         }
@@ -256,7 +279,6 @@ public class SZP extends AbstractZenithalProjection {
      * Evaluates the constraint.
      * @param phi phi
      * @param theta theta
-     * @param denom denom
      * @return true when it is visible
      */    
     private boolean firstContstraintVisibility(final double phi, final double theta) {
@@ -317,7 +339,7 @@ public class SZP extends AbstractZenithalProjection {
      * Returns mu.
      * @return the mu
      */
-    private double getMu() {
+    public double getMu() {
         return mu;
     }
 
@@ -325,7 +347,7 @@ public class SZP extends AbstractZenithalProjection {
      * Returns thetac.
      * @return the thetac
      */
-    private double getThetac() {
+    public double getThetac() {
         return thetac;
     }
 
@@ -333,15 +355,29 @@ public class SZP extends AbstractZenithalProjection {
      * Returns phic.
      * @return the phic
      */
-    private double getPhic() {
+    public double getPhic() {
         return phic;
+    }
+    
+    /**
+     * Set projection parameters.
+     * @param mu mu
+     * @param phic phic
+     * @param thetac thetac
+     * @throws BadProjectionParameterException TODO
+     */
+    private void setProjectionParameters(final double mu, final double phic, final double thetac) throws BadProjectionParameterException {
+        checkParameters(mu, phic, thetac);
+        setMu(mu);
+        setThetac(thetac);
+        setPhic(phic);
     }
 
     /**
      * Sets mu.
      * @param mu the mu to set
      */
-    public void setMu(final double mu) {
+    private void setMu(final double mu) {
         this.mu = mu;
     }
 
@@ -349,7 +385,7 @@ public class SZP extends AbstractZenithalProjection {
      * Sets thetac in radians.
      * @param thetac the thetac to set
      */
-    public void setThetac(final double thetac) {
+    private void setThetac(final double thetac) {
         this.thetac = thetac;
     }
 
@@ -357,7 +393,7 @@ public class SZP extends AbstractZenithalProjection {
      * Sets phic in radians.
      * @param phic the phic to set
      */
-    public void setPhic(final double phic) {
+    private void setPhic(final double phic) {
         this.phic = phic;
     }
 

@@ -64,6 +64,14 @@ public class PCO extends AbstractPolyConicProjection {
     private final PcoFunction pcoFunction;
 
     /**
+     * Constructs a PCO projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     */    
+    public PCO() {
+        this(FastMath.toDegrees(AbstractPolyConicProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractPolyConicProjection.DEFAULT_THETA0));
+    }
+    
+    /**
      * Constructs a PCO projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *

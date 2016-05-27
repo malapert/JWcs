@@ -52,6 +52,14 @@ public final class BON extends AbstractPolyConicProjection {
     private SFL sfl;
 
     /**
+     * Constructs a BON projection by providing the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03B8<sub>1</sub>=45&deg;.          
+     */    
+    public BON() {
+        this(AbstractPolyConicProjection.DEFAULT_PHI0, AbstractPolyConicProjection.DEFAULT_THETA0, 45.0);
+    }
+
+    /**
      * Constructs a BON projection by providing celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and \u03B8<sub>1</sub>.
      *

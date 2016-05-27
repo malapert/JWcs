@@ -41,7 +41,15 @@ public final class CAR extends AbstractCylindricalProjection{
     /**
      * Projection's description.
      */
-    private final static String DESCRIPTION = "no limits";     
+    private final static String DESCRIPTION = "no limits";
+    
+    /**
+     * Constructs a CAR based on the default celestial longitude and 
+     * latitude of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).     
+     */    
+    public CAR() {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
 
     /**
      * Constructs a CAR based on the celestial longitude and 

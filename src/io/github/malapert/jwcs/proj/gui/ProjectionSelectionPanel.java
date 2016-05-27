@@ -518,9 +518,11 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         errorLabel.setForeground(new java.awt.Color(230, 17, 17));
 
         phi0.setText("phip");
+        phi0.setEnabled(false);
 
         phip_Slider.setMaximum(360);
         phip_Slider.setValue(0);
+        phip_Slider.setEnabled(false);
         phip_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 phip_SliderStateChanged(evt);
@@ -528,11 +530,13 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         });
 
         theta0.setText("thetap");
+        theta0.setEnabled(false);
 
         thetap_Slider.setMaximum(90);
         thetap_Slider.setMinimum(-90);
         thetap_Slider.setToolTipText("");
         thetap_Slider.setValue(90);
+        thetap_Slider.setEnabled(false);
         thetap_Slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 thetap_SliderStateChanged(evt);
@@ -540,8 +544,10 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
         });
 
         phipLabel.setText("0");
+        phipLabel.setEnabled(false);
 
         thetapLabel.setText("90");
+        thetapLabel.setEnabled(false);
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
@@ -571,7 +577,7 @@ public class ProjectionSelectionPanel extends javax.swing.JPanel {
                                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(phi0)
                                     .addComponent(theta0))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(phip_Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lat0Slider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

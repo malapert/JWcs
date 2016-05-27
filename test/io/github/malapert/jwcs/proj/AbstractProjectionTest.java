@@ -16,7 +16,9 @@
  */
 package io.github.malapert.jwcs.proj;
 
+import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.JWcsFits;
+import io.github.malapert.jwcs.JWcsMap;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import java.util.logging.Level;
@@ -37,7 +39,7 @@ public class AbstractProjectionTest {
     /**
      *
      */
-    protected JWcsFits wcs;
+    protected AbstractJWcs wcs;
 
     /**
      *
@@ -56,8 +58,17 @@ public class AbstractProjectionTest {
     
     static final Logger LOG = Logger.getLogger("");
 
-    private static final double TOLERANCE = 1.0e-10;
+    public static final double TOLERANCE = 1.0e-10;
 
+    /**
+     *
+     * @throws JWcsException
+     */
+    public AbstractProjectionTest() throws JWcsException {
+    
+    }
+           
+    
     /**
      *
      * @param wcs
@@ -66,6 +77,24 @@ public class AbstractProjectionTest {
     public AbstractProjectionTest(final JWcsFits wcs) throws JWcsException {
         this(wcs, TOLERANCE);
     }
+    
+    /**
+     *
+     * @param wcs
+     * @throws JWcsException
+     */
+    public AbstractProjectionTest(final JWcsMap wcs) throws JWcsException {
+        this(wcs, TOLERANCE);
+    }    
+    
+    /**
+     *
+     * @param wcs
+     * @throws JWcsException
+     */
+    public AbstractProjectionTest(final AbstractJWcs wcs) throws JWcsException {
+        this(wcs, TOLERANCE);
+    }     
 
     /**
      *
@@ -79,6 +108,32 @@ public class AbstractProjectionTest {
         this.wcs.doInit();
         LOG.setLevel(Level.OFF);
     }
+    
+    /**
+     *
+     * @param wcs
+     * @param tolerance
+     * @throws JWcsException
+     */
+    public AbstractProjectionTest(final JWcsMap wcs, final double tolerance) throws JWcsException {
+        this.wcs = wcs;
+        this.tolerance = tolerance;
+        this.wcs.doInit();
+        LOG.setLevel(Level.OFF);
+    }    
+    
+    /**
+     *
+     * @param wcs
+     * @param tolerance
+     * @throws JWcsException
+     */
+    public AbstractProjectionTest(final AbstractJWcs wcs, final double tolerance) throws JWcsException {
+        this.wcs = wcs;
+        this.tolerance = tolerance;
+        this.wcs.doInit();
+        LOG.setLevel(Level.OFF);
+    }        
 
     @BeforeClass
     public static void setUpClass() {

@@ -61,6 +61,14 @@ public class MOL extends AbstractCylindricalProjection {
     private final GammaFunction gammaFunction;
 
     /**
+     * Constructs a MOL projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     */    
+    public MOL() {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
+    
+    /**
      * Constructs a MOL projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *

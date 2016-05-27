@@ -46,6 +46,17 @@ public class COP extends AbstractConicProjection {
      * <p>This constant is defined as c=sin\u03B8<sub>a</sub>
      */
     private final double c;
+    
+    /**
+     * Constructs a COP projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 
+     * 03B8<sub>a</sub> = 45 and \u03B7 = 25.
+     *
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     */     
+    public COP() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractConicProjection.DEFAULT_PHI0), 45, 45, 25);                
+    }
 
     /**
      * Constructs a COP projection based on the celestial longitude and latitude

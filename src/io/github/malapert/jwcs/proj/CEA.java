@@ -53,6 +53,15 @@ public class CEA extends AbstractCylindricalProjection {
      * Default value for \u03BB.
      */
     private final static int DEFAULT_VALUE = 1;
+    
+    /**
+     * Constructs a CEA based on the default celestial longitude and latitude of the
+     * fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     * @throws BadProjectionParameterException When projection parameters are wrong
+     */    
+    public CEA() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
 
     /**
      * Constructs a CEA based on the celestial longitude and latitude of the
@@ -156,7 +165,7 @@ public class CEA extends AbstractCylindricalProjection {
      *
      * @return the lambda
      */
-    private double getLambda() {
+    public double getLambda() {
         return lambda;
     }
 

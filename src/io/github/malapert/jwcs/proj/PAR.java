@@ -44,6 +44,14 @@ public class PAR extends AbstractCylindricalProjection {
     private final static String DESCRIPTION = "no limits";
 
     /**
+     * Constructs a PAR projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     */    
+    public PAR() {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
+    
+    /**
      * Constructs a PAR projection based on the celestial longitude and latitude
      * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
      *

@@ -77,11 +77,11 @@ public abstract class AbstractProjection {
     /**
      * Celestial longitude \u03B1<sub>0</sub> in radians of the fiducial point.
      */
-    private final double crval1;
+    private double crval1;
     /**
      * Celestial longitude \u03B4<sub>0</sub> in radians of the fiducial point.
      */
-    private final double crval2;
+    private double crval2;
     /**
      * Initializes the native longitude of the celestial pole (\u03D5<sub>p</sub>) to {@link AbstractProjection#DEFAULT_PHIP}. 
      */
@@ -516,6 +516,22 @@ public abstract class AbstractProjection {
     public double getCrval2() {
         return this.crval2;
     }
+    
+    /**
+     * Sets the crval1 in radians.
+     * @param crval1 the crval1 to set
+     */
+    public void setCrval1(final double crval1) {
+        this.crval1 = crval1;
+    }
+
+    /**
+     * Sets the crval2 in radians.
+     * @param crval2 the crval2 to set
+     */
+    public void setCrval2(final double crval2) {
+        this.crval2 = crval2;
+    }    
 
     /**
      * Returns true if the given lat/lon point is visible in this projection.

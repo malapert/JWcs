@@ -64,6 +64,19 @@ public class CYP extends AbstractCylindricalProjection {
      * \u03BB: radius of the cylinder in spherical radii.
      */
     private double lambda;
+
+   /**
+     * Constructs a CYP projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     *
+     * <p>\u03BC is set to {@link CYP#DEFAULT_MU}.
+     * \u03BB is set to {@link CYP#DEFAULT_LAMBDA}.
+     * 
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be &gt; 0 or Mu must not be -lambda
+     */    
+    public CYP() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractCylindricalProjection.DEFAULT_THETA0));
+    }
     
    /**
      * Constructs a CYP projection based on the celestial longitude and latitude
@@ -76,7 +89,7 @@ public class CYP extends AbstractCylindricalProjection {
      * fiducial point
      * @param crval2 Celestial longitude \u03B4<sub>0</sub> in degrees of the
      * fiducial point
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be &gt; 0 or Mu must not be -lambda
      */
     public CYP(final double crval1, final double crval2) throws BadProjectionParameterException {
         this(crval1, crval2, DEFAULT_MU, DEFAULT_LAMBDA);
@@ -92,7 +105,7 @@ public class CYP extends AbstractCylindricalProjection {
      * fiducial point
      * @param mu \u03BC distance measured from the center of the sphere in the direction opposite the projected surface
      * @param lambda \u03BB radius of the cylinder
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be &gt; 0 or Mu must not be -lambda
      * @see <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/ccs.pdf">Representations of celestial coordinates in FITS, chapter 5.2.1</a>
      */
     public CYP(final double crval1, final double crval2, final double mu, final double lambda) throws BadProjectionParameterException {
@@ -109,7 +122,7 @@ public class CYP extends AbstractCylindricalProjection {
      * <p>Sets \u03BB = 1 when \u03BB &lt; 0 or \u03BC = -\u03BB.
      * @param mu value to check
      * @param lambda value to check
-     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException Lambda must be &gt; 0 or Mu must not be -lambda
      */
     protected final void checkParameters(final double mu, final double lambda) throws BadProjectionParameterException {
         if (getLambda() < 0 || NumericalUtility.equal(getLambda(), 0)) {
@@ -148,7 +161,7 @@ public class CYP extends AbstractCylindricalProjection {
      * 
      * @return the mu
      */
-    protected final double getMu() {
+    public final double getMu() {
         return mu;
     }
 
@@ -157,7 +170,7 @@ public class CYP extends AbstractCylindricalProjection {
      * 
      * @return the lambda
      */
-    protected final double getLambda() {
+    public final double getLambda() {
         return lambda;
     }
 
@@ -198,7 +211,7 @@ public class CYP extends AbstractCylindricalProjection {
      * Sets the projection parameters.
      * @param mu mu
      * @param lambda lambda
-     * @throws BadProjectionParameterException Lambda must be > 0 or Mu must not be -lambda
+     * @throws BadProjectionParameterException Lambda must be &gt; 0 or Mu must not be -lambda
      */
     public void setProjectionParameters(final double mu, final double lambda) throws BadProjectionParameterException {
         checkParameters(mu, lambda);

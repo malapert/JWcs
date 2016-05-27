@@ -66,7 +66,18 @@ public class COE extends AbstractConicProjection {
      * 
      * <p>This constant is equal to 0.5*\u0263
      */
-    private final double c;    
+    private final double c;  
+    
+    /**
+     * Constructs a COE projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 
+     * 03B8<sub>a</sub> = 45 and \u03B7 = 25.
+     *
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     */    
+    public COE() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractConicProjection.DEFAULT_PHI0), 45, 45, 25);        
+    }
     
    /**
      * Constructs a COE projection based on the celestial longitude and latitude
@@ -94,6 +105,7 @@ public class COE extends AbstractConicProjection {
     
     /**
      * Checks parameters.
+     * @param gamma parameter to check
      * @throws BadProjectionParameterException Projection parameters: sin(theta1) + sin(theta2) = 0 are not allowed
      */
     private void checkParameters(final double gamma) throws BadProjectionParameterException {

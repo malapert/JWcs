@@ -44,7 +44,14 @@ public class TAN extends AbstractZenithalProjection {
      * Projection's description.
      */
     private final static String DESCRIPTION = "no limits";     
-    
+
+   /**
+     * Constructs a TAN projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     */    
+    public TAN() {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
 
    /**
      * Constructs a TAN projection based on the celestial longitude and latitude

@@ -112,4 +112,14 @@ public class CARTest extends AbstractProjectionTest {
              assertArrayEquals(expectedResult, result, 1e-12);
         }   
     }
+    
+    /**
+     * Test of description method, of class CAR.
+     */
+    @Test
+    public void testDescriptionCAR() throws ProjectionException {
+        System.out.println("description CAR");        
+        final String exptected = "no limits";
+        assertEquals(exptected, wcs.getName());
+    }    
 }

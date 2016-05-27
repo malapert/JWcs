@@ -67,6 +67,17 @@ public final class ZPN extends AbstractZenithalProjection {
     private final int n;
 
     /**
+     * Creates a ZPN projection based on crval1, crval2 and the default projection
+     * parameters and the pv = [0.050, 0.975, -0.807, 0.337, -0.065, 0.010, 0.003, -0.001].
+     *
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException
+     * when a parameter projection is wrong
+     */    
+    public ZPN() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0), new double[]{0.050, 0.975, -0.807, 0.337, -0.065, 0.010, 0.003, -0.001});
+    }
+
+    /**
      * Creates a ZPN projection based on crval1, crval2 and the projection
      * parameters.
      *
@@ -293,7 +304,7 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @return the pv
      */
-    protected double[] getPv() {
+    public double[] getPv() {
         return pv.clone();
     }
 
@@ -302,7 +313,7 @@ public final class ZPN extends AbstractZenithalProjection {
      *
      * @param pv the pv to set
      */
-    protected void setPv(final double[] pv) {
+    public void setPv(final double[] pv) {
         if (pv == null) {
             this.pv = new double[0];
         } else {

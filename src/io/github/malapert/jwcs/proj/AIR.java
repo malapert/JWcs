@@ -69,6 +69,19 @@ public final class AIR extends AbstractZenithalProjection {
      * @see io.github.malapert.jwcs.utility.AiryFunction
      */
     private AiryFunction airyFunction;
+    
+    /**
+     * Creates a new AIR projection based on the default \u03B8<sub>b</sub> 
+     * and celestial longitude and latitude of the fiducial 
+     * point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>).
+     *
+     * <p>\u03B8<sub>b</sub> is set to {@link AIR#DEFAULT_VALUE_THETHAB}.
+     *   
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException \u03B8<sub>b</sub> outside the range ]-90,90]   
+     */    
+    public AIR() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_PHI0), FastMath.toDegrees(AbstractZenithalProjection.DEFAULT_THETA0));
+    }
 
     /**
      * Creates a new AIR projection based on the celestial longitude and

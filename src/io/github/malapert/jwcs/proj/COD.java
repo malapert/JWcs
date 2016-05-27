@@ -57,6 +57,17 @@ public class COD extends AbstractConicProjection {
      * y0.
      */
     private final double y0;
+    
+    /**
+     * Constructs a COD projection based on the default celestial longitude and latitude
+     * of the fiducial point (\u03B1<sub>0</sub>, \u03B4<sub>0</sub>) and 
+     * 03B8<sub>a</sub> = 45 and \u03B7 = 25.
+     *
+     * @throws io.github.malapert.jwcs.proj.exception.BadProjectionParameterException When projection parameters are wrong
+     */
+    public COD() throws BadProjectionParameterException {
+        this(FastMath.toDegrees(AbstractConicProjection.DEFAULT_PHI0), 45, 45, 25);
+    }
 
     /**
      * Constructs a COD projection based on the celestial longitude and latitude
@@ -88,7 +99,7 @@ public class COD extends AbstractConicProjection {
      * Check the validity of projection parameters.
      * @param theta_a value to check
      * @param eta value to check
-     * @throws BadProjectionParameterException \u03B7,\u03B8 cannot be 0 or \u03B7,\u03B8&gte;90
+     * @throws BadProjectionParameterException \u03B7,\u03B8 cannot be 0 or \u03B7,\u03B8&ge;90
      */
     private void checkParameters(final double theta_a, final double eta) throws BadProjectionParameterException {
         if(NumericalUtility.equal(eta, 0)) {
