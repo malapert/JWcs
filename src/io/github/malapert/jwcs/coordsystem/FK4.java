@@ -64,7 +64,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * Creates a FK4 reference frame with default value of epoch {@link FK4#DEFAULT_EPOCH}.
      */
     public FK4() {
-        init(DEFAULT_EPOCH, null);
+        init(DEFAULT_EPOCH, DEFAULT_EPOCH);
     }
     
     /**
@@ -72,7 +72,7 @@ public class FK4 implements CoordinateReferenceFrame {
      * @param epoch the epoch of equinox
      */
     public FK4(final String epoch) {       
-        init(epoch, null);
+        init(epoch, epoch);
     }
     
     /**

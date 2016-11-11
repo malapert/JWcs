@@ -55,7 +55,7 @@ public class FK4Test {
     public void testGetEpochObs() {
         System.out.println("getEpochObs");
         FK4 instance = new FK4();
-        double expResult = Double.NaN;
+        double expResult = 1950;
         double result = instance.getEpochObs();
         assertEquals(expResult, result, 0.0);
     }

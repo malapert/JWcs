@@ -119,7 +119,7 @@ public class CARTest extends AbstractProjectionTest {
     @Test
     public void testDescriptionCAR() throws ProjectionException {
         System.out.println("description CAR");        
-        final String exptected = "no limits";
+        final String exptected = "Plate carrée";
         assertEquals(exptected, wcs.getName());
     }    
 }
