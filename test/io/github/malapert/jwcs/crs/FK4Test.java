@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.datum.FK4;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -16,8 +16,8 @@
  */
 package io.github.malapert.jwcs;
 
-import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.AbstractCrs;
+import io.github.malapert.jwcs.crs.Equatorial;
+import io.github.malapert.jwcs.crs.AbstractCrs;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import java.io.IOException;
 import java.net.URL;

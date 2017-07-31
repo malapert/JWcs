@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.datum.FK4NoEterms;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -55,7 +56,7 @@ public class FK4NoEtermsTest {
     public void testGetEpochObs() {
         System.out.println("getEpochObs");
         FK4NoEterms instance = new FK4NoEterms();
-        double expResult = Double.NaN;
+        double expResult = 1950.0;
         double result = instance.getEpochObs();
         assertEquals(expResult, result, 0.0);
     }

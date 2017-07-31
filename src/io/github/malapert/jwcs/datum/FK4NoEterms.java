@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.datum;
 
 import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.TimeUtility.epochs;
@@ -59,7 +59,7 @@ public class FK4NoEterms implements CoordinateReferenceFrame {
      * Creates a FK4_NO_E reference frame with default value of the epoch of equinox {@link FK4NoEterms#DEFAULT_EPOCH}.
      */
     public FK4NoEterms() {
-        init(DEFAULT_EPOCH, null);
+        init(DEFAULT_EPOCH, DEFAULT_EPOCH);
     }
     
     /**

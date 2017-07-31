@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.position.SkyPosition;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.utility.NumericalUtility;
-import static io.github.malapert.jwcs.utility.NumericalUtility.aacos;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aasin;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealMatrix;
@@ -33,15 +35,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.FastMath;
+import io.github.malapert.jwcs.utility.TimeUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.aatan2;
 import static io.github.malapert.jwcs.utility.NumericalUtility.equal;
 import static io.github.malapert.jwcs.utility.NumericalUtility.isInInterval;
-import io.github.malapert.jwcs.utility.TimeUtility;
 
 /**
  * A Coordinate Reference System (crs) contains two different elements : 
  * the <b>coordinate reference frame</b> {@link AbstractCrs#getCoordinateReferenceFrame()}
- * and the <b>coordinate system</b> {@link AbstractCrs#getCoordinateSystem()} .
+ * and the <b>coordinate system</b> {@link AbstractCrs#getCoordinateReferenceSystem()} .
  *
  * <p>The coordinate reference frame defines how the CRS is related to the origin
  * (position and the date of the origin - equinox {@link CoordinateReferenceFrame#getEquinox()} , 
@@ -69,9 +71,9 @@ public abstract class AbstractCrs {
     private final static Logger LOG = Logger.getLogger(AbstractCrs.class.getName());
 
     /**
-     * List of supported CoordinateSystem. 
+     * List of supported CoordinateReferenceSystem. 
      */
-    public enum CoordinateSystem {
+    public enum CoordinateReferenceSystem {
         /**
          * Galactic coordinates (lII, bII).
          */
@@ -105,7 +107,7 @@ public abstract class AbstractCrs {
          * @param hasCoordinateReferenceFrame Indicates if the coordinate system has a 
          * configurable coordinate reference frame.
          */
-        CoordinateSystem(final String name, final boolean hasCoordinateReferenceFrame) {
+        CoordinateReferenceSystem(final String name, final boolean hasCoordinateReferenceFrame) {
             this.name = name;
             this.hasCoordinateReferenceFrame = hasCoordinateReferenceFrame;
         }
@@ -128,15 +130,15 @@ public abstract class AbstractCrs {
         }
       
         /**
-         * Returns the CoordinateSystem object based on its name.
+         * Returns the CoordinateReferenceSystem object based on its name.
          * @param name name of the coordinate system
          * @return the CoodinateSystem object
          * @exception JWcsError Coordinate system not found
          */
-        public static CoordinateSystem valueOfByName(final String name) {
-            CoordinateSystem result = null;
-            final CoordinateSystem[] values = CoordinateSystem.values();
-            for (final CoordinateSystem value : values) {
+        public static CoordinateReferenceSystem valueOfByName(final String name) {
+            CoordinateReferenceSystem result = null;
+            final CoordinateReferenceSystem[] values = CoordinateReferenceSystem.values();
+            for (final CoordinateReferenceSystem value : values) {
                 if(value.getName().equals(name)) {
                     result = value;
                     break;
@@ -154,10 +156,10 @@ public abstract class AbstractCrs {
          * @return An array of names of all coordinate system
          */
         public static String[] getCoordinateSystemArray() {            
-            final CoordinateSystem[] values = CoordinateSystem.values();
+            final CoordinateReferenceSystem[] values = CoordinateReferenceSystem.values();
             String[] result = new String[values.length];
             int index = 0;
-            for (final CoordinateSystem value : values) {
+            for (final CoordinateReferenceSystem value : values) {
                 result[index] = value.getName();
                 index++;
             }
@@ -178,7 +180,7 @@ public abstract class AbstractCrs {
      * Returns the coordinate system of the CRS.     
      * @return the type of the coordinate system
      */
-    public abstract CoordinateSystem getCoordinateSystem();    
+    public abstract CoordinateReferenceSystem getCoordinateReferenceSystem();    
     
     /**
      * Returns the coordinate reference frame of the CRS.
@@ -219,7 +221,7 @@ public abstract class AbstractCrs {
         if (refFrame!=null && CoordinateReferenceFrame.ReferenceFrame.FK4.equals(refFrame.getReferenceFrame())) {
             final double equinox = refFrame.getEquinox();
             eterms = FK4.getEterms(equinox);
-            LOG.log(Level.FINER, "getEterms {0}(FK4) from {1} : {2}", new Object[]{crs.getCoordinateSystem(),equinox,eterms});
+            LOG.log(Level.FINER, "getEterms {0}(FK4) from {1} : {2}", new Object[]{crs.getCoordinateReferenceSystem(),equinox,eterms});
         }
         return eterms;        
     }
@@ -273,11 +275,11 @@ public abstract class AbstractCrs {
         RealMatrix xyz = longlat2xyz(longitude, latitude);
         LOG.log(Level.FINER, "convert sky ({0},{1}) to xyz : {2}", new Object[]{longitude, latitude, xyz});
         final RealMatrix rotation = getRotationMatrix(crs);
-        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});        
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateReferenceSystem(),crs.getCoordinateReferenceSystem(),rotation});        
         final RealMatrix etermsIn = AbstractCrs.getEterms(this);
         LOG.log(Level.FINER, "EtermsIn : {0}", new Object[]{etermsIn});        
         final RealMatrix etermsOut = AbstractCrs.getEterms(crs);
-        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});        
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateReferenceSystem(), etermsOut});        
         if (etermsIn != null) {
             xyz = removeEterms(xyz, etermsIn);
             LOG.log(Level.FINER, "Remove EtermsIn from xyz : {0}", xyz);            
@@ -316,11 +318,11 @@ public abstract class AbstractCrs {
         final SkyPosition[] skyPositionArray = new SkyPosition[(int) (numberElts * 0.5) * numberOfCoordinatesPerPoint];
 
         final RealMatrix rotation = getRotationMatrix(crs);
-        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateSystem(),crs.getCoordinateSystem(),rotation});
+        LOG.log(Level.FINER, "Rotation matrix from {0} to {1} : {2}", new Object[]{this.getCoordinateReferenceSystem(),crs.getCoordinateReferenceSystem(),rotation});
         final RealMatrix etermsIn = AbstractCrs.getEterms(this);
         LOG.log(Level.FINER, "EtermsIn : {0}", etermsIn);
         final RealMatrix etermsOut = AbstractCrs.getEterms(crs);
-        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateSystem(), etermsOut});
+        LOG.log(Level.FINER, "EtermsOut from {0} : {1}", new Object[]{crs.getCoordinateReferenceSystem(), etermsOut});
 
         int indice = 0;
         for (int i = 0; i < numberElts; i = i + 2) {
@@ -342,7 +344,7 @@ public abstract class AbstractCrs {
             skyPositionArray[indice] = new SkyPosition(position[0], position[1], crs);
             indice++;
         }
-        LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getCoordinateSystem(), crs.getCoordinateSystem(), Arrays.toString(skyPositionArray)});
+        LOG.log(Level.INFO, "convert {0} from {1} to {2} --> {3}", new Object[]{Arrays.toString(coordinates), this.getCoordinateReferenceSystem(), crs.getCoordinateReferenceSystem(), Arrays.toString(skyPositionArray)});
         return skyPositionArray;
     }
     
@@ -374,64 +376,7 @@ public abstract class AbstractCrs {
         }
         return targetPositions;
     }
-
-    /**
-     * Computes the angular separation between two positions in different
-     * coordinate reference systems.
-     *
-     * @param pos1 sky position in a coordinate Reference System
-     * @param pos2 sky position in a coordinate Reference System
-     * @return angular separation in decimal degrees.
-     */
-    public final static double separation(final SkyPosition pos1, final SkyPosition pos2) {
-        final AbstractCrs crs = pos1.getCrs();
-        final SkyPosition pos1InRefFramePos2 = crs.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
-        final double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
-        final double[] pos2XYZ = pos2.getCartesian();
-        final double normPos1 = FastMath.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
-        final double normPos2 = FastMath.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
-        final double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
-        LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, FastMath.toDegrees(separation)});
-        return FastMath.toDegrees(separation);
-    }    
-
-    /**
-     * Creates a coordinate reference system based on the coordinate system and 
-     * a default coordinate reference frame.
-     * 
-     * <p>The coordinate reference system is built based on ICRS reference frame
-     * when the coordinate system is equatorial or ecliptic
-     *
-     * @param coordinateSystem the coordinate system
-     * @return the coordinate reference system
-     * @exception JWcsError the coordinate system is not supported
-     * @see Ecliptic
-     * @see Equatorial
-     * @see Galactic
-     * @see SuperGalactic
-     */
-    public final static AbstractCrs createCrsFromCoordinateSystem(final CoordinateSystem coordinateSystem) {
-        AbstractCrs crs;
-        LOG.log(Level.INFO, "Get sky system {0}", new Object[]{coordinateSystem.name()});
-        switch (coordinateSystem) {
-            case ECLIPTIC:
-                crs = new Ecliptic();
-                break;
-            case EQUATORIAL:
-                crs = new Equatorial();
-                break;
-            case GALACTIC:
-                crs = new Galactic();
-                break;
-            case SUPER_GALACTIC:
-                crs = new SuperGalactic();
-                break;
-            default:
-                throw new JWcsError(coordinateSystem + " not supported as coordinate reference system");
-        }
-        return crs;
-    }
-    
+       
     /**
      * It handles precession and the transformation between equatorial
      * reference frames.
@@ -1416,7 +1361,7 @@ public abstract class AbstractCrs {
      * @param latitude latitude in decimal degrees
      * @return Corresponding values of x,y,z in same order as input
      */
-    protected static RealMatrix longlat2xyz(final double longitude, final double latitude) {
+    public static RealMatrix longlat2xyz(final double longitude, final double latitude) {
         return longlatRad2xyz(FastMath.toRadians(longitude), FastMath.toRadians(latitude));
     }
 
@@ -1434,7 +1379,7 @@ public abstract class AbstractCrs {
      * @param latitudeRad latitude in radians
      * @return Corresponding values of x,y,z in same order as input
      */
-    protected static RealMatrix longlatRad2xyz(final double longitudeRad, final double latitudeRad) {
+    public static RealMatrix longlatRad2xyz(final double longitudeRad, final double latitudeRad) {
         final double x = FastMath.cos(longitudeRad) * FastMath.cos(latitudeRad);
         final double y = FastMath.sin(longitudeRad) * FastMath.cos(latitudeRad);
         final double z = FastMath.sin(latitudeRad);
@@ -1458,7 +1403,7 @@ public abstract class AbstractCrs {
      * @return The same number of positions (longitude, latitude and in the same
      * order as the input.
      */
-    protected static double[] xyz2longlat(final RealMatrix xyz) {
+    public static double[] xyz2longlat(final RealMatrix xyz) {
         final double[] vec = xyz.getColumn(0);
         final double len = FastMath.sqrt(FastMath.pow(vec[0], 2)+FastMath.pow(vec[1], 2)+FastMath.pow(vec[2], 2));
         final double x = vec[0]/len;
@@ -1475,9 +1420,9 @@ public abstract class AbstractCrs {
         final String result;
         final CoordinateReferenceFrame refSystem = getCoordinateReferenceFrame();
         if (refSystem == null) {
-            result = getCoordinateSystem().getName();
+            result = getCoordinateReferenceSystem().getName();
         } else {
-            result = getCoordinateSystem().getName()+" with "+refSystem.getReferenceFrame();
+            result = getCoordinateReferenceSystem().getName()+" with "+refSystem.getReferenceFrame();
         }
         return result;
     }    

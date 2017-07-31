@@ -16,14 +16,14 @@
  */
 package io.github.malapert.jwcs;
 
-import io.github.malapert.jwcs.coordsystem.Ecliptic;
-import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
-import io.github.malapert.jwcs.coordsystem.FK5;
-import io.github.malapert.jwcs.coordsystem.Galactic;
-import io.github.malapert.jwcs.coordsystem.ICRS;
-import io.github.malapert.jwcs.coordsystem.AbstractCrs;
+import io.github.malapert.jwcs.crs.Ecliptic;
+import io.github.malapert.jwcs.crs.Equatorial;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.FK4NoEterms;
+import io.github.malapert.jwcs.datum.FK5;
+import io.github.malapert.jwcs.crs.Galactic;
+import io.github.malapert.jwcs.datum.ICRS;
+import io.github.malapert.jwcs.crs.AbstractCrs;
 import io.github.malapert.jwcs.proj.AbstractProjection;
 import io.github.malapert.jwcs.proj.AbstractProjection.ProjectionParameter;
 import io.github.malapert.jwcs.proj.SZP;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
-import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 import io.github.malapert.jwcs.proj.BON;
 import io.github.malapert.jwcs.proj.CEA;
 import io.github.malapert.jwcs.proj.COD;

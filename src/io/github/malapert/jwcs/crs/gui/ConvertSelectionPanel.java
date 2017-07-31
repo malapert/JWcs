@@ -14,27 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem.gui;
+package io.github.malapert.jwcs.crs.gui;
 
-import io.github.malapert.jwcs.coordsystem.Ecliptic;
-import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
-import io.github.malapert.jwcs.coordsystem.FK5;
-import io.github.malapert.jwcs.coordsystem.Galactic;
-import io.github.malapert.jwcs.coordsystem.ICRS;
-import io.github.malapert.jwcs.coordsystem.J2000;
-import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame;
-import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.AbstractCrs;
-import io.github.malapert.jwcs.coordsystem.AbstractCrs.CoordinateSystem;
-import io.github.malapert.jwcs.coordsystem.SuperGalactic;
+import io.github.malapert.jwcs.crs.Ecliptic;
+import io.github.malapert.jwcs.crs.Equatorial;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.FK4NoEterms;
+import io.github.malapert.jwcs.datum.FK5;
+import io.github.malapert.jwcs.crs.Galactic;
+import io.github.malapert.jwcs.datum.ICRS;
+import io.github.malapert.jwcs.datum.J2000;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame.ReferenceFrame;
+import io.github.malapert.jwcs.position.SkyPosition;
+import io.github.malapert.jwcs.crs.AbstractCrs;
+import io.github.malapert.jwcs.crs.AbstractCrs.CoordinateReferenceSystem;
+import io.github.malapert.jwcs.crs.SuperGalactic;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
 import java.awt.BorderLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
-import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 
 /**
@@ -52,12 +52,12 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
      */
     public ConvertSelectionPanel() {
         initComponents();
-        orginSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
-        targetSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateSystem.getCoordinateSystemArray()));
+        orginSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateReferenceSystem.getCoordinateSystemArray()));
+        targetSkySystem.setModel(new DefaultComboBoxModel<>(CoordinateReferenceSystem.getCoordinateSystemArray()));
         originRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.getRefenceFrameNametoArray()));
         targetRf.setModel(new DefaultComboBoxModel<>(ReferenceFrame.getRefenceFrameNametoArray()));
-        setEnableReferenceFrame(CoordinateSystem.values()[0].hasCoordinateReferenceFrame(), true);
-        setEnableReferenceFrame(CoordinateSystem.values()[0].hasCoordinateReferenceFrame(), false);
+        setEnableReferenceFrame(CoordinateReferenceSystem.values()[0].hasCoordinateReferenceFrame(), true);
+        setEnableReferenceFrame(CoordinateReferenceSystem.values()[0].hasCoordinateReferenceFrame(), false);
         setEnableReferenceFrameParameter(ReferenceFrame.getRefenceFrameNametoArray()[0], true);
         setEnableReferenceFrameParameter(ReferenceFrame.getRefenceFrameNametoArray()[0], false);
         this.errorMsg.setText("");
@@ -513,7 +513,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
     private void updateMenuBySkySystem(boolean isOrigin) {
         String skySystemName = (isOrigin) ? (String) orginSkySystem.getSelectedItem() : (String) targetSkySystem.getSelectedItem();
-        CoordinateSystem skySystem = CoordinateSystem.valueOfByName(skySystemName);
+        CoordinateReferenceSystem skySystem = CoordinateReferenceSystem.valueOfByName(skySystemName);
         setEnableReferenceFrame(skySystem.hasCoordinateReferenceFrame(), isOrigin);
     }
 
@@ -576,7 +576,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
 
     private void convertToTargetSkySystem() {
         String originSkySystemName = orginSkySystem.getSelectedItem().toString();
-        CoordinateSystem originSkySystemC = CoordinateSystem.valueOfByName(originSkySystemName);
+        CoordinateReferenceSystem originSkySystemC = CoordinateReferenceSystem.valueOfByName(originSkySystemName);
         CoordinateReferenceFrame originRefFrame = null;
         if (originSkySystemC.hasCoordinateReferenceFrame()) {
             String refFrameName = originRf.getSelectedItem().toString();
@@ -587,7 +587,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         AbstractCrs originSkySystem = createSkySystem(originSkySystemC, originRefFrame);
 
         String targetSkySystemName = targetSkySystem.getSelectedItem().toString();
-        CoordinateSystem targetSkySystemC = CoordinateSystem.valueOfByName(targetSkySystemName);
+        CoordinateReferenceSystem targetSkySystemC = CoordinateReferenceSystem.valueOfByName(targetSkySystemName);
         CoordinateReferenceFrame targetRefFrame = null;
         if (targetSkySystemC.hasCoordinateReferenceFrame()) {
             String refFrameName = targetRf.getSelectedItem().toString();
@@ -642,7 +642,7 @@ public class ConvertSelectionPanel extends javax.swing.JPanel {
         return result;
     }
 
-    private AbstractCrs createSkySystem(CoordinateSystem name, CoordinateReferenceFrame refFrame) {
+    private AbstractCrs createSkySystem(CoordinateReferenceSystem name, CoordinateReferenceFrame refFrame) {
         AbstractCrs result;
         switch (name) {
             case ECLIPTIC:

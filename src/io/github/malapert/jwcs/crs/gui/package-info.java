@@ -19,4 +19,4 @@
  * systems conversion.
  *
  */
-package io.github.malapert.jwcs.coordsystem.gui;
+package io.github.malapert.jwcs.crs.gui;

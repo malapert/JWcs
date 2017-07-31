@@ -14,12 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.position.SkyPosition;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.ICRS;
+import io.github.malapert.jwcs.datum.FK5;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.datum.FK4NoEterms;
 import io.github.malapert.jwcs.AbstractJWcs;
 import io.github.malapert.jwcs.JWcsFits;
-import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEpoch12Epoch2;
-import static io.github.malapert.jwcs.coordsystem.AbstractCrs.convertMatrixEqB19502Gal;
+import static io.github.malapert.jwcs.crs.AbstractCrs.convertMatrixEpoch12Epoch2;
+import static io.github.malapert.jwcs.crs.AbstractCrs.convertMatrixEqB19502Gal;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
@@ -112,7 +118,7 @@ public class AbstractCrsTest {
         final AbstractCrs sysEqFK5 = new Equatorial(fk5);
         final SkyPosition pos1 = new SkyPosition(10, 9, sysEqIcrs);
         final SkyPosition pos2 = new SkyPosition(11, 10, sysEqFK5);
-        final double separation = AbstractCrs.separation(pos1, pos2);
+        final double separation = SkyPosition.separation(pos1, pos2);
         final double expectedSeparation = 1.4045335865d;
         assertEquals(expectedSeparation, separation, 1e-8);
     }
@@ -556,7 +562,7 @@ public class AbstractCrsTest {
             //convert (ra,dec) To galactic
             final AbstractCrs sysOrigin = wcs.getCrs();
             final AbstractCrs sysTarget = new Galactic();
-            assertEquals(sysOrigin.getCoordinateSystem().name(), "EQUATORIAL");
+            assertEquals(sysOrigin.getCoordinateReferenceSystem().name(), "EQUATORIAL");
             final SkyPosition skyPosTarget = sysOrigin.convertTo(sysTarget, posOrigin[0], posOrigin[1]);
             
             //convert skyPos (galatic frame) to Equatorial

@@ -14,8 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.coordsystem.AbstractCs;
+import io.github.malapert.jwcs.coordsystem.AbstractCs.Axis;
+import io.github.malapert.jwcs.coordsystem.CsFactory;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.datum.FK5;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import java.util.Objects;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -40,12 +46,17 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
     /**
      * This coordinate system name.
      */
-    private final static CoordinateSystem SKY_NAME = CoordinateSystem.ECLIPTIC;
+    private final static CoordinateReferenceSystem SKY_NAME = CoordinateReferenceSystem.ECLIPTIC;
 
     /**
      * The coordinate reference system.
      */
     private CoordinateReferenceFrame coordinateReferenceFrame;
+    
+    /**
+     * The coordinate system.
+     */
+    private AbstractCs coordinateSystem;
 
     /**
      * Creates the Ecliptic coordinate system based on the reference system.
@@ -54,6 +65,9 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
      */
     public Ecliptic(final CoordinateReferenceFrame coordinateReferenceFrame) {
         this.coordinateReferenceFrame = coordinateReferenceFrame;
+        this.coordinateSystem = CsFactory.create(AbstractCs.CoordinateSystem.SPHERICAL2D);
+        this.coordinateSystem.getAxes()[0] = new Axis("\u03BB", "Geocentric longitude", AbstractCs.AxisDirection.EAST, AbstractCs.Unit.DEG);
+        this.coordinateSystem.getAxes()[1] = new Axis("\u03B2", "Geocentric latitude", AbstractCs.AxisDirection.NORTH, AbstractCs.Unit.DEG);
     }
 
     /**
@@ -127,7 +141,7 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();
-        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final CoordinateReferenceSystem cs = crs.getCoordinateReferenceSystem();
         switch(cs) {
             case EQUATORIAL:
                 RealMatrix m1 = convertMatrixEq2Ecl(this.getEquinox(), getReferenceFrame()).transpose();
@@ -154,13 +168,13 @@ public class Ecliptic extends AbstractCrs implements CoordinateReferenceFrame {
                 m = m3.multiply(m2).multiply(m1);                
                 break;
             default:
-                throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));                                
+                throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateReferenceSystem()));                                
         }
         return m;
     }
 
     @Override
-    public CoordinateSystem getCoordinateSystem() {
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return SKY_NAME;
     }
 

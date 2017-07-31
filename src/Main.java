@@ -18,18 +18,19 @@
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import io.github.malapert.jwcs.*;
-import io.github.malapert.jwcs.coordsystem.Ecliptic;
-import io.github.malapert.jwcs.coordsystem.Equatorial;
-import io.github.malapert.jwcs.coordsystem.FK4;
-import io.github.malapert.jwcs.coordsystem.FK4NoEterms;
-import io.github.malapert.jwcs.coordsystem.FK5;
-import io.github.malapert.jwcs.coordsystem.ICRS;
-import io.github.malapert.jwcs.coordsystem.J2000;
-import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.FK5;
-import static io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame.J2000;
-import io.github.malapert.jwcs.coordsystem.SkyPosition;
-import io.github.malapert.jwcs.coordsystem.AbstractCrs;
-import io.github.malapert.jwcs.coordsystem.gui.ConvertSelectionPanel;
+import io.github.malapert.jwcs.crs.Ecliptic;
+import io.github.malapert.jwcs.crs.Equatorial;
+import io.github.malapert.jwcs.datum.FK4;
+import io.github.malapert.jwcs.datum.FK4NoEterms;
+import io.github.malapert.jwcs.datum.FK5;
+import io.github.malapert.jwcs.datum.ICRS;
+import io.github.malapert.jwcs.datum.J2000;
+import static io.github.malapert.jwcs.datum.CoordinateReferenceFrame.ReferenceFrame.FK5;
+import static io.github.malapert.jwcs.datum.CoordinateReferenceFrame.ReferenceFrame.J2000;
+import io.github.malapert.jwcs.position.SkyPosition;
+import io.github.malapert.jwcs.crs.AbstractCrs;
+import io.github.malapert.jwcs.crs.CrsFactory;
+import io.github.malapert.jwcs.crs.gui.ConvertSelectionPanel;
 import io.github.malapert.jwcs.proj.exception.JWcsException;
 import io.github.malapert.jwcs.proj.exception.ProjectionException;
 import io.github.malapert.jwcs.proj.gui.ProjectionSelectionPanel;
@@ -51,7 +52,7 @@ import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.util.Cursor;
-import io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 
 /**
  * The main class.
@@ -414,8 +415,8 @@ public class Main {
             final CoordinateReferenceFrame.ReferenceFrame refFrame = CoordinateReferenceFrame.ReferenceFrame.valueOf(refFrameName);
             final String[] parameters = extractReferenceFrameParameter(refFrameStr);
             final CoordinateReferenceFrame refSystem = createReferenceFrameFactory(refFrame, parameters);
-            result = AbstractCrs.createCrsFromCoordinateSystem(AbstractCrs.CoordinateSystem.valueOf(skySystemName));
-            switch (result.getCoordinateSystem()) {
+            result = CrsFactory.create(AbstractCrs.CoordinateReferenceSystem.valueOf(skySystemName));
+            switch (result.getCoordinateReferenceSystem()) {
                 case EQUATORIAL:
                     ((Equatorial) result).setCoordinateReferenceFrame(refSystem);
                     break;
@@ -426,7 +427,7 @@ public class Main {
                     throw new IllegalArgumentException("Unknown sky system");
             }
         } else {
-            result = AbstractCrs.createCrsFromCoordinateSystem(AbstractCrs.CoordinateSystem.valueOf(crs));
+            result = CrsFactory.create(AbstractCrs.CoordinateReferenceSystem.valueOf(crs));
         }
         return result;
     }

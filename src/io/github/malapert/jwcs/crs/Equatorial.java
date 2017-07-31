@@ -14,8 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.coordsystem.AbstractCs;
+import io.github.malapert.jwcs.coordsystem.CsFactory;
+import io.github.malapert.jwcs.datum.ICRS;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import java.util.Objects;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -38,7 +42,7 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
     /**
      * This coordinate system name.
      */
-    private final static CoordinateSystem SKY_NAME = CoordinateSystem.EQUATORIAL;
+    private final static CoordinateReferenceSystem SKY_NAME = CoordinateReferenceSystem.EQUATORIAL;
     
     /**
      * The reference frame of the Equatorial coordinate system.
@@ -46,12 +50,20 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
     private CoordinateReferenceFrame coordinateReferenceFrame;
 
     /**
+     * The coordinate system.
+     */
+    private AbstractCs coordinateSystem;
+    
+    /**
      * Creates an Equatorial coordinate system based on the coordinate 
      * reference frame.
      * @param coordinateReferenceFrame the coordinate reference frame
      */    
     public Equatorial(final CoordinateReferenceFrame coordinateReferenceFrame) {
         this.coordinateReferenceFrame = coordinateReferenceFrame;
+        this.coordinateSystem = CsFactory.create(AbstractCs.CoordinateSystem.SPHERICAL2D);
+        this.coordinateSystem.getAxes()[0] = new AbstractCs.Axis("\u03B1", "Right ascension", AbstractCs.AxisDirection.EAST, AbstractCs.Unit.DEG);
+        this.coordinateSystem.getAxes()[1] = new AbstractCs.Axis("\u1D5F", "Declination", AbstractCs.AxisDirection.NORTH, AbstractCs.Unit.DEG);        
     }
 
     /**
@@ -95,7 +107,7 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();                
-        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final CoordinateReferenceSystem cs = crs.getCoordinateReferenceSystem();
         switch(cs) {
             case EQUATORIAL:
                 m = convertMatrixEpoch12Epoch2(getEquinox(), targetCrs.getEquinox(), getReferenceFrame(), targetCrs.getReferenceFrame(), getEpochObs());
@@ -117,13 +129,13 @@ public class Equatorial extends AbstractCrs implements CoordinateReferenceFrame 
                 m = m2.multiply(m1);                
                 break;
             default:
-                throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateSystem()));
+                throw new JWcsError(String.format("Unknown output crs: %s", crs.getCoordinateReferenceSystem()));
         }
         return m;
     }
 
     @Override
-    public CoordinateSystem getCoordinateSystem() {
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return SKY_NAME;
     }
 

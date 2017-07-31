@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.crs;
 
+import io.github.malapert.jwcs.coordsystem.AbstractCs;
+import io.github.malapert.jwcs.coordsystem.CsFactory;
+import io.github.malapert.jwcs.datum.CoordinateReferenceFrame;
 import io.github.malapert.jwcs.proj.exception.JWcsError;
 import io.github.malapert.jwcs.utility.NumericalUtility;
 import static io.github.malapert.jwcs.utility.NumericalUtility.createRealIdentityMatrix;
@@ -38,7 +41,18 @@ public class Galactic extends AbstractCrs {
     /**
      * Name of this coordinate system.
      */
-    private final static CoordinateSystem SKY_NAME = CoordinateSystem.GALACTIC;       
+    private final static CoordinateReferenceSystem SKY_NAME = CoordinateReferenceSystem.GALACTIC;       
+    
+    /**
+     * The coordinate system.
+     */
+    private AbstractCs coordinateSystem;    
+    
+    public Galactic() {
+        this.coordinateSystem = CsFactory.create(AbstractCs.CoordinateSystem.SPHERICAL2D);
+        this.coordinateSystem.getAxes()[0] = new AbstractCs.Axis("l", "Longitude galactic", AbstractCs.AxisDirection.EAST, AbstractCs.Unit.DEG);
+        this.coordinateSystem.getAxes()[1] = new AbstractCs.Axis("b", "Latitude galactic", AbstractCs.AxisDirection.NORTH, AbstractCs.Unit.DEG);               
+    }
     
     /**
      * Returns the rotation matrix to convert from this current CRS to 
@@ -73,7 +87,7 @@ public class Galactic extends AbstractCrs {
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {
         final RealMatrix m;
         final CoordinateReferenceFrame targetCrs = crs.getCoordinateReferenceFrame();        
-        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final CoordinateReferenceSystem cs = crs.getCoordinateReferenceSystem();
         switch(cs) {
             case EQUATORIAL:
                 RealMatrix m1 = convertMatrixEqB19502Gal().transpose(); 
@@ -93,13 +107,13 @@ public class Galactic extends AbstractCrs {
                 m = m3.multiply(m2).multiply(m1);
                 break;
             default:
-                throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateSystem()));
+                throw new JWcsError(String.format("Unknown output coordinate reference system: %s", crs.getCoordinateReferenceSystem()));
         }
         return m;
     }
 
     @Override
-    public CoordinateSystem getCoordinateSystem() {
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return SKY_NAME;
     }
 

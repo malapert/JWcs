@@ -14,12 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.malapert.jwcs.coordsystem;
+package io.github.malapert.jwcs.position;
 
-import static io.github.malapert.jwcs.coordsystem.AbstractCrs.longlat2xyz;
+import io.github.malapert.jwcs.crs.AbstractCrs;
 import io.github.malapert.jwcs.utility.DMS;
 import io.github.malapert.jwcs.utility.HMS;
+import static io.github.malapert.jwcs.utility.NumericalUtility.aacos;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Represents a position in the sky.
@@ -27,6 +31,12 @@ import java.util.Objects;
  * @version 2.0
  */
 public class SkyPosition {
+    
+    /**
+     * Logger.
+     */
+    private final static Logger LOG = Logger.getLogger(SkyPosition.class.getName());
+    
     
     /**
      * Factor to convert degrees to hours.
@@ -145,8 +155,28 @@ public class SkyPosition {
      * @return the cartesian coordinates as an array
      */
     public double[] getCartesian() {
-        return longlat2xyz(this.longitude, this.latitude).getColumn(0);
+        return AbstractCrs.longlat2xyz(this.longitude, this.latitude).getColumn(0);
     }
+    
+    /**
+     * Computes the angular separation between two positions in different
+     * coordinate reference systems.
+     *
+     * @param pos1 sky position in a coordinate Reference System
+     * @param pos2 sky position in a coordinate Reference System
+     * @return angular separation in decimal degrees.
+     */
+    public final static double separation(final SkyPosition pos1, final SkyPosition pos2) {
+        final AbstractCrs crs = pos1.getCrs();
+        final SkyPosition pos1InRefFramePos2 = crs.convertTo(pos2.getCrs(), pos1.getLongitude(), pos1.getLatitude());
+        final double[] pos1XYZ = pos1InRefFramePos2.getCartesian();
+        final double[] pos2XYZ = pos2.getCartesian();
+        final double normPos1 = FastMath.sqrt(pos1XYZ[0] * pos1XYZ[0] + pos1XYZ[1] * pos1XYZ[1] + pos1XYZ[2] * pos1XYZ[2]);
+        final double normPos2 = FastMath.sqrt(pos2XYZ[0] * pos2XYZ[0] + pos2XYZ[1] * pos2XYZ[1] + pos2XYZ[2] * pos2XYZ[2]);
+        final double separation = aacos((pos1XYZ[0] * pos2XYZ[0] + pos1XYZ[1] * pos2XYZ[1] + pos1XYZ[2] * pos2XYZ[2]) / (normPos1 * normPos2));
+        LOG.log(Level.INFO, "seratation({0},{1}) =  {2}", new Object[]{pos1, pos2, FastMath.toDegrees(separation)});
+        return FastMath.toDegrees(separation);
+    }     
       
     @Override
     public String toString() {        
