@@ -67,8 +67,8 @@
                     <includes>
                         <include>**/*</include>
                     </includes>
-                    <repositoryName>GeoJsonLib</repositoryName>      <!-- github repo name -->
-                    <repositoryOwner>RegardsOss</repositoryOwner>    <!-- github username  -->
+                    <repositoryName>JWcs</repositoryName>      <!-- github repo name -->
+                    <repositoryOwner>malapert</repositoryOwner>    <!-- github username  -->
                 </configuration>
                 <executions>
                     <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
