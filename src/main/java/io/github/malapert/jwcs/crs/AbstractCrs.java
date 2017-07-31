@@ -265,10 +265,10 @@ public abstract class AbstractCrs {
      * @param longitude longitude in decimal degrees
      * @param latitude latitude in decimal degrees
      * @return the position on the sky in the target coordinate reference system
-     * @see AbstractCrs#longlat2xyz(double, double) 
-     * @see AbstractCrs#getRotationMatrix(io.github.malapert.jwcs.coordsystem.AbstractCrs) 
-     * @see AbstractCrs#getEterms(io.github.malapert.jwcs.coordsystem.AbstractCrs) 
-     * @see AbstractCrs#xyz2longlat(org.apache.commons.math3.linear.RealMatrix) 
+     * @see AbstractCrs#longlat2xyz
+     * @see AbstractCrs#getRotationMatrix
+     * @see AbstractCrs#getEterms
+     * @see AbstractCrs#xyz2longlat
      */
     public final SkyPosition convertTo(final AbstractCrs crs, final double longitude, final double latitude) {
         checkCoordinates(longitude, latitude);
@@ -306,7 +306,7 @@ public abstract class AbstractCrs {
      * latitude2, ...) in degrees
      * @return an array of SkyPosition
      * @throws JWcsError coordinates should be an array containing a set of [longitude, latitude]
-     * @see #convertTo(io.github.malapert.jwcs.coordsystem.AbstractCrs, double, double) 
+     * @see #convertTo 
      */
     public final SkyPosition[] convertTo(final AbstractCrs crs, final double[] coordinates) throws JWcsError {
         
@@ -400,10 +400,10 @@ public abstract class AbstractCrs {
      * reference frame <code>s1</code> with <code>epoch1</code> to an equatorial
      * system with equator and equinox at <code>epoch2</code> in reference system <code>S2</code>.
      * @throws JWcsError <code>s1</code> to <code>s2</code> conversion is not supported
-     * @see #convertICRSTo(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double) 
-     * @see #convertFK5To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
-     * @see #convertFK4To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
-     * @see #convertJ2000To(io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double, double, double) 
+     * @see #convertICRSTo 
+     * @see #convertFK5To 
+     * @see #convertFK4To 
+     * @see #convertJ2000To 
      */
     protected static RealMatrix convertMatrixEpoch12Epoch2(final double epoch1, final double epoch2, final CoordinateReferenceFrame.ReferenceFrame s1, final CoordinateReferenceFrame.ReferenceFrame s2, final double epobs) {
        final RealMatrix result;
@@ -455,12 +455,12 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      * coordinate reference frame <code>s2</code>.
      * @throws JWcsError J2000 to <code>s2</code> conversion is not supported
-     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double) 
-     * @see #convertICRS2J2000Matrix() 
-     * @see #convertICRS2FK5Matrix() 
-     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertFK52FK4Matrix(java.lang.Double) 
-     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
+     * @see #convertIAU2006MatrixEpoch12Epoch2
+     * @see #convertICRS2J2000Matrix
+     * @see #convertICRS2FK5Matrix 
+     * @see #convertJulianMatrixEpoch12Epoch2
+     * @see #convertFK52FK4Matrix
+     * @see #convertBesselianMatrixEpoch12Epoch2
      */
     private static RealMatrix convertJ2000To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -527,13 +527,13 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      *  coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
-     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertFK42FK5Matrix() 
-     * @see #convertICRS2FK5Matrix() 
-     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertFK52FK4Matrix(java.lang.Double) 
-     * @see #convertICRS2J2000Matrix() 
-     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
+     * @see #convertBesselianMatrixEpoch12Epoch2
+     * @see #convertFK42FK5Matrix
+     * @see #convertICRS2FK5Matrix
+     * @see #convertJulianMatrixEpoch12Epoch2
+     * @see #convertFK52FK4Matrix
+     * @see #convertICRS2J2000Matrix
+     * @see #convertIAU2006MatrixEpoch12Epoch2
      */    
     private static RealMatrix convertFK4To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -601,12 +601,12 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      * coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK5 to <code>s2</code> conversion is not supported
-     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertICRS2FK5Matrix() 
-     * @see #convertFK52FK4Matrix(java.lang.Double) 
-     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertICRS2J2000Matrix() 
-     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
+     * @see #convertJulianMatrixEpoch12Epoch2
+     * @see #convertICRS2FK5Matrix
+     * @see #convertFK52FK4Matrix
+     * @see #convertBesselianMatrixEpoch12Epoch2
+     * @see #convertICRS2J2000Matrix
+     * @see #convertIAU2006MatrixEpoch12Epoch2
      */    
     private static RealMatrix convertFK5To(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch1, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -667,13 +667,13 @@ public abstract class AbstractCrs {
      * to an equatorial crs with equator and equinox at <code>epoch2</code> in 
      *  coordinate reference frame <code>s2</code>.
      * @throws JWcsError FK4 to <code>s2</code> conversion is not supported
-     * @see NumericalUtility#createRealIdentityMatrix(int) 
-     * @see #convertICRS2FK5Matrix() 
-     * @see #convertJulianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertFK52FK4Matrix(java.lang.Double) 
-     * @see #convertBesselianMatrixEpoch12Epoch2(double, double) 
-     * @see #convertICRS2J2000Matrix() 
-     * @see #convertIAU2006MatrixEpoch12Epoch2(double, double)      
+     * @see NumericalUtility#createRealIdentityMatrix
+     * @see #convertICRS2FK5Matrix
+     * @see #convertJulianMatrixEpoch12Epoch2
+     * @see #convertFK52FK4Matrix
+     * @see #convertBesselianMatrixEpoch12Epoch2
+     * @see #convertICRS2J2000Matrix
+     * @see #convertIAU2006MatrixEpoch12Epoch2
      */    
     private static RealMatrix convertICRSTo(final CoordinateReferenceFrame.ReferenceFrame s2, final double epoch2, final double epobs) {
         final RealMatrix result;       
@@ -715,7 +715,7 @@ public abstract class AbstractCrs {
      * @param eterm E-terms vector (as returned by getEterms()). If input is
      * omitted (== <code>null</code>), the e-terms for 1950 will be substituted.
      * @return Mean place
-     * @see FK4#getEterms(double) 
+     * @see FK4#getEterms
      */
     private static RealMatrix removeEterms(final RealMatrix xyz, final RealMatrix eterm) {
         RealMatrix etermToRemove = eterm;
@@ -733,7 +733,7 @@ public abstract class AbstractCrs {
      * @param eterm E-terms vector (as returned by getEterms()). If input is
      * omitted (i.e. == <code>null</code>), the e-terms for 1950 will be substituted.
      * @return Apparent place
-     * @see FK4#getEterms(double) 
+     * @see FK4#getEterms
      */
     private static RealMatrix addEterms(final RealMatrix xyz, final RealMatrix eterm) {
         RealMatrix etermToAdd = eterm;
@@ -1045,8 +1045,8 @@ public abstract class AbstractCrs {
      * @param bEpoch1 Besselian start epoch
      * @param bEpoch2 Besselian epoch to precess to.
      * @return 3x3 rotation matrix M as in <code>XYZepoch2 = M * XYZepoch1</code>
-     * @see #newcombPrecAngles(double, double) 
-     * @see #precessionMatrix(double, double, double) 
+     * @see #newcombPrecAngles
+     * @see #precessionMatrix
      */
     private static RealMatrix convertBesselianMatrixEpoch12Epoch2(final double bEpoch1, final double bEpoch2) {
         final double[] precessionAngles = newcombPrecAngles(bEpoch1, bEpoch2);
@@ -1144,7 +1144,7 @@ public abstract class AbstractCrs {
      *
      * @param t Besselian epoch as epoch of observation
      * @return 3x3 matrix M as in <i>XYZfk5 = M * XYZfk4</i>
-     * @see TimeUtility#convertEpochBessel2JD(double)      
+     * @see TimeUtility#convertEpochBessel2JD
      */
     private static RealMatrix convertFK42FK5Matrix(final Double t) {
         final RealMatrix mat = convertFK42FK5Matrix();

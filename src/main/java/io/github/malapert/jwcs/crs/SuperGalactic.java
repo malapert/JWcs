@@ -93,11 +93,11 @@ public class SuperGalactic extends AbstractCrs {
      * @return the rotation matrix to convert from this current CRS to 
      * another one
      * @throws JWcsError Unknown output crs
-     * @see AbstractCrs#convertMatrixEq2Ecl(double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame)      
-     * @see AbstractCrs#convertMatrixEpoch12Epoch2(double, double, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame.ReferenceFrame, double) 
-     * @see AbstractCrs#convertMatrixEqB19502Gal()    
-     * @see NumericalUtility#createRealIdentityMatrix(int) 
-     * @see AbstractCrs#convertMatrixGal2Sgal() 
+     * @see AbstractCrs#convertMatrixEq2Ecl
+     * @see AbstractCrs#convertMatrixEpoch12Epoch2
+     * @see AbstractCrs#convertMatrixEqB19502Gal    
+     * @see NumericalUtility#createRealIdentityMatrix
+     * @see AbstractCrs#convertMatrixGal2Sgal
      */    
     @Override
     protected RealMatrix getRotationMatrix(final AbstractCrs crs) throws JWcsError {

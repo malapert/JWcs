@@ -20,12 +20,12 @@
  * the conversion between the astronomical coordinate reference systems.
  *
  * <p>A Coordinate Reference System (crs) contains two different elements : 
- * the <b>coordinate reference frame</b> {@link io.github.malapert.jwcs.coordsystem.AbstractCrs#getCoordinateReferenceFrame()}
- * and the <b>coordinate system</b> {@link io.github.malapert.jwcs.coordsystem.AbstractCrs#getCoordinateSystem()} .
+ * the <b>coordinate reference frame</b> {@link io.github.malapert.jwcs.crs.AbstractCrs#getCoordinateReferenceFrame}
+ * and the <b>coordinate system</b> {@link io.github.malapert.jwcs.crs.AbstractCrs#getCoordinateReferenceSystem} .
  *
  * <p>The coordinate reference frame defines how the CRS is related to the origin
- * (position and the date of the origin - equinox {@link io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame#getEquinox()} , 
- * date of observation {@link io.github.malapert.jwcs.coordsystem.CoordinateReferenceFrame#getEpochObs()} ) and 
+ * (position and the date of the origin - equinox {@link io.github.malapert.jwcs.datum.CoordinateReferenceFrame#getEquinox} , 
+ * date of observation {@link io.github.malapert.jwcs.datum.CoordinateReferenceFrame#getEpochObs} ) and 
  * the coordinate system describes how the coordinates are expressed in the 
  * coordinate reference frame (e.g. as cartesian coordinates, spherical 
  * coordinates or coordinates of a map projection).
@@ -51,20 +51,20 @@
  * <h2>Coordinate reference system</h2>
  * In the current implementation, it exists four CRS:
  * <ul>
- * <li>{@link io.github.malapert.jwcs.coordsystem.Equatorial} coordinate reference system</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.Ecliptic} coordinate reference system</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.Galactic} coordinate reference system</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.SuperGalactic} coordinate reference system</li>
+ * <li>{@link io.github.malapert.jwcs.crs.Equatorial} coordinate reference system</li>
+ * <li>{@link io.github.malapert.jwcs.crs.Ecliptic} coordinate reference system</li>
+ * <li>{@link io.github.malapert.jwcs.crs.Galactic} coordinate reference system</li>
+ * <li>{@link io.github.malapert.jwcs.crs.SuperGalactic} coordinate reference system</li>
  * </ul>
  * <br>
- * For the {@link io.github.malapert.jwcs.coordsystem.Equatorial} and {@link io.github.malapert.jwcs.coordsystem.Ecliptic} CRS, it is possible to describe
+ * For the {@link io.github.malapert.jwcs.crs.Equatorial} and {@link io.github.malapert.jwcs.crs.Ecliptic} CRS, it is possible to describe
  * the origin of the CRS by the use of a coordinate reference frame :
  * <ul>
- * <li>{@link io.github.malapert.jwcs.coordsystem.ICRS}</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.FK5}</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.FK4}</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.FK4NoEterms}</li>
- * <li>{@link io.github.malapert.jwcs.coordsystem.J2000}</li>
+ * <li>{@link io.github.malapert.jwcs.datum.ICRS}</li>
+ * <li>{@link io.github.malapert.jwcs.datum.FK5}</li>
+ * <li>{@link io.github.malapert.jwcs.datum.FK4}</li>
+ * <li>{@link io.github.malapert.jwcs.datum.FK4NoEterms}</li>
+ * <li>{@link io.github.malapert.jwcs.datum.J2000}</li>
  * </ul>
  * 
  * <h2>Others capabilities</h2>

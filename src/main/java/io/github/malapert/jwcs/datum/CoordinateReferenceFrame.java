@@ -25,7 +25,7 @@ import io.github.malapert.jwcs.utility.TimeUtility;
  * 
  * @author Jean-Christophe Malapert (jcmalapert@gmail.com)
  * @version 2.0
- * @see io.github.malapert.jwcs.coordsystem.AbstractCrs
+ * @see io.github.malapert.jwcs.crs.AbstractCrs
  */
 public interface CoordinateReferenceFrame {
 
@@ -192,8 +192,8 @@ public interface CoordinateReferenceFrame {
      * according to the reference frame.
      * @return Double.NaN when epoch of observation is not required otherwise
      * the epoch of observation
-     * @see TimeUtility#convertEpochBessel2JD(double) 
-     * @see TimeUtility#convertEpochJulian2JD(double) 
+     * @see TimeUtility#convertEpochBessel2JD
+     * @see TimeUtility#convertEpochJulian2JD
      */
     double getEpochObs();
     
@@ -201,22 +201,22 @@ public interface CoordinateReferenceFrame {
      * Returns the equinox as a Besselian or a Julian value according to the 
      * reference frame.
      * @return the equinox
-     * @see TimeUtility#convertEpochBessel2JD(double) 
-     * @see TimeUtility#convertEpochJulian2JD(double)      
+     * @see TimeUtility#convertEpochBessel2JD
+     * @see TimeUtility#convertEpochJulian2JD
      */
     double getEquinox();
     
     /**
      * Sets the epoch of observation.
      * @param epochObs the epoch of observation
-     * @see TimeUtility#epochs(java.lang.String) 
+     * @see TimeUtility#epochs
      */
     void setEpochObs(final String epochObs);
     
     /**
      * Sets the equinox.
      * @param equinox the equinox
-     * @see TimeUtility#epochs(java.lang.String)      
+     * @see TimeUtility#epochs
      */
     void setEquinox(final String equinox);
     
@@ -224,8 +224,8 @@ public interface CoordinateReferenceFrame {
      * Sets the epoch of observation as a Julian or Besselian epoch according to
      * the reference frame.
      * @param epochObs the epoch of observation
-     * @see TimeUtility#convertEpochBessel2JD(double) 
-     * @see TimeUtility#convertEpochJulian2JD(double)     
+     * @see TimeUtility#convertEpochBessel2JD
+     * @see TimeUtility#convertEpochJulian2JD     
      */
     void setEpochObs(final double epochObs);
     
@@ -233,8 +233,8 @@ public interface CoordinateReferenceFrame {
      * Sets the equinox as a Julian or Besselian epoch according to
      * the reference frame.
      * @param equinox the equinox
-     * @see TimeUtility#convertEpochBessel2JD(double) 
-     * @see TimeUtility#convertEpochJulian2JD(double)     
+     * @see TimeUtility#convertEpochBessel2JD
+     * @see TimeUtility#convertEpochJulian2JD
      */
     void setEquinox(final double equinox);    
        
