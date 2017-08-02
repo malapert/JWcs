@@ -141,7 +141,7 @@ public abstract class AbstractJWcs implements JWcsKeyProvider {
      * 
      * <p>This keyword is required for projection computation.
      */
-    protected final static String CTYPE2 = "CTYPE2";
+    public final static String CTYPE2 = "CTYPE2";
     /**
      * Scale (degrees / pixel) and rotation matrix. 
      * 
