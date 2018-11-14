@@ -34,7 +34,7 @@ public abstract class AbstractCs {
      * @return the axes
      */
     public Axis[] getAxes() {
-        return axes;
+        return axes == null ? null : axes.clone();
     }
 
     /**

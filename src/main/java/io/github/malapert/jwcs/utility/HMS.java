@@ -41,6 +41,8 @@ public final class HMS implements Serializable {
      */
     private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
     private final static long serialVersionUID = 6425466963081211760L;
+    
+    private final static double EPSILON = 1E-14;
 
     static {
         NF.setMinimumIntegerDigits(2);
@@ -324,6 +326,6 @@ public final class HMS implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof HMS && val == ((HMS) obj).val;
+        return obj instanceof HMS && Math.abs(val - ((HMS) obj).val) <= EPSILON;
     }
 }

@@ -86,7 +86,7 @@ public class HeaderFitsReader {
      * @throws IOException File not found
      */
     public HeaderFitsReader(final URL url) throws IOException  {
-        final Reader reader = new InputStreamReader(url.openStream());
+        final Reader reader = new InputStreamReader(url.openStream(), Charset.defaultCharset());
         this.source = reader;
     }      
 

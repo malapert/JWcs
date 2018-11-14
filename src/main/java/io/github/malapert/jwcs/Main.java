@@ -1,3 +1,5 @@
+package io.github.malapert.jwcs;
+
 /* 
  * Copyright (C) 2014-2016 Jean-Christophe Malapert
  *
@@ -17,7 +19,6 @@
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
-import io.github.malapert.jwcs.*;
 import io.github.malapert.jwcs.crs.Ecliptic;
 import io.github.malapert.jwcs.crs.Equatorial;
 import io.github.malapert.jwcs.datum.FK4;
@@ -549,7 +550,7 @@ public class Main {
                     break;
                 case 'e':
                     try {
-                        extension = Integer.valueOf(g.getOptarg());
+                        extension = Integer.parseInt(g.getOptarg());
                     } catch (NumberFormatException ex) {
                         System.err.println(ex);
                         returnedCode = EXIT.USER_INPUT_ERROR;

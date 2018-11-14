@@ -609,7 +609,7 @@ public abstract class AbstractProjection {
      * <p>To define an undefined value, the value is set to Double.POSITIVE_INFINITY 
      * for positive number and Double.NEGATIVE_INFINITY for negative number.
      */
-    public class ProjectionParameter {
+    public static class ProjectionParameter {
         
         /**
          * Name of the parameter.

@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,7 +50,8 @@ public final class UngenerateImporter {
         
         // read lines until we reach the end of the file
         try ( // open the file
-                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, Charset.
+                defaultCharset()))) {
             while (in.readLine() != null) {
                 final MapLine line = readLine(in);
                 if (line != null) {

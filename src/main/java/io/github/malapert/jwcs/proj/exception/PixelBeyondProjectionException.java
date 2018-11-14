@@ -17,6 +17,7 @@
 package io.github.malapert.jwcs.proj.exception;
 
 import io.github.malapert.jwcs.proj.AbstractProjection;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 
 /**
@@ -116,9 +117,9 @@ public class PixelBeyondProjectionException extends ProjectionException {
         final String coordinates = isPlaneCoordinate ? "(x,y)" : "(phi,theta)";
         final String result;
         if (getMessage().isEmpty()) {
-            result = String.format("{0} - Solution not defined for {1} = ({2},{3})", this.getProjection().getClass().getName(), coordinates, getX(), getY());
+            result = MessageFormat.format("{0} - Solution not defined for {1} = ({2},{3})", this.getProjection().getClass().getName(), coordinates, getX(), getY());
         } else {
-            result = String.format("{0} - Solution not defined for {1} = ({2},{3}) : {4}", this.getProjection().getClass().getName(), coordinates, getX(), getY(), getMessage());
+            result = MessageFormat.format("{0} - Solution not defined for {1} = ({2},{3}) : {4}", this.getProjection().getClass().getName(), coordinates, getX(), getY(), getMessage());
         }
         return result;
     }

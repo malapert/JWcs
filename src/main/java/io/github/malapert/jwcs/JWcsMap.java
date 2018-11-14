@@ -85,7 +85,7 @@ public class JWcsMap extends AbstractJWcs {
         if (result == null) {
             throw new JWcsError(keyword + " not found");
         } else {
-            return Integer.valueOf(result);
+            return Integer.parseInt(result);
         }
     }
 

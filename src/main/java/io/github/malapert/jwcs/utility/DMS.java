@@ -42,6 +42,8 @@ public final class DMS implements Serializable {
     private final static NumberFormat NF_SEC = NumberFormat.getInstance(Locale.US);
     private final static long serialVersionUID = -6119277651753389123L;
 
+    private final static double EPSILON = 1E-14;
+    
     static {
         NF.setMinimumIntegerDigits(2);
         NF.setMaximumIntegerDigits(2);
@@ -52,7 +54,7 @@ public final class DMS implements Serializable {
         NF_SEC.setMinimumFractionDigits(2);
         NF_SEC.setMaximumFractionDigits(2);
     }
-
+    
     /**
      * number of degrees.
      */
@@ -194,6 +196,7 @@ public final class DMS implements Serializable {
      * 
      * <p>Seconds are formatted with leading zero if needed.
      * The seconds are formatted with 2 digits precision.
+     * @return 
      */
     @Override
     public String toString() {
@@ -290,10 +293,12 @@ public final class DMS implements Serializable {
 
     /**
      * Define equality based on the value.
+     * @param obj
+     * @return 
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof DMS && val == ((DMS) obj).val;
+        return obj instanceof DMS && Math.abs(val - ((DMS) obj).val) <= EPSILON;
     }
 
     @Override
