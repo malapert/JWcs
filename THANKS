@@ -33,18 +33,22 @@
 
     2.1 - Commons Math: The Apache Commons Mathematics Library
           https://commons.apache.org/proper/commons-math/
-          Version : 3.3
+          Version : 3.6.1
  
     2.2 - nom.tam Java FITS library
           http://heasarc.gsfc.nasa.gov/docs/heasarc/fits/
-          Version : 1.11.1
+          Version : 1.14.1
 
     2.3 - GNU Prolog for Java
           https://www.gnu.org/software/gnuprologjava/
-          Version : 0.2.6
+          Version : 1.0.13
 
 4. Test
 
-    3.1 - Alexandre Beelen (IAS)
+    4.1 - Alexandre Beelen (IAS)
           A python program has been provided by Alexandre for testing purpose
+          
+5. Contributions
+
+    5.1 - Tomas Alonso Albi  : https://github.com/malapert/JWcs/issues/88
 
