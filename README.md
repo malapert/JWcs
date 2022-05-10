@@ -1,5 +1,7 @@
 [![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Abandoned-orange.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
 
+> :warning: **This project is now hosted and maintained by ESA**: https://github.com/esdc-esac-esa-int/JWcs
+
 
 JWcs
 ======================
